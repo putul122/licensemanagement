@@ -32,8 +32,8 @@ export function * getAgreements (action) {
     // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
     const agreements = yield call(
       axios.get,
-      api.getAgreements
-      // action.payload
+      api.getAgreements,
+      {params: action.payload}
     )
     yield put(actionCreators.fetchAgreementsSuccess(agreements.data))
   } catch (error) {

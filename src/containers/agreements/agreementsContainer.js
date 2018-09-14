@@ -1,15 +1,23 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import Agreements from '../../components/agreements/agreementsComponent'
-// import { actions as sagaActions } from '../../redux/sagas/'
-// import { actionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actions as sagaActions } from '../../redux/sagas/'
+import { actionCreators } from '../../redux/reducers/agreementsReducer/agreementsReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
-  return {}
+  return {
+    agreements: state.agreementsReducer.agreements,
+    agreementsSummary: state.agreementsReducer.agreementsSummary,
+    currentPage: state.agreementsReducer.currentPage
+  }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
-export const propsMapping: Callbacks = {}
+export const propsMapping: Callbacks = {
+  fetchAgreements: sagaActions.agreementActions.fetchAgreements,
+  fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
+  setCurrentPage: actionCreators.setCurrentPage
+}
 
 // If you want to use the function mapping
 // export const propsMapping = (dispatch, ownProps) => {
@@ -23,7 +31,13 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('my props', this.props)
-      // this.props.fetchBasic && this.props.fetchBasic()
+      let payload = {
+        'search': '',
+        'page_size': 10,
+        'page': 1
+      }
+      this.props.fetchAgreements && this.props.fetchAgreements(payload)
+      this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
     }
   })
 )(Agreements)

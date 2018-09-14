@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {defaults, Pie, Bar} from 'react-chartjs-2'
 import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
-// import ApplicationsSummaryData from '../applicationInfoComponent/mockGetApplicationsSummary'
 import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
 defaults.global.legend.display = false
 

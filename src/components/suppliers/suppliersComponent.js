@@ -61,8 +61,6 @@ export default function Suppliers (props) {
   })
 
   let handleInputChange = function (event) {
-    // props.setSuppliersLoading(true)
-    // componentLoading = true
     suppliersList = ''
     let payload = {
       'search': searchTextBox.value ? searchTextBox.value : '',
@@ -86,8 +84,6 @@ export default function Suppliers (props) {
     } else if (page === totalNoPages) {
       nextClass = 'm-datatable__pager-link--disabled'
     }
-    // props.setComponentTypeLoading(true)
-    // componentLoading = true
     suppliersList = ''
     let payload = {
       'search': searchTextBox.value ? searchTextBox.value : '',
@@ -115,8 +111,6 @@ export default function Suppliers (props) {
         'page_size': 10,
         'page': currentPage - 1
       }
-      // props.setComponentTypeLoading(true)
-      // componentLoading = true
       props.fetchSuppliers(payload)
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -138,8 +132,6 @@ export default function Suppliers (props) {
         'page_size': 10,
         'page': currentPage + 1
       }
-      // props.setComponentTypeLoading(true)
-      // componentLoading = true
       suppliersList = ''
       props.fetchSuppliers(payload)
       // eslint-disable-next-line
