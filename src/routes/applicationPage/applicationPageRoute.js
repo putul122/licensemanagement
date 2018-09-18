@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../../containers/header/headerContainer.js'
 import LeftNavigation from '../../components/leftNavigation/leftNavigation.js'
-import ApplicationList from '../../containers/applicationlist/applicationlistContainer'
+import ApplicationList from '../../containers/applications/applicationsContainer'
 // import SmartDisplayStars from '../../containers/displayStars/displayStarsContainer'
 
 class ApplicationPageRoute extends React.Component {
@@ -13,7 +13,7 @@ class ApplicationPageRoute extends React.Component {
           <LeftNavigation />
           <div className='m-content col-xl-12'>
             <h2>Applications</h2>
-            <ApplicationList />
+            <ApplicationList {...this.props} />
           </div>
         </div>
       </div>

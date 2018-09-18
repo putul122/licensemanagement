@@ -31,6 +31,8 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('my props', this.props)
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         'search': '',
         'page_size': 10,
@@ -38,6 +40,22 @@ export default compose(
       }
       this.props.fetchSuppliers && this.props.fetchSuppliers(payload)
       this.props.fetchSuppliersSummary && this.props.fetchSuppliersSummary()
+    },
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      mApp && mApp.block('#supplierSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
+    componentWillReceiveProps: function (nextProps) {
+      if (nextProps.suppliers && nextProps.suppliers !== this.props.suppliers) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#supplierList')
+      }
+      if (nextProps.suppliersSummary && nextProps.suppliersSummary !== this.props.suppliersSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#supplierSummary')
+      }
     }
   })
 )(Suppliers)

@@ -1,10 +1,10 @@
 import React from 'react'
-import Header from '../../containers/header/headerContainer.js'
+import Header from '../../components/headerComponent/headerComponent.js'
 import LeftNavigation from '../../components/leftNavigation/leftNavigation.js'
-import SoftwareList from '../../containers/softwares/softwaresContainer.js'
+import ApplicationDetail from '../../containers/applicationDetail/applicationDetailContainer.js'
 // import SmartDisplayStars from '../../containers/displayStars/displayStarsContainer'
 
-class SoftwarePageRoute extends React.Component {
+class ApplicationPageRoute extends React.Component {
   render () {
     return (
       <div>
@@ -12,8 +12,7 @@ class SoftwarePageRoute extends React.Component {
         <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
           <LeftNavigation />
           <div className='m-content col-xl-12'>
-            <h2>Software</h2>
-            <SoftwareList {...this.props} />
+            <ApplicationDetail {...this.props} />
           </div>
         </div>
       </div>
@@ -21,4 +20,4 @@ class SoftwarePageRoute extends React.Component {
   }
   // props: {}
 }
-export default SoftwarePageRoute
+export default ApplicationPageRoute

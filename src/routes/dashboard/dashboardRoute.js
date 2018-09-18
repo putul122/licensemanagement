@@ -11,7 +11,7 @@ class DashboardRoute extends React.Component {
         <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
           <LeftNavigation />
           <div className='m-content col-xl-12'>
-            <Dashboard />
+            <Dashboard {...this.props} />
           </div>
         </div>
       </div>

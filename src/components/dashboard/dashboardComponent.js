@@ -1,27 +1,36 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {defaults, Pie, Bar} from 'react-chartjs-2'
-import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
-import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
+// import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
+// import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
 defaults.global.legend.display = false
+const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 
 export default function Dashboard (props) {
-  let SuppliersSummary = SuppliersSummaryData.resources[0]
-  let EntitlementSummary = EntitlementSummaryData.resources[0]
+  console.log('my props', props)
+  console.log(props.applicationSummary)
+  console.log(props.agreementSummary)
+  console.log(props.supplierSummary)
+  console.log(props.entitlementSummary)
+  console.log(props.softwareSummary)
+  // let SuppliersSummary = SuppliersSummaryData.resources[0]
+  // let EntitlementSummary = EntitlementSummaryData.resources[0]
   let EntitlementList = ''
-  let supplierCount = SuppliersSummaryData.resources[0].supplier_count
-  let agreementCount = SuppliersSummaryData.resources[0].agreement_count
+  let supplierCount = ''
+  let agreementCount = ''
+  let agreementCost = ''
   let applicationCount = ''
   let supplierPieChartData = {}
   let agreementPieChartData = {}
   let applicationPieChartData = {}
+  let applicationCost = ''
 
-  if (EntitlementSummary && EntitlementSummary !== '') {
+  if (props.entitlementSummary && props.entitlementSummary !== '') {
     let EntitlementContent = []
-    for (let supplier in EntitlementSummary.usage_per_supplier) {
-      if (EntitlementSummary.usage_per_supplier.hasOwnProperty(supplier)) {
-        let liability = EntitlementSummary.usage_per_supplier[supplier].liability_percent
-        let overspend = EntitlementSummary.usage_per_supplier[supplier].overspend_percent
+    for (let supplier in props.entitlementSummary.resources[0].usage_per_supplier) {
+      if (props.entitlementSummary.resources[0].usage_per_supplier.hasOwnProperty(supplier)) {
+        let liability = props.entitlementSummary.resources[0].usage_per_supplier[supplier].liability_percent
+        let overspend = props.entitlementSummary.resources[0].usage_per_supplier[supplier].overspend_percent
         EntitlementContent.push(
           <span>
             <div className='col-sm-5 row pull-left'><p style={{'font-weight': 'normal'}}>{supplier}</p></div>
@@ -38,48 +47,64 @@ export default function Dashboard (props) {
     })
     console.log(EntitlementList)
   }
-  if (SuppliersSummary && SuppliersSummary !== '') {
+  if (props.agreementSummary && props.agreementSummary !== '') {
+    agreementCount = props.agreementSummary.resources[0].agreement_count
+    agreementCost = props.agreementSummary.resources[0].cost
+    let costByAgreementType = props.agreementSummary.resources[0].cost_by_agreement_type
+    let labels = []
+    let agreementPieData = []
+    let colorData = []
+    let datasetAgreementObject = {}
+    let i = 0
+    for (let keyField in costByAgreementType) {
+      if (costByAgreementType.hasOwnProperty(keyField)) {
+        labels.push(keyField)
+        agreementPieData.push(costByAgreementType[keyField])
+        colorData.push(pieColor[i++])
+      }
+    }
+    agreementPieChartData.labels = labels
+    agreementPieChartData.legend = false
+    agreementPieChartData.datasets = []
+    datasetAgreementObject.data = agreementPieData
+    datasetAgreementObject.backgroundColor = colorData
+    datasetAgreementObject.hoverBackgroundColor = colorData
+    agreementPieChartData.datasets.push(datasetAgreementObject)
+  }
+  if (props.supplierSummary && props.supplierSummary !== '') {
+    supplierCount = props.supplierSummary.resources[0].supplier_count
+    // agreementCount = props.supplierSummary.resources[0].agreement_count
     let labels = []
     let supplierPieData = []
-    let agreementPieData = []
-    let colorData1 = []
-    let colorData2 = []
+    let colorData = []
     let datasetSupplierObject = {}
-    let datasetAgreementObject = {}
-    SuppliersSummary.top10_cost_suppliers.forEach(function (element, i) {
+    let j = 0
+    props.supplierSummary.resources[0].top10_cost_suppliers.forEach(function (element, i) {
       labels.push(element.name)
-      supplierPieData.push(element.total_cost)
-      agreementPieData.push(element.total_cost)
-      colorData1.push('#' + ((Math.random() * 0xffffff) << 0).toString(16))
-      colorData2.push('#' + ((Math.random() * 0xffffff) << 0).toString(16))
+      supplierPieData.push(element.cost)
+      colorData.push(pieColor[j++])
     })
     supplierPieChartData.labels = labels
     supplierPieChartData.legend = false
     supplierPieChartData.datasets = []
     datasetSupplierObject.data = supplierPieData
-    datasetSupplierObject.backgroundColor = colorData1
-    datasetSupplierObject.hoverBackgroundColor = colorData1
+    datasetSupplierObject.backgroundColor = colorData
+    datasetSupplierObject.hoverBackgroundColor = colorData
     supplierPieChartData.datasets.push(datasetSupplierObject)
-    agreementPieChartData.labels = labels
-    agreementPieChartData.legend = false
-    agreementPieChartData.datasets = []
-    datasetAgreementObject.data = agreementPieData
-    datasetAgreementObject.backgroundColor = colorData2
-    datasetAgreementObject.hoverBackgroundColor = colorData2
-    agreementPieChartData.datasets.push(datasetAgreementObject)
   }
 
   if (props.applicationSummary && props.applicationSummary !== '') {
     applicationCount = props.applicationSummary.resources[0].application_count
+    applicationCost = props.applicationSummary.resources[0].cost
     let labels = []
     let data = []
     let colorData = []
     let datasetObject = {}
+    let k = 0
     props.applicationSummary.resources[0].top10_cost_applications.forEach(function (element, i) {
       labels.push(element.name)
-      // data.push(element.total_cost)
-      data.push(Math.floor(Math.random() * 20))
-      colorData.push('#' + ((Math.random() * 0xffffff) << 0).toString(16))
+      data.push(element.cost)
+      colorData.push(pieColor[k++]) // colorData.push('#' + ((Math.random() * 0xffffff) << 0).toString(16))
     })
     applicationPieChartData.labels = labels
     applicationPieChartData.legend = false
@@ -89,20 +114,37 @@ export default function Dashboard (props) {
     datasetObject.hoverBackgroundColor = colorData
     applicationPieChartData.datasets.push(datasetObject)
   }
-  const data1 = {
-    labels: ['January', 'February', 'March'],
+
+  var data = {
+    labels: ['label1', 'label2', 'label3'],
+    barValueSpacing: 5,
     datasets: [
-      {
-        label: 'My First dataset',
-        backgroundColor: 'rgba(255,99,132,0.2)',
-        borderColor: 'rgba(255,99,132,1)',
-        borderWidth: 1,
-        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-        hoverBorderColor: 'rgba(255,99,132,1)',
-        data: [65, 59, 80]
-      }
+        {
+          label: 'Harpo',
+          backgroundColor: 'green',
+          data: [10, 7, 4]
+        },
+        {
+          label: 'Chico',
+          backgroundColor: 'red',
+          data: [4, 3, 5]
+        }
     ]
   }
+  // const data1 = {
+  //   labels: ['January', 'February', 'March'],
+  //   datasets: [
+  //     {
+  //       label: 'My First dataset',
+  //       backgroundColor: 'rgba(255,99,132,0.2)',
+  //       borderColor: 'rgba(255,99,132,1)',
+  //       borderWidth: 1,
+  //       hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+  //       hoverBorderColor: 'rgba(255,99,132,1)',
+  //       data: [20, 23, 23]
+  //     }
+  //   ]
+  // }
   return (
     <div className=''>
       <div className='row'>
@@ -114,7 +156,7 @@ export default function Dashboard (props) {
       </div>
       <div className='row'>
         <div className='col-md-8'>
-          <div className='row'>
+          <div className='row' id='supplierSummary'>
             <div className='col-md-6'>
               <div className='m-portlet m-portlet--full-height'>
                 <div className='m-portlet__body'>
@@ -155,7 +197,7 @@ export default function Dashboard (props) {
               </div>
             </div>
           </div>
-          <div className='row'>
+          <div className='row' id='agreementSummary'>
             <div className='col-md-6'>
               <div className='m-portlet m-portlet--full-height'>
                 <div className='m-portlet__body'>
@@ -164,7 +206,7 @@ export default function Dashboard (props) {
                       <span className='m-widget12__text1'>
                         <h4>Aggrements</h4>
                         <br />
-                        <h4>R 1044444.00</h4>
+                        <h4>R {agreementCost}</h4>
                       </span>
                       <span className='m-widget12__text1'>
                         <h4>{agreementCount}</h4>
@@ -198,7 +240,7 @@ export default function Dashboard (props) {
             </div>
           </div>
         </div>
-        <div className='col-md-4'>
+        <div className='col-md-4' id='entitlementSummary'>
           <div className='m-portlet m-portlet--full-height'>
             <div className='m-portlet__body'>
               <div className='m-widget12'>
@@ -221,7 +263,7 @@ export default function Dashboard (props) {
       </div>
       <div className='row' style={{'overflow': 'visible'}}>
         <div className='col-md-8'>
-          <div className='row'>
+          <div className='row' id='applicationSummary'>
             <div className='col-md-6'>
               <div className='m-portlet m-portlet--full-height'>
                 <div className='m-portlet__body'>
@@ -230,7 +272,7 @@ export default function Dashboard (props) {
                       <span className='m-widget12__text1'>
                         <h4>Applications</h4>
                         <br />
-                        <h4>R 10444444.00</h4>
+                        <h4>R {applicationCost}</h4>
                       </span>
                       <span className='m-widget12__text1'>
                         <h4>{applicationCount}</h4>
@@ -264,21 +306,21 @@ export default function Dashboard (props) {
             </div>
           </div>
         </div>
-        <div className='col-md-4'>
+        <div className='col-md-4' id='softwareSummary'>
           <div className='m-portlet m-portlet--full-height'>
             <div className='m-portlet__body'>
               <div className='m-widget12'>
                 <div className='m-widget12__item'>
-                  <div className='col m-widget12__text1'>
+                  <div className='m-widget12__text1'>
                     <span className=''>
                       <h4>Software Reference</h4>
                     </span>
                   </div>
                   <div className='col'>
                     <Bar
-                      data={data1}
+                      data={data}
                       width={200}
-                      height={60}
+                      height={200}
                       options={{
                         maintainAspectRatio: false
                       }}
@@ -295,5 +337,9 @@ export default function Dashboard (props) {
 }
 
 Dashboard.propTypes = {
-  applicationSummary: PropTypes.any
+  applicationSummary: PropTypes.any,
+  agreementSummary: PropTypes.any,
+  supplierSummary: PropTypes.any,
+  entitlementSummary: PropTypes.any,
+  softwareSummary: PropTypes.any
 }

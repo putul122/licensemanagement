@@ -12,7 +12,7 @@ class SuppliersPageRoute extends React.Component {
           <LeftNavigation />
           <div className='m-content col-xl-12'>
             <h3>Suppliers</h3>
-            <Suppliers />
+            <Suppliers {...this.props} />
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react'
-import Header from '../../containers/header/headerContainer.js'
+import Header from '../../components/headerComponent/headerComponent.js'
 import LeftNavigation from '../../components/leftNavigation/leftNavigation.js'
-import SoftwareList from '../../containers/softwares/softwaresContainer.js'
+import SoftwareView from '../../containers/softwareDetail/softwareDetailContainer.js'
 // import SmartDisplayStars from '../../containers/displayStars/displayStarsContainer'
 
 class SoftwarePageRoute extends React.Component {
@@ -12,8 +12,7 @@ class SoftwarePageRoute extends React.Component {
         <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
           <LeftNavigation />
           <div className='m-content col-xl-12'>
-            <h2>Software</h2>
-            <SoftwareList {...this.props} />
+            <SoftwareView {...this.props} />
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ export default class Root extends Component {
     this.views = {}
   }
 
-  loadView (fileName) {
+  loadView (fileName, props) {
     if (this.views[fileName]) {
       return this.views[fileName]
     }
@@ -74,14 +74,14 @@ export default class Root extends Component {
             }
             resolve(require('../applicationPage/applicationPageRoute').default)
             break
-          case 'applicationView':
+          case 'applicationDetail':
             if (module.hot) {
-              module.hot.accept('../applicationViewPage/applicationViewPageRoute', () => {
-                        require('../applicationViewPage/applicationViewPageRoute').default // eslint-disable-line
+              module.hot.accept('../applicationDetailPage/applicationDetailPageRoute', () => {
+                        require('../applicationDetailPage/applicationDetailPageRoute').default // eslint-disable-line
                 this.forceUpdate()
               })
             }
-            resolve(require('../applicationViewPage/applicationViewPageRoute').default)
+            resolve(require('../applicationDetailPage/applicationDetailPageRoute').default)
             break
           case 'software':
             if (module.hot) {
@@ -92,14 +92,14 @@ export default class Root extends Component {
             }
             resolve(require('../softwarePage/softwarePageRoute').default)
             break
-          case 'softwareView':
+          case 'softwareDetail':
             if (module.hot) {
-              module.hot.accept('../softwareViewPage/softwareViewPageRoute', () => {
-                        require('../softwareViewPage/softwareViewPageRoute').default // eslint-disable-line
+              module.hot.accept('../softwareDetailPage/softwareDetailPageRoute', () => {
+                        require('../softwareDetailPage/softwareDetailPageRoute').default // eslint-disable-line
                 this.forceUpdate()
               })
             }
-            resolve(require('../softwareViewPage/softwareViewPageRoute').default)
+            resolve(require('../softwareDetailPage/softwareDetailPageRoute').default)
             break
           default:
             break
@@ -107,7 +107,7 @@ export default class Root extends Component {
       })
     )
       .then(View => {
-        this.views[fileName] = <View />
+        this.views[fileName] = <View {...props} />
       })
       .then(() => this.forceUpdate())
       .catch(err => {
@@ -122,17 +122,17 @@ export default class Root extends Component {
       <AppWrapper>
         <BrowserRouter>
           <Switch>
-            <Route path='/dashboard' exact component={(props) => this.loadView('dashboard')} />
-            <Route path='/agreements' exact component={(props) => this.loadView('agreements')} />
-            <Route path='/suppliers' exact component={(props) => this.loadView('suppliers')} />
+            <Route path='/dashboard' exact component={(props) => this.loadView('dashboard', props)} />
+            <Route path='/agreements' exact component={(props) => this.loadView('agreements', props)} />
+            <Route path='/suppliers' exact component={(props) => this.loadView('suppliers', props)} />
             <Route path='/suppliers/:id' component={(props) => this.loadView('supplierDetail', props)} />
             <Route exact path='/applications' component={(props) => this.loadView('application', props)} />
             <Route exact path='/applications/:id' component={(props) => this.loadView('applicationView', props)} />
             <Route exact path='/softwares' component={(props) => this.loadView('software', props)} />
             <Route exact path='/softwares/:id' component={(props) => this.loadView('softwareView', props)} />
-            <Route path='/applications' component={(props) => this.ApplicationsRoute(props)} />
-            <Route path='/softwares' component={(props) => this.SoftwaresRoute(props)} />
-            <Route path='/' exact component={(props) => this.loadView('home')} />
+            {/* <Route path='/applications' component={(props) => this.ApplicationsRoute(props)} />
+            <Route path='/softwares' component={(props) => this.SoftwaresRoute(props)} /> */}
+            <Route path='/' exact component={(props) => this.loadView('home', props)} />
           </Switch>
         </BrowserRouter>
       </AppWrapper>

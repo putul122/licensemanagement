@@ -4,12 +4,15 @@ import { createAction } from 'redux-actions'
 import api from '../../../constants'
 
 // Saga action strings
-export const FETCH_APPLICATIONS = 'saga/dashboard/FETCH_APPLICATIONS'
-export const FETCH_APPLICATIONS_SUCCESS = 'saga/dashboard/FETCH_APPLICATIONS_SUCCESS'
-export const FETCH_APPLICATIONS_FAILURE = 'saga/dashboard/FETCH_APPLICATIONS_FAILURE'
-export const FETCH_APPLICATIONS_SUMMARY = 'saga/dashboard/FETCH_APPLICATIONS_SUMMARY'
-export const FETCH_APPLICATIONS_SUMMARY_SUCCESS = 'saga/dashboard/FETCH_APPLICATIONS_SUMMARY_SUCCESS'
-export const FETCH_APPLICATIONS_SUMMARY_FAILURE = 'saga/dashboard/FETCH_APPLICATIONS_SUMMARY_FAILURE'
+export const FETCH_APPLICATIONS = 'saga/application/FETCH_APPLICATIONS'
+export const FETCH_APPLICATIONS_SUCCESS = 'saga/application/FETCH_APPLICATIONS_SUCCESS'
+export const FETCH_APPLICATIONS_FAILURE = 'saga/application/FETCH_APPLICATIONS_FAILURE'
+export const FETCH_APPLICATIONS_SUMMARY = 'saga/application/FETCH_APPLICATIONS_SUMMARY'
+export const FETCH_APPLICATIONS_SUMMARY_SUCCESS = 'saga/application/FETCH_APPLICATIONS_SUMMARY_SUCCESS'
+export const FETCH_APPLICATIONS_SUMMARY_FAILURE = 'saga/application/FETCH_APPLICATIONS_SUMMARY_FAILURE'
+export const FETCH_APPLICATION_BY_ID = 'saga/application/FETCH_APPLICATION_BY_ID'
+export const FETCH_APPLICATION_BY_ID_SUCCESS = 'saga/application/FETCH_APPLICATION_BY_ID_SUCCESS'
+export const FETCH_APPLICATION_BY_ID_FAILURE = 'saga/application/FETCH_APPLICATION_BY_ID_FAILURE'
 
 export const actionCreators = {
   fetchApplications: createAction(FETCH_APPLICATIONS),
@@ -17,13 +20,17 @@ export const actionCreators = {
   fetchApplicationsFailure: createAction(FETCH_APPLICATIONS_FAILURE),
   fetchApplicationsSummary: createAction(FETCH_APPLICATIONS_SUMMARY),
   fetchApplicationsSummarySuccess: createAction(FETCH_APPLICATIONS_SUMMARY_SUCCESS),
-  fetchApplicationsSummaryFailure: createAction(FETCH_APPLICATIONS_SUMMARY_FAILURE)
+  fetchApplicationsSummaryFailure: createAction(FETCH_APPLICATIONS_SUMMARY_FAILURE),
+  fetchApplicationById: createAction(FETCH_APPLICATION_BY_ID),
+  fetchApplicationByIdSuccess: createAction(FETCH_APPLICATION_BY_ID_SUCCESS),
+  fetchApplicationByIdFailure: createAction(FETCH_APPLICATION_BY_ID_FAILURE)
 }
 
 export default function * watchApplications () {
   yield [
       takeLatest(FETCH_APPLICATIONS, getApplications),
-      takeLatest(FETCH_APPLICATIONS_SUMMARY, getApplicationsSummary)
+      takeLatest(FETCH_APPLICATIONS_SUMMARY, getApplicationsSummary),
+      takeLatest(FETCH_APPLICATION_BY_ID, getApplicationById)
   ]
 }
 
@@ -32,8 +39,8 @@ export function * getApplications (action) {
     // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
     const applications = yield call(
       axios.get,
-      api.getApplications
-      // action.payload
+      api.getApplications,
+      {params: action.payload}
     )
     yield put(actionCreators.fetchApplicationsSuccess(applications.data))
   } catch (error) {
@@ -52,5 +59,19 @@ export function * getApplicationsSummary (action) {
       yield put(actionCreators.fetchApplicationsSummarySuccess(applicationsSummary.data))
     } catch (error) {
       yield put(actionCreators.fetchApplicationsSummaryFailure(error))
+    }
+  }
+
+  export function * getApplicationById (action) {
+    try {
+      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      const application = yield call(
+        axios.get,
+        api.getApplication,
+        {params: action.payload}
+      )
+      yield put(actionCreators.fetchApplicationByIdSuccess(application.data))
+    } catch (error) {
+      yield put(actionCreators.fetchApplicationByIdFailure(error))
     }
   }

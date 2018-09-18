@@ -31,6 +31,8 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('my props', this.props)
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         'search': '',
         'page_size': 10,
@@ -38,6 +40,24 @@ export default compose(
       }
       this.props.fetchAgreements && this.props.fetchAgreements(payload)
       this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+    },
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      mApp && mApp.block('#agreementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
+    componentWillReceiveProps: function (nextProps) {
+      if (nextProps.agreementsSummary && nextProps.agreementsSummary !== this.props.agreementsSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#agreementSummary')
+        // mApp && mApp.unblockPage()
+      }
+      if (nextProps.agreements && nextProps.agreements !== this.props.agreements) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#agreementList')
+        // mApp && mApp.unblockPage()
+      }
     }
   })
 )(Agreements)

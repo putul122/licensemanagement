@@ -6,9 +6,9 @@ import styles from './suppliersComponent.scss'
 // import PropTypes from 'prop-types'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
+const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 
 export default function Suppliers (props) {
-  console.log(props.currentPage, props.suppliersSummary)
   let searchTextBox
   let suppliersList = ''
   let totalNoPages
@@ -20,7 +20,37 @@ export default function Suppliers (props) {
   let listPage = []
   let paginationLimit = 6
   let totalSupplier
+  let supplierPieChartData = {}
+  let supplierCount = ''
+  let agreementCount = ''
+  let supplierAgreementCost = ''
 
+  // Code for formating pie chart data
+  if (props.suppliersSummary && props.suppliersSummary !== '') {
+    supplierCount = props.suppliersSummary.resources[0].supplier_count
+    agreementCount = props.suppliersSummary.resources[0].agreement_count
+    supplierAgreementCost = props.suppliersSummary.resources[0].cost
+    let labels = []
+    let supplierPieData = []
+    let colorData = []
+    let datasetSupplierObject = {}
+    let idx = 0
+    props.suppliersSummary.resources[0].top10_cost_suppliers.forEach(function (element, i) {
+      labels.push(element.name)
+      supplierPieData.push(element.cost)
+      colorData.push(pieColor[idx++])
+    })
+    supplierPieChartData.labels = labels
+    supplierPieChartData.legend = false
+    supplierPieChartData.datasets = []
+    datasetSupplierObject.data = supplierPieData
+    datasetSupplierObject.backgroundColor = colorData
+    datasetSupplierObject.hoverBackgroundColor = colorData
+    supplierPieChartData.datasets.push(datasetSupplierObject)
+    console.log('s pie', supplierPieChartData)
+  }
+
+  // Code for populating data in table
   if (props.suppliers && props.suppliers !== '') {
     suppliersList = props.suppliers.resources.map(function (data, index) {
       return (
@@ -70,8 +100,8 @@ export default function Suppliers (props) {
     if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
       props.fetchSuppliers(payload)
       // eslint-disable-next-line
+      mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
     }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage})
@@ -92,6 +122,7 @@ export default function Suppliers (props) {
     }
     props.fetchSuppliers(payload)
     // eslint-disable-next-line
+    mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     props.setCurrentPage(page)
 
@@ -113,6 +144,7 @@ export default function Suppliers (props) {
       }
       props.fetchSuppliers(payload)
       // eslint-disable-next-line
+      mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage - 1)
     }
@@ -135,6 +167,7 @@ export default function Suppliers (props) {
       suppliersList = ''
       props.fetchSuppliers(payload)
       // eslint-disable-next-line
+      mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage + 1)
     }
@@ -144,30 +177,30 @@ export default function Suppliers (props) {
     })
   }
 
-  const data = {
-    labels: [
-      'Red',
-      'Green',
-      'Yellow'
-    ],
-    legend: false,
-    datasets: [{
-      data: [300, 50, 100],
-      backgroundColor: [
-      '#FF6384',
-      '#36A2EB',
-      '#FFCE56'
-      ],
-      hoverBackgroundColor: [
-      '#FF6384',
-      '#36A2EB',
-      '#FFCE56'
-      ]
-    }]
-  }
+  // const data = {
+  //   labels: [
+  //     'Red',
+  //     'Green',
+  //     'Yellow'
+  //   ],
+  //   legend: false,
+  //   datasets: [{
+  //     data: [300, 50, 100],
+  //     backgroundColor: [
+  //     '#FF6384',
+  //     '#36A2EB',
+  //     '#FFCE56'
+  //     ],
+  //     hoverBackgroundColor: [
+  //     '#FF6384',
+  //     '#36A2EB',
+  //     '#FFCE56'
+  //     ]
+  //   }]
+  // }
     return (
       <div>
-        <div className='row'>
+        <div className='row' id='supplierSummary' >
           <div className='col-md-3'>
             <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
@@ -177,7 +210,7 @@ export default function Suppliers (props) {
                       <h2>Suppliers&nbsp;&nbsp;&nbsp;</h2>
                     </span>
                     <span className='m-widget12__text2'>
-                      <h2>{'40'}</h2>
+                      <h2>{supplierCount}</h2>
                     </span>
                   </div>
                 </div>
@@ -190,9 +223,12 @@ export default function Suppliers (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h2>Agreements</h2>
+                      <h2>Agreements&nbsp;&nbsp;&nbsp;</h2>
                       <br />
-                      <h2>R {'50'}</h2>
+                      <h4>R {supplierAgreementCost}</h4>
+                    </span>
+                    <span className='m-widget12__text2'>
+                      <h2>{agreementCount}</h2>
                     </span>
                   </div>
                 </div>
@@ -216,7 +252,7 @@ export default function Suppliers (props) {
                     </div>
                     <div className='col'>
                       <span className='m-widget12__text2'>
-                        <Pie data={data} />
+                        <Pie data={supplierPieChartData} />
                       </span>
                     </div>
                   </div>
@@ -225,54 +261,56 @@ export default function Suppliers (props) {
             </div>
           </div>
         </div>
-        <div className='row'>
-          <div className={'col-md-3'}>
-            <div className='m-input-icon m-input-icon--left'>
-              <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
-              <span className='m-input-icon__icon m-input-icon__icon--left'>
-                <span>
-                  <i className='la la-search' />
+        <div id='supplierList'>
+          <div className='row'>
+            <div className={'col-md-3'}>
+              <div className='m-input-icon m-input-icon--left'>
+                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
+                <span className='m-input-icon__icon m-input-icon__icon--left'>
+                  <span>
+                    <i className='la la-search' />
+                  </span>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
-        </div>
-        {/* The table structure begins */}
-        <div className='row' style={{'marginTop': '20px'}}>
-          <div className='col-md-12'>
-            <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-              <thead>
-                <tr role='row'>
-                  <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                  <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                  <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                  <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
-                  <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
-                  <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
-                </tr>
-              </thead>
-              <tbody>
-                {suppliersList}
-              </tbody>
-            </table>
-          </div>
-          <div className='row col-md-12' id='scrolling_vertical'>
-            <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-              <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
-                <ul className='m-datatable__pager-nav'>
-                  <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
-                  {listPage[0] && listPage[0].map(function (page, index) {
-                          if (page.number === currentPage) {
-                                  page.class = 'm-datatable__pager-link--active'
-                                } else {
-                                  page.class = ''
-                                }
-                                return (<li key={index} >
-                                  <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
-                                </li>)
-                              })}
-                  <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
-                </ul>
+          {/* The table structure begins */}
+          <div className='row' style={{'marginTop': '20px'}}>
+            <div className='col-md-12'>
+              <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                <thead>
+                  <tr role='row'>
+                    <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
+                    <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
+                    <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
+                    <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
+                    <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
+                    <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {suppliersList}
+                </tbody>
+              </table>
+            </div>
+            <div className='row col-md-12' id='scrolling_vertical'>
+              <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
+                <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                  <ul className='m-datatable__pager-nav'>
+                    <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                    {listPage[0] && listPage[0].map(function (page, index) {
+                            if (page.number === currentPage) {
+                                    page.class = 'm-datatable__pager-link--active'
+                                  } else {
+                                    page.class = ''
+                                  }
+                                  return (<li key={index} >
+                                    <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                                  </li>)
+                                })}
+                    <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

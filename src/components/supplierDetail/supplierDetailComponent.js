@@ -1,51 +1,112 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 // import './suppliersComponent.scss'
-import SupplierData from '../../mockData/GetSuppliers'
+// import SupplierData from '../../mockData/GetSuppliers'
 // import PropTypes from 'prop-types'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
+const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 
 export default function Suppliers (props) {
-  let suppliersList = ''
-  suppliersList = SupplierData.resources.map(function (data, index) {
-    return (
-      <tr key={index}>
-        <td>{data.name}</td>
-        <td>{''}</td>
-        <td>{data.agreements}</td>
-        <td>{data.applications_managed}</td>
-        <td>{data.softwares_supplied}</td>
-        <td>{data.total_cost}</td>
-      </tr>
-    )
-  })
-
-  const data = {
-    labels: [
-      'Red',
-      'Green',
-      'Yellow'
-    ],
-    legend: false,
-    datasets: [{
-      data: [300, 50, 100],
-      backgroundColor: [
-      '#FF6384',
-      '#36A2EB',
-      '#FFCE56'
-      ],
-      hoverBackgroundColor: [
-      '#FF6384',
-      '#36A2EB',
-      '#FFCE56'
-      ]
-    }]
+  let supplierSoftwareList = ''
+  let supplierApplicationList = ''
+  let supplierAgreementList = ''
+  let supplierName = ''
+  let agreementCount = ''
+  let suppliedSoftwareCount = ''
+  let agreementPieChartData = {}
+  if (props.supplier && props.supplier !== '') {
+    supplierName = props.supplier.resources[0].name
+    agreementCount = props.supplier.resources[0].agreement_count
+    suppliedSoftwareCount = props.supplier.resources[0].supplied_software_count
+    let costByAgreementType = props.supplier.resources[0].cost_by_agreement_type
+    let labels = []
+    let agreementPieData = []
+    let colorData = []
+    let datasetAgreementObject = {}
+    let i = 0
+    for (let keyField in costByAgreementType) {
+      if (costByAgreementType.hasOwnProperty(keyField)) {
+        labels.push(keyField)
+        // agreementPieData.push(costByAgreementType[keyField])
+        agreementPieData.push(10)
+        colorData.push(pieColor[i++])
+      }
+    }
+    agreementPieChartData.labels = labels
+    agreementPieChartData.legend = false
+    agreementPieChartData.datasets = []
+    datasetAgreementObject.data = agreementPieData
+    datasetAgreementObject.backgroundColor = colorData
+    datasetAgreementObject.hoverBackgroundColor = colorData
+    agreementPieChartData.datasets.push(datasetAgreementObject)
+  }
+  if (props.supplierApplications && props.supplierApplications !== '') {
+    if (props.supplierApplications.resources.length > 0) {
+      supplierApplicationList = props.supplierApplications.resources.map(function (data, index) {
+        return (
+          <tr key={index}>
+            <td>{data.name}</td>
+            <td>{data.stage}</td>
+            <td>{data.owner}</td>
+            <td>{data.cost}</td>
+          </tr>
+        )
+      })
+    } else {
+      supplierApplicationList = []
+      supplierApplicationList.push((
+        <tr key={0}>
+          <td colSpan='4'>{'No data to display'}</td>
+        </tr>
+      ))
+    }
+  }
+  if (props.supplierAgreements && props.supplierAgreements !== '') {
+    if (props.supplierAgreements.resources.length > 0) {
+      supplierAgreementList = props.supplierAgreements.resources.map(function (data, index) {
+        return (
+          <tr key={index}>
+            <td>{data.name}</td>
+            <td>{data.expiry_date}</td>
+            <td>{data.agreement_type}</td>
+            <td>{data.entitlement_count}</td>
+            <td>{data.cost}</td>
+          </tr>
+        )
+      })
+    } else {
+      supplierAgreementList = []
+      supplierAgreementList.push((
+        <tr key={0}>
+          <td colSpan='5'>{'No data to display'}</td>
+        </tr>
+      ))
+    }
+  }
+  if (props.supplierSoftwares && props.supplierSoftwares !== '') {
+    if (props.supplierSoftwares.resources.length > 0) {
+      supplierSoftwareList = props.supplierSoftwares.resources.map(function (data, index) {
+        return (
+          <tr key={index}>
+            <td>{data.name}</td>
+            <td>{data.cost}</td>
+          </tr>
+        )
+      })
+    } else {
+      supplierSoftwareList = []
+      supplierSoftwareList.push((
+        <tr key={0}>
+          <td colSpan='2'>{'No data to display'}</td>
+        </tr>
+      ))
+    }
   }
     return (
       <div>
-        <h2>Amdocs Development Limited</h2>
-        <div className='row'>
+        <h2>{supplierName}</h2>
+        <div className='row' id='supplier'>
           <div className='col-md-3'>
             <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
@@ -55,7 +116,7 @@ export default function Suppliers (props) {
                       <h2>Agreements&nbsp;&nbsp;&nbsp;</h2>
                     </span>
                     <span className='m-widget12__text2'>
-                      <h2>{'40'}</h2>
+                      <h2>{agreementCount}</h2>
                     </span>
                   </div>
                 </div>
@@ -70,7 +131,7 @@ export default function Suppliers (props) {
                     <span className='m-widget12__text1'>
                       <h2>Software</h2>
                       <br />
-                      <h2>R {'50'}</h2>
+                      <h2>R {suppliedSoftwareCount}</h2>
                     </span>
                   </div>
                 </div>
@@ -94,7 +155,7 @@ export default function Suppliers (props) {
                     </div>
                     <div className='col'>
                       <span className='m-widget12__text2'>
-                        <Pie data={data} />
+                        <Pie data={agreementPieChartData} />
                       </span>
                     </div>
                   </div>
@@ -104,7 +165,7 @@ export default function Suppliers (props) {
           </div>
         </div>
         {/* The table structure begins */}
-        <div className='row' style={{'marginTop': '20px'}}>
+        <div className='' style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist'>
             <li className='nav-item active show'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_1'>Agreements</a>
@@ -117,46 +178,55 @@ export default function Suppliers (props) {
             </li>
           </ul>
           <div className='tab-content'>
-            <div className='tab-pane active' id='m_tabs_1_1' role='tabpanel'>
+            <div className='tab-pane active' id='m_tabs_2_1' role='tabpanel'>
               <div className='col-md-12'>
                 <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                   <thead>
                     <tr role='row'>
-                      <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                      <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                      <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                      <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
-                      <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
-                      <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
+                      <th className='' ><h5>Name</h5></th>
+                      <th className='' ><h5>Expiry Date</h5></th>
+                      <th className='' ><h5>Agreement Type</h5></th>
+                      <th className='' ><h5># Entitlements</h5></th>
+                      <th className='' ><h5>Cost</h5></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {suppliersList}
+                    {supplierAgreementList}
                   </tbody>
                 </table>
               </div>
             </div>
-            <div className='tab-pane' id='m_tabs_1_2' role='tabpanel'>
+            <div className='tab-pane' id='m_tabs_2_2' role='tabpanel'>
               <div className='col-md-12'>
                 <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                   <thead>
                     <tr role='row'>
-                      <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                      <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                      <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                      <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
-                      <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
-                      <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
+                      <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
+                      <th className='' style={{width: '58.25px'}}><h5>Cost</h5></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {suppliersList}
+                    {supplierSoftwareList}
                   </tbody>
                 </table>
               </div>
             </div>
-            <div className='tab-pane' id='m_tabs_1_3' role='tabpanel'>
-              <div className='col-md-12' />
+            <div className='tab-pane' id='m_tabs_2_3' role='tabpanel'>
+              <div className='col-md-12' >
+                <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                  <thead>
+                    <tr role='row'>
+                      <th className='' ><h5>Name</h5></th>
+                      <th className='' ><h5>Stage</h5></th>
+                      <th className='' ><h5>Owner</h5></th>
+                      <th className='' ><h5>Cost</h5></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {supplierApplicationList}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -165,4 +235,8 @@ export default function Suppliers (props) {
       )
     }
     Suppliers.propTypes = {
+      supplier: PropTypes.any,
+      supplierApplications: PropTypes.any,
+      supplierSoftwares: PropTypes.any,
+      supplierAgreements: PropTypes.any
  }
