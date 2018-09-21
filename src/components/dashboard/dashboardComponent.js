@@ -1,20 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {defaults, Pie, Bar} from 'react-chartjs-2'
+import _ from 'lodash'
 // import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
 // import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 
 export default function Dashboard (props) {
-  console.log('my props', props)
-  console.log(props.applicationSummary)
-  console.log(props.agreementSummary)
-  console.log(props.supplierSummary)
-  console.log(props.entitlementSummary)
   console.log(props.softwareSummary)
-  // let SuppliersSummary = SuppliersSummaryData.resources[0]
-  // let EntitlementSummary = EntitlementSummaryData.resources[0]
   let EntitlementList = ''
   let supplierCount = ''
   let agreementCount = ''
@@ -24,16 +18,79 @@ export default function Dashboard (props) {
   let agreementPieChartData = {}
   let applicationPieChartData = {}
   let applicationCost = ''
+  let selectOptionList = ''
+  let costByTechnology = []
+  let softwareSummaryData = {}
+  let handleChange = function (event) {
+    console.log('handle change', event.target.value)
+    let payload = {
+      'business_id': event.target.value
+    }
+    props.setDefaultSelect(event.target.value)
+    // eslint-disable-next-line
+    mApp.block('#supplierSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    mApp.block('#agreementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    mApp.block('#applicationSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    mApp.block('#entitlementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.fetchApplicationsSummary && props.fetchApplicationsSummary(payload)
+    props.fetchAgreementsSummary && props.fetchAgreementsSummary(payload)
+    props.fetchSuppliersSummary && props.fetchSuppliersSummary(payload)
+    props.fetchSoftwaresSummary && props.fetchSoftwaresSummary(payload)
+    props.fetchEntitlementsSummary && props.fetchEntitlementsSummary(payload)
+  }
 
+  if (props.businessUnits && props.businessUnits !== '') {
+    selectOptionList = props.businessUnits.resources.map(function (data, index) {
+      return (<option key={index} value={data.id}>{data.name}</option>)
+    })
+  }
+  if (props.softwareSummary && props.softwareSummary !== '') {
+    for (let software in props.softwareSummary.resources[0].cost_by_technology_classification) {
+      if (props.softwareSummary.resources[0].cost_by_technology_classification.hasOwnProperty(software)) {
+        let obj = {}
+        obj.name = software
+        obj.cost = props.softwareSummary.resources[0].cost_by_technology_classification[software]
+        costByTechnology.push(obj)
+      }
+    }
+    let sortedCostByTechnology = _.orderBy(costByTechnology, ['cost'], ['desc'])
+    let labels = []
+    let data = []
+    for (let i = 0; i < 5; i++) {
+      labels.push(sortedCostByTechnology[i].name)
+      data.push(sortedCostByTechnology[i].cost)
+    }
+    console.log(sortedCostByTechnology)
+    softwareSummaryData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Cost',
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          borderColor: 'rgba(255,99,132,1)',
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+          hoverBorderColor: 'rgba(255,99,132,1)',
+          data: data
+        }
+      ]
+    }
+  }
   if (props.entitlementSummary && props.entitlementSummary !== '') {
     let EntitlementContent = []
+    let index = 0
     for (let supplier in props.entitlementSummary.resources[0].usage_per_supplier) {
       if (props.entitlementSummary.resources[0].usage_per_supplier.hasOwnProperty(supplier)) {
         let liability = props.entitlementSummary.resources[0].usage_per_supplier[supplier].liability_percent
         let overspend = props.entitlementSummary.resources[0].usage_per_supplier[supplier].overspend_percent
         EntitlementContent.push(
-          <span>
-            <div className='col-sm-5 row pull-left'><p style={{'font-weight': 'normal'}}>{supplier}</p></div>
+          <span key={index++}>
+            <div className='col-sm-5 row pull-left'><p style={{'fontWeight': 'normal'}}>{supplier}</p></div>
             <div className='progress'>
               <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100' />
               <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' />
@@ -45,7 +102,6 @@ export default function Dashboard (props) {
     EntitlementList = EntitlementContent.map(function (element, index) {
       return element
     })
-    console.log(EntitlementList)
   }
   if (props.agreementSummary && props.agreementSummary !== '') {
     agreementCount = props.agreementSummary.resources[0].agreement_count
@@ -73,7 +129,6 @@ export default function Dashboard (props) {
   }
   if (props.supplierSummary && props.supplierSummary !== '') {
     supplierCount = props.supplierSummary.resources[0].supplier_count
-    // agreementCount = props.supplierSummary.resources[0].agreement_count
     let labels = []
     let supplierPieData = []
     let colorData = []
@@ -115,42 +170,28 @@ export default function Dashboard (props) {
     applicationPieChartData.datasets.push(datasetObject)
   }
 
-  var data = {
-    labels: ['label1', 'label2', 'label3'],
-    barValueSpacing: 5,
-    datasets: [
-        {
-          label: 'Harpo',
-          backgroundColor: 'green',
-          data: [10, 7, 4]
-        },
-        {
-          label: 'Chico',
-          backgroundColor: 'red',
-          data: [4, 3, 5]
-        }
-    ]
-  }
-  // const data1 = {
-  //   labels: ['January', 'February', 'March'],
+  // var data = { /
+  //   labels: ['label1', 'label2', 'label3'],
+  //   barValueSpacing: 5,
   //   datasets: [
-  //     {
-  //       label: 'My First dataset',
-  //       backgroundColor: 'rgba(255,99,132,0.2)',
-  //       borderColor: 'rgba(255,99,132,1)',
-  //       borderWidth: 1,
-  //       hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-  //       hoverBorderColor: 'rgba(255,99,132,1)',
-  //       data: [20, 23, 23]
-  //     }
+  //       {
+  //         label: 'Harpo',
+  //         backgroundColor: 'green',
+  //         data: [10, 7, 4]
+  //       },
+  //       {
+  //         label: 'Chico',
+  //         backgroundColor: 'red',
+  //         data: [4, 3, 5]
+  //       }
   //   ]
   // }
   return (
     <div className=''>
       <div className='row'>
         <div className={'col-md-3'}>
-          <select className='form-control m-input m-input--solid' id='exampleSelect1'>
-            <option>Telkom Corporate Centre</option>
+          <select className='form-control m-input m-input--solid' onBlur={handleChange}>
+            {selectOptionList}
           </select>
         </div>
       </div>
@@ -318,11 +359,28 @@ export default function Dashboard (props) {
                   </div>
                   <div className='col'>
                     <Bar
-                      data={data}
+                      data={softwareSummaryData}
                       width={200}
-                      height={200}
+                      height={250}
                       options={{
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        scales: {
+                          yAxes: [{
+                              ticks: {
+                                  beginAtZero: true
+                              }
+                          }],
+                          // yAxes: [{
+                          //     ticks: {
+                          //         fontSize: 40
+                          //     }
+                          // }],
+                           xAxes: [{
+                              ticks: {
+                                  fontSize: 7
+                              }
+                          }]
+                        }
                       }}
                     />
                   </div>
@@ -341,5 +399,6 @@ Dashboard.propTypes = {
   agreementSummary: PropTypes.any,
   supplierSummary: PropTypes.any,
   entitlementSummary: PropTypes.any,
-  softwareSummary: PropTypes.any
+  softwareSummary: PropTypes.any,
+  businessUnits: PropTypes.any
 }

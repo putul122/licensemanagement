@@ -1,0 +1,8 @@
+h5{
+    font-weight: bold;
+}
+a.disabled {
+    /* Make the disabled links grayish*/
+    color: gray;
+    pointer-events: none;
+}

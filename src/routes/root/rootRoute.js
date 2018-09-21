@@ -65,6 +65,15 @@ export default class Root extends Component {
             }
             resolve(require('../agreementsPage/agreementsPageRoute').default)
             break
+          case 'agreementDetail':
+            if (module.hot) {
+              module.hot.accept('../agreementDetailPage/agreementDetailPageRoute', () => {
+                require('../agreementDetailPage/agreementDetailPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../agreementDetailPage/agreementDetailPageRoute').default)
+            break
             case 'application':
             if (module.hot) {
               module.hot.accept('../applicationPage/applicationPageRoute', () => {
@@ -101,6 +110,33 @@ export default class Root extends Component {
             }
             resolve(require('../softwareDetailPage/softwareDetailPageRoute').default)
             break
+          case 'account':
+            if (module.hot) {
+              module.hot.accept('../accountPage/accountPageRoute', () => {
+                require('../accountPage/accountPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../accountPage/accountPageRoute').default)
+            break
+          case 'entitlement':
+            if (module.hot) {
+              module.hot.accept('../entitlementsPage/entitlementsPageRoute', () => {
+                        require('../entitlementsPage/entitlementsPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../entitlementsPage/entitlementsPageRoute').default)
+            break
+          case 'entitlementDetail':
+            if (module.hot) {
+              module.hot.accept('../entitlementDetailPage/entitlementDetailPageRoute', () => {
+                        require('../entitlementDetailPage/entitlementDetailPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../entitlementDetailPage/entitlementDetailPageRoute').default)
+            break
           default:
             break
         }
@@ -124,15 +160,18 @@ export default class Root extends Component {
           <Switch>
             <Route path='/dashboard' exact component={(props) => this.loadView('dashboard', props)} />
             <Route path='/agreements' exact component={(props) => this.loadView('agreements', props)} />
+            <Route path='/agreements/:id' component={(props) => this.loadView('agreementDetail', props)} />
             <Route path='/suppliers' exact component={(props) => this.loadView('suppliers', props)} />
             <Route path='/suppliers/:id' component={(props) => this.loadView('supplierDetail', props)} />
             <Route exact path='/applications' component={(props) => this.loadView('application', props)} />
-            <Route exact path='/applications/:id' component={(props) => this.loadView('applicationView', props)} />
+            <Route exact path='/applications/:id' component={(props) => this.loadView('applicationDetail', props)} />
             <Route exact path='/softwares' component={(props) => this.loadView('software', props)} />
-            <Route exact path='/softwares/:id' component={(props) => this.loadView('softwareView', props)} />
+            <Route exact path='/softwares/:id' component={(props) => this.loadView('softwareDetail', props)} />
+            <Route exact path='/entitlements' component={(props) => this.loadView('entitlement', props)} />
+            <Route exact path='/entitlements/:id' component={(props) => this.loadView('entitlementDetail', props)} />
             {/* <Route path='/applications' component={(props) => this.ApplicationsRoute(props)} />
             <Route path='/softwares' component={(props) => this.SoftwaresRoute(props)} /> */}
-            <Route path='/' exact component={(props) => this.loadView('home', props)} />
+            <Route path='/' exact component={(props) => this.loadView('account', props)} />
           </Switch>
         </BrowserRouter>
       </AppWrapper>

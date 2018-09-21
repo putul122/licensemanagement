@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 // import './suppliersComponent.scss'
 // import SupplierData from '../../mockData/GetSuppliers'
 // import PropTypes from 'prop-types'
@@ -68,7 +69,7 @@ export default function Suppliers (props) {
         return (
           <tr key={index}>
             <td>{data.name}</td>
-            <td>{data.expiry_date}</td>
+            <td>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
             <td>{data.agreement_type}</td>
             <td>{data.entitlement_count}</td>
             <td>{data.cost}</td>
@@ -167,7 +168,7 @@ export default function Suppliers (props) {
         {/* The table structure begins */}
         <div className='' style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist'>
-            <li className='nav-item active show'>
+            <li className='nav-item'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_1'>Agreements</a>
             </li>
             <li className='nav-item'>

@@ -10,9 +10,15 @@ export const FETCH_SOFTWARES_FAILURE = 'saga/software/FETCH_SOFTWARES_FAILURE'
 export const FETCH_SOFTWARES_SUMMARY = 'saga/software/FETCH_SOFTWARES_SUMMARY'
 export const FETCH_SOFTWARES_SUMMARY_SUCCESS = 'saga/software/FETCH_SOFTWARES_SUMMARY_SUCCESS'
 export const FETCH_SOFTWARES_SUMMARY_FAILURE = 'saga/software/FETCH_SOFTWARES_SUMMARY_FAILURE'
-export const FETCH_SOFTWARE_BY_ID = 'saga/application/FETCH_SOFTWARE_BY_ID'
-export const FETCH_SOFTWARE_BY_ID_SUCCESS = 'saga/application/FETCH_SOFTWARE_BY_ID_SUCCESS'
-export const FETCH_SOFTWARE_BY_ID_FAILURE = 'saga/application/FETCH_SOFTWARE_BY_ID_FAILURE'
+export const FETCH_SOFTWARE_BY_ID = 'saga/software/FETCH_SOFTWARE_BY_ID'
+export const FETCH_SOFTWARE_BY_ID_SUCCESS = 'saga/software/FETCH_SOFTWARE_BY_ID_SUCCESS'
+export const FETCH_SOFTWARE_BY_ID_FAILURE = 'saga/software/FETCH_SOFTWARE_BY_ID_FAILURE'
+export const FETCH_SOFTWARE_PROPERTIES = 'saga/software/FETCH_SOFTWARE_PROPERTIES'
+export const FETCH_SOFTWARE_PROPERTIES_SUCCESS = 'saga/software/FETCH_SOFTWARE_PROPERTIES_SUCCESS'
+export const FETCH_SOFTWARE_PROPERTIES_FAILURE = 'saga/software/FETCH_SOFTWARE_PROPERTIES_FAILURE'
+export const FETCH_SOFTWARE_RELATIONSHIPS = 'saga/software/FETCH_SOFTWARE_RELATIONSHIPS'
+export const FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS = 'saga/software/FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS'
+export const FETCH_SOFTWARE_RELATIONSHIPS_FAILURE = 'saga/software/FETCH_SOFTWARE_RELATIONSHIPS_FAILURE'
 
 export const actionCreators = {
   fetchSoftwares: createAction(FETCH_SOFTWARES),
@@ -23,15 +29,49 @@ export const actionCreators = {
   fetchSoftwaresSummaryFailure: createAction(FETCH_SOFTWARES_SUMMARY_FAILURE),
   fetchSoftwareById: createAction(FETCH_SOFTWARE_BY_ID),
   fetchSoftwareByIdSuccess: createAction(FETCH_SOFTWARE_BY_ID_SUCCESS),
-  fetchSoftwareByIdFailure: createAction(FETCH_SOFTWARE_BY_ID_FAILURE)
+  fetchSoftwareByIdFailure: createAction(FETCH_SOFTWARE_BY_ID_FAILURE),
+  fetchSoftwareProperties: createAction(FETCH_SOFTWARE_PROPERTIES),
+  fetchSoftwarePropertiesSuccess: createAction(FETCH_SOFTWARE_PROPERTIES_SUCCESS),
+  fetchSoftwarePropertiesFailure: createAction(FETCH_SOFTWARE_PROPERTIES_FAILURE),
+  fetchSoftwareRelationships: createAction(FETCH_SOFTWARE_RELATIONSHIPS),
+  fetchSoftwareRelationshipsSuccess: createAction(FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS),
+  fetchSoftwareRelationshipsFailure: createAction(FETCH_SOFTWARE_RELATIONSHIPS_FAILURE)
 }
 
 export default function * watchSuppliers () {
   yield [
       takeLatest(FETCH_SOFTWARES, getSoftwares),
       takeLatest(FETCH_SOFTWARES_SUMMARY, getSoftwaresSummary),
-      takeLatest(FETCH_SOFTWARE_BY_ID, getSoftwareById)
+      takeLatest(FETCH_SOFTWARE_BY_ID, getSoftwareById),
+      takeLatest(FETCH_SOFTWARE_PROPERTIES, getSoftwareProperties),
+      takeLatest(FETCH_SOFTWARE_RELATIONSHIPS, getSoftwareRelationships)
   ]
+}
+
+export function * getSoftwareProperties (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const softwareProperties = yield call(
+      axios.get,
+      api.getSoftwareProperties(action.payload.software_id)
+    )
+    yield put(actionCreators.fetchSoftwarePropertiesSuccess(softwareProperties.data))
+  } catch (error) {
+    yield put(actionCreators.fetchSoftwarePropertiesFailure(error))
+  }
+}
+
+export function * getSoftwareRelationships (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const softwareRelationships = yield call(
+      axios.get,
+      api.getSoftwareRelationships(action.payload.software_id)
+    )
+    yield put(actionCreators.fetchSoftwareRelationshipsSuccess(softwareRelationships.data))
+  } catch (error) {
+    yield put(actionCreators.fetchSoftwareRelationshipsFailure(error))
+  }
 }
 
 export function * getSoftwares (action) {
@@ -53,8 +93,8 @@ export function * getSoftwaresSummary (action) {
       // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
       const softwaresSummary = yield call(
         axios.get,
-        api.getSoftwareSummary
-        // action.payload
+        api.getSoftwareSummary,
+        {params: action.payload}
       )
       yield put(actionCreators.fetchSoftwaresSummarySuccess(softwaresSummary.data))
     } catch (error) {

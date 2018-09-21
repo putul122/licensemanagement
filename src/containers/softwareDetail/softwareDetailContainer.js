@@ -7,12 +7,16 @@ import { actions as sagaActions } from '../../redux/sagas/'
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    softwarebyId: state.softwareDetailReducer.softwarebyId
+    softwarebyId: state.softwareDetailReducer.softwarebyId,
+    softwareProperties: state.softwareDetailReducer.softwareProperties,
+    softwareRelationships: state.softwareDetailReducer.softwareRelationships
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchSoftwareById: sagaActions.softwareActions.fetchSoftwareById
+  fetchSoftwareById: sagaActions.softwareActions.fetchSoftwareById,
+  fetchSoftwareProperties: sagaActions.softwareActions.fetchSoftwareProperties,
+  fetchSoftwareRelationships: sagaActions.softwareActions.fetchSoftwareRelationships
  }
 
 // If you want to use the function mapping
@@ -28,9 +32,11 @@ export default compose(
     componentWillMount: function () {
       console.log('component will mount', this.props)
       let payload = {
-        'id': this.props.match.params.id
+        'software_id': this.props.match.params.id
       }
       this.props.fetchSoftwareById && this.props.fetchSoftwareById(payload)
+      this.props.fetchSoftwareProperties && this.props.fetchSoftwareProperties(payload)
+      this.props.fetchSoftwareRelationships && this.props.fetchSoftwareRelationships(payload)
       }
     // componentDidMount: function () {
     // //   this.props.fetchBasic && this.props.fetchBasic()

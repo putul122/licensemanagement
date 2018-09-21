@@ -6,8 +6,12 @@ import supplierDetailReducer from './supplierDetailReducer/supplierDetailReducer
 import applicationDetailReducer from './applicationDetailReducer/applicationDetailReducerReducer'
 import softwareDetailReducer from './softwareDetailReducer/softwareDetailReducerReducer'
 import agreementsReducer from './agreementsReducer/agreementsReducerReducer'
+import agreementDetailReducer from './agreementDetailReducer/agreementDetailReducerReducer'
 import applicationsReducer from './applicationsReducer/applicationsReducerReducer'
 import softwaresReducer from './softwaresReducer/softwaresReducerReducer'
+import loginReducer from './loginReducer/loginReducerReducer'
+import entitlementsReducer from './entitlementsReducer/entitlementsReducerReducer'
+import entitlementDetailReducer from './entitlementDetailReducer/entitlementDetailReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -15,7 +19,11 @@ export default combineReducers({
     supplierDetailReducer,
     applicationDetailReducer,
     agreementsReducer,
+    agreementDetailReducer,
     applicationsReducer,
     softwaresReducer,
-    softwareDetailReducer
+    softwareDetailReducer,
+    loginReducer,
+    entitlementsReducer,
+    entitlementDetailReducer
 })

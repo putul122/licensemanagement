@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './agreementsComponent.scss'
-// import SupplierData from '../../mockData/GetSuppliers'
-// import PropTypes from 'prop-types'
+import moment from 'moment'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -54,9 +53,9 @@ export default function Agreements (props) {
     agreementsList = props.agreements.resources.map(function (data, index) {
       return (
         <tr key={index}>
-          <td><a href={'javascript:void(0);'} >{data.name}</a></td>
+          <td><a href={'/agreements/' + data.id} >{data.name}</a></td>
           <td>{data.supplier}</td>
-          <td>{data.expiry_date}</td>
+          <td>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
           <td>{''}</td>
           <td>{data.entitlement_count}</td>
           <td>{data.cost}</td>
@@ -264,12 +263,12 @@ export default function Agreements (props) {
               <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                 <thead>
                   <tr role='row'>
-                    <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                    <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                    <th className='' style={{width: '58.25px'}}><h5>Expiry Date</h5></th>
-                    <th className='' style={{width: '137.25px'}}><h5>Type</h5></th>
-                    <th className='' style={{width: '171.25px'}}><h5># Entitlements</h5></th>
-                    <th className='' style={{width: '132.25px'}}><h5>Cost</h5></th>
+                    <th className=''><h5># Agreements</h5></th>
+                    <th className=''><h5>Supplier</h5></th>
+                    <th className=''><h5>Expiry Date</h5></th>
+                    <th className=''><h5>Type</h5></th>
+                    <th className=''><h5># Entitlements</h5></th>
+                    <th className=''><h5>Cost</h5></th>
                   </tr>
                 </thead>
                 <tbody>

@@ -8,12 +8,17 @@ import '../../redux/reducers/applicationsReducer/applicationsReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    applicationbyId: state.applicationDetailReducer.applicationbyId
+    applicationbyId: state.applicationDetailReducer.applicationbyId,
+    applicationProperties: state.applicationDetailReducer.applicationProperties,
+    applicationRelationships: state.applicationDetailReducer.applicationRelationships
+
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchApplicationById: sagaActions.applicationActions.fetchApplicationById
+  fetchApplicationById: sagaActions.applicationActions.fetchApplicationById,
+  fetchApplicationProperties: sagaActions.applicationActions.fetchApplicationProperties,
+  fetchApplicationRelationships: sagaActions.applicationActions.fetchApplicationRelationships
  }
 
 // If you want to use the function mapping
@@ -32,6 +37,8 @@ export default compose(
       'application_id': this.props.match.params.id
     }
     this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
+    this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
+    this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
     }
   })
 )(ApplicationDetail)

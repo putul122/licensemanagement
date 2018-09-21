@@ -1,30 +1,74 @@
 import axios from 'axios'
 import { takeLatest, call, put } from 'redux-saga/effects'
 import { createAction } from 'redux-actions'
+import api from '../../../constants'
 
 // Saga action strings
-export const FETCH_BASIC = 'saga/Basic/FETCH_BASIC'
-export const FETCH_BASIC_SUCCESS = 'saga/Basic/FETCH_BASIC_SUCCESS'
-export const FETCH_BASIC_FAILURE = 'saga/Basic/FETCH_BASIC_FAILURE'
+export const FETCH_CLIENT_ACCESS_TOKEN = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN'
+export const FETCH_CLIENT_ACCESS_TOKEN_SUCCESS = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN_SUCCESS'
+export const FETCH_CLIENT_ACCESS_TOKEN_FAILURE = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN_FAILURE'
+export const FETCH_USER_AUTHENTICATION = 'saga/Basic/FETCH_USER_AUTHENTICATION'
+export const FETCH_USER_AUTHENTICATION_SUCCESS = 'saga/Basic/FETCH_USER_AUTHENTICATION_SUCCESS'
+export const FETCH_USER_AUTHENTICATION_FAILURE = 'saga/Basic/FETCH_USER_AUTHENTICATION_FAILURE'
+export const FETCH_BUSINESS_UNITS = 'saga/Basic/FETCH_BUSINESS_UNITS'
+export const FETCH_BUSINESS_UNITS_SUCCESS = 'saga/Basic/FETCH_BUSINESS_UNITS_SUCCESS'
+export const FETCH_BUSINESS_UNITS_FAILURE = 'saga/Basic/FETCH_BUSINESS_UNITS_FAILURE'
 
 export const actionCreators = {
-  fetchBasic: createAction(FETCH_BASIC),
-  fetchBasicSuccess: createAction(FETCH_BASIC_SUCCESS),
-  fetchBasicFailure: createAction(FETCH_BASIC_FAILURE)
+  fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
+  fetchClientAccessTokenSuccess: createAction(FETCH_CLIENT_ACCESS_TOKEN_SUCCESS),
+  fetchClientAccessTokenFailure: createAction(FETCH_CLIENT_ACCESS_TOKEN_FAILURE),
+  fetchUserAuthentication: createAction(FETCH_USER_AUTHENTICATION),
+  fetchUserAuthenticationSuccess: createAction(FETCH_USER_AUTHENTICATION_SUCCESS),
+  fetchUserAuthenticationFailure: createAction(FETCH_USER_AUTHENTICATION_FAILURE),
+  fetchBusinessUnits: createAction(FETCH_BUSINESS_UNITS),
+  fetchBusinessUnitsSuccess: createAction(FETCH_BUSINESS_UNITS_SUCCESS),
+  fetchBusinessUnitsFailure: createAction(FETCH_BUSINESS_UNITS_FAILURE)
 }
 
 export default function * watchBasic () {
-  yield takeLatest(FETCH_BASIC, getBasic)
+  yield [
+    takeLatest(FETCH_CLIENT_ACCESS_TOKEN, getClientAccessToken),
+    takeLatest(FETCH_USER_AUTHENTICATION, getUserAuthentication),
+    takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits)
+  ]
 }
 
-export function * getBasic (action) {
+export function * getClientAccessToken (action) {
   try {
-    const repoInfo = yield call(
-      axios.get,
-      'https://api.github.com/repos/akrigline/react-redux-saga-starter'
+    const clientAccessToken = yield call(
+      axios.post,
+      api.clientAccessToken,
+      action.payload
     )
-    yield put(actionCreators.fetchBasicSuccess(repoInfo.data.stargazers_count))
+    yield put(actionCreators.fetchClientAccessTokenSuccess(clientAccessToken.data))
   } catch (error) {
-    yield put(actionCreators.fetchBasicFailure(error))
+    yield put(actionCreators.fetchClientAccessTokenFailure(error))
+  }
+}
+
+export function * getUserAuthentication (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const userAuthentication = yield call(
+      axios.get,
+      api.authenticateUser
+    )
+    yield put(actionCreators.fetchUserAuthenticationSuccess(userAuthentication.data))
+  } catch (error) {
+    yield put(actionCreators.fetchUserAuthenticationFailure(error))
+  }
+}
+
+export function * getBusinessUnits (action) {
+  try {
+    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const businessUnits = yield call(
+      axios.get,
+      api.getBusinessUnits
+    )
+    yield put(actionCreators.fetchBusinessUnitsSuccess(businessUnits.data))
+  } catch (error) {
+    yield put(actionCreators.fetchBusinessUnitsFailure(error))
   }
 }

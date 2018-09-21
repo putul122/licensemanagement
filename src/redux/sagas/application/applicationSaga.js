@@ -13,6 +13,12 @@ export const FETCH_APPLICATIONS_SUMMARY_FAILURE = 'saga/application/FETCH_APPLIC
 export const FETCH_APPLICATION_BY_ID = 'saga/application/FETCH_APPLICATION_BY_ID'
 export const FETCH_APPLICATION_BY_ID_SUCCESS = 'saga/application/FETCH_APPLICATION_BY_ID_SUCCESS'
 export const FETCH_APPLICATION_BY_ID_FAILURE = 'saga/application/FETCH_APPLICATION_BY_ID_FAILURE'
+export const FETCH_APPLICATION_PROPERTIES = 'saga/application/FETCH_APPLICATION_PROPERTIES'
+export const FETCH_APPLICATION_PROPERTIES_SUCCESS = 'saga/application/FETCH_APPLICATION_PROPERTIES_SUCCESS'
+export const FETCH_APPLICATION_PROPERTIES_FAILURE = 'saga/application/FETCH_APPLICATION_PROPERTIES_FAILURE'
+export const FETCH_APPLICATION_RELATIONSHIPS = 'saga/application/FETCH_APPLICATION_RELATIONSHIPS'
+export const FETCH_APPLICATION_RELATIONSHIPS_SUCCESS = 'saga/application/FETCH_APPLICATION_RELATIONSHIPS_SUCCESS'
+export const FETCH_APPLICATION_RELATIONSHIPS_FAILURE = 'saga/application/FETCH_APPLICATION_RELATIONSHIPS_FAILURE'
 
 export const actionCreators = {
   fetchApplications: createAction(FETCH_APPLICATIONS),
@@ -23,15 +29,49 @@ export const actionCreators = {
   fetchApplicationsSummaryFailure: createAction(FETCH_APPLICATIONS_SUMMARY_FAILURE),
   fetchApplicationById: createAction(FETCH_APPLICATION_BY_ID),
   fetchApplicationByIdSuccess: createAction(FETCH_APPLICATION_BY_ID_SUCCESS),
-  fetchApplicationByIdFailure: createAction(FETCH_APPLICATION_BY_ID_FAILURE)
+  fetchApplicationByIdFailure: createAction(FETCH_APPLICATION_BY_ID_FAILURE),
+  fetchApplicationProperties: createAction(FETCH_APPLICATION_PROPERTIES),
+  fetchApplicationPropertiesSuccess: createAction(FETCH_APPLICATION_PROPERTIES_SUCCESS),
+  fetchApplicationPropertiesFailure: createAction(FETCH_APPLICATION_PROPERTIES_FAILURE),
+  fetchApplicationRelationships: createAction(FETCH_APPLICATION_RELATIONSHIPS),
+  fetchApplicationRelationshipsSuccess: createAction(FETCH_APPLICATION_RELATIONSHIPS_SUCCESS),
+  fetchApplicationRelationshipsFailure: createAction(FETCH_APPLICATION_RELATIONSHIPS_FAILURE)
 }
 
 export default function * watchApplications () {
   yield [
       takeLatest(FETCH_APPLICATIONS, getApplications),
       takeLatest(FETCH_APPLICATIONS_SUMMARY, getApplicationsSummary),
-      takeLatest(FETCH_APPLICATION_BY_ID, getApplicationById)
+      takeLatest(FETCH_APPLICATION_BY_ID, getApplicationById),
+      takeLatest(FETCH_APPLICATION_PROPERTIES, getApplicationProperties),
+      takeLatest(FETCH_APPLICATION_RELATIONSHIPS, getApplicationRelationships)
   ]
+}
+
+export function * getApplicationProperties (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const applicationProperties = yield call(
+      axios.get,
+      api.getApplicationProperties(action.payload.application_id)
+    )
+    yield put(actionCreators.fetchApplicationPropertiesSuccess(applicationProperties.data))
+  } catch (error) {
+    yield put(actionCreators.fetchApplicationPropertiesFailure(error))
+  }
+}
+
+export function * getApplicationRelationships (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const applicationRelationships = yield call(
+      axios.get,
+      api.getApplicationRelationships(action.payload.application_id)
+    )
+    yield put(actionCreators.fetchApplicationRelationshipsSuccess(applicationRelationships.data))
+  } catch (error) {
+    yield put(actionCreators.fetchApplicationRelationshipsFailure(error))
+  }
 }
 
 export function * getApplications (action) {
@@ -62,9 +102,8 @@ export function * getApplicationsSummary (action) {
     }
   }
 
-  export function * getApplicationById (action) {
+export function * getApplicationById (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
       const application = yield call(
         axios.get,
         api.getApplication,

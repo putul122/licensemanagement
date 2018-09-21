@@ -74,8 +74,8 @@ export function * getSuppliersSummary (action) {
     // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
     const suppliersSummary = yield call(
       axios.get,
-      api.getSuppliersSummary
-      // action.payload
+      api.getSuppliersSummary,
+      {params: action.payload}
     )
     yield put(actionCreators.fetchSuppliersSummarySuccess(suppliersSummary.data))
   } catch (error) {
