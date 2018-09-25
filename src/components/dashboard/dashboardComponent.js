@@ -56,7 +56,7 @@ export default function Dashboard (props) {
   if (props.businessUnits && props.businessUnits !== '') {
     if (props.businessUnits.error_code === null) {
       selectOptionList = props.businessUnits.resources.map(function (data, index) {
-        return (<option key={index} value={data.id}>{'Business Unit ' + data.name}</option>)
+        return (<option key={index} value={data.id}>{data.name}</option>)
       })
       selectOptionList.unshift(<option key={-111111} value={-111111}>{'Select Business Unit'}</option>)
     }
@@ -231,7 +231,7 @@ export default function Dashboard (props) {
                         <span className=''>
                           <h4>Cost Per</h4>
                           <br />
-                          <h5>Top 10 Suppliers</h5>
+                          <h5>Top 5 Suppliers</h5>
                         </span>
                       </div>
                       <div className='col'>
@@ -340,7 +340,7 @@ export default function Dashboard (props) {
                         <span className=''>
                           <h4>Cost Per</h4>
                           <br />
-                          <h5>Top 10 Applications</h5>
+                          <h5>Top 5 Applications</h5>
                         </span>
                       </div>
                       <div className='col'>
