@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './suppliersComponent.scss'
-// import SupplierData from '../../mockData/GetSuppliers'
-// import PropTypes from 'prop-types'
+import './style.css'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -54,14 +53,24 @@ export default function Suppliers (props) {
   if (props.suppliers && props.suppliers !== '') {
     suppliersList = props.suppliers.resources.map(function (data, index) {
       return (
-        <tr key={index}>
-          <td><a href={'/suppliers/' + data.id} >{data.name}</a></td>
-          <td>{''}</td>
-          <td>{''}</td>
-          <td>{data.managed_application_count}</td>
-          <td>{data.supplied_software_count}</td>
-          <td>{data.cost}</td>
-        </tr>
+        <tbody>
+          <tr key={index} data-toggle='collapse' data-target={'#group-of-rows-' + index} className='accordion-toggle'>
+            <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/suppliers/' + data.id} >{data.name}</a></td>
+            <td>{''}</td>
+            <td>{data.agreement_count}</td>
+            <td>{data.managed_application_count}</td>
+            <td>{data.supplied_software_count}</td>
+            <td>{data.cost}</td>
+          </tr>
+          <tr id={'group-of-rows-' + index} className='accordion-body collapse' style={{'show': {'dispaly': ''}, 'collapse': {'dispaly': ''}}}>
+            <td>{''}</td>
+            <td>Software</td>
+            <td>{''}</td>
+            <td>{''}</td>
+            <td>{''}</td>
+            <td>R 100 000 000</td>
+          </tr>
+        </tbody>
       )
     })
 
@@ -277,7 +286,7 @@ export default function Suppliers (props) {
           {/* The table structure begins */}
           <div className='row' style={{'marginTop': '20px'}}>
             <div className='col-md-12'>
-              <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+              <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline  no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                 <thead>
                   <tr role='row'>
                     <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
@@ -289,8 +298,26 @@ export default function Suppliers (props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {suppliersList}
+                  <tr data-toggle='collapse' data-target='#a1' className='accordion-toggle' style={{cursor: 'pointer'}}>
+                    <td><span className='icon_expand' /> <span className='icon_green' /></td>
+                    <td>7596322719</td>
+                    <td>normal</td>
+                    <td>Deferred</td>
+                    <td>10:13</td>
+                    <td>ab0o2231</td>
+                  </tr>
+                  <tr className='accordion-body collapse' id='a1'>
+                    <td><span className='icon_expand' /> <span className='icon_green' /></td>
+                    <td>7596322719</td>
+                    <td>normal</td>
+                    <td>Deferred</td>
+                    <td>10:13</td>
+                    <td>ab0o2231</td>
+                  </tr>
                 </tbody>
+                {/* <tbody> */}
+                {suppliersList}
+                {/* </tbody> */}
               </table>
             </div>
             <div className='row col-md-12' id='scrolling_vertical'>

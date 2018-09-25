@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './agreementsComponent.scss'
 import moment from 'moment'
+import ReactModal from 'react-modal'
 import {defaults, Pie} from 'react-chartjs-2'
+ReactModal.setAppElement('#root')
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 
@@ -23,7 +25,29 @@ export default function Agreements (props) {
   let paginationLimit = 6
   let totalAgreement
   let agreementPieChartData = {}
-
+  // Code for add new agreement
+  let newAgreementName = ''
+  let newAgreementDescription = ''
+  let addAgreement = function () {
+    let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: true}
+    props.setAddAgreementSettings(addAgreementSettings)
+  }
+  let createNewAgreement = function () {
+    let payload = {
+      'component_type': {
+        'id': 961
+      },
+      'name': newAgreementName.value,
+      'description': newAgreementDescription.value
+    }
+    props.addAgreement(payload)
+    closeAddModal()
+  }
+  let closeAddModal = function () {
+    let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: false}
+    props.setAddAgreementSettings(addAgreementSettings)
+  }
+  // End code for add new agreement
   if (props.agreementsSummary && props.agreementsSummary !== '') {
     agreementCount = props.agreementsSummary.resources[0].agreement_count
     expireIn90Days = props.agreementsSummary.resources[0].expire_in_90_days
@@ -50,7 +74,8 @@ export default function Agreements (props) {
   }
 
   if (props.agreements && props.agreements !== '') {
-    agreementsList = props.agreements.resources.map(function (data, index) {
+    let sortedArray = _.orderBy(props.agreements.resources, ['name'], ['asc'])
+    agreementsList = sortedArray.map(function (data, index) {
       return (
         <tr key={index}>
           <td><a href={'/agreements/' + data.id} >{data.name}</a></td>
@@ -183,7 +208,14 @@ export default function Agreements (props) {
 
     return (
       <div>
-        <h3>Agreements</h3>
+        <div className='row'>
+          <div className='col-md-10'>
+            <h3>Agreements</h3>
+          </div>
+          <div className='col-md-2'>
+            <button onClick={addAgreement} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
+          </div>
+        </div>
         <div className='row' id='agreementSummary'>
           <div className='col-md-3'>
             <div className='m-portlet m-portlet--full-height'>
@@ -298,12 +330,48 @@ export default function Agreements (props) {
             </div>
           </div>
         </div>
-        {/* The table structure ends */}
+        <div>
+          <ReactModal isOpen={props.addAgreementSettings.isAddModalOpen}
+            onRequestClose={closeAddModal}
+            >
+            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+            <div className={''}>
+              <div className='modal-dialog'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>New { 'Agreement' }</h4>
+                    <button type='button' onClick={closeAddModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <form>
+                      {/* {messageBlock} */}
+                      <div className='form-group'>
+                        <label htmlFor='component-name' className='form-control-label'>Name:</label>
+                        <input type='text' className='form-control' ref={input => (newAgreementName = input)} id='agreement-name' autoComplete='off' required />
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='description-text' className='form-control-label'>Description:</label>
+                        <textarea className='form-control'ref={textarea => (newAgreementDescription = textarea)} defaultValue={''} autoComplete='off' required />
+                      </div>
+                    </form>
+                  </div>
+                  <div className='modal-footer'>
+                    {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
+                    <button type='button' onClick={createNewAgreement} id='m_login_signup' className=''>Add { '' }</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+        </div>
       </div>
       )
     }
     Agreements.propTypes = {
     agreements: PropTypes.any,
     agreementsSummary: PropTypes.any,
-    currentPage: PropTypes.any
+    currentPage: PropTypes.any,
+    addAgreementSettings: PropTypes.any
  }

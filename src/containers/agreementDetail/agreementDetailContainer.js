@@ -7,13 +7,13 @@ import { actionCreators } from '../../redux/reducers/agreementDetailReducer/agre
 export function mapStateToProps (state, props) {
   console.log('state', state)
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     agreement: state.agreementDetailReducer.agreement,
     agreementProperties: state.agreementDetailReducer.agreementProperties,
     agreementRelationships: state.agreementDetailReducer.agreementRelationships,
     agreementEntitlements: state.agreementDetailReducer.agreementEntitlements,
     addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
     relationshipActionSettings: state.agreementDetailReducer.relationshipActionSettings,
-    addAgreementResponse: state.agreementDetailReducer.addAgreementResponse,
     deleteAgreementResponse: state.agreementDetailReducer.deleteAgreementResponse,
     updateAgreementResponse: state.agreementDetailReducer.updateAgreementResponse,
     isEditComponent: state.agreementDetailReducer.isEditComponent,
@@ -32,11 +32,11 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchAgreementById: sagaActions.agreementActions.fetchAgreementById,
   fetchAgreementEntitlements: sagaActions.agreementActions.fetchAgreementEntitlements,
   fetchAgreementProperties: sagaActions.agreementActions.fetchAgreementProperties,
   fetchAgreementRelationships: sagaActions.agreementActions.fetchAgreementRelationships,
-  addAgreement: sagaActions.agreementActions.addAgreement,
   deleteAgreement: sagaActions.agreementActions.deleteAgreement,
   updateAgreementProperties: sagaActions.agreementActions.updateAgreementProperties,
   fetchRelationshipProperty: sagaActions.agreementActions.fetchRelationshipProperty,
@@ -90,10 +90,10 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'agreement_id': this.props.match.params.id
       }
-      console.log('component will mount')
       this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
       this.props.fetchAgreementEntitlements && this.props.fetchAgreementEntitlements(payload)
       this.props.fetchAgreementProperties && this.props.fetchAgreementProperties(payload)
@@ -107,19 +107,10 @@ export default compose(
       // mApp && mApp.block('#supplier', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
-        if (nextProps.addAgreementResponse.error_code === null) {
-          let newAgreementId = nextProps.addAgreementResponse.resources[0].id
-          // eslint-disable-next-line
-          toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-          this.props.history.push('/agreements/' + newAgreementId)
-          // eslint-disable-next-line
-          location.reload()
-        } else {
-          // eslint-disable-next-line
-          toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
         }
-        this.props.resetResponse()
       }
       if (nextProps.deleteAgreementResponse && nextProps.deleteAgreementResponse !== '') {
         if (nextProps.deleteAgreementResponse.error_code === null) {

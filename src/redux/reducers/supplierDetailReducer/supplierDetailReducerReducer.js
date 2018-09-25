@@ -9,6 +9,7 @@ import {
 } from '../../sagas/supplier/supplierSaga'
 // Name Spaced Action Types
 const SET_CURRENT_PAGE = 'SuppliersReducer/SET_CURRENT_PAGE'
+const SET_ACTIVE_TAB = 'SuppliersReducer/SET_ACTIVE_TAB'
 
 export const actions = {
     FETCH_SUPPLIERS_SUCCESS,
@@ -17,11 +18,13 @@ export const actions = {
     FETCH_SUPPLIER_AGREEMENTS_SUCCESS,
     FETCH_SUPPLIER_SOFTWARES_SUCCESS,
     FETCH_SUPPLIER_APPLICATIONS_SUCCESS,
-    SET_CURRENT_PAGE
+    SET_CURRENT_PAGE,
+    SET_ACTIVE_TAB
 }
 
 export const actionCreators = {
-    setCurrentPage: createAction(SET_CURRENT_PAGE)
+    setCurrentPage: createAction(SET_CURRENT_PAGE),
+    setActiveTab: createAction(SET_ACTIVE_TAB)
 }
 
 export const initialState = {
@@ -30,7 +33,8 @@ export const initialState = {
   suppliersSummary: '',
   supplierAgreements: '',
   supplierSoftwares: '',
-  currentPage: 1
+  currentPage: 1,
+  activeTab: 'agreement'
 }
 
 export default handleActions(
@@ -58,6 +62,10 @@ export default handleActions(
     [SET_CURRENT_PAGE]: (state, action) => ({
     ...state,
     currentPage: action.payload
+    }),
+    [SET_ACTIVE_TAB]: (state, action) => ({
+      ...state,
+      activeTab: action.payload
     })
   },
   initialState

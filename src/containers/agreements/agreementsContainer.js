@@ -7,16 +7,22 @@ import { actionCreators } from '../../redux/reducers/agreementsReducer/agreement
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     agreements: state.agreementsReducer.agreements,
     agreementsSummary: state.agreementsReducer.agreementsSummary,
-    currentPage: state.agreementsReducer.currentPage
+    currentPage: state.agreementsReducer.currentPage,
+    addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
+    addAgreementResponse: state.agreementDetailReducer.addAgreementResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchAgreements: sagaActions.agreementActions.fetchAgreements,
   fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
-  setCurrentPage: actionCreators.setCurrentPage
+  addAgreement: sagaActions.agreementActions.addAgreement,
+  setCurrentPage: actionCreators.setCurrentPage,
+  setAddAgreementSettings: actionCreators.setAddAgreementSettings
 }
 
 // If you want to use the function mapping
@@ -25,12 +31,30 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('my props', this.props)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
@@ -48,6 +72,25 @@ export default compose(
       mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
+        if (nextProps.addAgreementResponse.error_code === null) {
+          let newAgreementId = nextProps.addAgreementResponse.resources[0].id
+          // eslint-disable-next-line
+          toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
+          this.props.history.push('/agreements/' + newAgreementId)
+          // eslint-disable-next-line
+          // location.reload()
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
       if (nextProps.agreementsSummary && nextProps.agreementsSummary !== this.props.agreementsSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#agreementSummary')

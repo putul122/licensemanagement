@@ -137,6 +137,15 @@ export default class Root extends Component {
             }
             resolve(require('../entitlementDetailPage/entitlementDetailPageRoute').default)
             break
+          case 'landing':
+            if (module.hot) {
+              module.hot.accept('../landingPage/landingPageRoute', () => {
+                        require('../landingPage/landingPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../landingPage/landingPageRoute').default)
+            break
           default:
             break
         }
@@ -169,6 +178,7 @@ export default class Root extends Component {
             <Route exact path='/softwares/:id' component={(props) => this.loadView('softwareDetail', props)} />
             <Route exact path='/entitlements' component={(props) => this.loadView('entitlement', props)} />
             <Route exact path='/entitlements/:id' component={(props) => this.loadView('entitlementDetail', props)} />
+            {/* <Route exact path='/landing' component={(props) => this.loadView('landing', props)} /> */}
             {/* <Route path='/applications' component={(props) => this.ApplicationsRoute(props)} />
             <Route path='/softwares' component={(props) => this.SoftwaresRoute(props)} /> */}
             <Route path='/' exact component={(props) => this.loadView('account', props)} />

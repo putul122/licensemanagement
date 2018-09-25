@@ -7,15 +7,19 @@ import { actionCreators } from '../../redux/reducers/suppliersReducer/suppliersR
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     suppliers: state.suppliersReducer.suppliers,
     suppliersSummary: state.suppliersReducer.suppliersSummary,
+    supplierSoftwares: state.suppliersReducer.supplierSoftwares,
     currentPage: state.suppliersReducer.currentPage
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchSuppliers: sagaActions.supplierActions.fetchSuppliers,
   fetchSuppliersSummary: sagaActions.supplierActions.fetchSuppliersSummary,
+  fetchSupplierSoftwares: sagaActions.supplierActions.fetchSupplierSoftwares,
   setCurrentPage: actionCreators.setCurrentPage
 }
 
@@ -30,7 +34,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('my props', this.props)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
@@ -48,6 +52,11 @@ export default compose(
       mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.suppliers && nextProps.suppliers !== this.props.suppliers) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierList')

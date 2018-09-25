@@ -7,6 +7,7 @@ import { actionCreators } from '../../redux/reducers/dashboardReducer/dashboardR
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     supplierSummary: state.dashboardReducer.supplierSummary,
     applicationSummary: state.dashboardReducer.applicationSummary,
     agreementSummary: state.dashboardReducer.agreementSummary,
@@ -18,6 +19,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchApplicationsSummary: sagaActions.applicationActions.fetchApplicationsSummary,
   fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
   fetchSuppliersSummary: sagaActions.supplierActions.fetchSuppliersSummary,
@@ -38,7 +40,13 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
+      this.props.fetchApplicationsSummary && this.props.fetchApplicationsSummary()
+      this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      this.props.fetchSuppliersSummary && this.props.fetchSuppliersSummary()
+      this.props.fetchSoftwaresSummary && this.props.fetchSoftwaresSummary()
+      this.props.fetchEntitlementsSummary && this.props.fetchEntitlementsSummary()
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -53,21 +61,26 @@ export default compose(
       mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.businessUnits && this.props.businessUnits === '' && nextProps.businessUnits !== this.props.businessUnits) {
-        if (nextProps.businessUnits.error_code === null) {
-          console.log('again run')
-          let payload = {
-            'business_id': nextProps.businessUnits.resources[0].id
-          }
-          this.props.fetchApplicationsSummary && this.props.fetchApplicationsSummary(payload)
-          this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary(payload)
-          this.props.fetchSuppliersSummary && this.props.fetchSuppliersSummary(payload)
-          this.props.fetchSoftwaresSummary && this.props.fetchSoftwaresSummary(payload)
-          this.props.fetchEntitlementsSummary && this.props.fetchEntitlementsSummary(payload)
-        } else {
-          this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
         }
       }
+      // if (nextProps.businessUnits && this.props.businessUnits === '' && nextProps.businessUnits !== this.props.businessUnits) {
+      //   if (nextProps.businessUnits.error_code === null) {
+      //     console.log('again run')
+      //     let payload = {
+      //       'business_unit_id': nextProps.businessUnits.resources[0].id
+      //     }
+      //     this.props.fetchApplicationsSummary && this.props.fetchApplicationsSummary(payload)
+      //     this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary(payload)
+      //     this.props.fetchSuppliersSummary && this.props.fetchSuppliersSummary(payload)
+      //     this.props.fetchSoftwaresSummary && this.props.fetchSoftwaresSummary(payload)
+      //     this.props.fetchEntitlementsSummary && this.props.fetchEntitlementsSummary(payload)
+      //   } else {
+      //     this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
+      //   }
+      // }
       if (nextProps.supplierSummary && nextProps.supplierSummary !== this.props.supplierSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierSummary')

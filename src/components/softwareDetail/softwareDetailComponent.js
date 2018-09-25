@@ -2,33 +2,34 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './softwareDetailComponent.scss'
 import moment from 'moment'
-// import DataModelComponent from '../dataModel/dataModelComponent'
+import DataModelComponent from '../dataModel/dataModelComponent'
 import _ from 'lodash'
-// var divStyle = {
-//   width: '900px',
-//   height: '600px',
-//   // 'overflowY': 'scroll',
-//   // 'overflowX': 'scroll',
-//   'border': '1px solid #000000',
-//   'background-color': '#FFFFFF'
-// }
+var divStyle = {
+  width: '900px',
+  height: '600px',
+  // 'overflowY': 'scroll',
+  // 'overflowX': 'scroll',
+  'border': '1px solid #000000',
+  'background-color': '#FFFFFF'
+}
 
 export default function Softwareview (props) {
   let softwareName = ''
   let softwareInstances = ''
   let softwareCost = ''
   let softwarePropertiesList = ''
-  // let startNode = {}
   let parentSoftwareRelationshipList = ''
   let outgoingSoftwareRelationshipList = ''
   let incomingSoftwareRelationshipList = ''
   let childSoftwareRelationshipList = ''
-  // let modelRelationshipData = ''
-  // let startNode = {}
+  let modelRelationshipData = ''
+  let startNode = {}
   if (props.softwarebyId && props.softwarebyId !== '') {
     softwareName = props.softwarebyId.resources[0].name
     softwareInstances = props.softwarebyId.resources[0].instances
     softwareCost = props.softwarebyId.resources[0].cost
+    startNode.name = props.softwarebyId.resources[0].name
+    startNode.title = props.softwarebyId.resources[0].name
   }
   if (props.softwareProperties && props.softwareProperties !== '') {
     softwarePropertiesList = props.softwareProperties.resources.map(function (property, index) {
@@ -79,7 +80,7 @@ export default function Softwareview (props) {
     console.log('-------------', softwarePropertiesList)
   }
   if (props.softwareRelationships && props.softwareRelationships !== '') {
-    // modelRelationshipData = props.softwareRelationships.resources
+    modelRelationshipData = props.softwareRelationships.resources
     let parent = _.filter(props.softwareRelationships.resources, {'relationship_type': 'Parent'})
     let outgoing = _.filter(props.softwareRelationships.resources, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
@@ -302,6 +303,12 @@ export default function Softwareview (props) {
           <div className='col-md-7'>
             {/* <DataModelComponent startNode={startNode} relationships={modelRelationshipData} /> */}
             {/* <img alt='model' src='https://via.placeholder.com/900x545?text=Model%20Visualization' /> */}
+            <div className='row'>
+              <div id='divPaperWrapper' style={divStyle}>
+                <DataModelComponent startNode={startNode} relationships={modelRelationshipData} />
+                {/* <DataModelComponent /> */}
+              </div>
+            </div>
           </div>
         </div>
       </div>

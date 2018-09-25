@@ -11,7 +11,8 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
- }
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+}
 
 // If you want to use the function mapping
 // export const propsMapping = (dispatch, ownProps) => {

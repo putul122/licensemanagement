@@ -3,7 +3,7 @@ import React from 'react'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import styles from './applicationDetailComponent.scss'
-// import DataModelComponent from '../dataModel/dataModelComponent'
+import DataModelComponent from '../dataModel/dataModelComponent'
 import _ from 'lodash'
 var divStyle = {
   width: '900px',
@@ -25,14 +25,14 @@ export default function Applicationview (props) {
   let outgoingApplicationRelationshipList = ''
   let incomingApplicationRelationshipList = ''
   let childApplicationRelationshipList = ''
-  // let modelRelationshipData = ''
-  // let startNode = {}
+  let modelRelationshipData = ''
+  let startNode = {}
   if (props.applicationbyId && props.applicationbyId !== '') {
     applicationName = props.applicationbyId.resources[0].name
     applicationCount = props.applicationbyId.resources[0].used_by_business_unit_count
     applicationCost = props.applicationbyId.resources[0].cost
-    // startNode.name = props.applicationbyId.resources[0].name
-    // startNode.title = props.applicationbyId.resources[0].name
+    startNode.name = props.applicationbyId.resources[0].name
+    startNode.title = props.applicationbyId.resources[0].name
   }
   if (props.applicationProperties && props.applicationProperties !== '') {
     applicationPropertiesList = props.applicationProperties.resources.map(function (property, index) {
@@ -83,7 +83,7 @@ export default function Applicationview (props) {
     console.log('-------------', applicationPropertiesList)
   }
   if (props.applicationRelationships && props.applicationRelationships !== '') {
-    // modelRelationshipData = props.applicationRelationships.resources
+    modelRelationshipData = props.applicationRelationships.resources
     let parent = _.filter(props.applicationRelationships.resources, {'relationship_type': 'Parent'})
     let outgoing = _.filter(props.applicationRelationships.resources, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
@@ -306,7 +306,7 @@ export default function Applicationview (props) {
           <div className='col-md-7'>
             <div className='row'>
               <div id='divPaperWrapper' style={divStyle}>
-                {/* <DataModelComponent startNode={startNode} relationships={modelRelationshipData} /> */}
+                <DataModelComponent startNode={startNode} relationships={modelRelationshipData} />
                 {/* <DataModelComponent /> */}
               </div>
             </div>

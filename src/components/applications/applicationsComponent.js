@@ -25,8 +25,8 @@ export default function Applicationlists (props) {
     applicationList = props.application.resources.map(function (data, index) {
       return (
         <tr key={index}>
-          <td><a href={'/applications/' + data.id} >{data.name}</a></td>
-          <td>{data.software_count}</td>
+          <td><button onClick={handleClick}>+</button><a href={'/applications/' + data.id} >{data.name}</a></td>
+          <td>{''}</td>
           <td>{data.supplied_by}</td>
           <td>{data.managed_by}</td>
           <td>{data.stage}</td>
@@ -161,9 +161,16 @@ export default function Applicationlists (props) {
     applicationCount = props.applicationSummary.resources[0].application_count
     totalCost = props.applicationSummary.resources[0].cost
   }
+  let handleClick = function (event) {
+    event.preventDefault()
+    let payloadId = {
+     'id': props.application.resources[0].id
+    }
+    props.fetchApplicationSoftwares(payloadId)
+  }
 return (
   <div>
-    <div className='row'>
+    <div className='row' id='applicationSummary'>
       <div className='col-xl-4'>
         <div className='m-portlet m-portlet--full-height'>
           <div className='m-portlet__body'>
@@ -196,37 +203,39 @@ return (
         </div>
       </div>
     </div>
-    <div className='row'>
-      <div className={'col-md-3'}>
-        <div className='m-input-icon m-input-icon--left'>
-          <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
-          <span className='m-input-icon__icon m-input-icon__icon--left'>
-            <span>
-              <i className='la la-search' />
+    <div id='applicationList'>
+      <div className='row'>
+        <div className={'col-md-3'}>
+          <div className='m-input-icon m-input-icon--left'>
+            <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
+            <span className='m-input-icon__icon m-input-icon__icon--left'>
+              <span>
+                <i className='la la-search' />
+              </span>
             </span>
-          </span>
+          </div>
         </div>
       </div>
-    </div>
-    {/* The table structure begins */}
-    <div className='row' style={{'marginTop': '20px'}}>
-      <div className='col-md-12'>
-        <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-          <thead>
-            <tr role='row'>
-              <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
-              <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-              <th className='' style={{width: '108.25px'}}><h5>Supplied By</h5></th>
-              <th className='' style={{width: '137.25px'}}><h5>Managed By</h5></th>
-              <th className='' style={{width: '171.25px'}}><h5>Stage</h5></th>
-              <th className='' style={{width: '132.25px'}}><h5>Owner</h5></th>
-              <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th>
-            </tr>
-          </thead>
-          <tbody>
-            {applicationList}
-          </tbody>
-        </table>
+      {/* The table structure begins */}
+      <div className='row' style={{'marginTop': '20px'}}>
+        <div className='col-md-12'>
+          <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+            <thead>
+              <tr role='row'>
+                <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
+                <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
+                <th className='' style={{width: '108.25px'}}><h5>Supplied By</h5></th>
+                <th className='' style={{width: '137.25px'}}><h5>Managed By</h5></th>
+                <th className='' style={{width: '171.25px'}}><h5>Stage</h5></th>
+                <th className='' style={{width: '132.25px'}}><h5>Owner</h5></th>
+                <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th>
+              </tr>
+            </thead>
+            <tbody>
+              {applicationList}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     {/* The table structure ends */}

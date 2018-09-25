@@ -23,8 +23,12 @@ const customStyles = {
     transform: 'translate(-50%, -50%)'
   }
 }
+const formatAmount = (x) => {
+  var parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  return parts.join('.')
+}
 // Agreement 961 to be used as component type id
-// Code for setting toaster options
 export default function AgreementDetail (props) {
   console.log(props)
   console.log(props.isEditComponent)
@@ -38,29 +42,6 @@ export default function AgreementDetail (props) {
   let outgoingComponentRelationshipList
   let incomingComponentRelationshipList
   let childComponentRelationshipList
-  // Code for add new agreement
-  let newAgreementName = ''
-  let newAgreementDescription = ''
-  let addAgreement = function () {
-    let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: true}
-    props.setAddAgreementSettings(addAgreementSettings)
-  }
-  let createNewAgreement = function () {
-    let payload = {
-      'component_type': {
-        'id': 961
-      },
-      'name': newAgreementName.value,
-      'description': newAgreementDescription.value
-    }
-    props.addAgreement(payload)
-    closeAddModal()
-  }
-  let closeAddModal = function () {
-    let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: false}
-    props.setAddAgreementSettings(addAgreementSettings)
-  }
-  // End code for add new agreement
   // Code for Update Agreement
   let agreementProperties = props.agreementProperties.resources ? [...props.agreementProperties.resources] : ''
   let agreementPropertiesPayload = {...props.agreementPropertiesPayload}
@@ -311,7 +292,7 @@ export default function AgreementDetail (props) {
           value = childProperty.value_set_value ? childProperty.value_set_value.name : null
           htmlElement = function () {
             return (<Select
-              className='col-7 input-sm form-control m-input'
+              className='col-7 input-sm m-input'
               placeholder='Select Options'
               isClearable
               defaultValue={dvalue}
@@ -555,7 +536,7 @@ export default function AgreementDetail (props) {
           value = childProperty.value_set_value ? childProperty.value_set_value.name : null
           htmlElement = function () {
             return (<div className='col-8 form-group has-info'><Select
-              className='input-sm form-control m-input'
+              className='input-sm m-input'
               placeholder='Select Options'
               isClearable
               defaultValue={dvalue}
@@ -1075,11 +1056,10 @@ export default function AgreementDetail (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-8'>
+          <div className='col-md-9'>
             <h2>{agreementName}</h2>
           </div>
-          <div className='col-md-4' >
-            <button onClick={addAgreement} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
+          <div className='col-md-3' >
             <button onClick={updateAgreement} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
             <button onClick={deleteAgreement} className='btn btn-outline-info btn-sm'>Delete Agreement</button>&nbsp;
           </div>
@@ -1093,7 +1073,7 @@ export default function AgreementDetail (props) {
                     <span className='m-widget12__text1'>
                       <h2>Entitlements&nbsp;&nbsp;&nbsp;</h2>
                       <br />
-                      <h2>R {'5000000.00'}</h2>
+                      <h2>R {formatAmount(5000000.00)}</h2>
                     </span>
                     <span className='m-widget12__text2'>
                       <h2>{agreementCost}</h2>
@@ -1179,40 +1159,6 @@ export default function AgreementDetail (props) {
           </div>
         </div>
         <div>
-          <ReactModal isOpen={props.addAgreementSettings.isAddModalOpen}
-            onRequestClose={closeAddModal}
-            >
-            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
-            <div className={''}>
-              <div className='modal-dialog'>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>New { 'Agreement' }</h4>
-                    <button type='button' onClick={closeAddModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
-                  </div>
-                  <div className='modal-body'>
-                    <form>
-                      {/* {messageBlock} */}
-                      <div className='form-group'>
-                        <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                        <input type='text' className='form-control' ref={input => (newAgreementName = input)} id='agreement-name' autoComplete='off' required />
-                      </div>
-                      <div className='form-group'>
-                        <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                        <textarea className='form-control'ref={textarea => (newAgreementDescription = textarea)} defaultValue={''} autoComplete='off' required />
-                      </div>
-                    </form>
-                  </div>
-                  <div className='modal-footer'>
-                    {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                    <button type='button' onClick={createNewAgreement} id='m_login_signup' className=''>Add { '' }</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ReactModal>
           <ReactModal isOpen={props.addAgreementSettings.isUpdateModalOpen}
             onRequestClose={closeUpdateModal}
             >
@@ -1265,6 +1211,7 @@ export default function AgreementDetail (props) {
           <ReactModal isOpen={props.addAgreementSettings.isDeleteModalOpen}
             onRequestClose={closeDeleteModal}
             className=''
+            style={customStyles}
             >
             <div className={''}>
               <div className='modal-dialog'>
@@ -1365,7 +1312,7 @@ export default function AgreementDetail (props) {
                       <label htmlFor='SelectRelationship' className='col-5 col-form-label'>Choose Relationship Type</label>
                       <div className='col-7'>
                         <Select
-                          className='input-sm form-control m-input'
+                          className='input-sm m-input'
                           placeholder='Choose Relationships Type'
                           isClearable
                           isOptionDisabled={(option) => { return (isParentSelected && option.isParent) }}
@@ -1389,7 +1336,7 @@ export default function AgreementDetail (props) {
                           {/* <select className='form-control m-input' onBlur={handleSecondSelect} >{selectComponentOptions}</select> */}
                           <CreatableSelect
                             isClearable
-                            className='form-control m-input'
+                            className='input-sm m-input'
                             // name='component-select'
                             // value={props.addNewConnectionSettings.secondSelectboxValue}
                             onChange={handleSecondSelect}

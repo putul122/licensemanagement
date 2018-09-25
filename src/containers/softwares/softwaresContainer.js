@@ -7,6 +7,7 @@ import { actionCreators } from '../../redux/reducers/softwaresReducer/softwaresR
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     software: state.softwaresReducer.software,
     softwareSummary: state.softwaresReducer.softwareSummary,
     currentPage: state.softwaresReducer.currentPage
@@ -14,6 +15,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchSoftwaresSummary: sagaActions.softwareActions.fetchSoftwaresSummary,
   fetchSoftwares: sagaActions.softwareActions.fetchSoftwares,
   setCurrentPage: actionCreators.setCurrentPage
@@ -30,9 +32,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('my props', this.props)
-      // eslint-disable-next-line
-      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'search': '',
         'page_size': 10,
@@ -42,13 +42,24 @@ export default compose(
       this.props.fetchSoftwaresSummary && this.props.fetchSoftwaresSummary()
     },
     componentDidMount: function () {
-      // // eslint-disable-next-line
-      // mApp && mApp.unblockPage()
+       // eslint-disable-next-line
+       mApp && mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+       // eslint-disable-next-line
+       mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.software && nextProps.software !== this.props.software) {
         // eslint-disable-next-line
-        mApp && mApp.unblockPage()
+        mApp && mApp.unblock('#softwareList')
+      }
+      if (nextProps.softwareSummary && nextProps.softwareSummary !== this.props.softwareSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#softwareSummary')
       }
     }
   })

@@ -8,6 +8,7 @@ import '../../redux/reducers/applicationsReducer/applicationsReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     applicationbyId: state.applicationDetailReducer.applicationbyId,
     applicationProperties: state.applicationDetailReducer.applicationProperties,
     applicationRelationships: state.applicationDetailReducer.applicationRelationships
@@ -16,6 +17,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchApplicationById: sagaActions.applicationActions.fetchApplicationById,
   fetchApplicationProperties: sagaActions.applicationActions.fetchApplicationProperties,
   fetchApplicationRelationships: sagaActions.applicationActions.fetchApplicationRelationships
@@ -32,13 +34,20 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-    console.log('component will mount', this.props)
-    let payload = {
-      'application_id': this.props.match.params.id
-    }
-    this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
-    this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
-    this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      let payload = {
+        'application_id': this.props.match.params.id
+      }
+      this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
+      this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
+      this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
+    },
+    componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
     }
   })
 )(ApplicationDetail)

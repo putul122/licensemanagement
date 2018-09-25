@@ -30,6 +30,7 @@ const api = {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + id + '/component_relationships'
   },
   addAgreement: 'https://ecoconductor-dev-api-model.azurewebsites.net/components',
+  addEntitlement: 'https://ecoconductor-dev-api-model.azurewebsites.net/components',
   deleteAgreement: function (componentId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
   },
@@ -71,6 +72,9 @@ const api = {
   getEntitlementsSummary: 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlementsSummary',
   getEntitlementById: function (id) {
     return 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlement/' + id
+  },
+  updateComponent: function (payload) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId
   }
 }
 

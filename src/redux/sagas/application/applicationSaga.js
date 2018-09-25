@@ -93,8 +93,8 @@ export function * getApplicationsSummary (action) {
       // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
       const applicationsSummary = yield call(
         axios.get,
-        api.getApplicationsSummary
-        // action.payload
+        api.getApplicationsSummary,
+        {params: action.payload}
       )
       yield put(actionCreators.fetchApplicationsSummarySuccess(applicationsSummary.data))
     } catch (error) {

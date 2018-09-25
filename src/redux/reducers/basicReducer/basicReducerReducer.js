@@ -3,19 +3,27 @@ import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS } 
 // Name Spaced Action Types
 const INCREMENT = 'BasicReducer/INCREMENT'
 const DECREMENT = 'BasicReducer/DECREMENT'
+const SET_TABLE_OPEN_STATUS = 'BasicReducer/SET_TABLE_OPEN_STATUS'
+const SET_MODAL_OPEN_STATUS = 'BasicReducer/SET_MODAL_OPEN_STATUS'
 export const actions = {
   INCREMENT,
   DECREMENT,
   FETCH_CLIENT_ACCESS_TOKEN_SUCCESS,
-  FETCH_USER_AUTHENTICATION_SUCCESS
+  FETCH_USER_AUTHENTICATION_SUCCESS,
+  SET_TABLE_OPEN_STATUS,
+  SET_MODAL_OPEN_STATUS
 }
 
 export const actionCreators = {
   increment: createAction(INCREMENT),
-  decrement: createAction(DECREMENT)
+  decrement: createAction(DECREMENT),
+  setTableOpenStatus: createAction(SET_TABLE_OPEN_STATUS),
+  setModalOpenStatus: createAction(SET_MODAL_OPEN_STATUS)
 }
 
 export const initialState = {
+  tableIsOpen: false,
+  modalIsOpen: false,
   count: 0,
   string: 'string',
   clientAccessToken: '',
@@ -43,6 +51,14 @@ export default handleActions(
     [FETCH_USER_AUTHENTICATION_SUCCESS]: (state, action) => ({
       ...state,
       authenticateUser: action.payload
+    }),
+    [SET_TABLE_OPEN_STATUS]: (state, action) => ({
+      ...state,
+      tableIsOpen: action.payload
+    }),
+    [SET_MODAL_OPEN_STATUS]: (state, action) => ({
+      ...state,
+      modalIsOpen: action.payload
     })
   },
   initialState
