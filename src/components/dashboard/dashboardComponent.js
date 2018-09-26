@@ -9,9 +9,6 @@ const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#80000
 const formatAmount = (x) => {
   var parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-  if (!isNaN(parts[1])) {
-    parts[1] = Number(parts[1]).toFixed(2)
-  }
   return parts.join('.')
 }
 export default function Dashboard (props) {
