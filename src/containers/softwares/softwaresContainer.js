@@ -68,7 +68,7 @@ export default compose(
       }
       if (nextProps.softwareAgreements && nextProps.softwareAgreements !== this.props.softwareSummary) {
         // eslint-disable-next-line
-        mApp && mApp.unblock('#applicationList')
+        mApp && mApp.unblock('#softwareList')
       }
     }
   })

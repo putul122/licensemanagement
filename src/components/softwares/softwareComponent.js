@@ -208,7 +208,7 @@ let handleClick = function (data) {
   props.setExpandSettings(expandSettings)
   props.fetchSoftwareAgreement && props.fetchSoftwareAgreement(payload)
   // eslint-disable-next-line
-  mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
 }
 
 if (props.softwareAgreements && props.softwareAgreements !== '') {
@@ -220,24 +220,36 @@ if (props.softwareAgreements && props.softwareAgreements !== '') {
       if (props.expandSettings.expandFlag) {
         faClass = 'fa fa-minus'
         if (props.softwareAgreements.resources.length > 0) {
-          childList = props.softwareAgreements.resources.map(function (childData, idx) {
-            return (
-              <tr key={'child' + idx}>
-                <td>{''}</td>
-                <td>{childData.name}</td>
-                <td>{''}</td>
-                <td>{''}</td>
-                <td>{'R' + formatAmount(childData.cost)}</td>
+          let costByAgreementType = props.softwareAgreements.resources[0].cost_by_agreement_type
+          let childArray = []
+          for (let keyField in costByAgreementType) {
+            if (costByAgreementType.hasOwnProperty(keyField)) {
+              let obj = {}
+              obj.name = keyField
+              obj.cost = costByAgreementType[keyField]
+              childArray.push(obj)
+            }
+          }
+          if (childArray.length > 0) {
+            childList = childArray.map(function (childData, idx) {
+              return (
+                <tr key={'child' + idx}>
+                  <td>{''}</td>
+                  <td>{childData.name}</td>
+                  <td>{''}</td>
+                  <td>{''}</td>
+                  <td>{'R ' + formatAmount(childData.cost)}</td>
+                </tr>
+              )
+            })
+          } else {
+            childList = []
+            childList.push((
+              <tr key={0}>
+                <td colSpan='7'>{'No data to display'}</td>
               </tr>
-            )
-          })
-        } else {
-          childList = []
-          childList.push((
-            <tr key={0}>
-              <td colSpan='7'>{'No data to display'}</td>
-            </tr>
-          ))
+            ))
+          }
         }
       }
     }
