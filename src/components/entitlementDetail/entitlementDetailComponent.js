@@ -17,6 +17,14 @@ var divStyle = {
   'border': '1px solid #000000',
   'background-color': '#FFFFFF'
 }
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 const customStyles = {
   content: {
     top: '50%',
@@ -28,11 +36,6 @@ const customStyles = {
     background: 'none',
     transform: 'translate(-50%, -50%)'
   }
-}
-const formatAmount = (x) => {
-  var parts = x.toString().split('.')
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-  return parts.join('.')
 }
 
 export default function EntitlementDetail (props) {
