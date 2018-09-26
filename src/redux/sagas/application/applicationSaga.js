@@ -19,6 +19,9 @@ export const FETCH_APPLICATION_PROPERTIES_FAILURE = 'saga/application/FETCH_APPL
 export const FETCH_APPLICATION_RELATIONSHIPS = 'saga/application/FETCH_APPLICATION_RELATIONSHIPS'
 export const FETCH_APPLICATION_RELATIONSHIPS_SUCCESS = 'saga/application/FETCH_APPLICATION_RELATIONSHIPS_SUCCESS'
 export const FETCH_APPLICATION_RELATIONSHIPS_FAILURE = 'saga/application/FETCH_APPLICATION_RELATIONSHIPS_FAILURE'
+export const FETCH_APPLICATION_SOFTWARES = 'saga/application/FETCH_APPLICATION_SOFTWARES'
+export const FETCH_APPLICATION_SOFTWARES_SUCCESS = 'saga/application/FETCH_APPLICATION_SOFTWARES_SUCCESS'
+export const FETCH_APPLICATION_SOFTWARES_FAILURE = 'saga/application/FETCH_APPLICATION_SOFTWARES_FAILURE'
 
 export const actionCreators = {
   fetchApplications: createAction(FETCH_APPLICATIONS),
@@ -35,7 +38,10 @@ export const actionCreators = {
   fetchApplicationPropertiesFailure: createAction(FETCH_APPLICATION_PROPERTIES_FAILURE),
   fetchApplicationRelationships: createAction(FETCH_APPLICATION_RELATIONSHIPS),
   fetchApplicationRelationshipsSuccess: createAction(FETCH_APPLICATION_RELATIONSHIPS_SUCCESS),
-  fetchApplicationRelationshipsFailure: createAction(FETCH_APPLICATION_RELATIONSHIPS_FAILURE)
+  fetchApplicationRelationshipsFailure: createAction(FETCH_APPLICATION_RELATIONSHIPS_FAILURE),
+  fetchApplicationSoftwares: createAction(FETCH_APPLICATION_SOFTWARES),
+  fetchApplicationSoftwaresSuccess: createAction(FETCH_APPLICATION_SOFTWARES_SUCCESS),
+  fetchApplicationSoftwaresFailure: createAction(FETCH_APPLICATION_SOFTWARES_FAILURE)
 }
 
 export default function * watchApplications () {
@@ -44,7 +50,8 @@ export default function * watchApplications () {
       takeLatest(FETCH_APPLICATIONS_SUMMARY, getApplicationsSummary),
       takeLatest(FETCH_APPLICATION_BY_ID, getApplicationById),
       takeLatest(FETCH_APPLICATION_PROPERTIES, getApplicationProperties),
-      takeLatest(FETCH_APPLICATION_RELATIONSHIPS, getApplicationRelationships)
+      takeLatest(FETCH_APPLICATION_RELATIONSHIPS, getApplicationRelationships),
+      takeLatest(FETCH_APPLICATION_SOFTWARES, getApplicationSoftwares)
   ]
 }
 
@@ -112,5 +119,19 @@ export function * getApplicationById (action) {
       yield put(actionCreators.fetchApplicationByIdSuccess(application.data))
     } catch (error) {
       yield put(actionCreators.fetchApplicationByIdFailure(error))
+    }
+  }
+
+  export function * getApplicationSoftwares (action) {
+    try {
+      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      const applicationSoftwares = yield call(
+        axios.get,
+        api.getApplicationSoftwares,
+        {params: action.payload}
+      )
+      yield put(actionCreators.fetchApplicationSoftwaresSuccess(applicationSoftwares.data))
+    } catch (error) {
+      yield put(actionCreators.fetchApplicationSoftwaresFailure(error))
     }
   }

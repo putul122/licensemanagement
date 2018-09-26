@@ -19,6 +19,9 @@ export const FETCH_SOFTWARE_PROPERTIES_FAILURE = 'saga/software/FETCH_SOFTWARE_P
 export const FETCH_SOFTWARE_RELATIONSHIPS = 'saga/software/FETCH_SOFTWARE_RELATIONSHIPS'
 export const FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS = 'saga/software/FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS'
 export const FETCH_SOFTWARE_RELATIONSHIPS_FAILURE = 'saga/software/FETCH_SOFTWARE_RELATIONSHIPS_FAILURE'
+export const FETCH_SOFTWARE_AGREEMENTS = 'saga/software/FETCH_SOFTWARE_AGREEMENTS'
+export const FETCH_SOFTWARE_AGREEMENTS_SUCCESS = 'saga/software/FETCH_SOFTWARE_AGREEMENTS_SUCCESS'
+export const FETCH_SOFTWARE_AGREEMENTS_FAILURE = 'saga/software/FETCH_SOFTWARE_AGREEMENTS_FAILURE'
 
 export const actionCreators = {
   fetchSoftwares: createAction(FETCH_SOFTWARES),
@@ -35,7 +38,10 @@ export const actionCreators = {
   fetchSoftwarePropertiesFailure: createAction(FETCH_SOFTWARE_PROPERTIES_FAILURE),
   fetchSoftwareRelationships: createAction(FETCH_SOFTWARE_RELATIONSHIPS),
   fetchSoftwareRelationshipsSuccess: createAction(FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS),
-  fetchSoftwareRelationshipsFailure: createAction(FETCH_SOFTWARE_RELATIONSHIPS_FAILURE)
+  fetchSoftwareRelationshipsFailure: createAction(FETCH_SOFTWARE_RELATIONSHIPS_FAILURE),
+  fetchSoftwareAgreement: createAction(FETCH_SOFTWARE_AGREEMENTS),
+  fetchSoftwareAgreementSuccess: createAction(FETCH_SOFTWARE_AGREEMENTS_SUCCESS),
+  fetchSoftwareAgreementFailure: createAction(FETCH_SOFTWARE_AGREEMENTS_FAILURE)
 }
 
 export default function * watchSuppliers () {
@@ -44,7 +50,8 @@ export default function * watchSuppliers () {
       takeLatest(FETCH_SOFTWARES_SUMMARY, getSoftwaresSummary),
       takeLatest(FETCH_SOFTWARE_BY_ID, getSoftwareById),
       takeLatest(FETCH_SOFTWARE_PROPERTIES, getSoftwareProperties),
-      takeLatest(FETCH_SOFTWARE_RELATIONSHIPS, getSoftwareRelationships)
+      takeLatest(FETCH_SOFTWARE_RELATIONSHIPS, getSoftwareRelationships),
+      takeLatest(FETCH_SOFTWARE_AGREEMENTS, getSoftwareAgreements)
   ]
 }
 
@@ -113,5 +120,19 @@ export function * getSoftwaresSummary (action) {
       yield put(actionCreators.fetchSoftwareByIdSuccess(software.data))
     } catch (error) {
       yield put(actionCreators.fetchSoftwareByIdFailure(error))
+    }
+  }
+
+  export function * getSoftwareAgreements (action) {
+    try {
+      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      const softwareAgreements = yield call(
+        axios.get,
+        api.getSoftwareAgreements,
+        {params: action.payload}
+      )
+      yield put(actionCreators.fetchSoftwareAgreementSuccess(softwareAgreements.data))
+    } catch (error) {
+      yield put(actionCreators.fetchSoftwareAgreementFailure(error))
     }
   }

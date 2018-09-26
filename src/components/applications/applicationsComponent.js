@@ -4,9 +4,18 @@ import React from 'react'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import styles from './applicationsComponent.scss'
-
+import './style.css'
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 export default function Applicationlists (props) {
-  console.log(props.currentPage, props.application)
+  console.log(props.currentPage, props.application, props.applicationSoftwares)
+  console.log('props', props.expandSettings)
   let applicationCount = ''
   let totalCost = ''
   let searchTextBox
@@ -22,17 +31,33 @@ export default function Applicationlists (props) {
   let totalApplication
 
   if (props.application && props.application !== '') {
-    applicationList = props.application.resources.map(function (data, index) {
+    let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
+    // applicationList = props.application.resources.map(function (data, index) {
+    //   return (
+    //     <tr key={index}>
+    //       <td><button onClick={handleClick}>+</button><a href={'/applications/' + data.id} >{data.name}</a></td>
+    //       <td>{''}</td>
+    //       <td>{data.supplied_by}</td>
+    //       <td>{data.managed_by}</td>
+    //       <td>{data.stage}</td>
+    //       <td>{data.owner}</td>
+    //       <td>{data.cost}</td>
+    //     </tr>
+    //   )
+    // })
+    applicationList = sortedArray.map(function (data, index) {
       return (
-        <tr key={index}>
-          <td><button onClick={handleClick}>+</button><a href={'/applications/' + data.id} >{data.name}</a></td>
-          <td>{''}</td>
-          <td>{data.supplied_by}</td>
-          <td>{data.managed_by}</td>
-          <td>{data.stage}</td>
-          <td>{data.application_owner}</td>
-          <td>{data.cost}</td>
-        </tr>
+        <tbody>
+          <tr key={index} onClick={() => handleClick(data)}>
+            <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/applications/' + data.id} >{data.name}</a></td>
+            <td>{''}</td>
+            <td>{data.supplied_by}</td>
+            <td>{data.managed_by}</td>
+            <td>{data.stage}</td>
+            <td>{data.owner}</td>
+            <td>{'R ' + formatAmount(data.cost)}</td>
+          </tr>
+        </tbody>
       )
     })
 
@@ -161,13 +186,98 @@ export default function Applicationlists (props) {
     applicationCount = props.applicationSummary.resources[0].application_count
     totalCost = props.applicationSummary.resources[0].cost
   }
-  let handleClick = function (event) {
-    event.preventDefault()
-    let payloadId = {
-     'id': props.application.resources[0].id
-    }
-    props.fetchApplicationSoftwares(payloadId)
+  let resetList = function () {
+    let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
+    applicationList = sortedArray.map(function (data, index) {
+      return (
+        <tbody>
+          <tr key={index} onClick={() => handleClick(data)}>
+            <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/applications/' + data.id} >{data.name}</a></td>
+            <td>{''}</td>
+            <td>{data.supplied_by}</td>
+            <td>{data.managed_by}</td>
+            <td>{data.stage}</td>
+            <td>{data.owner}</td>
+            <td>{'R ' + formatAmount(data.cost)}</td>
+          </tr>
+        </tbody>
+      )
+    })
   }
+
+  let handleClick = function (data) {
+    console.log(data)
+    let payload = {
+      'application_id': data.id
+    }
+    let expandFalg = true
+    if (props.expandSettings.selectedId === data.id) {
+      expandFalg = !props.expandSettings.expandFlag
+      console.log('test flag', expandFalg)
+      if (!expandFalg) {
+        resetList()
+        // props.resetResponse()
+      }
+    } else {
+      expandFalg = true
+    }
+
+    let expandSettings = {...props.expandSettings, 'selectedId': data.id, 'expandFlag': expandFalg}
+    props.setExpandSettings(expandSettings)
+    props.fetchApplicationSoftwares && props.fetchApplicationSoftwares(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  }
+
+  if (props.applicationSoftwares && props.applicationSoftwares !== '') {
+    let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
+    applicationList = sortedArray.map(function (data, index) {
+      let faClass = 'fa fa-plus'
+      let childList = ''
+      if (data.id === props.expandSettings.selectedId) {
+        if (props.expandSettings.expandFlag) {
+          faClass = 'fa fa-minus'
+          if (props.applicationSoftwares.resources.length > 0) {
+            childList = props.applicationSoftwares.resources.map(function (childData, idx) {
+              return (
+                <tr key={'child' + idx}>
+                  <td>{''}</td>
+                  <td>{childData.name}</td>
+                  <td>{''}</td>
+                  <td>{''}</td>
+                  <td>{''}</td>
+                  <td>{''}</td>
+                  <td>{'R ' + formatAmount(childData.cost)}</td>
+                </tr>
+              )
+            })
+          } else {
+            childList = []
+            childList.push((
+              <tr key={0}>
+                <td colSpan='7'>{'No data to display'}</td>
+              </tr>
+            ))
+          }
+        }
+      }
+      return (
+        <tbody>
+          <tr key={index} onClick={() => handleClick(data)}>
+            <td><i className={faClass} aria-hidden='true' />&nbsp;<a href={'/applications/' + data.id} >{data.name}</a></td>
+            <td>{''}</td>
+            <td>{data.supplied_by}</td>
+            <td>{data.managed_by}</td>
+            <td>{data.stage}</td>
+            <td>{data.owner}</td>
+            <td>{data.cost}</td>
+          </tr>
+          {childList}
+        </tbody>
+      )
+    })
+  }
+
 return (
   <div>
     <div className='row' id='applicationSummary'>
@@ -195,7 +305,7 @@ return (
                 <span className='m-widget12__text1'>
                   <h1>Total Cost</h1>
                   <br />
-                  <h2>R {totalCost}</h2>
+                  <h2>{'R' + formatAmount(totalCost)}</h2>
                 </span>
               </div>
             </div>
@@ -231,9 +341,9 @@ return (
                 <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th>
               </tr>
             </thead>
-            <tbody>
-              {applicationList}
-            </tbody>
+            {/* <tbody> */}
+            {applicationList}
+            {/* </tbody> */}
           </table>
         </div>
       </div>
@@ -265,5 +375,7 @@ return (
  Applicationlists.propTypes = {
   applicationSummary: PropTypes.any,
   application: PropTypes.any,
-  currentPage: PropTypes.any
+  currentPage: PropTypes.any,
+  applicationSoftwares: PropTypes.any,
+  expandSettings: PropTypes.any
  }

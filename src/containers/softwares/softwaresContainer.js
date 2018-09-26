@@ -10,7 +10,9 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     software: state.softwaresReducer.software,
     softwareSummary: state.softwaresReducer.softwareSummary,
-    currentPage: state.softwaresReducer.currentPage
+    softwareAgreements: state.softwaresReducer.softwareAgreements,
+    currentPage: state.softwaresReducer.currentPage,
+    expandSettings: state.softwaresReducer.expandSettings
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -18,7 +20,10 @@ export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchSoftwaresSummary: sagaActions.softwareActions.fetchSoftwaresSummary,
   fetchSoftwares: sagaActions.softwareActions.fetchSoftwares,
-  setCurrentPage: actionCreators.setCurrentPage
+  fetchSoftwareAgreement: sagaActions.softwareActions.fetchSoftwareAgreement,
+  setCurrentPage: actionCreators.setCurrentPage,
+  setExpandSettings: actionCreators.setExpandSettings,
+  resetResponse: actionCreators.resetResponse
  }
 
 // If you want to use the function mapping
@@ -60,6 +65,10 @@ export default compose(
       if (nextProps.softwareSummary && nextProps.softwareSummary !== this.props.softwareSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#softwareSummary')
+      }
+      if (nextProps.softwareAgreements && nextProps.softwareAgreements !== this.props.softwareSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#applicationList')
       }
     }
   })

@@ -10,7 +10,9 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     applicationSummary: state.applicationsReducer.applicationSummary,
     application: state.applicationsReducer.application,
-    currentPage: state.applicationsReducer.currentPage
+    applicationSoftwares: state.applicationsReducer.applicationSoftwares,
+    currentPage: state.applicationsReducer.currentPage,
+    expandSettings: state.applicationsReducer.expandSettings
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -18,7 +20,10 @@ export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchApplicationsSummary: sagaActions.applicationActions.fetchApplicationsSummary,
   fetchApplications: sagaActions.applicationActions.fetchApplications,
-  setCurrentPage: actionCreators.setCurrentPage
+  fetchApplicationSoftwares: sagaActions.applicationActions.fetchApplicationSoftwares,
+  setCurrentPage: actionCreators.setCurrentPage,
+  setExpandSettings: actionCreators.setExpandSettings,
+  resetResponse: actionCreators.resetResponse
  }
 
 // If you want to use the function mapping
@@ -48,6 +53,7 @@ export default compose(
      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('****', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -60,6 +66,10 @@ export default compose(
       if (nextProps.applicationSummary && nextProps.applicationSummary !== this.props.applicationSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#applicationSummary')
+      }
+      if (nextProps.applicationSoftwares && nextProps.applicationSoftwares !== this.props.applicationSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#applicationList')
       }
     }
   })

@@ -70,6 +70,8 @@ const api = {
   getEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlements',
   getEntitlement: 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlement',
   getEntitlementsSummary: 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlementsSummary',
+  getApplicationSoftwares: 'https://lm-eco-dev.ecoconductor.com/api/application/GetApplicationSoftwares',
+  getSoftwareAgreements: 'https://lm-eco-dev.ecoconductor.com/api/software/GetSoftwareAgreements',
   getEntitlementById: function (id) {
     return 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlement/' + id
   },

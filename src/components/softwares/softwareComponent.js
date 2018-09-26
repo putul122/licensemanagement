@@ -2,13 +2,23 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './softwareComponent.scss'
+import './style.css'
 // import Softwares from '../../mockData/mockGetSoftwares'
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 
 export default function Softwarelists (props) {
 console.log('JSON data for Softwares', props.softwareSummary)
 console.log('softwarelist', props.software)
+console.log('props', props.expandSettings)
 let softwareCount
-let totalCost
+let totalCost = ''
 let searchTextBox
 let softwareList = ''
 let totalNoPages
@@ -22,6 +32,7 @@ let paginationLimit = 6
 let totalSoftware
 // let softwareagreementList
 if (props.software && props.software !== '') {
+  let sortedArray = _.orderBy(props.software.resources, ['name'], ['asc'])
   softwareList = props.software.resources.map(function (data, index) {
     return (
       <tr key={index}>
@@ -31,6 +42,19 @@ if (props.software && props.software !== '') {
         <td>{data.instances}</td>
         <td>{data.cost}</td>
       </tr>
+    )
+  })
+  softwareList = sortedArray.map(function (data, index) {
+    return (
+      <tbody>
+        <tr key={index} onClick={() => handleClick(data)}>
+          <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/softwares/' + data.id} >{data.name}</a></td>
+          <td>{''}</td>
+          <td>{data.supplier}</td>
+          <td>{data.instances}</td>
+          <td>{'R ' + formatAmount(data.cost)}</td>
+        </tr>
+      </tbody>
     )
   })
 
@@ -146,9 +170,91 @@ if (props.softwareSummary && props.softwareSummary !== '') {
   softwareCount = props.softwareSummary.resources[0].software_count
   totalCost = props.softwareSummary.resources[0].cost
 }
-// let handleClick = function(){
-//   tableIsOpen = !tableIsOpen
-// }
+let resetList = function () {
+  let sortedArray = _.orderBy(props.software.resources, ['name'], ['asc'])
+  softwareList = sortedArray.map(function (data, index) {
+    return (
+      <tbody>
+        <tr key={index} onClick={() => handleClick(data)}>
+          <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/softwares/' + data.id} >{data.name}</a></td>
+          <td>{''}</td>
+          <td>{data.supplier}</td>
+          <td>{data.instances}</td>
+          <td>{'R ' + formatAmount(data.cost)}</td>
+        </tr>
+      </tbody>
+    )
+  })
+}
+
+let handleClick = function (data) {
+  console.log(data)
+  let payload = {
+    'software_id': data.id
+  }
+  let expandFalg = true
+  if (props.expandSettings.selectedId === data.id) {
+    expandFalg = !props.expandSettings.expandFlag
+    console.log('test flag', expandFalg)
+    if (!expandFalg) {
+      resetList()
+      // props.resetResponse()
+    }
+  } else {
+    expandFalg = true
+  }
+
+  let expandSettings = {...props.expandSettings, 'selectedId': data.id, 'expandFlag': expandFalg}
+  props.setExpandSettings(expandSettings)
+  props.fetchSoftwareAgreement && props.fetchSoftwareAgreement(payload)
+  // eslint-disable-next-line
+  mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+}
+
+if (props.softwareAgreements && props.softwareAgreements !== '') {
+  let sortedArray = _.orderBy(props.software.resources, ['name'], ['asc'])
+  softwareList = sortedArray.map(function (data, index) {
+    let faClass = 'fa fa-plus'
+    let childList = ''
+    if (data.id === props.expandSettings.selectedId) {
+      if (props.expandSettings.expandFlag) {
+        faClass = 'fa fa-minus'
+        if (props.softwareAgreements.resources.length > 0) {
+          childList = props.softwareAgreements.resources.map(function (childData, idx) {
+            return (
+              <tr key={'child' + idx}>
+                <td>{''}</td>
+                <td>{childData.name}</td>
+                <td>{''}</td>
+                <td>{''}</td>
+                <td>{'R' + formatAmount(childData.cost)}</td>
+              </tr>
+            )
+          })
+        } else {
+          childList = []
+          childList.push((
+            <tr key={0}>
+              <td colSpan='7'>{'No data to display'}</td>
+            </tr>
+          ))
+        }
+      }
+    }
+    return (
+      <tbody>
+        <tr key={index} onClick={() => handleClick(data)}>
+          <td><i className={faClass} aria-hidden='true' />&nbsp;<a href={'/softwares/' + data.id} >{data.name}</a></td>
+          <td>{''}</td>
+          <td>{data.supplier}</td>
+          <td>{data.instances}</td>
+          <td>{'R ' + formatAmount(data.cost)}</td>
+        </tr>
+        {childList}
+      </tbody>
+    )
+  })
+}
 return (
   <div>
     <div className='row' id='softwareSummary'>
@@ -176,7 +282,7 @@ return (
                 <span className='m-widget12__text1'>
                   <h1>Total Cost</h1>
                   <br />
-                  <h2 className=''>R {totalCost}</h2>
+                  <h2 className=''>{'R' + formatAmount(totalCost)}</h2>
                 </span>
               </div>
             </div>
@@ -210,23 +316,9 @@ return (
                 <th className='' style={{width: '171.25px'}}><h5>Total cost</h5></th>
               </tr>
             </thead>
-            <tbody>
-              {softwareList}
-            </tbody>
-            <tbody id='group-of-rows-1' className='collapse'>
-              <tr>
-                <td>- child row</td>
-                <td>data 1</td>
-                <td>data 1</td>
-                <td>data 1</td>
-              </tr>
-              <tr>
-                <td>- child row</td>
-                <td>data 1</td>
-                <td>data 1</td>
-                <td>data 1</td>
-              </tr>
-            </tbody>
+            {/* <tbody> */}
+            {softwareList}
+            {/* </tbody> */}
           </table>
         </div>
       </div>
@@ -258,5 +350,7 @@ return (
  Softwarelists.propTypes = {
   softwareSummary: PropTypes.any,
   software: PropTypes.any,
-  currentPage: PropTypes.any
+  currentPage: PropTypes.any,
+  softwareAgreements: PropTypes.any,
+  expandSettings: PropTypes.any
  }
