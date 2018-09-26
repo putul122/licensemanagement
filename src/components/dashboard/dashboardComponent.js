@@ -241,7 +241,7 @@ export default function Dashboard (props) {
                         <span className=''>
                           <h4>Cost Per</h4>
                           <br />
-                          <h5>Top 5 Suppliers</h5>
+                          <h5>Top 10 Suppliers</h5>
                         </span>
                       </div>
                       <div className='col'>
@@ -350,7 +350,7 @@ export default function Dashboard (props) {
                         <span className=''>
                           <h4>Cost Per</h4>
                           <br />
-                          <h5>Top 5 Applications</h5>
+                          <h5>Top 10 Applications</h5>
                         </span>
                       </div>
                       <div className='col'>
