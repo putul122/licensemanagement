@@ -7,8 +7,11 @@ import _ from 'lodash'
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 const formatAmount = (x) => {
-  var parts = x.toString().split('.')
+  let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
   return parts.join('.')
 }
 export default function Dashboard (props) {
@@ -108,10 +111,16 @@ export default function Dashboard (props) {
           let overspend = props.entitlementSummary.resources[0].usage_per_supplier[supplier].overspend_percent
           EntitlementContent.push(
             <span key={index++}>
-              <div className='col-sm-5 row pull-left'><p style={{'fontWeight': 'normal'}}>{supplier}</p></div>
-              <div className='progress'>
-                <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100' />
-                <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' />
+              <div className='row'>
+                <div className='col-sm-3' style={{'marginTop': '6px'}}><span style={{'fontWeight': 'normal'}}>{supplier || 'No Supplier'}</span></div>
+                <div className='col-sm-9 pull-left'>
+                  <div className='m--space-10' />
+                  <div className='progress'>
+                    <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100' />
+                    <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' />
+                  </div>
+                  <div className='m--space-10' />
+                </div>
               </div>
             </span>
           )
@@ -203,6 +212,7 @@ export default function Dashboard (props) {
           </select>
         </div>
       </div>
+      <br />
       <div className='row'>
         <div className='col-md-8'>
           <div className='row' id='supplierSummary'>
@@ -215,7 +225,7 @@ export default function Dashboard (props) {
                         <h4>Suppliers</h4>
                       </span>
                       <span className='m-widget12__text1'>
-                        <h4>{supplierCount}</h4>
+                        <h4 style={{'float': 'right'}}>{supplierCount}</h4>
                       </span>
                     </div>
                   </div>
@@ -236,7 +246,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie data={supplierPieChartData} />
+                          <Pie width={180} data={supplierPieChartData} />
                         </span>
                       </div>
                       {/* <div className='m-widget12__text2'></div> */}
@@ -254,11 +264,11 @@ export default function Dashboard (props) {
                     <div className='m-widget12__item'>
                       <span className='m-widget12__text1'>
                         <h4>Aggrements</h4>
-                        <br />
+                        <br /><br /><br /><br />
                         <h4>R {formatAmount(agreementCost)}</h4>
                       </span>
                       <span className='m-widget12__text1'>
-                        <h4>{agreementCount}</h4>
+                        <h4 style={{'float': 'right'}}>{agreementCount}</h4>
                       </span>
                     </div>
                   </div>
@@ -279,7 +289,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie data={agreementPieChartData} />
+                          <Pie width={180} data={agreementPieChartData} />
                         </span>
                       </div>
                     </div>
@@ -320,11 +330,11 @@ export default function Dashboard (props) {
                     <div className='m-widget12__item'>
                       <span className='m-widget12__text1'>
                         <h4>Applications</h4>
-                        <br />
+                        <br /><br /><br /><br />
                         <h4>R {formatAmount(applicationCost)}</h4>
                       </span>
                       <span className='m-widget12__text1'>
-                        <h4>{applicationCount}</h4>
+                        <h4 style={{'float': 'right'}}>{applicationCount}</h4>
                       </span>
                     </div>
                   </div>
@@ -345,7 +355,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie data={applicationPieChartData} />
+                          <Pie width={180} data={applicationPieChartData} />
                         </span>
                       </div>
                     </div>

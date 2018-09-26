@@ -6,8 +6,18 @@ import './style.css'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 
 export default function Suppliers (props) {
+  console.log('props')
+  console.log('props', props.expandSettings)
   let searchTextBox
   let suppliersList = ''
   let totalNoPages
@@ -51,24 +61,17 @@ export default function Suppliers (props) {
 
   // Code for populating data in table
   if (props.suppliers && props.suppliers !== '') {
-    suppliersList = props.suppliers.resources.map(function (data, index) {
+    let sortedArray = _.orderBy(props.suppliers.resources, ['name'], ['asc'])
+    suppliersList = sortedArray.map(function (data, index) {
       return (
         <tbody>
-          <tr key={index} data-toggle='collapse' data-target={'#group-of-rows-' + index} className='accordion-toggle'>
+          <tr key={index} onClick={() => handleClick(data)}>
             <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/suppliers/' + data.id} >{data.name}</a></td>
             <td>{''}</td>
             <td>{data.agreement_count}</td>
             <td>{data.managed_application_count}</td>
             <td>{data.supplied_software_count}</td>
-            <td>{data.cost}</td>
-          </tr>
-          <tr id={'group-of-rows-' + index} className='accordion-body collapse' style={{'show': {'dispaly': ''}, 'collapse': {'dispaly': ''}}}>
-            <td>{''}</td>
-            <td>Software</td>
-            <td>{''}</td>
-            <td>{''}</td>
-            <td>{''}</td>
-            <td>R 100 000 000</td>
+            <td>{'R ' + formatAmount(data.cost)}</td>
           </tr>
         </tbody>
       )
@@ -186,31 +189,98 @@ export default function Suppliers (props) {
     })
   }
 
-  // const data = {
-  //   labels: [
-  //     'Red',
-  //     'Green',
-  //     'Yellow'
-  //   ],
-  //   legend: false,
-  //   datasets: [{
-  //     data: [300, 50, 100],
-  //     backgroundColor: [
-  //     '#FF6384',
-  //     '#36A2EB',
-  //     '#FFCE56'
-  //     ],
-  //     hoverBackgroundColor: [
-  //     '#FF6384',
-  //     '#36A2EB',
-  //     '#FFCE56'
-  //     ]
-  //   }]
-  // }
+  let resetList = function () {
+    let sortedArray = _.orderBy(props.suppliers.resources, ['name'], ['asc'])
+    suppliersList = sortedArray.map(function (data, index) {
+      return (
+        <tbody>
+          <tr key={index} onClick={() => handleClick(data)}>
+            <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/suppliers/' + data.id} >{data.name}</a></td>
+            <td>{''}</td>
+            <td>{data.agreement_count}</td>
+            <td>{data.managed_application_count}</td>
+            <td>{data.supplied_software_count}</td>
+            <td>{'R ' + formatAmount(data.cost)}</td>
+          </tr>
+        </tbody>
+      )
+    })
+  }
+
+  let handleClick = function (data) {
+    console.log(data)
+    let payload = {
+      'supplier_id': data.id
+    }
+    let expandFalg = true
+    if (props.expandSettings.selectedId === data.id) {
+      expandFalg = !props.expandSettings.expandFlag
+      console.log('test flag', expandFalg)
+      if (!expandFalg) {
+        resetList()
+        // props.resetResponse()
+      }
+    } else {
+      expandFalg = true
+    }
+
+    let expandSettings = {...props.expandSettings, 'selectedId': data.id, 'expandFlag': expandFalg}
+    props.setExpandSettings(expandSettings)
+    props.fetchSupplierSoftwares && props.fetchSupplierSoftwares(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  }
+
+  if (props.supplierSoftwares && props.supplierSoftwares !== '') {
+    let sortedArray = _.orderBy(props.suppliers.resources, ['name'], ['asc'])
+    suppliersList = sortedArray.map(function (data, index) {
+      let faClass = 'fa fa-plus'
+      let childList = ''
+      if (data.id === props.expandSettings.selectedId) {
+        if (props.expandSettings.expandFlag) {
+          faClass = 'fa fa-minus'
+          if (props.supplierSoftwares.resources.length > 0) {
+            childList = props.supplierSoftwares.resources.map(function (childData, idx) {
+              return (
+                <tr key={'child' + idx}>
+                  <td>{''}</td>
+                  <td>{childData.name}</td>
+                  <td>{''}</td>
+                  <td>{''}</td>
+                  <td>{''}</td>
+                  <td>{'R ' + formatAmount(childData.cost)}</td>
+                </tr>
+              )
+            })
+          } else {
+            childList = []
+            childList.push((
+              <tr key={0}>
+                <td colSpan='6'>{'No data to display'}</td>
+              </tr>
+            ))
+          }
+        }
+      }
+      return (
+        <tbody>
+          <tr key={index} onClick={() => handleClick(data)}>
+            <td><i className={faClass} aria-hidden='true' />&nbsp;<a href={'/suppliers/' + data.id} >{data.name}</a></td>
+            <td>{''}</td>
+            <td>{data.agreement_count}</td>
+            <td>{data.managed_application_count}</td>
+            <td>{data.supplied_software_count}</td>
+            <td>{data.cost}</td>
+          </tr>
+          {childList}
+        </tbody>
+      )
+    })
+  }
     return (
       <div>
         <div className='row' id='supplierSummary' >
-          <div className='col-md-3'>
+          <div className='col-md-4'>
             <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
                 <div className='m-widget12'>
@@ -226,15 +296,15 @@ export default function Suppliers (props) {
               </div>
             </div>
           </div>
-          <div className='col-md-3'>
+          <div className='col-md-4'>
             <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
                       <h2>Agreements&nbsp;&nbsp;&nbsp;</h2>
-                      <br />
-                      <h4>R {supplierAgreementCost}</h4>
+                      <br /><br /><br /><br />
+                      <h4 className='pull-right'>R {formatAmount(supplierAgreementCost)}</h4>
                     </span>
                     <span className='m-widget12__text2'>
                       <h2>{agreementCount}</h2>
@@ -244,26 +314,19 @@ export default function Suppliers (props) {
               </div>
             </div>
           </div>
-          <div className='col-md-6'>
+          <div className='col-md-4'>
             <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
-                    <div className='col m-widget12__text1'>
-                      <span className=''>
-                        <h2>Cost Per</h2>
-                        <br />
-                        <h5>License</h5>
-                        <h5>Support & Maintenance</h5>
-                        <h5>Professional Service</h5>
-                        <h5>Managed Services</h5>
-                      </span>
-                    </div>
-                    <div className='col'>
-                      <span className='m-widget12__text2'>
-                        <Pie data={supplierPieChartData} />
-                      </span>
-                    </div>
+                    <span className='m-widget12__text1'>
+                      <h2>Cost Per</h2>
+                      <br />
+                      <h5>Agreement Type</h5>
+                    </span>
+                    <span className='m-widget12__text2'>
+                      <Pie data={supplierPieChartData} />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -284,59 +347,43 @@ export default function Suppliers (props) {
             </div>
           </div>
           {/* The table structure begins */}
-          <div className='row' style={{'marginTop': '20px'}}>
-            <div className='col-md-12'>
-              <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline  no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                <thead>
-                  <tr role='row'>
-                    <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                    <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                    <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                    <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
-                    <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
-                    <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr data-toggle='collapse' data-target='#a1' className='accordion-toggle' style={{cursor: 'pointer'}}>
-                    <td><span className='icon_expand' /> <span className='icon_green' /></td>
-                    <td>7596322719</td>
-                    <td>normal</td>
-                    <td>Deferred</td>
-                    <td>10:13</td>
-                    <td>ab0o2231</td>
-                  </tr>
-                  <tr className='accordion-body collapse' id='a1'>
-                    <td><span className='icon_expand' /> <span className='icon_green' /></td>
-                    <td>7596322719</td>
-                    <td>normal</td>
-                    <td>Deferred</td>
-                    <td>10:13</td>
-                    <td>ab0o2231</td>
-                  </tr>
-                </tbody>
-                {/* <tbody> */}
-                {suppliersList}
-                {/* </tbody> */}
-              </table>
-            </div>
-            <div className='row col-md-12' id='scrolling_vertical'>
-              <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-                <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
-                  <ul className='m-datatable__pager-nav'>
-                    <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
-                    {listPage[0] && listPage[0].map(function (page, index) {
-                            if (page.number === currentPage) {
-                                    page.class = 'm-datatable__pager-link--active'
-                                  } else {
-                                    page.class = ''
-                                  }
-                                  return (<li key={index} >
-                                    <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
-                                  </li>)
-                                })}
-                    <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
-                  </ul>
+          <div className='m-portlet m-portlet--mobile'>
+            <div className='row' style={{'marginTop': '20px'}}>
+              <div className='col-md-12'>
+                <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                  <thead>
+                    <tr role='row'>
+                      <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
+                      <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
+                      <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
+                      <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
+                      <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
+                      <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
+                    </tr>
+                  </thead>
+                  {/* <tbody> */}
+                  {suppliersList}
+                  {/* </tbody> */}
+                </table>
+              </div>
+              <div className='row'>
+                <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
+                  <div className='m-datatable__pager m-datatable--paging-loaded' style={{ 'textAlign': 'center' }}>
+                    <ul className='m-datatable__pager-nav'>
+                      <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                      {listPage[0] && listPage[0].map(function (page, index) {
+                              if (page.number === currentPage) {
+                                      page.class = 'm-datatable__pager-link--active'
+                                    } else {
+                                      page.class = ''
+                                    }
+                                    return (<li key={index} >
+                                      <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                                    </li>)
+                                  })}
+                      <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -349,5 +396,7 @@ export default function Suppliers (props) {
     Suppliers.propTypes = {
       suppliers: PropTypes.any,
       suppliersSummary: PropTypes.any,
-      currentPage: PropTypes.any
- }
+      currentPage: PropTypes.any,
+      supplierSoftwares: PropTypes.any,
+      expandSettings: PropTypes.any
+    }

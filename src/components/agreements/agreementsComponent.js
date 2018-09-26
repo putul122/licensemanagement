@@ -6,13 +6,22 @@ import moment from 'moment'
 import ReactModal from 'react-modal'
 import {defaults, Pie} from 'react-chartjs-2'
 ReactModal.setAppElement('#root')
-defaults.global.legend.display = false
+defaults.global.legend.display = true
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 
 export default function Agreements (props) {
   console.log(props.agreementsSummary, props.agreements, props.currentPage)
   let agreementsList = ''
   let agreementCount = ''
+  let agreementCost = ''
   let expireIn90Days = ''
   let searchTextBox
   let totalNoPages
@@ -50,6 +59,7 @@ export default function Agreements (props) {
   // End code for add new agreement
   if (props.agreementsSummary && props.agreementsSummary !== '') {
     agreementCount = props.agreementsSummary.resources[0].agreement_count
+    agreementCost = props.agreementsSummary.resources[0].cost
     expireIn90Days = props.agreementsSummary.resources[0].expire_in_90_days
     let costByAgreementType = props.agreementsSummary.resources[0].cost_by_agreement_type
     let labels = []
@@ -83,7 +93,7 @@ export default function Agreements (props) {
           <td>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
           <td>{''}</td>
           <td>{data.entitlement_count}</td>
-          <td>{data.cost}</td>
+          <td>{'R ' + formatAmount(data.cost)}</td>
         </tr>
       )
     })
@@ -223,13 +233,13 @@ export default function Agreements (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h3>Agreements&nbsp;&nbsp;&nbsp;</h3>
-                      <br />
-                      <h2>R {'50'}</h2>
+                      <h3>Agreements&nbsp;&nbsp;&nbsp;{agreementCount}</h3>
+                      <br /><br /><br /><br />
+                      <h4 className='pull-right'>R {formatAmount(agreementCost)}</h4>
                     </span>
-                    <span className='m-widget12__text2'>
+                    {/* <span className='m-widget12__text2'>
                       <h2>{agreementCount}</h2>
-                    </span>
+                    </span> */}
                   </div>
                 </div>
               </div>
@@ -260,9 +270,7 @@ export default function Agreements (props) {
                       <span className=''>
                         <h2>Cost Per</h2>
                         <br />
-                        <h5>License</h5>
-                        <h5>Professional Service</h5>
-                        <h5>Support & Maintenance</h5>
+                        <h5>Agreement Type</h5>
                       </span>
                     </div>
                     <div className='col'>

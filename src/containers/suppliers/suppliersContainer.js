@@ -11,7 +11,8 @@ export function mapStateToProps (state, props) {
     suppliers: state.suppliersReducer.suppliers,
     suppliersSummary: state.suppliersReducer.suppliersSummary,
     supplierSoftwares: state.suppliersReducer.supplierSoftwares,
-    currentPage: state.suppliersReducer.currentPage
+    currentPage: state.suppliersReducer.currentPage,
+    expandSettings: state.suppliersReducer.expandSettings
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -20,7 +21,9 @@ export const propsMapping: Callbacks = {
   fetchSuppliers: sagaActions.supplierActions.fetchSuppliers,
   fetchSuppliersSummary: sagaActions.supplierActions.fetchSuppliersSummary,
   fetchSupplierSoftwares: sagaActions.supplierActions.fetchSupplierSoftwares,
-  setCurrentPage: actionCreators.setCurrentPage
+  setCurrentPage: actionCreators.setCurrentPage,
+  setExpandSettings: actionCreators.setExpandSettings,
+  resetResponse: actionCreators.resetResponse
 }
 
 // If you want to use the function mapping
@@ -64,6 +67,10 @@ export default compose(
       if (nextProps.suppliersSummary && nextProps.suppliersSummary !== this.props.suppliersSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierSummary')
+      }
+      if (nextProps.supplierSoftwares && nextProps.supplierSoftwares !== this.props.suppliersSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#supplierList')
       }
     }
   })
