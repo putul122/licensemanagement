@@ -16,6 +16,19 @@ const formatAmount = (x) => {
   }
   return parts.join('.')
 }
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    border: 'none',
+    background: 'none',
+    transform: 'translate(-50%, -50%)',
+    width: '100%'
+  }
+}
 
 export default function Agreements (props) {
   console.log(props.agreementsSummary, props.agreements, props.currentPage)
@@ -341,6 +354,7 @@ export default function Agreements (props) {
         <div>
           <ReactModal isOpen={props.addAgreementSettings.isAddModalOpen}
             onRequestClose={closeAddModal}
+            style={customStyles}
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''}>
@@ -367,7 +381,7 @@ export default function Agreements (props) {
                   </div>
                   <div className='modal-footer'>
                     {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                    <button type='button' onClick={createNewAgreement} id='m_login_signup' className=''>Add { '' }</button>
+                    <button onClick={createNewAgreement} className='btn btn-sm btn-info ' >Add { '' }</button>
                   </div>
                 </div>
               </div>
