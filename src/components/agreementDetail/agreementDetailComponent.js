@@ -24,8 +24,11 @@ const customStyles = {
   }
 }
 const formatAmount = (x) => {
-  var parts = x.toString().split('.')
+  let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
   return parts.join('.')
 }
 // Agreement 961 to be used as component type id
@@ -38,6 +41,7 @@ export default function AgreementDetail (props) {
   let agreementDescription = ''
   let expireInDays = ''
   let agreementCost = ''
+  let entitlementCount = ''
   // let componentPropertiesPayload = {...props.componentPropertiesPayload}
   let parentComponentRelationshipList
   let outgoingComponentRelationshipList
@@ -546,6 +550,7 @@ export default function AgreementDetail (props) {
     agreementDescription = props.agreement.resources[0].description
     expireInDays = props.agreement.resources[0].expire_in_days
     agreementCost = props.agreement.resources[0].cost
+    entitlementCount = props.agreement.resources[0].entitlement_count
   }
   if (props.agreementProperties && props.agreementProperties !== '') {
     agreementPropertiesList = props.agreementProperties.resources.map(function (property, index) {
@@ -1156,12 +1161,9 @@ export default function AgreementDetail (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h2>Entitlements&nbsp;&nbsp;&nbsp;</h2>
-                      <br />
-                      <h2>R {formatAmount(5000000.00)}</h2>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <h2>{agreementCost}</h2>
+                      <h2>Entitlements&nbsp;&nbsp;&nbsp;{entitlementCount}</h2>
+                      <br /><br /><br /><br />
+                      <h2 className='pull-right'>R {formatAmount(agreementCost)}</h2>
                     </span>
                   </div>
                 </div>
@@ -1174,10 +1176,7 @@ export default function AgreementDetail (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h3>Expirying in </h3>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <h3>{expireInDays + 'days'}</h3>
+                      <h3>Expirying in {expireInDays + ' days'}</h3>
                     </span>
                   </div>
                 </div>

@@ -222,7 +222,7 @@ export default function Dashboard (props) {
                   <div className='m-widget12'>
                     <div className='m-widget12__item'>
                       <span className='m-widget12__text1'>
-                        <h4>Suppliers</h4>
+                        <h4><a href='/suppliers'>Suppliers</a></h4>
                       </span>
                       <span className='m-widget12__text1'>
                         <h4 style={{'float': 'right'}}>{supplierCount}</h4>
@@ -263,7 +263,7 @@ export default function Dashboard (props) {
                   <div className='m-widget12'>
                     <div className='m-widget12__item'>
                       <span className='m-widget12__text1'>
-                        <h4>Aggrements</h4>
+                        <h4><a href='/agreements'>Agreements</a></h4>
                         <br /><br /><br /><br />
                         <h4>R {formatAmount(agreementCost)}</h4>
                       </span>
@@ -305,7 +305,7 @@ export default function Dashboard (props) {
               <div className='m-widget12'>
                 <div className='m-widget12__item'>
                   <span className='m-widget12__text1 row'>
-                    <h4>Entitlements</h4>
+                    <h4><a href='/entitlements'>Entitlements</a></h4>
                     <br />
                     <h5>Liability/Overspend</h5>
                     <div className='row'>
@@ -329,7 +329,7 @@ export default function Dashboard (props) {
                   <div className='m-widget12'>
                     <div className='m-widget12__item'>
                       <span className='m-widget12__text1'>
-                        <h4>Applications</h4>
+                        <h4><a href='/applications'>Applications</a></h4>
                         <br /><br /><br /><br />
                         <h4>R {formatAmount(applicationCost)}</h4>
                       </span>
@@ -398,7 +398,7 @@ export default function Dashboard (props) {
                         }}
                       />
                       <br />
-                      <h4>Software per Technology Category</h4>
+                      <h4><a href='/softwares'>Software per Technology Category</a></h4>
                     </span>
                   </div>
                 </div>
