@@ -9,6 +9,9 @@ const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#80000
 const formatAmount = (x) => {
   var parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (!isNaN(parts[1])) {
+    parts[1] = Number(parts[1]).toFixed(2)
+  }
   return parts.join('.')
 }
 export default function Dashboard (props) {
@@ -321,7 +324,7 @@ export default function Dashboard (props) {
                       <span className='m-widget12__text1'>
                         <h4>Applications</h4>
                         <br />
-                        <h4>R {applicationCost}</h4>
+                        <h4>R {formatAmount(applicationCost)}</h4>
                       </span>
                       <span className='m-widget12__text1'>
                         <h4>{applicationCount}</h4>
@@ -362,35 +365,34 @@ export default function Dashboard (props) {
                 <div className='m-widget12__item'>
                   <div className='m-widget12__text1'>
                     <span className=''>
+                      <Bar
+                        data={softwareSummaryData}
+                        width={200}
+                        height={250}
+                        options={{
+                          maintainAspectRatio: true,
+                          scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }],
+                            // yAxes: [{
+                            //     ticks: {
+                            //         fontSize: 40
+                            //     }
+                            // }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 7
+                                }
+                            }]
+                          }
+                        }}
+                      />
+                      <br />
                       <h4>Software per Technology Category</h4>
                     </span>
-                  </div>
-                  <div className='col'>
-                    <Bar
-                      data={softwareSummaryData}
-                      width={200}
-                      height={250}
-                      options={{
-                        maintainAspectRatio: false,
-                        scales: {
-                          yAxes: [{
-                              ticks: {
-                                  beginAtZero: true
-                              }
-                          }],
-                          // yAxes: [{
-                          //     ticks: {
-                          //         fontSize: 40
-                          //     }
-                          // }],
-                           xAxes: [{
-                              ticks: {
-                                  fontSize: 7
-                              }
-                          }]
-                        }
-                      }}
-                    />
                   </div>
                 </div>
               </div>

@@ -29,13 +29,18 @@ const customStyles = {
     transform: 'translate(-50%, -50%)'
   }
 }
+const formatAmount = (x) => {
+  var parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  return parts.join('.')
+}
 
 export default function EntitlementDetail (props) {
   console.log(props)
   let entitlementName = ''
   let entitlementDescription = ''
   let entitlementPurchased = ''
-  let entitlementUsed = ''
+  let entitlementConsumed = ''
   let entitlementCost = ''
   let entitlementPropertiesList = ''
   let startNode = {}
@@ -280,7 +285,7 @@ export default function EntitlementDetail (props) {
     entitlementName = props.entitlement.resources[0].name
     entitlementDescription = props.entitlement.resources[0].description
     entitlementPurchased = props.entitlement.resources[0].purchased
-    entitlementUsed = props.entitlement.resources[0].used
+    entitlementConsumed = props.entitlement.resources[0].consumed
     entitlementCost = props.entitlement.resources[0].cost
     startNode.name = props.entitlement.resources[0].name
     startNode.title = props.entitlement.resources[0].name
@@ -540,7 +545,7 @@ export default function EntitlementDetail (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-10'>
+          <div className='col-md-9'>
             {!props.isEditComponent && (<h2>{entitlementName}</h2>)}
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
               <input type='text' className='form-control m-input' onChange={editEntitlementName} value={entitlementName} placeholder='Entitlement Name' aria-describedby='basic-addon2' />
@@ -551,9 +556,9 @@ export default function EntitlementDetail (props) {
             </div>)}
           </div>
           {!props.isEditComponent && (
-          <div className='col-md-2' >
-            <button onClick={updateEntitlement} className='btn btn-outline-info btn-sm'>Edit</button>&nbsp;
-            <button onClick={deleteEntitlement} className='btn btn-outline-info btn-sm'>Delete</button>&nbsp;
+          <div className='col-md-3 pull-right' >
+            <button onClick={updateEntitlement} className='btn btn-outline-info btn-sm'>Edit Entitlement</button>&nbsp;
+            <button onClick={deleteEntitlement} className='btn btn-outline-info btn-sm'>Delete Entitlement</button>&nbsp;
           </div>
           )}
           {props.isEditComponent && (
@@ -570,7 +575,7 @@ export default function EntitlementDetail (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h1>Purchased</h1>
+                      <h1>Purchased&nbsp;&nbsp;</h1>
                     </span>
                     <span className='m-widget12__text2'>
                       <h1>{entitlementPurchased}</h1>
@@ -586,10 +591,10 @@ export default function EntitlementDetail (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h1>Used</h1>
+                      <h1>consumed&nbsp;&nbsp;</h1>
                     </span>
                     <span className='m-widget12__text2'>
-                      <h1>{entitlementUsed + '%'}</h1>
+                      <h1>{entitlementConsumed}</h1>
                     </span>
                   </div>
                 </div>
@@ -604,7 +609,7 @@ export default function EntitlementDetail (props) {
                     <span className='m-widget12__text1'>
                       <h1>Cost</h1>
                       <br />
-                      <h2 className='pull-right'> R {entitlementCost}</h2>
+                      <h2 className='pull-right'> R {formatAmount(entitlementCost)}</h2>
                     </span>
                   </div>
                 </div>
