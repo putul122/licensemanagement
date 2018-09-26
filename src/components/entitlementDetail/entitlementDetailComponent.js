@@ -597,7 +597,7 @@ export default function EntitlementDetail (props) {
                       <h1>Consumed&nbsp;&nbsp;</h1>
                     </span>
                     <span className='m-widget12__text2'>
-                      <h1>{entitlementConsumed + '%'}</h1>
+                      <h1>{Number(entitlementConsumed).toFixed(2) + '%'}</h1>
                     </span>
                   </div>
                 </div>
