@@ -35,6 +35,7 @@ export default function AgreementDetail (props) {
   let agreementEntitlementList = ''
   let agreementPropertiesList = ''
   let agreementName = ''
+  let agreementDescription = ''
   let expireInDays = ''
   let agreementCost = ''
   // let componentPropertiesPayload = {...props.componentPropertiesPayload}
@@ -46,12 +47,80 @@ export default function AgreementDetail (props) {
   let agreementProperties = props.agreementProperties.resources ? [...props.agreementProperties.resources] : ''
   let agreementPropertiesPayload = {...props.agreementPropertiesPayload}
   let copiedAgreementProperties = {...props.copiedAgreementProperties}
+  let copiedAgreementData = {...props.copiedAgreementData}
+  let agreementData = props.agreement
+  let editAgreementName = function (event) {
+    console.log('entitlementPropertiesPayload', agreementPropertiesPayload)
+    console.log(props)
+    let value = event.target.value
+    let payload = { 'op': 'replace', 'path': '/name', 'value': value }
+    let agreementPayload
+    if (value === '') {
+      agreementData.resources[0].nameMessage = true
+    } else {
+      agreementData.resources[0].nameMessage = false
+      if (agreementPropertiesPayload.agreement.length === 0) {
+        agreementPropertiesPayload.agreement.push(payload)
+      } else if (agreementPropertiesPayload.agreement.length === 1) {
+        if (agreementPropertiesPayload.agreement[0].path === '/name') {
+          agreementPropertiesPayload.agreement[0].value = value
+        } else {
+          agreementPropertiesPayload.agreement.push(payload)
+        }
+      } else {
+        agreementPayload = agreementPropertiesPayload.agreement.map((payload, index) => {
+          if (payload.path === '/name') {
+            payload.value = value
+            return payload
+          } else {
+            return payload
+          }
+        })
+        agreementPropertiesPayload.agreement = agreementPayload
+      }
+    }
+    agreementData.resources[0].name = value
+    let editPayload = {}
+    editPayload.agreement = agreementData
+    editPayload.property = {resources: agreementProperties}
+    props.editComponentProperties(editPayload)
+  }
+  let editAgreementDescription = function (event) {
+    console.log(props)
+    let value = event.target.value
+    let payload = { 'op': 'replace', 'path': '/description', 'value': value }
+    let agreementPayload
+    if (agreementPropertiesPayload.agreement.length === 0) {
+      agreementPropertiesPayload.agreement.push(payload)
+    } else if (agreementPropertiesPayload.agreement.length === 1) {
+      if (agreementPropertiesPayload.agreement[0].path === '/description') {
+        agreementPropertiesPayload.agreement[0].value = value
+      } else {
+        agreementPropertiesPayload.agreement.push(payload)
+      }
+    } else {
+      agreementPayload = agreementPropertiesPayload.agreement.map((payload, index) => {
+        if (payload.path === '/description') {
+          payload.value = value
+          return payload
+        } else {
+          return payload
+        }
+      })
+      agreementPropertiesPayload.agreement = agreementPayload
+    }
+    agreementData.resources[0].description = value
+    let editPayload = {}
+    editPayload.agreement = agreementData
+    editPayload.property = {resources: agreementProperties}
+    props.editComponentProperties(editPayload)
+  }
   let updateAgreement = function () {
     let payloadAgreementData = JSON.parse(JSON.stringify(props.agreement))
     props.copyAgreementProperties({'resources': JSON.parse(JSON.stringify(agreementProperties))})
     props.copyAgreementData(payloadAgreementData)
-    let addAgreementSettings = {...props.addAgreementSettings, isUpdateModalOpen: true}
-    props.setAddAgreementSettings(addAgreementSettings)
+    // let addAgreementSettings = {...props.addAgreementSettings, isUpdateModalOpen: true}
+    // props.setAddAgreementSettings(addAgreementSettings)
     props.setEditComponentFlag(true)
   }
   let updateAgreementConfirm = function () {
@@ -62,7 +131,7 @@ export default function AgreementDetail (props) {
   let cancelEditAgreement = function () {
     let payload = {}
     payload.property = JSON.parse(JSON.stringify(copiedAgreementProperties))
-    payload.agreement = JSON.parse(JSON.stringify(props.copiedAgreementData))
+    payload.agreement = JSON.parse(JSON.stringify(copiedAgreementData))
     props.restoreAgreementProperties(payload)
     props.setEditComponentFlag(false)
   }
@@ -84,9 +153,9 @@ export default function AgreementDetail (props) {
     let payload = {}
     payload.componentId = props.agreement.resources[0].id
     payload.property = agreementPropertiesPayload.property
-    // payload.component = componentPropertiesPayload.component
+    payload.agreement = agreementPropertiesPayload.agreement
     props.updateAgreementProperties(payload)
-    // props.updateComponentTypeComponent(payload)
+    props.updateAgreement(payload)
     let addAgreementSettings = {...props.addAgreementSettings, isConfirmationModalOpen: false}
     props.setAddAgreementSettings(addAgreementSettings)
   }
@@ -109,7 +178,7 @@ export default function AgreementDetail (props) {
             }
           }
           let editPayload = {}
-          // editPayload.component = componentTypeComponentData
+          editPayload.agreement = agreementData
           editPayload.property = {resources: agreementProperties}
           props.editComponentProperties(editPayload)
           props.pushComponentPropertyPayload(agreementPropertiesPayload)
@@ -131,7 +200,7 @@ export default function AgreementDetail (props) {
           }
         }
         let editPayload = {}
-        // editPayload.component = componentTypeComponentData
+        editPayload.agreement = agreementData
         editPayload.property = {resources: agreementProperties}
         props.editComponentProperties(editPayload)
         props.pushComponentPropertyPayload(agreementPropertiesPayload)
@@ -154,7 +223,7 @@ export default function AgreementDetail (props) {
       }
     }
     let editPayload = {}
-    // editPayload.component = componentTypeComponentData
+    editPayload.agreement = agreementData
     editPayload.property = {resources: agreementProperties}
     props.editComponentProperties(editPayload)
     props.pushComponentPropertyPayload(agreementPropertiesPayload)
@@ -192,7 +261,7 @@ export default function AgreementDetail (props) {
       }
     }
     let editPayload = {}
-    // editPayload.component = componentTypeComponentData
+    editPayload.agreement = agreementData
     editPayload.property = {resources: agreementProperties}
     props.editComponentProperties(editPayload)
     props.pushComponentPropertyPayload(agreementPropertiesPayload)
@@ -474,6 +543,7 @@ export default function AgreementDetail (props) {
   // End code for delete relationships
   if (props.agreement && props.agreement !== '') {
     agreementName = props.agreement.resources[0].name
+    agreementDescription = props.agreement.resources[0].description
     expireInDays = props.agreement.resources[0].expire_in_days
     agreementCost = props.agreement.resources[0].cost
   }
@@ -1057,12 +1127,27 @@ export default function AgreementDetail (props) {
       <div>
         <div className='row'>
           <div className='col-md-9'>
-            <h2>{agreementName}</h2>
+            {!props.isEditComponent && (<h2>{agreementName}</h2>)}
+            {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
+              <input type='text' className='form-control m-input' onChange={editAgreementName} value={agreementName} placeholder='Entitlement Name' aria-describedby='basic-addon2' />
+              </div>)}
+            <br />
+            {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
+              <input type='text' className='form-control m-input' onChange={editAgreementDescription} value={agreementDescription} placeholder='Entitlement Description' aria-describedby='basic-addon2' />
+            </div>)}
           </div>
-          <div className='col-md-3' >
-            <button onClick={updateAgreement} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
-            <button onClick={deleteAgreement} className='btn btn-outline-info btn-sm'>Delete Agreement</button>&nbsp;
-          </div>
+          {!props.isEditComponent && (
+            <div className='col-md-3' >
+              <button onClick={updateAgreement} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
+              <button onClick={deleteAgreement} className='btn btn-outline-info btn-sm'>Delete Agreement</button>&nbsp;
+            </div>
+          )}
+          {props.isEditComponent && (
+            <div className='col-md-2' >
+              <button onClick={cancelEditAgreement} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
+              <button onClick={updateAgreementConfirm} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;
+            </div>
+          )}
         </div>
         <div className='row' id='supplier'>
           <div className='col-md-4'>
@@ -1407,6 +1492,7 @@ export default function AgreementDetail (props) {
     isEditComponent: PropTypes.any,
     agreementPropertiesPayload: PropTypes.any,
     copiedAgreementProperties: PropTypes.any,
+    copiedAgreementData: PropTypes.any,
     relationshipPropertyPayload: PropTypes.any,
     relationshipProperty: PropTypes.any,
     addNewConnectionSettings: PropTypes.any,

@@ -113,6 +113,7 @@ export default function * watchAgreements () {
     takeLatest(FETCH_AGREEMENT_PROPERTIES, getAgreementProperties),
     takeLatest(FETCH_AGREEMENT_RELATIONSHIPS, getAgreementRelationships),
     takeLatest(ADD_AGREEMENT, addAgreement),
+    takeLatest(UPDATE_AGREEMENT, updateAgreementData),
     takeLatest(DELETE_AGREEMENT, deleteAgreement),
     takeLatest(UPDATE_AGREEMENT_PROPERTIES, updateAgreementProperties),
     takeLatest(FETCH_RELATIONSHIP_PROPERTY, getRelationshipProperty),
@@ -217,6 +218,20 @@ export function * addAgreement (action) {
     yield put(actionCreators.addAgreementSuccess(agreement.data))
   } catch (error) {
     yield put(actionCreators.addAgreementFailure(error))
+  }
+}
+
+export function * updateAgreementData (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreement = yield call(
+      axios.patch,
+      api.updateComponent(action.payload),
+      action.payload.agreement
+    )
+    yield put(actionCreators.updateAgreementSuccess(agreement.data))
+  } catch (error) {
+    yield put(actionCreators.updateAgreementFailure(error))
   }
 }
 

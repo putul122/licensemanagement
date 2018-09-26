@@ -5,7 +5,7 @@ import _ from 'lodash'
 import styles from './supplierDetailComponent.scss'
 // import PropTypes from 'prop-types'
 import {defaults, Pie} from 'react-chartjs-2'
-defaults.global.legend.display = true
+defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 const formatAmount = (x) => {
   let parts = x.toString().split('.')

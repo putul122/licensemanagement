@@ -38,6 +38,7 @@ export const propsMapping: Callbacks = {
   fetchAgreementProperties: sagaActions.agreementActions.fetchAgreementProperties,
   fetchAgreementRelationships: sagaActions.agreementActions.fetchAgreementRelationships,
   deleteAgreement: sagaActions.agreementActions.deleteAgreement,
+  updateAgreement: sagaActions.agreementActions.updateAgreement,
   updateAgreementProperties: sagaActions.agreementActions.updateAgreementProperties,
   fetchRelationshipProperty: sagaActions.agreementActions.fetchRelationshipProperty,
   updateRelationshipProperty: sagaActions.agreementActions.updateRelationshipProperty,

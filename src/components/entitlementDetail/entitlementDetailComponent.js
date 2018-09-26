@@ -288,7 +288,7 @@ export default function EntitlementDetail (props) {
     entitlementName = props.entitlement.resources[0].name
     entitlementDescription = props.entitlement.resources[0].description
     entitlementPurchased = props.entitlement.resources[0].purchased
-    entitlementConsumed = props.entitlement.resources[0].consumed
+    entitlementConsumed = props.entitlement.resources[0].consumption_ratio_percent || ''
     entitlementCost = props.entitlement.resources[0].cost
     startNode.name = props.entitlement.resources[0].name
     startNode.title = props.entitlement.resources[0].name
@@ -594,10 +594,10 @@ export default function EntitlementDetail (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h1>consumed&nbsp;&nbsp;</h1>
+                      <h1>Consumed&nbsp;&nbsp;</h1>
                     </span>
                     <span className='m-widget12__text2'>
-                      <h1>{entitlementConsumed}</h1>
+                      <h1>{entitlementConsumed + '%'}</h1>
                     </span>
                   </div>
                 </div>
