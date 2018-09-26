@@ -5,13 +5,17 @@ import _ from 'lodash'
 import styles from './supplierDetailComponent.scss'
 // import PropTypes from 'prop-types'
 import {defaults, Pie} from 'react-chartjs-2'
-defaults.global.legend.display = false
+defaults.global.legend.display = true
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
 const formatAmount = (x) => {
-  var parts = x.toString().split('.')
+  let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
   return parts.join('.')
 }
+
 export default function Suppliers (props) {
   console.log(props)
   let supplierSoftwareList = ''
@@ -19,6 +23,7 @@ export default function Suppliers (props) {
   let supplierAgreementList = ''
   let supplierName = ''
   let agreementCount = ''
+  let agreementCost = ''
   let suppliedSoftwareCount = ''
   let agreementPieChartData = {}
   let totalAgreementPages
@@ -39,6 +44,7 @@ export default function Suppliers (props) {
   if (props.supplier && props.supplier !== '') {
     supplierName = props.supplier.resources[0].name
     agreementCount = props.supplier.resources[0].agreement_count
+    agreementCost = props.supplier.resources[0].cost
     suppliedSoftwareCount = props.supplier.resources[0].supplied_software_count
     let costByAgreementType = props.supplier.resources[0].cost_by_agreement_type
     let labels = []
@@ -71,7 +77,7 @@ export default function Suppliers (props) {
               <td>{data.name}</td>
               <td>{data.stage}</td>
               <td>{data.owner}</td>
-              <td>{data.cost}</td>
+              <td>{'R ' + formatAmount(data.cost)}</td>
             </tr>
           )
         })
@@ -95,7 +101,7 @@ export default function Suppliers (props) {
               <td>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
               <td>{data.agreement_type}</td>
               <td>{data.entitlement_count}</td>
-              <td>{data.cost}</td>
+              <td>{'R ' + formatAmount(data.cost)}</td>
             </tr>
           )
         })
@@ -116,7 +122,7 @@ export default function Suppliers (props) {
           return (
             <tr key={index}>
               <td>{data.name}</td>
-              <td>{data.cost}</td>
+              <td>{'R ' + formatAmount(data.cost)}</td>
             </tr>
           )
         })
@@ -297,6 +303,8 @@ export default function Suppliers (props) {
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
                       <h2>Agreements&nbsp;&nbsp;&nbsp;</h2>
+                      <br /><br /><br /><br />
+                      <h2 className='pull-right'>R {formatAmount(agreementCost)}</h2>
                     </span>
                     <span className='m-widget12__text2'>
                       <h2>{agreementCount}</h2>
@@ -313,8 +321,9 @@ export default function Suppliers (props) {
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
                       <h2>Software</h2>
-                      <br />
-                      <h2 className='pull-right'>R {formatAmount(suppliedSoftwareCount)}</h2>
+                    </span>
+                    <span className='m-widget12__text2'>
+                      <h2>{suppliedSoftwareCount}</h2>
                     </span>
                   </div>
                 </div>
@@ -330,10 +339,7 @@ export default function Suppliers (props) {
                       <span className=''>
                         <h2>Cost Per</h2>
                         <br />
-                        <h5>Software License</h5>
-                        <h5>Support & Maintenance</h5>
-                        <h5>Managed Services</h5>
-                        <h5>Professional Service</h5>
+                        <h5>Agreement Type</h5>
                       </span>
                     </div>
                     <div className='col'>
