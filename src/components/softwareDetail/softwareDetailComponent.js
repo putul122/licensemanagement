@@ -12,6 +12,14 @@ var divStyle = {
   'border': '1px solid #000000',
   'background-color': '#FFFFFF'
 }
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 
 export default function Softwareview (props) {
   let softwareName = ''
@@ -259,7 +267,7 @@ export default function Softwareview (props) {
                     <span className='m-widget12__text1'>
                       <h1>Total Cost</h1>
                       <br />
-                      <h2 className='pull-right'> R {softwareCost}</h2>
+                      <h2 className='pull-right'>{'R ' + formatAmount(softwareCost)}</h2>
                     </span>
                   </div>
                 </div>

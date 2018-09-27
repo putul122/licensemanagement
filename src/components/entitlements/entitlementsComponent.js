@@ -15,7 +15,8 @@ const customStyles = {
     marginRight: '-50%',
     border: 'none',
     background: 'none',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    width: '100%'
   }
 }
 export default function Entitlementlists (props) {
@@ -162,7 +163,7 @@ export default function Entitlementlists (props) {
   }
   if (props.entitlementsSummary && props.entitlementsSummary !== '') {
     entitlementCount = props.entitlementsSummary.resources[0].entitlement_count
-    consumed = props.entitlementsSummary.resources[0].used
+    consumed = props.entitlementsSummary.resources[0].consumption_ratio_percent
   }
   let openModal = function (event) {
     event.preventDefault()
@@ -241,7 +242,7 @@ return (
           </div>
         </div>
       </div>
-      <div className='col-md-offset-1 col-xl-5'>
+      <div className='col-md-offset-1 col-xl-6'>
         <div className='m-portlet m-portlet--full-height'>
           <div className='m-portlet__body'>
             <div className='m-widget12'>
