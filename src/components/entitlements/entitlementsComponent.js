@@ -8,7 +8,7 @@ import styles from './entitlementsComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
   content: {
-    top: '27%',
+    top: '50%',
     left: '50%',
     right: 'auto',
     bottom: 'auto',
@@ -218,7 +218,7 @@ return (
               </div>
               <div className='modal-footer'>
                 {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                <button type='button' onClick={createEntitlement} id='m_login_signup' className=''>Add { '' }</button>
+                <button type='button' onClick={createEntitlement} id='m_login_signup' className='btn btn-sm btn-info' >Add { '' }</button>
               </div>
             </div>
           </div>
@@ -251,7 +251,7 @@ return (
                   <h1>Consumed</h1>
                 </span>
                 <span className='m-widget12__text2'>
-                  <h1>R {consumed}</h1>
+                  <h1>{Number(consumed).toFixed(2) + '%'}</h1>
                 </span>
               </div>
             </div>
