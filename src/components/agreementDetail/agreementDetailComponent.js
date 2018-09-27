@@ -1134,11 +1134,11 @@ export default function AgreementDetail (props) {
           <div className='col-md-9'>
             {!props.isEditComponent && (<h2>{agreementName}</h2>)}
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
-              <input type='text' className='form-control m-input' onChange={editAgreementName} value={agreementName} placeholder='Entitlement Name' aria-describedby='basic-addon2' />
+              <input type='text' className='form-control m-input' onChange={editAgreementName} value={agreementName} placeholder='Agreement Name' aria-describedby='basic-addon2' />
               </div>)}
             <br />
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
-              <input type='text' className='form-control m-input' onChange={editAgreementDescription} value={agreementDescription} placeholder='Entitlement Description' aria-describedby='basic-addon2' />
+              <input type='text' className='form-control m-input' onChange={editAgreementDescription} value={agreementDescription} placeholder='Agreement Description' aria-describedby='basic-addon2' />
             </div>)}
           </div>
           {!props.isEditComponent && (
