@@ -19,6 +19,15 @@ const customStyles = {
     width: '100%'
   }
 }
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
+
 export default function Entitlementlists (props) {
   console.log(props.currentPage, props.entitlements)
   let entitlementCount = ''
