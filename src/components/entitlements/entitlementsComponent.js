@@ -46,8 +46,8 @@ export default function Entitlementlists (props) {
           <td>{data.supplier}</td>
           <td>{data.purchased}</td>
           <td>{data.consumed}</td>
-          <td>{data.cost}</td>
-          <td>{data.total_cost}</td>
+          <td>{'R ' + formatAmount(data.cost)}</td>
+          <td>{'R ' + formatAmount(data.total_cost)}</td>
           {/* <td>{data.cost}</td> */}
         </tr>
       )
