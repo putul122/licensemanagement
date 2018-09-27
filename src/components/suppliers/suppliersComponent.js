@@ -322,7 +322,7 @@ export default function Suppliers (props) {
                     <span className='m-widget12__text1'>
                       <h2>Cost Per</h2>
                       <br />
-                      <h5>Agreement Type</h5>
+                      <h5>Top 10 Suppliers</h5>
                     </span>
                     <span className='m-widget12__text2'>
                       <Pie data={supplierPieChartData} />
