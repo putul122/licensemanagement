@@ -113,6 +113,13 @@ export default compose(
           this.props.history.push('/')
         }
       }
+      if (nextProps.agreement && nextProps.agreement !== this.props.agreement) {
+        if (nextProps.agreement.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.agreement.error_message, nextProps.agreement.error_code)
+          this.props.history.push('/agreements')
+        }
+      }
       if (nextProps.deleteAgreementResponse && nextProps.deleteAgreementResponse !== '') {
         if (nextProps.deleteAgreementResponse.error_code === null) {
           // eslint-disable-next-line
