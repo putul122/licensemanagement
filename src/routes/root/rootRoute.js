@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import AppWrapper from '../../components/appWrapper/appWrapperComponent'
+import { runWithAdal } from 'react-adal'
+import { authContext } from '../../config/adal'
+const DO_NOT_LOGIN = false
 
 if (module.hot) {
   module.hot.accept()
@@ -20,6 +23,15 @@ export default class Root extends Component {
     new Promise(resolve =>
       require.ensure([], require => {
         switch (fileName) {
+          case 'handleAzure':
+            if (module.hot) {
+              module.hot.accept('../handleAzurePage/handleAzurePageRoute', () => {
+                require('../handleAzurePage/handleAzurePageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../handleAzurePage/handleAzurePageRoute').default)
+          break
           case 'home':
             if (module.hot) {
               module.hot.accept('../homePage/homePageRoute', () => {
@@ -111,13 +123,15 @@ export default class Root extends Component {
             resolve(require('../softwareDetailPage/softwareDetailPageRoute').default)
             break
           case 'account':
-            if (module.hot) {
-              module.hot.accept('../accountPage/accountPageRoute', () => {
-                require('../accountPage/accountPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
-            }
-            resolve(require('../accountPage/accountPageRoute').default)
+            runWithAdal(authContext, () => {
+              if (module.hot) {
+                module.hot.accept('../accountPage/accountPageRoute', () => {
+                  require('../accountPage/accountPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../accountPage/accountPageRoute').default)
+            }, DO_NOT_LOGIN)
             break
           case 'entitlement':
             if (module.hot) {
@@ -178,10 +192,9 @@ export default class Root extends Component {
             <Route exact path='/softwares/:id' component={(props) => this.loadView('softwareDetail', props)} />
             <Route exact path='/entitlements' component={(props) => this.loadView('entitlement', props)} />
             <Route exact path='/entitlements/:id' component={(props) => this.loadView('entitlementDetail', props)} />
-            {/* <Route exact path='/landing' component={(props) => this.loadView('landing', props)} /> */}
-            {/* <Route path='/applications' component={(props) => this.ApplicationsRoute(props)} />
-            <Route path='/softwares' component={(props) => this.SoftwaresRoute(props)} /> */}
-            <Route path='/' exact component={(props) => this.loadView('account', props)} />
+            <Route exact path='/account' component={(props) => this.loadView('account', props)} />
+            <Route exact path='/handleAzure' component={(props) => this.loadView('handleAzure', props)} />
+            <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>
       </AppWrapper>

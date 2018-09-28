@@ -1,0 +1,22 @@
+  .button {
+    text-decoration: none;
+    float: right;
+    padding: 12px;
+    margin: 15px;
+    color: white;
+    width: 25px;
+    background-color: #2739c1;
+    transition: width .35s;
+    -webkit-transition: width .35s;
+    overflow: hidden;
+    width: 100px;
+    text-align: center;
+  }
+  
+  a:hover {
+    color: white;
+  }
+
+  a {
+    text-decoration: none;
+  }

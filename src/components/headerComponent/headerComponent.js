@@ -1,5 +1,7 @@
 import React from 'react'
+import styles from './headerComponent.scss'
 // import SmartDisplayStars from '../../containers/displayStars/displayStarsContainer'
+import { authContext } from '../../config/adal'
 
 class HeaderComponent extends React.Component {
   render () {
@@ -20,24 +22,18 @@ class HeaderComponent extends React.Component {
                 <div id='m_header_topbar' className='m-topbar  m-stack m-stack--ver m-stack--general'>
                   <div className='m-stack__item m-topbar__nav-wrapper'>
                     <ul className='m-topbar__nav m-nav m-nav--inline'>
-                      {/* <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
+                      {/* {/* <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
                         <a href='' className='m-nav__link m-dropdown__toggle' id='m_topbar_notification_icon'>
                             <span className='m-nav__link-icon m-topbar__usericon'>
                             <span className='m-nav__link-icon-wrapper'><i className='flaticon-music-2' /></span>
                             </span>
                         </a>
-                        </li>
-                        <li className='m-nav__item m-topbar__user-profile  m-dropdown  m-dropdown--medium m-dropdown--arrow  m-dropdown--align-right  m-dropdown--mobile-full-width m-dropdown--skin-light '>
-                        <a href='' className='m-nav__link'>
-                            <span className='m-topbar__userpic m--hide'>
-                            <img src='assets/app/media/img/users/user4.jpg' className='m--img-rounded m--marginless m--img-centered' alt='' />
-                            </span>
-                            <span className='m-nav__link-icon m-topbar__usericon'>
-                            <span className='m-nav__link-icon-wrapper'><i className='flaticon-user-ok' /></span>
-                            </span>
-                            <span className='m-topbar__username m--hide'>Nick</span>
+                        </li> */}
+                      <li className='m-nav__item m-topbar__user-profile  m-dropdown  m-dropdown--medium m-dropdown--arrow  m-dropdown--align-right  m-dropdown--mobile-full-width m-dropdown--skin-light '>
+                        <a href='javascript:void(0);' onClick={(event) => { localStorage.removeItem('userAccessToken'); authContext.logOut() }} className={styles.button}>
+                          <div className='' >LOGOUT</div>
                         </a>
-                      </li> */}
+                      </li>
                     </ul>
                   </div>
                 </div>

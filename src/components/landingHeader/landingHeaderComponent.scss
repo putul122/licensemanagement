@@ -1,8 +1,22 @@
 .logo{
- margin:10px;
+    margin:10px;
+   }
+   .slogan{
+   //  text-align: center;
+    color: #ffffff;
+    font-weight: 300;
+    margin-top: 5px;
+    font-size: 45px;
+    font-family: 'Lucida Sans';
+    display: inline;
+    }
+    .loginbutton{
+        margin-left: 300px;
+        background-color: #ffffff;
+        border: 1px solid #ffffff;
+        font-size: 20px;
+        cursor: pointer; 
 }
-.slogan{
- text-align: center;
- color: #ffffff;
- font-weight: 200;
+.loginbutton:hover {
+    background-color: #33ccff
 }
