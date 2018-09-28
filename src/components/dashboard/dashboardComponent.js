@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {defaults, Pie, Bar} from 'react-chartjs-2'
+import {defaults, Doughnut, Bar} from 'react-chartjs-2'
 import _ from 'lodash'
 // import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
 // import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
 defaults.global.legend.display = false
-const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
+const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -59,7 +59,7 @@ export default function Dashboard (props) {
   if (props.businessUnits && props.businessUnits !== '') {
     if (props.businessUnits.error_code === null) {
       selectOptionList = props.businessUnits.resources.map(function (data, index) {
-        return (<option key={index} value={data.id}>{data.name}</option>)
+        return (<option key={index} value={data.id} style={{'backgroundColor': '#ffffff', 'color': '#000000', 'fontSize': '13px'}}>{data.name}</option>)
       })
       selectOptionList.unshift(<option key={-111111} value={-111111}>{'Select Business Unit'}</option>)
     }
@@ -116,8 +116,8 @@ export default function Dashboard (props) {
                 <div className='col-sm-9 pull-left'>
                   <div className='m--space-10' />
                   <div className='progress'>
-                    <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100' />
-                    <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' />
+                    <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100'><div style={{'fontSize': '12px'}}>{formatAmount(liability)}%</div></div>
+                    <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' ><div style={{'fontSize': '12px'}}>{formatAmount(overspend)}%</div></div>
                   </div>
                   <div className='m--space-10' />
                 </div>
@@ -145,7 +145,7 @@ export default function Dashboard (props) {
         if (costByAgreementType.hasOwnProperty(keyField)) {
           labels.push(keyField)
           agreementPieData.push(costByAgreementType[keyField])
-          colorData.push(pieColor[i++])
+          colorData.push(doughnutColor[i++])
         }
       }
       agreementPieChartData.labels = labels
@@ -168,7 +168,7 @@ export default function Dashboard (props) {
       props.supplierSummary.resources[0].top10_cost_suppliers.forEach(function (element, i) {
         labels.push(element.name)
         supplierPieData.push(element.cost)
-        colorData.push(pieColor[j++])
+        colorData.push(doughnutColor[j++])
       })
       supplierPieChartData.labels = labels
       supplierPieChartData.legend = false
@@ -192,7 +192,7 @@ export default function Dashboard (props) {
       props.applicationSummary.resources[0].top10_cost_applications.forEach(function (element, i) {
         labels.push(element.name)
         data.push(element.cost)
-        colorData.push(pieColor[k++]) // colorData.push('#' + ((Math.random() * 0xffffff) << 0).toString(16))
+        colorData.push(doughnutColor[k++]) // colorData.push('#' + ((Math.random() * 0xffffff) << 0).toString(16))
       })
       applicationPieChartData.labels = labels
       applicationPieChartData.legend = false
@@ -207,7 +207,7 @@ export default function Dashboard (props) {
     <div className=''>
       <div className='row'>
         <div className={'col-md-3'}>
-          <select className='form-control m-input m-input--solid' onBlur={handleBlurChange} onChange={handleChange}>
+          <select className='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onBlur={handleBlurChange} onChange={handleChange}>
             {selectOptionList}
           </select>
         </div>
@@ -246,7 +246,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie width={180} data={supplierPieChartData} />
+                          <Doughnut width={180} data={supplierPieChartData} />
                         </span>
                       </div>
                       {/* <div className='m-widget12__text2'></div> */}
@@ -289,7 +289,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie width={180} data={agreementPieChartData} />
+                          <Doughnut width={180} data={agreementPieChartData} />
                         </span>
                       </div>
                     </div>
@@ -355,7 +355,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie width={180} data={applicationPieChartData} />
+                          <Doughnut width={180} data={applicationPieChartData} />
                         </span>
                       </div>
                     </div>

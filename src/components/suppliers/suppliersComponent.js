@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './suppliersComponent.scss'
 import './style.css'
-import {defaults, Pie} from 'react-chartjs-2'
+import {defaults, Doughnut} from 'react-chartjs-2'
 defaults.global.legend.display = false
-const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
+const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -47,7 +47,7 @@ export default function Suppliers (props) {
     props.suppliersSummary.resources[0].top10_cost_suppliers.forEach(function (element, i) {
       labels.push(element.name)
       supplierPieData.push(element.cost)
-      colorData.push(pieColor[idx++])
+      colorData.push(doughnutColor[idx++])
     })
     supplierPieChartData.labels = labels
     supplierPieChartData.legend = false
@@ -294,6 +294,34 @@ export default function Suppliers (props) {
                   </div>
                 </div>
               </div>
+              {/* <div className='m-portlet__body'>
+                <div className='m-widget17'>
+                  <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                    <div className='m-widget17__chart' style={{'height': '320px'}}>
+                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                        <div className='chartjs-size-monitor-expand' />
+                        <div className='chartjs-size-monitor-shrink' />
+                      </div>
+                      <canvas id='m_chart_activities' width={509} height={216} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 216}} />
+                    </div>
+                  </div>
+                  <div className='m-widget17__stats'>
+                    <div className='m-widget17__items m-widget17__items-col1'>
+                      <div className='m-widget17__item'>
+                        <span className='m-widget17__icon'>
+                          HIII
+                        </span>
+                        <span className='m-widget17__subtitle'>
+                          Delivered
+                        </span>
+                        <span className='m-widget17__desc'>
+                          <h2>{supplierCount}</h2>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> */}
             </div>
           </div>
           <div className='col-md-4'>
@@ -325,7 +353,7 @@ export default function Suppliers (props) {
                       <h5>Top 10 Suppliers</h5>
                     </span>
                     <span className='m-widget12__text2'>
-                      <Pie data={supplierPieChartData} />
+                      <Doughnut data={supplierPieChartData} />
                     </span>
                   </div>
                 </div>
