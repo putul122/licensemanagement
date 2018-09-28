@@ -6,7 +6,7 @@ const adalConfig = {
    api: 'https://login.microsoftonline.com/1c557f17-ac27-40c1-a529-7a42bbce3d4d'
  },
  postLogoutRedirectUri: window.location.origin,
- redirectUri: 'http://localhost:3000/handleAzure',
+ redirectUri: window.location.origin + '/handleAzure',
  cacheLocation: 'localStorage'
 }
 
