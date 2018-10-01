@@ -28,6 +28,87 @@ export default function Dashboard (props) {
   let selectOptionList = ''
   let costByTechnology = []
   let softwareSummaryData = {}
+  // let chartOptions = {
+  //   'responsive': true,
+  //   'hover': {
+  //     'mode': 'x',
+  //     'intersect': false
+  //   },
+  //   'tooltips': {
+  //     'enabled': false,
+  //     // 'mode': 'x',
+  //     // 'intersect': true,
+  //     'custom': (tooltipModel) => {
+  //       // Tooltip Element
+  //       var tooltipEl = document.getElementById('chartjs-tooltip')
+
+  //       // Create element on first render
+  //       if (!tooltipEl) {
+  //         tooltipEl = document.createElement('div')
+  //         tooltipEl.id = 'chartjs-tooltip'
+  //         tooltipEl.innerHTML = '<table></table>'
+  //         document.body.appendChild(tooltipEl)
+  //       }
+  //       // hide the tooltip
+  //       if (tooltipModel.opacity === 0) {
+  //         tooltipEl.style.opacity = 0
+  //         // this.hide()
+  //         return
+  //       }
+
+  //       // Set caret Position
+  //       tooltipEl.classList.remove('above', 'below', 'no-transform')
+  //       if (tooltipModel.yAlign) {
+  //           tooltipEl.classList.add(tooltipModel.yAlign)
+  //       } else {
+  //           tooltipEl.classList.add('no-transform')
+  //       }
+
+  //       function getBody (bodyItem) {
+  //           return bodyItem.lines
+  //       }
+
+  //       // Set Text
+  //       if (tooltipModel.body) {
+  //           var titleLines = tooltipModel.title || []
+  //           var bodyLines = tooltipModel.body.map(getBody)
+
+  //           var innerHtml = '<thead>'
+
+  //           titleLines.forEach(function (title) {
+  //               innerHtml += '<tr><th>' + title + '</th></tr>'
+  //           })
+  //           innerHtml += '</thead><tbody>'
+
+  //           bodyLines.forEach(function (body, i) {
+  //               var colors = tooltipModel.labelColors[i]
+  //               var style = 'background:' + colors.backgroundColor
+  //               style += '; border-color:' + colors.borderColor
+  //               style += '; border-width: 2px'
+  //               var span = '<span style="' + style + '"></span>'
+  //               innerHtml += '<tr><td>' + span + body + '</td></tr>'
+  //           })
+  //           innerHtml += '</tbody>'
+
+  //           var tableRoot = tooltipEl.querySelector('table')
+  //           tableRoot.innerHTML = innerHtml
+  //       }
+
+  //       // `this` will be the overall tooltip
+  //       var position = this._chart.canvas.getBoundingClientRect()
+
+  //       // Display, position, and set styles for font
+  //       tooltipEl.style.opacity = 1
+  //       tooltipEl.style.position = 'absolute'
+  //       tooltipEl.style.left = position.left + tooltipModel.caretX + 'px'
+  //       tooltipEl.style.top = position.top + tooltipModel.caretY + 'px'
+  //       tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+  //       tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px'
+  //       tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+  //       tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
+  //     }
+  //   }
+  // }
   let handleBlurChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -377,11 +458,35 @@ export default function Dashboard (props) {
                         width={200}
                         height={250}
                         options={{
+                          responsive: true,
+                          title: {
+                            display: true,
+                            text: 'Top 5 Technology'
+                          },
                           maintainAspectRatio: true,
                           scales: {
                             yAxes: [{
                                 ticks: {
-                                    beginAtZero: true
+                                  beginAtZero: true,
+                                  callback: function (label, index, labels) {
+                                    switch (label) {
+                                      case labels[0]:
+                                        return 'R ' + formatAmount(label)
+                                      case labels[1]:
+                                        return 'R ' + formatAmount(label)
+                                      case labels[2]:
+                                        return 'R ' + formatAmount(label)
+                                      case labels[3]:
+                                        return 'R ' + formatAmount(label)
+                                      case labels[4]:
+                                        return 'R ' + formatAmount(label)
+                                    }
+                                  }
+                                },
+                                display: true,
+                                scaleLabel: {
+                                  display: true,
+                                  labelString: 'Cost'
                                 }
                             }],
                             // yAxes: [{
@@ -391,8 +496,33 @@ export default function Dashboard (props) {
                             // }],
                             xAxes: [{
                                 ticks: {
-                                    fontSize: 7
-                                }
+                                    min: 0,
+                                    max: 5,
+                                    stepSize: 1,
+                                    suggestedMin: 0.5,
+                                    suggestedMax: 5.5,
+                                    callback: function (label, index, labels) {
+                                      switch (label) {
+                                        case labels[0]:
+                                            return label
+                                        case labels[1]:
+                                            return label
+                                        case labels[2]:
+                                            return label
+                                        case labels[3]:
+                                            return label
+                                        case labels[4]:
+                                            return label
+                                      }
+                                    }
+                                },
+                                display: true,
+                                scaleLabel: {
+                                  display: true,
+                                  fontStyle: 'bold',
+                                  labelString: 'Software'
+                                },
+                                stacked: false
                             }]
                           }
                         }}

@@ -81,9 +81,10 @@ export default compose(
         if (nextProps.addAgreementResponse.error_code === null) {
           let newAgreementId = nextProps.addAgreementResponse.resources[0].id
           // eslint-disable-next-line
+          mApp && mApp.unblockPage()
+          // eslint-disable-next-line
           toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
           this.props.history.push('/agreements/' + newAgreementId)
-          // eslint-disable-next-line
           // location.reload()
         } else {
           // eslint-disable-next-line

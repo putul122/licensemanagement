@@ -108,6 +108,9 @@ export default compose(
       // mApp && mApp.block('#supplier', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      let payload = {
+        'agreement_id': this.props.match.params.id
+      }
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -120,7 +123,13 @@ export default compose(
           this.props.history.push('/agreements')
         }
       }
+      if (nextProps.agreementRelationships && nextProps.agreementRelationships !== this.props.agreementRelationships) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+      }
       if (nextProps.deleteAgreementResponse && nextProps.deleteAgreementResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
         if (nextProps.deleteAgreementResponse.error_code === null) {
           // eslint-disable-next-line
           toastr.success('The Agreement ' +  nextProps.deleteAgreementResponse.resources[0].name  +  ' was successfully deleted', 'Zapped!')
@@ -132,7 +141,10 @@ export default compose(
         this.props.resetResponse()
       }
       if (nextProps.updateAgreementResponse && nextProps.updateAgreementResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
         if (nextProps.updateAgreementResponse.error_code === null) {
+          this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
           // eslint-disable-next-line
           toastr.success('The ' + this.props.agreement.resources[0].name + ' was successfully updated', 'Good Stuff!')
         } else {
@@ -173,6 +185,8 @@ export default compose(
         this.props.resetUpdateRelationshipResponse()
       }
       if (nextProps.updateRelationshipPropertyResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
         if (nextProps.updateRelationshipPropertyResponse.result_code !== 1) {
           // eslint-disable-next-line
           toastr.success('Successfully updated relationship ' + this.props.relationshipActionSettings.relationshipText + ': ' + this.props.relationshipActionSettings.componentName, 'Updated!')
@@ -185,6 +199,8 @@ export default compose(
         this.props.setRelationshipActionSettings(settingPayload)
       }
       if (nextProps.deleteRelationshipResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
         if (nextProps.deleteRelationshipResponse.result_code !== 1) {
           let payload = {
             'agreement_id': this.props.match.params.id

@@ -154,6 +154,8 @@ export default function AgreementDetail (props) {
   let submitUpdates = function (event) {
     event.preventDefault()
     props.setEditComponentFlag(false)
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
     payload.componentId = props.agreement.resources[0].id
     payload.property = agreementPropertiesPayload.property
@@ -280,6 +282,8 @@ export default function AgreementDetail (props) {
     let payload = {
       'id': props.agreement.resources[0].id
     }
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     props.deleteAgreement(payload)
     closeDeleteModal()
   }
@@ -300,6 +304,8 @@ export default function AgreementDetail (props) {
   }
   let updateRelationshipProperty = function (event) {
     event.preventDefault()
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
     payload.componentId = props.agreement.resources[0].id
     payload.relationshipId = props.relationshipActionSettings.relationshipId
@@ -1049,6 +1055,8 @@ export default function AgreementDetail (props) {
   let addConnections = function () {
     // comment this below line when actual api work in correct response
     // props.setRelationshipsValue({'resources': newRelationshipArray})
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
     payload.componentId = props.agreement.resources[0].id
     payload.relationship = agreementPropertiesPayload.relationship

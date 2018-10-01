@@ -55,6 +55,8 @@ export default function Agreements (props) {
     props.setAddAgreementSettings(addAgreementSettings)
   }
   let createNewAgreement = function () {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {
       'component_type': {
         'id': 961

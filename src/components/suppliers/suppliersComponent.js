@@ -244,7 +244,7 @@ export default function Suppliers (props) {
               return (
                 <tr key={'child' + idx}>
                   <td>{''}</td>
-                  <td>{childData.name}</td>
+                  <td><a href={'/softwares/' + childData.id} >{childData.name}</a></td>
                   <td>{''}</td>
                   <td>{''}</td>
                   <td>{''}</td>
@@ -294,34 +294,6 @@ export default function Suppliers (props) {
                   </div>
                 </div>
               </div>
-              {/* <div className='m-portlet__body'>
-                <div className='m-widget17'>
-                  <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
-                    <div className='m-widget17__chart' style={{'height': '320px'}}>
-                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
-                        <div className='chartjs-size-monitor-expand' />
-                        <div className='chartjs-size-monitor-shrink' />
-                      </div>
-                      <canvas id='m_chart_activities' width={509} height={216} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 216}} />
-                    </div>
-                  </div>
-                  <div className='m-widget17__stats'>
-                    <div className='m-widget17__items m-widget17__items-col1'>
-                      <div className='m-widget17__item'>
-                        <span className='m-widget17__icon'>
-                          HIII
-                        </span>
-                        <span className='m-widget17__subtitle'>
-                          Delivered
-                        </span>
-                        <span className='m-widget17__desc'>
-                          <h2>{supplierCount}</h2>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
           <div className='col-md-4'>
@@ -347,14 +319,18 @@ export default function Suppliers (props) {
               <div className='m-portlet__body'>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
-                    <span className='m-widget12__text1'>
-                      <h2>Cost Per</h2>
-                      <br />
-                      <h5>Top 10 Suppliers</h5>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <Doughnut data={supplierPieChartData} />
-                    </span>
+                    <div className='col m-widget12__text1'>
+                      <span className=''>
+                        <h2>Cost Per</h2>
+                        <br />
+                        <h5>Top 10 Suppliers</h5>
+                      </span>
+                    </div>
+                    <div className='col'>
+                      <span className='m-widget12__text2'>
+                        <Doughnut width={180} data={supplierPieChartData} />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
