@@ -29,6 +29,7 @@ const RESET_COMPONENT_RELATIONSHIP_PROPERTY = 'AgreementsReducer/RESET_COMPONENT
 const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'AgreementsReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD'
 const SET_ADD_CONNECTION_SETTINGS = 'AgreementsReducer/SET_ADD_CONNECTION_SETTINGS'
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'AgreementsReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
+const SET_CURRENT_PAGE = 'AgreementsReducer/SET_CURRENT_PAGE'
 
 export const actions = {
     FETCH_AGREEMENT_BY_ID_SUCCESS,
@@ -51,7 +52,8 @@ export const actions = {
     UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
     DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
     UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
-    RESET_UPDATE_RELATIONSHIP_RESPONSE
+    RESET_UPDATE_RELATIONSHIP_RESPONSE,
+    SET_CURRENT_PAGE
 }
 
 export const actionCreators = {
@@ -68,7 +70,8 @@ export const actionCreators = {
     resetComponentRelationshipProperties: createAction(RESET_COMPONENT_RELATIONSHIP_PROPERTY),
     editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD),
     setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
-    resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE)
+    resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
+    setCurrentPage: createAction(SET_CURRENT_PAGE)
 }
 
 export const initialState = {
@@ -244,6 +247,10 @@ export default handleActions(
       deleteRelationshipResponse: '',
       relationshipPropertyPayload: [],
       deleteComponent: ''
+    }),
+    [SET_CURRENT_PAGE]: (state, action) => ({
+      ...state,
+      currentPage: action.payload
     })
   },
   initialState

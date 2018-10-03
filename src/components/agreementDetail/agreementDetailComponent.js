@@ -42,11 +42,19 @@ export default function AgreementDetail (props) {
   let expireInDays = ''
   let agreementCost = ''
   let entitlementCount = ''
-  // let componentPropertiesPayload = {...props.componentPropertiesPayload}
   let parentComponentRelationshipList
   let outgoingComponentRelationshipList
   let incomingComponentRelationshipList
   let childComponentRelationshipList
+  let totalEntitlementPages
+  let perPage = 10
+  let currentPage = props.currentPage
+  let nextClass = ''
+  let previousClass = ''
+  let pageArray = []
+  let listEntitlementPage = []
+  let paginationLimit = 6
+
   // Code for Update Agreement
   let agreementProperties = props.agreementProperties.resources ? [...props.agreementProperties.resources] : ''
   let agreementPropertiesPayload = {...props.agreementPropertiesPayload}
@@ -659,29 +667,90 @@ export default function AgreementDetail (props) {
   } else {
     console.log('else')
   }
-  if (props.agreementEntitlements && props.agreementEntitlements !== '') {
-    if (props.agreementEntitlements.resources.length > 0) {
-      agreementEntitlementList = props.agreementEntitlements.resources.map(function (data, index) {
-        return (
-          <tr key={index}>
-            <td>{data.name}</td>
-            <td>{data.purchased}</td>
-            <td>{data.consumed}</td>
-            <td>{data.unit_cost}</td>
-            <td>{data.total_cost}</td>
+  let listEntitlement = function () {
+    if (props.agreementEntitlements !== '') {
+      if (props.agreementEntitlements.resources.length > 0) {
+        agreementEntitlementList = props.agreementEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td><a href={'/entitlements/' + data.id}>{data.name}</a></td>
+              <td>{data.purchased}</td>
+              <td>{data.consumed}</td>
+              <td>{'R ' + formatAmount(data.unit_cost)}</td>
+              <td>{'R ' + formatAmount(data.total_cost)}</td>
+            </tr>
+          )
+        })
+      } else {
+        agreementEntitlementList = []
+        agreementEntitlementList.push((
+          <tr key={0}>
+            <td colSpan='5'>{'No data to display'}</td>
           </tr>
-        )
-      })
+        ))
+      }
+    }
+  }
+  if (props.agreementEntitlements && props.agreementEntitlements !== '') {
+    totalEntitlementPages = Math.ceil(props.agreementEntitlements.count / perPage)
+    let i = 1
+    while (i <= totalEntitlementPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listEntitlementPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalEntitlementPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    listEntitlement()
+  }
+  let handleListAndPagination = function (page) {
+    listEntitlement()
+    props.setCurrentPage(page)
+    listEntitlementPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handlePage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalEntitlementPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
     } else {
-      agreementEntitlementList = []
-      agreementEntitlementList.push((
-        <tr key={0}>
-          <td colSpan='5'>{'No data to display'}</td>
-        </tr>
-      ))
+      handleListAndPagination(page)
     }
   }
 
+  let handlePrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage - 1)
+      handleListAndPagination(currentPage - 1)
+    }
+  }
+
+  let handleNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalEntitlementPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage + 1)
+      handleListAndPagination(currentPage + 1)
+    }
+  }
   if (props.agreementRelationships && props.agreementRelationships !== '') {
     // modelRelationshipData = props.agreementRelationships.resources
     let parent = _.filter(props.agreementRelationships.resources, {'relationship_type': 'Parent'})
@@ -1169,7 +1238,7 @@ export default function AgreementDetail (props) {
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
                     <span className='m-widget12__text1'>
-                      <h2>Entitlements&nbsp;&nbsp;&nbsp;{entitlementCount}</h2>
+                      <h2><a href='/entitlements'>Entitlements</a>&nbsp;&nbsp;&nbsp;{entitlementCount}</h2>
                       <br /><br /><br /><br />
                       <h2 className='pull-right'>R {formatAmount(agreementCost)}</h2>
                     </span>
@@ -1215,7 +1284,7 @@ export default function AgreementDetail (props) {
               </div>
             </div>
             <div className='tab-pane' id='m_tabs_2_2' role='tabpanel'>
-              <div className='col-md-12'>
+              <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
                 <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                   <thead>
                     <tr role='row'>
@@ -1230,6 +1299,24 @@ export default function AgreementDetail (props) {
                     {agreementEntitlementList}
                   </tbody>
                 </table>
+                {agreementEntitlementList.length > 0 && (
+                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                    <ul className='m-datatable__pager-nav'>
+                      <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                      {listEntitlementPage[0] && listEntitlementPage[0].map(function (page, index) {
+                          if (page.number === currentPage) {
+                            page.class = 'm-datatable__pager-link--active'
+                          } else {
+                            page.class = ''
+                          }
+                          return (<li key={index} >
+                            <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                          </li>)
+                        })}
+                      <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
             <div className='tab-pane' id='m_tabs_2_3' role='tabpanel'>
@@ -1504,5 +1591,6 @@ export default function AgreementDetail (props) {
     relationshipProperty: PropTypes.any,
     addNewConnectionSettings: PropTypes.any,
     componentTypeComponentConstraints: PropTypes.any,
-    componentTypeComponents: PropTypes.any
+    componentTypeComponents: PropTypes.any,
+    currentPage: PropTypes.any
  }

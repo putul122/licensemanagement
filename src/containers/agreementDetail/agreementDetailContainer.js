@@ -5,7 +5,6 @@ import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/agreementDetailReducer/agreementDetailReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
-  console.log('state', state)
   return {
     authenticateUser: state.basicReducer.authenticateUser,
     agreement: state.agreementDetailReducer.agreement,
@@ -27,7 +26,8 @@ export function mapStateToProps (state, props) {
     componentTypeComponents: state.agreementDetailReducer.componentTypeComponents,
     updateRelationshipResponse: state.agreementDetailReducer.updateRelationshipResponse,
     updateRelationshipPropertyResponse: state.agreementDetailReducer.updateRelationshipPropertyResponse,
-    deleteRelationshipResponse: state.agreementDetailReducer.deleteRelationshipResponse
+    deleteRelationshipResponse: state.agreementDetailReducer.deleteRelationshipResponse,
+    currentPage: state.agreementDetailReducer.currentPage
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -59,7 +59,8 @@ export const propsMapping: Callbacks = {
   resetComponentRelationshipProperties: actionCreators.resetComponentRelationshipProperties,
   editComponentRelationshipPropertyPayload: actionCreators.editComponentRelationshipPropertyPayload,
   setAddConnectionSettings: actionCreators.setAddConnectionSettings,
-  resetUpdateRelationshipResponse: actionCreators.resetUpdateRelationshipResponse
+  resetUpdateRelationshipResponse: actionCreators.resetUpdateRelationshipResponse,
+  setCurrentPage: actionCreators.setCurrentPage
 }
 
 // If you want to use the function mapping
@@ -103,7 +104,6 @@ export default compose(
       // this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(payload)
     },
     componentDidMount: function () {
-      console.log('component did mount')
       // eslint-disable-next-line
       // mApp && mApp.block('#supplier', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
@@ -148,6 +148,10 @@ export default compose(
           // eslint-disable-next-line
           toastr.success('The ' + this.props.agreement.resources[0].name + ' was successfully updated', 'Good Stuff!')
         } else {
+          let payload = {}
+          payload.property = JSON.parse(JSON.stringify(this.props.copiedAgreementProperties))
+          payload.agreement = JSON.parse(JSON.stringify(this.props.copiedAgreementData))
+          this.props.restoreAgreementProperties(payload)
           // eslint-disable-next-line
           toastr.error(nextProps.updateAgreementResponse.error_message, nextProps.updateAgreementResponse.error_code)
         }

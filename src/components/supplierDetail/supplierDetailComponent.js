@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import _ from 'lodash'
 import styles from './supplierDetailComponent.scss'
-// import PropTypes from 'prop-types'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const pieColor = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -55,8 +54,8 @@ export default function Suppliers (props) {
     for (let keyField in costByAgreementType) {
       if (costByAgreementType.hasOwnProperty(keyField)) {
         labels.push(keyField)
-        // agreementPieData.push(costByAgreementType[keyField])
-        agreementPieData.push(10)
+        agreementPieData.push(costByAgreementType[keyField])
+        // agreementPieData.push(10)
         colorData.push(pieColor[i++])
       }
     }
@@ -71,7 +70,7 @@ export default function Suppliers (props) {
   let listApplication = function () {
     if (props.supplierApplications !== '') {
       if (props.supplierApplications.resources.length > 0) {
-        supplierApplicationList = props.supplierApplications.resources.slice(perPage * currentPage, (currentPage + 1) * perPage).map(function (data, index) {
+        supplierApplicationList = props.supplierApplications.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
               <td>{data.name}</td>
@@ -94,7 +93,7 @@ export default function Suppliers (props) {
   let listAgreement = function () {
     if (props.supplierAgreements !== '') {
       if (props.supplierAgreements.resources.length > 0) {
-        supplierAgreementList = props.supplierAgreements.resources.map(function (data, index) {
+        supplierAgreementList = props.supplierAgreements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
               <td>{data.name}</td>
@@ -118,7 +117,7 @@ export default function Suppliers (props) {
   let listSoftware = function () {
     if (props.supplierSoftwares !== '') {
       if (props.supplierSoftwares.resources.length > 0) {
-        supplierSoftwareList = props.supplierSoftwares.resources.map(function (data, index) {
+        supplierSoftwareList = props.supplierSoftwares.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
               <td>{data.name}</td>
@@ -214,14 +213,14 @@ export default function Suppliers (props) {
   }
   let handleListAndPagination = function (page) {
     if (props.activeTab === 'agreement') {
-      listApplication()
+      listAgreement()
       props.setCurrentPage(page)
       listAgreementPage = _.filter(agreementPageArray, function (group) {
         let found = _.filter(group, {'number': page})
         if (found.length > 0) { return group }
       })
     } else if (props.activeTab === 'software') {
-      listApplication()
+      listSoftware()
       props.setCurrentPage(page)
       listSoftwarePage = _.filter(softwarePageArray, function (group) {
         let found = _.filter(group, {'number': page})
@@ -242,21 +241,26 @@ export default function Suppliers (props) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalAgreementPages) {
         nextClass = 'm-datatable__pager-link--disabled'
+      } else {
+        handleListAndPagination(page)
       }
     } else if (props.activeTab === 'software') {
       if (page === 1) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalSoftwarePages) {
         nextClass = 'm-datatable__pager-link--disabled'
+      } else {
+        handleListAndPagination(page)
       }
     } else if (props.activeTab === 'application') {
       if (page === 1) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalApplicationPages) {
         nextClass = 'm-datatable__pager-link--disabled'
+      } else {
+        handleListAndPagination(page)
       }
     }
-    handleListAndPagination(page)
   }
 
   let handlePrevious = function (event) {
@@ -265,8 +269,8 @@ export default function Suppliers (props) {
       previousClass = styles.disabled
     } else {
       props.setCurrentPage(currentPage - 1)
+      handleListAndPagination(currentPage - 1)
     }
-    handleListAndPagination(currentPage - 1)
   }
 
   let handleNext = function (event) {
@@ -276,21 +280,23 @@ export default function Suppliers (props) {
         nextClass = styles.disabled
       } else {
         props.setCurrentPage(currentPage + 1)
+        handleListAndPagination(currentPage + 1)
       }
     } else if (props.activeTab === 'software') {
       if (currentPage === totalSoftwarePages) {
         nextClass = styles.disabled
       } else {
         props.setCurrentPage(currentPage + 1)
+        handleListAndPagination(currentPage + 1)
       }
     } else if (props.activeTab === 'application') {
       if (currentPage === totalApplicationPages) {
         nextClass = styles.disabled
       } else {
         props.setCurrentPage(currentPage + 1)
+        handleListAndPagination(currentPage + 1)
       }
     }
-    handleListAndPagination(currentPage + 1)
   }
     return (
       <div>

@@ -52,7 +52,7 @@ class LeftNavigation extends React.Component {
               </a>
             </li>
             <li className={styles.navicon}>
-              <a href='entitlements'>
+              <a href='/entitlements'>
                 <i className='fa fa-object-group fa-2x' />
                 <span className={styles.navtext}>
                 Entitlements

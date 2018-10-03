@@ -95,6 +95,10 @@ export default compose(
       }
       if (nextProps.updateEntitlementPropertyResponse && nextProps.updateEntitlementPropertyResponse !== '') {
         if (nextProps.updateEntitlementPropertyResponse.error_code === null) {
+          let payload = {
+            'entitlement_id': this.props.match.params.id
+          }
+          this.props.fetchEntitlementById && this.props.fetchEntitlementById(payload)
           // eslint-disable-next-line
           toastr.success('The ' + this.props.entitlement.resources[0].name + ' was successfully updated', 'Good Stuff!')
         } else {

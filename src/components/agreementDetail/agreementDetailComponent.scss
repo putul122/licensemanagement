@@ -85,3 +85,12 @@ h4{
     font-weight: bold;
     color:#000000;
 }
+h5{
+    font-weight: bold;
+}
+
+.disabled {
+    /* Make the disabled links grayish*/
+    color: gray;
+    pointer-events: none;
+}
