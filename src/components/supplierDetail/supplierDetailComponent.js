@@ -73,7 +73,7 @@ export default function Suppliers (props) {
         supplierApplicationList = props.supplierApplications.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td>{data.name}</td>
+              <td><a href={'/applications/' + data.id} >{data.name}</a></td>
               <td>{data.stage}</td>
               <td>{data.owner}</td>
               <td>{'R ' + formatAmount(data.cost)}</td>
@@ -96,7 +96,7 @@ export default function Suppliers (props) {
         supplierAgreementList = props.supplierAgreements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td>{data.name}</td>
+              <td><a href={'/agreements/' + data.id} >{data.name}</a></td>
               <td>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
               <td>{data.agreement_type}</td>
               <td>{data.entitlement_count}</td>
@@ -120,7 +120,7 @@ export default function Suppliers (props) {
         supplierSoftwareList = props.supplierSoftwares.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td>{data.name}</td>
+              <td><a href={'/softwares/' + data.id} >{data.name}</a></td>
               <td>{'R ' + formatAmount(data.cost)}</td>
             </tr>
           )
