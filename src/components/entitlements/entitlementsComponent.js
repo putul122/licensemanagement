@@ -1,7 +1,6 @@
 import React from 'react'
-// import ApplicationsSummaryData from '../../mockData/mockGetApplicationsSummary'
-// import ApplicationsData from '../../mockData/mockGetApplications'
 import _ from 'lodash'
+import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
 import styles from './entitlementsComponent.scss'
@@ -87,24 +86,26 @@ export default function Entitlementlists (props) {
     if (found.length > 0) { return group }
   })
 
-  let handleInputChange = function (event) {
+  let handleInputChange = debounce((e) => {
+    console.log(e)
+    const value = searchTextBox.value
     entitlementsList = ''
     let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
+      'search': value || '',
       'page_size': 10,
       'page': currentPage
     }
-    if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
       props.fetchEntitlements(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // props.setComponentTypeLoading(true)
-    }
+    // }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage})
       if (found.length > 0) { return group }
     })
-  }
+  }, 500)
   let handlePage = function (page) {
     if (page === 1) {
       previousClass = 'm-datatable__pager-link--disabled'
@@ -273,7 +274,7 @@ return (
       <div className='row'>
         <div className={'col-md-3'}>
           <div className='m-input-icon m-input-icon--left'>
-            <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
+            <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
             <span className='m-input-icon__icon m-input-icon__icon--left'>
               <span>
                 <i className='la la-search' />

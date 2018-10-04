@@ -1416,7 +1416,7 @@ export default function EntitlementDetail (props) {
                     </button>
                   </div>
                   <div className='modal-body' style={{'height': 'calc(50vh - 65px)', 'overflow': 'auto'}}>
-                    { props.relationshipActionSettings.actionType === 'edit' && componentRelationshipPropertiesList !== '' && (
+                    {props.relationshipActionSettings.actionType === 'edit' && componentRelationshipPropertiesList !== '' && (
                     <table className={'table ' + styles.borderless}>
                       {componentRelationshipPropertiesList}
                     </table>

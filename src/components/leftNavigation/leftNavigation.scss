@@ -23,7 +23,7 @@
     // bottom:0;
     height:100%;
     // left:0;
-    width:65px;
+    width:70px;
     overflow:hidden;
     -webkit-transition:width .05s linear;
     transition:width .05s linear;
@@ -64,6 +64,15 @@
     transition:all .1s linear;
       
     }
+    .mainmenu li>a:hover {
+        color:#00c5dc;
+     }
+    //  .mainmenu li:hover {
+    //  background-color: #000000;
+    //  position:relative;
+    //  display:block;
+    //  padding-top: 40px;
+    //     }
     
     .mainmenu .nav-icon {
     position:relative;

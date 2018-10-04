@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {defaults, Doughnut, Bar} from 'react-chartjs-2'
+import './dashboardComponent.scss'
 import _ from 'lodash'
 // import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
 // import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
@@ -298,27 +299,13 @@ export default function Dashboard (props) {
         <div className='col-md-8'>
           <div className='row' id='supplierSummary'>
             <div className='col-md-6'>
-              {/* <div className='m-portlet m-portlet--full-height'>
-                <div className='m-portlet__body'>
-                  <div className='m-widget12'>
-                    <div className='m-widget12__item'>
-                      <span className='m-widget12__text1'>
-                        <h4><a href='/suppliers'>Suppliers</a></h4>
-                      </span>
-                      <span className='m-widget12__text1'>
-                        <h4 style={{'float': 'right'}}>{supplierCount}</h4>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
               <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
                 <div className='m-portlet__head'>
                   <div className='m-portlet__head-caption'>
                     <div className='m-portlet__head-title'>
-                      {/* <h3 className='m-portlet__head-text m--font-light'>
+                      <h3 className='m-portlet__head-text m--font-light'>
                         Activity
-                      </h3> */}
+                      </h3>
                     </div>
                   </div>
                 </div>
@@ -340,7 +327,7 @@ export default function Dashboard (props) {
                             <i className='flaticon-truck m--font-brand' />
                           </span>
                           <span className='m-widget17__subtitle'>
-                            <h3>Suppliers</h3>
+                            <h3><a href='/suppliers'>Suppliers</a></h3>
                           </span>
                           <span className='m-widget17__desc'>
                             <h5>{supplierCount}</h5>
@@ -378,7 +365,7 @@ export default function Dashboard (props) {
           </div>
           <div className='row' id='agreementSummary'>
             <div className='col-md-6'>
-              <div className='m-portlet m-portlet--full-height'>
+              {/* <div className='m-portlet m-portlet--full-height'>
                 <div className='m-portlet__body'>
                   <div className='m-widget12'>
                     <div className='m-widget12__item'>
@@ -390,6 +377,44 @@ export default function Dashboard (props) {
                       <span className='m-widget12__text1'>
                         <h4 style={{'float': 'right'}}>{agreementCount}</h4>
                       </span>
+                    </div>
+                  </div>
+                </div>
+              </div> */}
+              <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+                <div className='m-portlet__head'>
+                  <div className='m-portlet__head-caption'>
+                    <div className='m-portlet__head-title'>
+                      <h3 className='m-portlet__head-text m--font-light'>
+                        Activity
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+                <div className='m-portlet__body'>
+                  <div className='m-widget17'>
+                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                      <div className='m-widget17__chart'>
+                        <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                          <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                          <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                            <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                        <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                      </div>
+                    </div>
+                    <div className='m-widget17__stats'>
+                      <div className='m-widget17__items m-widget17__items-col2'>
+                        <div className='m-widget17__item'>
+                          <span className='m-widget17__icon'>
+                            <i className='flaticon-business m--font-brand' />
+                            <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{agreementCount}</h4>
+                          </span>
+                          <span className='m-widget17__subtitle'>
+                            <h3><a href='/agreements'>Agreements</a></h3>
+                            <h4>R {formatAmount(agreementCost)}</h4>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -444,7 +469,7 @@ export default function Dashboard (props) {
         <div className='col-md-8'>
           <div className='row' id='applicationSummary'>
             <div className='col-md-6'>
-              <div className='m-portlet m-portlet--full-height'>
+              {/* <div className='m-portlet m-portlet--full-height'>
                 <div className='m-portlet__body'>
                   <div className='m-widget12'>
                     <div className='m-widget12__item'>
@@ -456,6 +481,44 @@ export default function Dashboard (props) {
                       <span className='m-widget12__text1'>
                         <h4 style={{'float': 'right'}}>{applicationCount}</h4>
                       </span>
+                    </div>
+                  </div>
+                </div>
+              </div> */}
+              <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+                <div className='m-portlet__head'>
+                  <div className='m-portlet__head-caption'>
+                    <div className='m-portlet__head-title'>
+                      <h3 className='m-portlet__head-text m--font-light'>
+                        Activity
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+                <div className='m-portlet__body'>
+                  <div className='m-widget17'>
+                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                      <div className='m-widget17__chart'>
+                        <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                          <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                          <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                            <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                        <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                      </div>
+                    </div>
+                    <div className='m-widget17__stats'>
+                      <div className='m-widget17__items m-widget17__items-col2'>
+                        <div className='m-widget17__item'>
+                          <span className='m-widget17__icon'>
+                            <i className='flaticon-folder-4 m--font-brand' />
+                            <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{applicationCount}</h4>
+                          </span>
+                          <span className='m-widget17__subtitle'>
+                            <h3><a href='/applications'>Applications</a></h3>
+                            <h4>R {formatAmount(applicationCost)}</h4>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './suppliersComponent.scss'
-import './style.css'
+import debounce from 'lodash/debounce'
 import {defaults, Doughnut} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -102,24 +102,26 @@ export default function Suppliers (props) {
     if (found.length > 0) { return group }
   })
 
-  let handleInputChange = function (event) {
+  let handleInputChange = debounce((e) => {
+    console.log(e)
+    const value = searchTextBox.value
     suppliersList = ''
     let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
+      'search': value || '',
       'page_size': 10,
       'page': currentPage
     }
-    if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
       props.fetchSuppliers(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    }
+    // }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage})
       if (found.length > 0) { return group }
     })
-  }
+  }, 500)
   let handlePage = function (page) {
     if (page === 1) {
       previousClass = 'm-datatable__pager-link--disabled'
@@ -281,7 +283,7 @@ export default function Suppliers (props) {
       <div>
         <div className='row' id='supplierSummary' >
           <div className='col-md-4'>
-            <div className='m-portlet m-portlet--full-height'>
+            {/* <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
@@ -294,10 +296,49 @@ export default function Suppliers (props) {
                   </div>
                 </div>
               </div>
+            </div> */}
+            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+              <div className='m-portlet__head'>
+                <div className='m-portlet__head-caption'>
+                  <div className='m-portlet__head-title'>
+                    <h3 className='m-portlet__head-text m--font-light'>
+                      Activity
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div className='m-portlet__body'>
+                <div className='m-widget17'>
+                  <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                    <div className='m-widget17__chart'>
+                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                        <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                          <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                      <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                    </div>
+                  </div>
+                  <div className='m-widget17__stats'>
+                    <div className='m-widget17__items m-widget17__items-col2'>
+                      <div className='m-widget17__item'>
+                        <span className='m-widget17__icon'>
+                          <i className='flaticon-truck m--font-brand' />
+                        </span>
+                        <span className='m-widget17__subtitle'>
+                          <h3><a href='/suppliers'>Suppliers</a></h3>
+                        </span>
+                        <span className='m-widget17__desc'>
+                          <h5>{supplierCount}</h5>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className='col-md-4'>
-            <div className='m-portlet m-portlet--full-height'>
+            {/* <div className='m-portlet m-portlet--full-height'>
               <div className='m-portlet__body'>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
@@ -309,6 +350,44 @@ export default function Suppliers (props) {
                     <span className='m-widget12__text2'>
                       <h2>{agreementCount}</h2>
                     </span>
+                  </div>
+                </div>
+              </div>
+            </div> */}
+            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+              <div className='m-portlet__head'>
+                <div className='m-portlet__head-caption'>
+                  <div className='m-portlet__head-title'>
+                    <h3 className='m-portlet__head-text m--font-light'>
+                      Activity
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div className='m-portlet__body'>
+                <div className='m-widget17'>
+                  <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                    <div className='m-widget17__chart'>
+                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                        <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                          <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                      <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                    </div>
+                  </div>
+                  <div className='m-widget17__stats'>
+                    <div className='m-widget17__items m-widget17__items-col2'>
+                      <div className='m-widget17__item'>
+                        <span className='m-widget17__icon'>
+                          <i className='flaticon-business m--font-brand' />
+                          <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{agreementCount}</h4>
+                        </span>
+                        <span className='m-widget17__subtitle'>
+                          <h3><a href='/agreements'>Agreements</a></h3>
+                          <h5>R {formatAmount(supplierAgreementCost)}</h5>
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -341,7 +420,7 @@ export default function Suppliers (props) {
           <div className='row'>
             <div className={'col-md-3'}>
               <div className='m-input-icon m-input-icon--left'>
-                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
+                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
                 <span className='m-input-icon__icon m-input-icon__icon--left'>
                   <span>
                     <i className='la la-search' />

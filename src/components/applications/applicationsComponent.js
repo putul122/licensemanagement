@@ -1,10 +1,8 @@
 import React from 'react'
-// import ApplicationsSummaryData from '../../mockData/mockGetApplicationsSummary'
-// import ApplicationsData from '../../mockData/mockGetApplications'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import styles from './applicationsComponent.scss'
-import './style.css'
+import debounce from 'lodash/debounce'
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -32,19 +30,6 @@ export default function Applicationlists (props) {
 
   if (props.application && props.application !== '') {
     let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
-    // applicationList = props.application.resources.map(function (data, index) {
-    //   return (
-    //     <tr key={index}>
-    //       <td><button onClick={handleClick}>+</button><a href={'/applications/' + data.id} >{data.name}</a></td>
-    //       <td>{''}</td>
-    //       <td>{data.supplied_by}</td>
-    //       <td>{data.managed_by}</td>
-    //       <td>{data.stage}</td>
-    //       <td>{data.owner}</td>
-    //       <td>{data.cost}</td>
-    //     </tr>
-    //   )
-    // })
     applicationList = sortedArray.map(function (data, index) {
       return (
         <tbody>
@@ -86,27 +71,29 @@ export default function Applicationlists (props) {
     if (found.length > 0) { return group }
   })
 
-  let handleInputChange = function (event) {
+  let handleInputChange = debounce((e) => {
+    console.log(e)
+    const value = searchTextBox.value
     applicationList = ''
     let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
+      'search': value || '',
       'page_size': 10,
       'page': currentPage
     }
-    if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchApplications(payload)
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+    props.fetchApplications(payload)
      // eslint-disable-next-line
-     mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
      // eslint-disable-next-line
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // props.setComponentTypeLoading(true)
-    }
+    // }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage})
       if (found.length > 0) { return group }
     })
-  }
+  }, 500)
   let handlePage = function (page) {
     if (page === 1) {
       previousClass = 'm-datatable__pager-link--disabled'
@@ -328,13 +315,15 @@ return (
     <div id='applicationList'>
       <div className='row'>
         <div className={'col-md-3'}>
-          <div className='m-input-icon m-input-icon--left'>
-            <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
-            <span className='m-input-icon__icon m-input-icon__icon--left'>
-              <span>
-                <i className='la la-search' />
+          <div>
+            <div className='m-input-icon m-input-icon--left'>
+              <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
+              <span className='m-input-icon__icon m-input-icon__icon--left'>
+                <span>
+                  <i className='la la-search' />
+                </span>
               </span>
-            </span>
+            </div>
           </div>
         </div>
       </div>
