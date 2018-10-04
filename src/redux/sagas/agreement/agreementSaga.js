@@ -309,7 +309,7 @@ export function * getComponentConstraints (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.get,
-      api.getComponentConstraints(action.payload.agreement_id)
+      api.getComponentConstraints(action.payload.id)
     )
     yield put(actionCreators.fetchComponentConstraintsSuccess(componentTypes.data))
   } catch (error) {

@@ -95,9 +95,6 @@ export default function Applicationlists (props) {
     }
     if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
       props.fetchApplications(payload)
-     // eslint-disable-next-line
-     mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-     // eslint-disable-next-line
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // props.setComponentTypeLoading(true)
@@ -121,9 +118,6 @@ export default function Applicationlists (props) {
     }
     props.fetchApplications(payload)
     // eslint-disable-next-line
-    mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // eslint-disable-next-line
-    // eslint-disable-next-line
     // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     props.setCurrentPage(page)
 
@@ -144,9 +138,6 @@ export default function Applicationlists (props) {
         'page': currentPage - 1
       }
       props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // eslint-disable-next-line
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage - 1)
@@ -169,9 +160,6 @@ export default function Applicationlists (props) {
       }
       applicationList = ''
       props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // eslint-disable-next-line
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage + 1)
@@ -282,7 +270,7 @@ export default function Applicationlists (props) {
             <td>{data.managed_by}</td>
             <td>{data.stage}</td>
             <td>{data.owner}</td>
-            <td>{'R ' + formatAmount(data.cost)}</td>
+            <td>{data.cost}</td>
           </tr>
           {childList}
         </tbody>
