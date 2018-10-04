@@ -93,6 +93,9 @@ let handleInputChange = function (event) {
   if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
     props.fetchSoftwares(payload)
     // eslint-disable-next-line
+    mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    // eslint-disable-next-line
     // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     // props.setComponentTypeLoading(true)
   }
@@ -115,7 +118,8 @@ let handlePage = function (page) {
   }
   props.fetchSoftwares(payload)
   // eslint-disable-next-line
-  // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  // eslint-disable-next-line
   props.setCurrentPage(page)
 
   listPage = _.filter(pageArray, function (group) {
@@ -135,8 +139,9 @@ let handlePrevious = function (event) {
       'page': currentPage - 1
     }
     props.fetchSoftwares(payload)
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  // eslint-disable-next-line
+  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  // eslint-disable-next-line
     props.setCurrentPage(currentPage - 1)
   }
   listPage = _.filter(pageArray, function (group) {
@@ -157,8 +162,9 @@ let handleNext = function (event) {
     }
     softwareList = ''
     props.fetchSoftwares(payload)
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+   // eslint-disable-next-line
+   mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+   // eslint-disable-next-line
     props.setCurrentPage(currentPage + 1)
   }
   listPage = _.filter(pageArray, function (group) {

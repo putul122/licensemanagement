@@ -6,3 +6,7 @@ a.disabled {
     color: gray;
     pointer-events: none;
 }
+a:hover{
+    color: unset;
+    text-decoration: none;
+}
