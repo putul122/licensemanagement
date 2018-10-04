@@ -99,7 +99,7 @@ export default function Softwareview (props) {
       if (parent.length > 0) {
         let childElementList = parent.map(function (element, i) {
         return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+          <div className='col-md-10'><span>{element.target_component.name}</span></div>
         </span>)
       })
       return (
@@ -124,7 +124,7 @@ export default function Softwareview (props) {
       if (child.length > 0) {
         let childElementList = child.map(function (element, i) {
         return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+          <div className='col-md-10'><span>{element.target_component.name}</span></div>
         </span>)
       })
       return (
@@ -162,7 +162,7 @@ export default function Softwareview (props) {
                 innerKey++
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+                    <div className='col-md-10'><span>{element.target_component.name}</span></div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
@@ -206,7 +206,7 @@ export default function Softwareview (props) {
                 innerKey++
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+                    <div className='col-md-10'><span>{element.target_component.name}</span></div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
@@ -284,7 +284,7 @@ export default function Softwareview (props) {
                   <a className='nav-link active show' data-toggle='tab' href='#m_tabs_3_1'>Properties</a>
                 </li>
                 <li className='nav-item'>
-                  <a className='nav-link' data-toggle='tab' href='#m_tabs_3_2'>RelationShips</a>
+                  <a className='nav-link' data-toggle='tab' href='#m_tabs_3_2'>Relationships</a>
                 </li>
               </ul>
               <div className={styles.tabcontentborder}>

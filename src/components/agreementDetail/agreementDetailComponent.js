@@ -1444,7 +1444,7 @@ export default function AgreementDetail (props) {
                     </button>
                   </div>
                   <div className='modal-body' style={{'height': 'calc(50vh - 65px)', 'overflow': 'auto'}}>
-                    { componentRelationshipPropertiesList !== '' && (
+                    {props.relationshipActionSettings.actionType === 'edit' && componentRelationshipPropertiesList !== '' && (
                     <table className={'table ' + styles.borderless}>
                       {componentRelationshipPropertiesList}
                     </table>

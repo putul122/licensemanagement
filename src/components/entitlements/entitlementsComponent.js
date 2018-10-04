@@ -52,7 +52,7 @@ export default function Entitlementlists (props) {
       return (
         <tr key={index}>
           <td><a href={'/entitlements/' + data.id} >{data.name}</a></td>
-          <td>{data.supplier}</td>
+          <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
           <td>{data.purchased}</td>
           <td>{data.consumed}</td>
           <td>{'R ' + formatAmount(data.cost)}</td>
