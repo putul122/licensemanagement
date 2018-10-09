@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {defaults, Doughnut, Bar} from 'react-chartjs-2'
-import './dashboardComponent.scss'
+import styles from './dashboardComponent.scss'
 import _ from 'lodash'
+console.log(styles)
 // import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
 // import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
 defaults.global.legend.display = false
@@ -29,87 +30,252 @@ export default function Dashboard (props) {
   let selectOptionList = ''
   let costByTechnology = []
   let softwareSummaryData = {}
-  // let chartOptions = {
-  //   'responsive': true,
-  //   'hover': {
-  //     'mode': 'x',
-  //     'intersect': false
-  //   },
-  //   'tooltips': {
-  //     'enabled': false,
-  //     // 'mode': 'x',
-  //     // 'intersect': true,
-  //     'custom': (tooltipModel) => {
-  //       // Tooltip Element
-  //       var tooltipEl = document.getElementById('chartjs-tooltip')
+  let chartOptionSupplier = {
+    'responsive': true,
+    'tooltips': {
+      'enabled': false,
+      'custom': (tooltipModel) => {
+        console.log(tooltipModel)
+        console.log(this)
+        // Tooltip Element
+        var tooltipEl = document.getElementById('chartjs-tooltip')
+        // Create element on first render
+        if (!tooltipEl) {
+          tooltipEl = document.createElement('div')
+          tooltipEl.id = 'chartjs-tooltip'
+          tooltipEl.innerHTML = '<table></table>'
+          document.body.appendChild(tooltipEl)
+        }
+        // hide the tooltip
+        if (tooltipModel.opacity === 0) {
+          tooltipEl.style.opacity = 0
+          return
+        }
+        // Set caret Position
+        tooltipEl.classList.remove('above', 'below', 'no-transform')
+        if (tooltipModel.yAlign) {
+            tooltipEl.classList.add(tooltipModel.yAlign)
+        } else {
+            tooltipEl.classList.add('no-transform')
+        }
+        function getBody (bodyItem) {
+          return bodyItem.lines
+        }
+        // Set Text
+        if (tooltipModel.body) {
+          var titleLines = tooltipModel.title || []
+          var bodyLines = tooltipModel.body.map(getBody)
 
-  //       // Create element on first render
-  //       if (!tooltipEl) {
-  //         tooltipEl = document.createElement('div')
-  //         tooltipEl.id = 'chartjs-tooltip'
-  //         tooltipEl.innerHTML = '<table></table>'
-  //         document.body.appendChild(tooltipEl)
-  //       }
-  //       // hide the tooltip
-  //       if (tooltipModel.opacity === 0) {
-  //         tooltipEl.style.opacity = 0
-  //         // this.hide()
-  //         return
-  //       }
+          var innerHtml = '<thead>'
 
-  //       // Set caret Position
-  //       tooltipEl.classList.remove('above', 'below', 'no-transform')
-  //       if (tooltipModel.yAlign) {
-  //           tooltipEl.classList.add(tooltipModel.yAlign)
-  //       } else {
-  //           tooltipEl.classList.add('no-transform')
-  //       }
+          titleLines.forEach(function (title) {
+            innerHtml += '<tr><th>' + title + '</th></tr>'
+          })
+          innerHtml += '</thead><tbody>'
+          bodyLines.forEach(function (body, i) {
+            let parts = body.toString().split(':')
+            let toolBody = []
+            toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            var colors = tooltipModel.labelColors[i]
+            var style = 'background:' + colors.backgroundColor
+            style += '; border-color:' + colors.borderColor
+            style += '; border-width: 2px'
+            var span = '<span class="' + styles['chartjs-tooltip-key'] + '" style="' + style + '"></span>'
+            innerHtml += '<tr><td>' + span + toolBody + '</td></tr>'
+          })
+          innerHtml += '</tbody>'
 
-  //       function getBody (bodyItem) {
-  //           return bodyItem.lines
-  //       }
+          var tableRoot = tooltipEl.querySelector('table')
+          tableRoot.innerHTML = innerHtml
+        }
+        // eslint-disable-next-line
+        var position = $('#supplierChart').offset()
+        // Display, position, and set styles for font
+        // eslint-disable-next-line
+        // $('#chartjs-tooltip').addClass(styles['chartjs-tooltip'])
+        tooltipEl.classList.add(styles['chartjs-tooltip'])
+        tooltipEl.style.opacity = 1
+        tooltipEl.style.position = 'absolute'
+        tooltipEl.style.background = 'rgba(0, 0, 0, .7)'
+        tooltipEl.style.color = 'white'
+        tooltipEl.style.borderRadius = '3px'
+        tooltipEl.style.webkitTransition = 'all .1s ease'
+        tooltipEl.style.transition = 'all .1s ease'
+        tooltipEl.style.pointerEvents = 'none'
+        tooltipEl.style.transform = 'translate(-50%, 0)'
+        tooltipEl.style.left = position.left + tooltipModel.caretX + 'px'
+        tooltipEl.style.top = position.top + tooltipModel.caretY + 'px'
+        tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+        tooltipEl.style.fontSize = tooltipModel.bodyFontSize
+        tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+        tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
+      }
+    }
+  }
+  let chartOptionAgreement = {
+    'responsive': true,
+    'tooltips': {
+      'enabled': false,
+      'custom': (tooltipModel) => {
+        console.log(tooltipModel)
+        console.log(this)
+        // Tooltip Element
+        var tooltipEl = document.getElementById('chartjs-tooltip')
+        // Create element on first render
+        if (!tooltipEl) {
+          tooltipEl = document.createElement('div')
+          tooltipEl.id = 'chartjs-tooltip'
+          tooltipEl.innerHTML = '<table></table>'
+          document.body.appendChild(tooltipEl)
+        }
+        // hide the tooltip
+        if (tooltipModel.opacity === 0) {
+          tooltipEl.style.opacity = 0
+          return
+        }
+        // Set caret Position
+        tooltipEl.classList.remove('above', 'below', 'no-transform')
+        if (tooltipModel.yAlign) {
+            tooltipEl.classList.add(tooltipModel.yAlign)
+        } else {
+            tooltipEl.classList.add('no-transform')
+        }
+        function getBody (bodyItem) {
+          return bodyItem.lines
+        }
+        // Set Text
+        if (tooltipModel.body) {
+          var titleLines = tooltipModel.title || []
+          var bodyLines = tooltipModel.body.map(getBody)
 
-  //       // Set Text
-  //       if (tooltipModel.body) {
-  //           var titleLines = tooltipModel.title || []
-  //           var bodyLines = tooltipModel.body.map(getBody)
+          var innerHtml = '<thead>'
 
-  //           var innerHtml = '<thead>'
+          titleLines.forEach(function (title) {
+            innerHtml += '<tr><th>' + title + '</th></tr>'
+          })
+          innerHtml += '</thead><tbody>'
+          bodyLines.forEach(function (body, i) {
+            let parts = body.toString().split(':')
+            let toolBody = []
+            toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            var colors = tooltipModel.labelColors[i]
+            var style = 'background:' + colors.backgroundColor
+            style += '; border-color:' + colors.borderColor
+            style += '; border-width: 2px'
+            var span = '<span class="' + styles['chartjs-tooltip-key'] + '" style="' + style + '"></span>'
+            innerHtml += '<tr><td>' + span + toolBody + '</td></tr>'
+          })
+          innerHtml += '</tbody>'
 
-  //           titleLines.forEach(function (title) {
-  //               innerHtml += '<tr><th>' + title + '</th></tr>'
-  //           })
-  //           innerHtml += '</thead><tbody>'
+          var tableRoot = tooltipEl.querySelector('table')
+          tableRoot.innerHTML = innerHtml
+        }
+        // eslint-disable-next-line
+        var position = $('#agreementChart').offset()
+        // Display, position, and set styles for font
+        // eslint-disable-next-line
+        // $('#chartjs-tooltip').addClass(styles['chartjs-tooltip'])
+        tooltipEl.classList.add(styles['chartjs-tooltip'])
+        tooltipEl.style.opacity = 1
+        tooltipEl.style.position = 'absolute'
+        tooltipEl.style.background = 'rgba(0, 0, 0, .7)'
+        tooltipEl.style.color = 'white'
+        tooltipEl.style.borderRadius = '3px'
+        tooltipEl.style.webkitTransition = 'all .1s ease'
+        tooltipEl.style.transition = 'all .1s ease'
+        tooltipEl.style.pointerEvents = 'none'
+        tooltipEl.style.transform = 'translate(-50%, 0)'
+        tooltipEl.style.left = position.left + tooltipModel.caretX + 'px'
+        tooltipEl.style.top = position.top + tooltipModel.caretY + 'px'
+        tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+        tooltipEl.style.fontSize = tooltipModel.bodyFontSize
+        tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+        tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
+      }
+    }
+  }
+  let chartOptionApplication = {
+    'responsive': true,
+    'tooltips': {
+      'enabled': false,
+      'custom': (tooltipModel) => {
+        console.log(tooltipModel)
+        console.log(this)
+        // Tooltip Element
+        var tooltipEl = document.getElementById('chartjs-tooltip')
+        // Create element on first render
+        if (!tooltipEl) {
+          tooltipEl = document.createElement('div')
+          tooltipEl.id = 'chartjs-tooltip'
+          tooltipEl.innerHTML = '<table></table>'
+          document.body.appendChild(tooltipEl)
+        }
+        // hide the tooltip
+        if (tooltipModel.opacity === 0) {
+          tooltipEl.style.opacity = 0
+          return
+        }
+        // Set caret Position
+        tooltipEl.classList.remove('above', 'below', 'no-transform')
+        if (tooltipModel.yAlign) {
+            tooltipEl.classList.add(tooltipModel.yAlign)
+        } else {
+            tooltipEl.classList.add('no-transform')
+        }
+        function getBody (bodyItem) {
+          return bodyItem.lines
+        }
+        // Set Text
+        if (tooltipModel.body) {
+          var titleLines = tooltipModel.title || []
+          var bodyLines = tooltipModel.body.map(getBody)
 
-  //           bodyLines.forEach(function (body, i) {
-  //               var colors = tooltipModel.labelColors[i]
-  //               var style = 'background:' + colors.backgroundColor
-  //               style += '; border-color:' + colors.borderColor
-  //               style += '; border-width: 2px'
-  //               var span = '<span style="' + style + '"></span>'
-  //               innerHtml += '<tr><td>' + span + body + '</td></tr>'
-  //           })
-  //           innerHtml += '</tbody>'
+          var innerHtml = '<thead>'
 
-  //           var tableRoot = tooltipEl.querySelector('table')
-  //           tableRoot.innerHTML = innerHtml
-  //       }
+          titleLines.forEach(function (title) {
+            innerHtml += '<tr><th>' + title + '</th></tr>'
+          })
+          innerHtml += '</thead><tbody>'
+          bodyLines.forEach(function (body, i) {
+            let parts = body.toString().split(':')
+            let toolBody = []
+            toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            var colors = tooltipModel.labelColors[i]
+            var style = 'background:' + colors.backgroundColor
+            style += '; border-color:' + colors.borderColor
+            style += '; border-width: 2px'
+            var span = '<span class="' + styles['chartjs-tooltip-key'] + '" style="' + style + '"></span>'
+            innerHtml += '<tr><td>' + span + toolBody + '</td></tr>'
+          })
+          innerHtml += '</tbody>'
 
-  //       // `this` will be the overall tooltip
-  //       var position = this._chart.canvas.getBoundingClientRect()
-
-  //       // Display, position, and set styles for font
-  //       tooltipEl.style.opacity = 1
-  //       tooltipEl.style.position = 'absolute'
-  //       tooltipEl.style.left = position.left + tooltipModel.caretX + 'px'
-  //       tooltipEl.style.top = position.top + tooltipModel.caretY + 'px'
-  //       tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
-  //       tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px'
-  //       tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
-  //       tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
-  //     }
-  //   }
-  // }
+          var tableRoot = tooltipEl.querySelector('table')
+          tableRoot.innerHTML = innerHtml
+        }
+        // eslint-disable-next-line
+        var position = $('#applicationChart').offset()
+        // Display, position, and set styles for font
+        // eslint-disable-next-line
+        // $('#chartjs-tooltip').addClass(styles['chartjs-tooltip'])
+        tooltipEl.classList.add(styles['chartjs-tooltip'])
+        tooltipEl.style.opacity = 1
+        tooltipEl.style.position = 'absolute'
+        tooltipEl.style.background = 'rgba(0, 0, 0, .7)'
+        tooltipEl.style.color = 'white'
+        tooltipEl.style.borderRadius = '3px'
+        tooltipEl.style.webkitTransition = 'all .1s ease'
+        tooltipEl.style.transition = 'all .1s ease'
+        tooltipEl.style.pointerEvents = 'none'
+        tooltipEl.style.transform = 'translate(-50%, 0)'
+        tooltipEl.style.left = position.left + tooltipModel.caretX + 'px'
+        tooltipEl.style.top = position.top + tooltipModel.caretY + 'px'
+        tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+        tooltipEl.style.fontSize = tooltipModel.bodyFontSize
+        tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+        tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
+      }
+    }
+  }
   let handleBlurChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -163,7 +329,8 @@ export default function Dashboard (props) {
         let labels = []
         let data = []
         for (let i = 0; i < 5; i++) {
-          labels.push(sortedCostByTechnology[i].name)
+          let names = sortedCostByTechnology[i].name.toString().split(' ')
+          labels.push(names)
           data.push(sortedCostByTechnology[i].cost)
         }
         softwareSummaryData = {
@@ -353,7 +520,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Doughnut width={180} data={supplierPieChartData} />
+                          <Doughnut id='supplierChart' ref='chart' width={180} data={supplierPieChartData} options={chartOptionSupplier} />
                         </span>
                       </div>
                       {/* <div className='m-widget12__text2'></div> */}
@@ -434,7 +601,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Doughnut width={180} data={agreementPieChartData} />
+                          <Doughnut id='agreementChart' width={180} data={agreementPieChartData} options={chartOptionAgreement} />
                         </span>
                       </div>
                     </div>
@@ -469,22 +636,6 @@ export default function Dashboard (props) {
         <div className='col-md-8'>
           <div className='row' id='applicationSummary'>
             <div className='col-md-6'>
-              {/* <div className='m-portlet m-portlet--full-height'>
-                <div className='m-portlet__body'>
-                  <div className='m-widget12'>
-                    <div className='m-widget12__item'>
-                      <span className='m-widget12__text1'>
-                        <h4><a href='/applications'>Applications</a></h4>
-                        <br /><br /><br /><br />
-                        <h4>R {formatAmount(applicationCost)}</h4>
-                      </span>
-                      <span className='m-widget12__text1'>
-                        <h4 style={{'float': 'right'}}>{applicationCount}</h4>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
               <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
                 <div className='m-portlet__head'>
                   <div className='m-portlet__head-caption'>
@@ -538,7 +689,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Doughnut width={180} data={applicationPieChartData} />
+                          <Doughnut id='applicationChart' width={180} data={applicationPieChartData} options={chartOptionApplication} />
                         </span>
                       </div>
                     </div>
