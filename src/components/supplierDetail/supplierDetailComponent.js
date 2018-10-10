@@ -350,7 +350,17 @@ export default function Suppliers (props) {
                     </div>
                     <div className='col'>
                       <span className='m-widget12__text2'>
-                        <Pie data={agreementPieChartData} />
+                        <Pie
+                          data={agreementPieChartData}
+                          options={{
+                            tooltips: {
+                              callbacks: {
+                                label: function (tooltipItem) {
+                                    return agreementPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(agreementPieChartData.datasets[0].data[tooltipItem.index])
+                                }
+                              }
+                            }
+                          }} />
                       </span>
                     </div>
                   </div>

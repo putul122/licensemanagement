@@ -7,6 +7,40 @@ let width = 1000
 let height = 600
 let diagramLayout
 let simulation
+function wrap (text, width) {
+    text.each(function () {
+        // eslint-disable-next-line
+        var text = d3.select(this),
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            x = text.attr('x'),
+            y = text.attr('y'),
+            dy = 0, // parseFloat(text.attr("dy")),
+            tspan = text.text(null)
+                        .append('tspan')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('dy', dy + 'em')
+        // eslint-disable-next-line
+        while (word = words.pop()) {
+            line.push(word)
+            tspan.text(line.join(' '))
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop()
+                tspan.text(line.join(' '))
+                line = [word]
+                tspan = text.append('tspan')
+                            .attr('x', x)
+                            .attr('y', y)
+                            .attr('dy', ++lineNumber * lineHeight + dy + 'em')
+                            .text(word)
+            }
+        }
+    })
+}
 
 function forceInitialize (graphData) {
     d3.selectAll('svg > *').remove()
@@ -160,6 +194,7 @@ function force (graphData) {
         .attr('font-size', function (node, i) { return node.fontSize })
         .attr('font-family', function (node, i) { return node.fontFamily })
         .text(function (d) { return d.name })
+        .call(wrap, 20)
     // nodeIcon.call(d3.drag()
     //   .on("start", dragstarted)
     //   .on("drag", dragged)

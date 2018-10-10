@@ -338,22 +338,6 @@ export default function Suppliers (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            {/* <div className='m-portlet m-portlet--full-height'>
-              <div className='m-portlet__body'>
-                <div className='m-widget12'>
-                  <div className='m-widget12__item'>
-                    <span className='m-widget12__text1'>
-                      <h2>Agreements&nbsp;&nbsp;&nbsp;</h2>
-                      <br /><br /><br /><br />
-                      <h4 className='pull-right'>R {formatAmount(supplierAgreementCost)}</h4>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <h2>{agreementCount}</h2>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
@@ -407,7 +391,20 @@ export default function Suppliers (props) {
                     </div>
                     <div className='col'>
                       <span className='m-widget12__text2'>
-                        <Doughnut width={180} data={supplierPieChartData} />
+                        <Doughnut
+                          id='supplierChart'
+                          // width={180}
+                          data={supplierPieChartData}
+                          options={{
+                            tooltips: {
+                              callbacks: {
+                                label: function (tooltipItem) {
+                                    return supplierPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(supplierPieChartData.datasets[0].data[tooltipItem.index])
+                                }
+                              }
+                            }
+                          }}
+                           />
                       </span>
                     </div>
                   </div>

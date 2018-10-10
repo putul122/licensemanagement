@@ -30,13 +30,65 @@ export default function Dashboard (props) {
   let selectOptionList = ''
   let costByTechnology = []
   let softwareSummaryData = {}
+  let chartOptionSoftware = {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Top 5 Technology'
+    },
+    maintainAspectRatio: true,
+    scales: {
+      yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            callback: function (label, index, labels) {
+              switch (label) {
+                case labels[0]:
+                  return 'R ' + formatAmount(label)
+                case labels[1]:
+                  return 'R ' + formatAmount(label)
+                case labels[2]:
+                  return 'R ' + formatAmount(label)
+                case labels[3]:
+                  return 'R ' + formatAmount(label)
+                case labels[4]:
+                  return 'R ' + formatAmount(label)
+              }
+            }
+          },
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Cost'
+          }
+      }],
+      xAxes: [{
+          ticks: {
+              autoSkip: false
+          },
+          display: true,
+          scaleLabel: {
+            display: true,
+            fontStyle: 'bold',
+            labelString: 'Software'
+          },
+          stacked: false
+      }]
+    },
+    'tooltips': {
+      callbacks: {
+        label: function (tooltipItem) {
+          console.log(tooltipItem)
+          return 'Cost: R ' + formatAmount(softwareSummaryData.datasets[0].data[tooltipItem.index])
+        }
+      }
+    }
+  }
   let chartOptionSupplier = {
     'responsive': true,
     'tooltips': {
       'enabled': false,
       'custom': (tooltipModel) => {
-        console.log(tooltipModel)
-        console.log(this)
         // Tooltip Element
         var tooltipEl = document.getElementById('chartjs-tooltip')
         // Create element on first render
@@ -75,7 +127,11 @@ export default function Dashboard (props) {
           bodyLines.forEach(function (body, i) {
             let parts = body.toString().split(':')
             let toolBody = []
-            toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            if (parts.length > 2) {
+              toolBody.push(parts[0] + ':' + parts[1] + ': R ' + formatAmount(parts[2].trim()))
+            } else {
+              toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            }
             var colors = tooltipModel.labelColors[i]
             var style = 'background:' + colors.backgroundColor
             style += '; border-color:' + colors.borderColor
@@ -117,8 +173,6 @@ export default function Dashboard (props) {
     'tooltips': {
       'enabled': false,
       'custom': (tooltipModel) => {
-        console.log(tooltipModel)
-        console.log(this)
         // Tooltip Element
         var tooltipEl = document.getElementById('chartjs-tooltip')
         // Create element on first render
@@ -157,7 +211,11 @@ export default function Dashboard (props) {
           bodyLines.forEach(function (body, i) {
             let parts = body.toString().split(':')
             let toolBody = []
-            toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            if (parts.length > 2) {
+              toolBody.push(parts[0] + ':' + parts[1] + ': R ' + formatAmount(parts[2].trim()))
+            } else {
+              toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            }
             var colors = tooltipModel.labelColors[i]
             var style = 'background:' + colors.backgroundColor
             style += '; border-color:' + colors.borderColor
@@ -199,8 +257,6 @@ export default function Dashboard (props) {
     'tooltips': {
       'enabled': false,
       'custom': (tooltipModel) => {
-        console.log(tooltipModel)
-        console.log(this)
         // Tooltip Element
         var tooltipEl = document.getElementById('chartjs-tooltip')
         // Create element on first render
@@ -239,7 +295,11 @@ export default function Dashboard (props) {
           bodyLines.forEach(function (body, i) {
             let parts = body.toString().split(':')
             let toolBody = []
-            toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            if (parts.length > 2) {
+              toolBody.push(parts[0] + ':' + parts[1] + ': R ' + formatAmount(parts[2].trim()))
+            } else {
+              toolBody.push(parts[0] + ': R ' + formatAmount(parts[1].trim()))
+            }
             var colors = tooltipModel.labelColors[i]
             var style = 'background:' + colors.backgroundColor
             style += '; border-color:' + colors.borderColor
@@ -329,8 +389,8 @@ export default function Dashboard (props) {
         let labels = []
         let data = []
         for (let i = 0; i < 5; i++) {
-          let names = sortedCostByTechnology[i].name.toString().split(' ')
-          labels.push(names)
+          // let names = sortedCostByTechnology[i].name.toString().split(' ')
+          labels.push(sortedCostByTechnology[i].name)
           data.push(sortedCostByTechnology[i].cost)
         }
         softwareSummaryData = {
@@ -707,78 +767,11 @@ export default function Dashboard (props) {
                   <div className='m-widget12__text1'>
                     <span className=''>
                       <Bar
+                        id='softwareChart'
                         data={softwareSummaryData}
                         width={200}
                         height={250}
-                        options={{
-                          responsive: true,
-                          title: {
-                            display: true,
-                            text: 'Top 5 Technology'
-                          },
-                          maintainAspectRatio: true,
-                          scales: {
-                            yAxes: [{
-                                ticks: {
-                                  beginAtZero: true,
-                                  callback: function (label, index, labels) {
-                                    switch (label) {
-                                      case labels[0]:
-                                        return 'R ' + formatAmount(label)
-                                      case labels[1]:
-                                        return 'R ' + formatAmount(label)
-                                      case labels[2]:
-                                        return 'R ' + formatAmount(label)
-                                      case labels[3]:
-                                        return 'R ' + formatAmount(label)
-                                      case labels[4]:
-                                        return 'R ' + formatAmount(label)
-                                    }
-                                  }
-                                },
-                                display: true,
-                                scaleLabel: {
-                                  display: true,
-                                  labelString: 'Cost'
-                                }
-                            }],
-                            // yAxes: [{
-                            //     ticks: {
-                            //         fontSize: 40
-                            //     }
-                            // }],
-                            xAxes: [{
-                                ticks: {
-                                    min: 0,
-                                    max: 5,
-                                    stepSize: 1,
-                                    suggestedMin: 0.5,
-                                    suggestedMax: 5.5,
-                                    callback: function (label, index, labels) {
-                                      switch (label) {
-                                        case labels[0]:
-                                            return label
-                                        case labels[1]:
-                                            return label
-                                        case labels[2]:
-                                            return label
-                                        case labels[3]:
-                                            return label
-                                        case labels[4]:
-                                            return label
-                                      }
-                                    }
-                                },
-                                display: true,
-                                scaleLabel: {
-                                  display: true,
-                                  fontStyle: 'bold',
-                                  labelString: 'Software'
-                                },
-                                stacked: false
-                            }]
-                          }
-                        }}
+                        options={chartOptionSoftware}
                       />
                       <br />
                       <h4><a href='/softwares'>Software per Technology Category</a></h4>

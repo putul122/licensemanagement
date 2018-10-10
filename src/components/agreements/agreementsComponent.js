@@ -369,7 +369,17 @@ export default function Agreements (props) {
                     </div>
                     <div className='col'>
                       <span className='m-widget12__text2'>
-                        <Doughnut data={agreementPieChartData} />
+                        <Doughnut data={agreementPieChartData}
+                          // width={280}
+                          options={{
+                            tooltips: {
+                              callbacks: {
+                                label: function (tooltipItem) {
+                                    return agreementPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(agreementPieChartData.datasets[0].data[tooltipItem.index])
+                                }
+                              }
+                            }
+                          }} />
                       </span>
                     </div>
                   </div>
