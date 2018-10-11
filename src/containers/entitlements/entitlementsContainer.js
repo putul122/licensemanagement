@@ -11,7 +11,8 @@ export function mapStateToProps (state, props) {
     entitlements: state.entitlementsReducer.entitlements,
     currentPage: state.entitlementsReducer.currentPage,
     addEntitlementResponse: state.entitlementsReducer.addEntitlementResponse,
-    modalIsOpen: state.basicReducer.modalIsOpen
+    modalIsOpen: state.basicReducer.modalIsOpen,
+    perPage: state.entitlementsReducer.perPage
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -19,6 +20,7 @@ export const propsMapping: Callbacks = {
   fetchEntitlementsSummary: sagaActions.entitlementActions.fetchEntitlementsSummary,
   fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
   setCurrentPage: actionCreators.setCurrentPage,
+  setPerPage: actionCreators.setPerPage,
   addEntitlement: sagaActions.entitlementActions.addEntitlement,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus
  }
@@ -91,6 +93,16 @@ export default compose(
           toastr.error(nextProps.addEntitlementResponse.error_message, nextProps.addEntitlementResponse.error_code)
         }
         this.props.resetResponse()
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
       }
     }
   })

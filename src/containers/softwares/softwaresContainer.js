@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     softwareSummary: state.softwaresReducer.softwareSummary,
     softwareAgreements: state.softwaresReducer.softwareAgreements,
     currentPage: state.softwaresReducer.currentPage,
-    expandSettings: state.softwaresReducer.expandSettings
+    expandSettings: state.softwaresReducer.expandSettings,
+    perPage: state.softwaresReducer.perPage
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -22,6 +23,7 @@ export const propsMapping: Callbacks = {
   fetchSoftwares: sagaActions.softwareActions.fetchSoftwares,
   fetchSoftwareAgreement: sagaActions.softwareActions.fetchSoftwareAgreement,
   setCurrentPage: actionCreators.setCurrentPage,
+  setPerPage: actionCreators.setPerPage,
   setExpandSettings: actionCreators.setExpandSettings,
   resetResponse: actionCreators.resetResponse
  }
@@ -69,6 +71,16 @@ export default compose(
       if (nextProps.softwareAgreements && nextProps.softwareAgreements !== this.props.softwareSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#softwareList')
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchSoftwares && this.props.fetchSoftwares(payload)
       }
     }
   })

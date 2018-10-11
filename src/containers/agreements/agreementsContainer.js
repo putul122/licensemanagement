@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     agreementsSummary: state.agreementsReducer.agreementsSummary,
     currentPage: state.agreementsReducer.currentPage,
     addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
-    addAgreementResponse: state.agreementDetailReducer.addAgreementResponse
+    addAgreementResponse: state.agreementDetailReducer.addAgreementResponse,
+    perPage: state.agreementsReducer.perPage
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -22,6 +23,7 @@ export const propsMapping: Callbacks = {
   fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
   addAgreement: sagaActions.agreementActions.addAgreement,
   setCurrentPage: actionCreators.setCurrentPage,
+  setPerPage: actionCreators.setPerPage,
   setAddAgreementSettings: actionCreators.setAddAgreementSettings
 }
 
@@ -101,6 +103,16 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblock('#agreementList')
         // mApp && mApp.unblockPage()
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchAgreements && this.props.fetchAgreements(payload)
       }
     }
   })

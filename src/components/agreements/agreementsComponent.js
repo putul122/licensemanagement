@@ -233,7 +233,13 @@ export default function Agreements (props) {
       if (found.length > 0) { return group }
     })
   }
-
+  let handleBlurdropdownChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handledropdownChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
     return (
       <div>
         <div className='row'>
@@ -391,34 +397,60 @@ export default function Agreements (props) {
         <div id='agreementList'>
           <div className='row'>
             <div className={'col-md-3'}>
-              <div className='m-input-icon m-input-icon--left'>
-                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
-                <span className='m-input-icon__icon m-input-icon__icon--left'>
-                  <span>
-                    <i className='la la-search' />
+              <div style={{'display': 'flex'}}>
+                <h5 style={{'margin': '10px'}}>Search</h5>
+                <div className='m-input-icon m-input-icon--left'>
+                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
+                  <span className='m-input-icon__icon m-input-icon__icon--left'>
+                    <span>
+                      <i className='la la-search' />
+                    </span>
                   </span>
-                </span>
+                </div>
               </div>
+            </div>
+            <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4 col-md-6 pull-right'>
+              {/* <div className='row'> */}
+              <div className='col-sm-12 col-md-6'>
+                <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
+                  <h5 style={{'margin': '8px'}}>Show</h5>
+                  <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <h5 style={{'margin': '8px'}}>Entries</h5>
+                  {/* </label> */}
+                </div>
+              </div>
+              {/* </div> */}
             </div>
           </div>
           {/* The table structure begins */}
           <div className='row' style={{'marginTop': '20px'}}>
             <div className='col-md-12'>
-              <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                <thead>
-                  <tr role='row'>
-                    <th className=''><h5># Agreements</h5></th>
-                    <th className=''><h5>Supplier</h5></th>
-                    <th className=''><h5>Expiry Date</h5></th>
-                    <th className=''><h5>Type</h5></th>
-                    <th className=''><h5># Entitlements</h5></th>
-                    <th className=''><h5>Cost</h5></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {agreementsList}
-                </tbody>
-              </table>
+              <div className='m_datatable' id='scrolling_vertical'>
+                <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
+                  <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '50vh'}}>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className=''><h5># Agreements</h5></th>
+                          <th className=''><h5>Supplier</h5></th>
+                          <th className=''><h5>Expiry Date</h5></th>
+                          <th className=''><h5>Type</h5></th>
+                          <th className=''><h5># Entitlements</h5></th>
+                          <th className=''><h5>Cost</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {agreementsList}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className='row col-md-12' id='scrolling_vertical'>
               <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
@@ -486,5 +518,6 @@ export default function Agreements (props) {
     agreements: PropTypes.any,
     agreementsSummary: PropTypes.any,
     currentPage: PropTypes.any,
-    addAgreementSettings: PropTypes.any
+    addAgreementSettings: PropTypes.any,
+    perPage: PropTypes.any
  }

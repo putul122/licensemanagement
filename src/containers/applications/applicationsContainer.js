@@ -12,7 +12,10 @@ export function mapStateToProps (state, props) {
     application: state.applicationsReducer.application,
     applicationSoftwares: state.applicationsReducer.applicationSoftwares,
     currentPage: state.applicationsReducer.currentPage,
-    expandSettings: state.applicationsReducer.expandSettings
+    expandSettings: state.applicationsReducer.expandSettings,
+    businessUnits: state.applicationsReducer.businessUnits,
+    defaultSelect: state.applicationsReducer.defaultSelect,
+    perPage: state.applicationsReducer.perPage
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -22,8 +25,11 @@ export const propsMapping: Callbacks = {
   fetchApplications: sagaActions.applicationActions.fetchApplications,
   fetchApplicationSoftwares: sagaActions.applicationActions.fetchApplicationSoftwares,
   setCurrentPage: actionCreators.setCurrentPage,
+  setPerPage: actionCreators.setPerPage,
   setExpandSettings: actionCreators.setExpandSettings,
-  resetResponse: actionCreators.resetResponse
+  resetResponse: actionCreators.resetResponse,
+  fetchBusinessUnits: sagaActions.basicActions.fetchBusinessUnits,
+  setDefaultSelect: actionCreators.setDefaultSelect
  }
 
 // If you want to use the function mapping
@@ -45,6 +51,7 @@ export default compose(
       }
       this.props.fetchApplications && this.props.fetchApplications(payload)
       this.props.fetchApplicationsSummary && this.props.fetchApplicationsSummary()
+      this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
     },
     componentDidMount: function () {
      // eslint-disable-next-line
@@ -70,6 +77,16 @@ export default compose(
       if (nextProps.applicationSoftwares && nextProps.applicationSoftwares !== this.props.applicationSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#applicationList')
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchApplications && this.props.fetchApplications(payload)
       }
     }
   })

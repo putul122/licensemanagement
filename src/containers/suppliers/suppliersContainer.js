@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     suppliersSummary: state.suppliersReducer.suppliersSummary,
     supplierSoftwares: state.suppliersReducer.supplierSoftwares,
     currentPage: state.suppliersReducer.currentPage,
-    expandSettings: state.suppliersReducer.expandSettings
+    expandSettings: state.suppliersReducer.expandSettings,
+    perPage: state.suppliersReducer.perPage
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -23,7 +24,8 @@ export const propsMapping: Callbacks = {
   fetchSupplierSoftwares: sagaActions.supplierActions.fetchSupplierSoftwares,
   setCurrentPage: actionCreators.setCurrentPage,
   setExpandSettings: actionCreators.setExpandSettings,
-  resetResponse: actionCreators.resetResponse
+  resetResponse: actionCreators.resetResponse,
+  setPerPage: actionCreators.setPerPage
 }
 
 // If you want to use the function mapping
@@ -71,6 +73,16 @@ export default compose(
       if (nextProps.supplierSoftwares && nextProps.supplierSoftwares !== this.props.suppliersSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierList')
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchSuppliers && this.props.fetchSuppliers(payload)
       }
     }
   })

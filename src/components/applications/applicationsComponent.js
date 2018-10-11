@@ -18,6 +18,7 @@ export default function Applicationlists (props) {
   let totalCost = ''
   let searchTextBox
   let applicationList = ''
+  let selectOptionList = ''
   let totalNoPages
   let perPage = 10
   let currentPage = props.currentPage
@@ -168,6 +169,13 @@ export default function Applicationlists (props) {
       if (found.length > 0) { return group }
     })
   }
+  let handleBlurdropdownChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handledropdownChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
   // applicationList = ApplicationsDatalist.map(function (application, index) {
   //   return (
   //     <tr key={index}>
@@ -276,12 +284,48 @@ export default function Applicationlists (props) {
       )
     })
   }
+  let handleBlurChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handleChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    if (parseInt(event.target.value) !== -111111) {
+      let payload = {
+        'business_unit_id': event.target.value,
+        'page_size': 10,
+        'page': 2
+      }
+      props.setDefaultSelect(event.target.value)
+      // eslint-disable-next-line
+      mApp.block('#applicationSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.fetchApplicationsSummary && props.fetchApplicationsSummary(payload)
+      props.fetchApplications && props.fetchApplications(payload)
+    }
+  }
+
+  if (props.businessUnits && props.businessUnits !== '') {
+    if (props.businessUnits.error_code === null) {
+      selectOptionList = props.businessUnits.resources.map(function (data, index) {
+        return (<option key={index} value={data.id} style={{'backgroundColor': '#ffffff', 'color': '#000000', 'fontSize': '13px'}}>{data.name}</option>)
+      })
+      selectOptionList.unshift(<option key={-111111} value={-111111}>{'Select Business Unit'}</option>)
+    }
+  }
 
 return (
   <div>
+    <div className='row' style={{'marginBottom': '20px'}}>
+      <div className={'col-md-3'}>
+        <select className='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onBlur={handleBlurChange} onChange={handleChange}>
+          {selectOptionList}
+        </select>
+      </div>
+    </div>
     <div className='row' id='applicationSummary'>
-      <div className='col-xl-4'>
-        <div className='m-portlet m-portlet--full-height'>
+      <div className='col-xl-6'>
+        {/* <div className='m-portlet m-portlet--full-height'>
           <div className='m-portlet__body'>
             <div className='m-widget12'>
               <div className='m-widget12__item'>
@@ -294,10 +338,50 @@ return (
               </div>
             </div>
           </div>
+        </div> */}
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+          <div className='m-portlet__head'>
+            <div className='m-portlet__head-caption'>
+              <div className='m-portlet__head-title'>
+                <h3 className='m-portlet__head-text m--font-light'>
+                 Activity
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div className='m-portlet__body'>
+            <div className='m-widget17'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                <div className='m-widget17__chart'>
+                  <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                    <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                    <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                  <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                </div>
+              </div>
+              <div className='m-widget17__stats'>
+                <div className='m-widget17__items m-widget17__items-col2'>
+                  <div className='m-widget17__item'>
+                    <span className='m-widget17__icon'>
+                      <i className='flaticon-file m--font-brand' />
+                    </span>
+                    <span className='m-widget17__subtitle'>
+                      <h1>Total </h1>
+                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{applicationCount}</h1>
+                    </span>
+                    {/* <span className='m-widget17__desc'>
+                      <h1>{softwareCount}</h1>
+                    </span> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className='col-md-offset-1 col-xl-5'>
-        <div className='m-portlet m-portlet--full-height'>
+      <div className='col-md-offset-1 col-xl-6'>
+        {/* <div className='m-portlet m-portlet--full-height'>
           <div className='m-portlet__body'>
             <div className='m-widget12'>
               <div className='m-widget12__item'>
@@ -309,13 +393,54 @@ return (
               </div>
             </div>
           </div>
+        </div> */}
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+          <div className='m-portlet__head'>
+            <div className='m-portlet__head-caption'>
+              <div className='m-portlet__head-title'>
+                <h3 className='m-portlet__head-text m--font-light'>
+                 Activity
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div className='m-portlet__body'>
+            <div className='m-widget17'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                <div className='m-widget17__chart'>
+                  <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                    <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                    <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                  <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                </div>
+              </div>
+              <div className='m-widget17__stats'>
+                <div className='m-widget17__items m-widget17__items-col2'>
+                  <div className='m-widget17__item'>
+                    <span className='m-widget17__icon'>
+                      <i className='flaticon-file m--font-brand' />
+                    </span>
+                    <span className='m-widget17__subtitle'>
+                      <h1>Total Cost</h1>
+                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'R' + formatAmount(totalCost)}</h1>
+                    </span>
+                    {/* <span className='m-widget17__desc'>
+                      <h1>{softwareCount}</h1>
+                    </span> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div id='applicationList'>
       <div className='row'>
         <div className={'col-md-3'}>
-          <div>
+          <div style={{'display': 'flex'}}>
+            <h5 style={{'margin': '10px'}}>Search</h5>
             <div className='m-input-icon m-input-icon--left'>
               <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
               <span className='m-input-icon__icon m-input-icon__icon--left'>
@@ -326,26 +451,49 @@ return (
             </div>
           </div>
         </div>
+        <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4 col-md-6 pull-right'>
+          {/* <div className='row'> */}
+          <div className='col-sm-12 col-md-6'>
+            <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
+              <h5 style={{'margin': '8px'}}>Show</h5>
+              <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <h5 style={{'margin': '8px'}}>Entries</h5>
+              {/* </label> */}
+            </div>
+          </div>
+          {/* </div> */}
+        </div>
       </div>
       {/* The table structure begins */}
       <div className='row' style={{'marginTop': '20px'}}>
         <div className='col-md-12'>
-          <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-            <thead>
-              <tr role='row'>
-                <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
-                <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                <th className='' style={{width: '108.25px'}}><h5>Supplied By</h5></th>
-                <th className='' style={{width: '137.25px'}}><h5>Managed By</h5></th>
-                <th className='' style={{width: '171.25px'}}><h5>Stage</h5></th>
-                <th className='' style={{width: '132.25px'}}><h5>Owner</h5></th>
-                <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th>
-              </tr>
-            </thead>
-            {/* <tbody> */}
-            {applicationList}
-            {/* </tbody> */}
-          </table>
+          <div className='m_datatable' id='scrolling_vertical'>
+            <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
+              <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '50vh'}}>
+                <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                  <thead>
+                    <tr role='row'>
+                      <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
+                      <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
+                      <th className='' style={{width: '108.25px'}}><h5>Supplied By</h5></th>
+                      <th className='' style={{width: '137.25px'}}><h5>Managed By</h5></th>
+                      <th className='' style={{width: '171.25px'}}><h5>Stage</h5></th>
+                      <th className='' style={{width: '132.25px'}}><h5>Owner</h5></th>
+                      <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th>
+                    </tr>
+                  </thead>
+                  {/* <tbody> */}
+                  {applicationList}
+                  {/* </tbody> */}
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -378,5 +526,7 @@ return (
   application: PropTypes.any,
   currentPage: PropTypes.any,
   applicationSoftwares: PropTypes.any,
-  expandSettings: PropTypes.any
+  expandSettings: PropTypes.any,
+  businessUnits: PropTypes.any,
+  perPage: PropTypes.any
  }

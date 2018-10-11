@@ -1,29 +1,38 @@
 import {createAction, handleActions} from 'redux-actions'
 import {FETCH_APPLICATIONS_SUMMARY_SUCCESS, FETCH_APPLICATIONS_SUCCESS, FETCH_APPLICATION_SOFTWARES_SUCCESS} from '../../sagas/application/applicationSaga'
 // import {FETCH_APPLICATIONS_SUCCESS} from '../../sagas/application/applicationSaga'
+import {FETCH_BUSINESS_UNITS_SUCCESS} from '../../sagas/basic/basicSaga'
 const SET_CURRENT_PAGE = 'applicationsReducer/SET_CURRENT_PAGE'
 const SET_EXPAND_SETTINGS = 'applicationsReducer/SET_EXPAND_SETTINGS'
 const RESET_RESPONSE = 'applicationsReducer/RESET_RESPONSE'
+const SET_DEFAULT_SELECT = 'applicationsReducer/SET_DEFAULT_SELECT'
+const SET_PER_PAGE = 'applicationsReducer/SET_PER_PAGE'
 
 export const actions = {
 FETCH_APPLICATIONS_SUMMARY_SUCCESS,
 FETCH_APPLICATIONS_SUCCESS,
 SET_CURRENT_PAGE,
 FETCH_APPLICATION_SOFTWARES_SUCCESS,
+FETCH_BUSINESS_UNITS_SUCCESS,
 SET_EXPAND_SETTINGS,
-RESET_RESPONSE
+RESET_RESPONSE,
+SET_DEFAULT_SELECT,
+SET_PER_PAGE
 }
 
 export const actionCreators = {
   setCurrentPage: createAction(SET_CURRENT_PAGE),
   setExpandSettings: createAction(SET_EXPAND_SETTINGS),
-  resetResponse: createAction(RESET_RESPONSE)
+  resetResponse: createAction(RESET_RESPONSE),
+  setDefaultSelect: createAction(SET_DEFAULT_SELECT),
+  setPerPage: createAction(SET_PER_PAGE)
 }
 
 export const initialState = {
    application: '',
    applicationSummary: '',
    applicationSoftwares: '',
+   businessUnits: '',
    currentPage: 1,
    expandSettings: {
     selectedId: '',
@@ -45,6 +54,10 @@ export default handleActions(
       ...state,
       currentPage: action.payload
     }),
+    [SET_PER_PAGE]: (state, action) => ({
+      ...state,
+      perPage: action.payload
+    }),
     [FETCH_APPLICATION_SOFTWARES_SUCCESS]: (state, action) => ({
       ...state,
       applicationSoftwares: action.payload
@@ -56,6 +69,14 @@ export default handleActions(
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       applicationSoftwares: {resources: []}
+    }),
+    [FETCH_BUSINESS_UNITS_SUCCESS]: (state, action) => ({
+      ...state,
+      businessUnits: action.payload
+    }),
+    [SET_DEFAULT_SELECT]: (state, action) => ({
+      ...state,
+      defaultSelect: action.payload
     })
   },
   initialState
