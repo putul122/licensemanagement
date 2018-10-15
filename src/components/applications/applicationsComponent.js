@@ -81,7 +81,7 @@ export default function Applicationlists (props) {
     applicationList = ''
     if (props.businessUnitId === '') {
       let payload = {
-        'search': value || null,
+        'search': value || '',
         'page_size': props.perPage,
         'page': currentPage
       }
