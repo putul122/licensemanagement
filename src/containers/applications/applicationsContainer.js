@@ -14,6 +14,7 @@ export function mapStateToProps (state, props) {
     currentPage: state.applicationsReducer.currentPage,
     expandSettings: state.applicationsReducer.expandSettings,
     businessUnits: state.applicationsReducer.businessUnits,
+    businessUnitId: state.applicationsReducer.businessUnitId,
     defaultSelect: state.applicationsReducer.defaultSelect,
     perPage: state.applicationsReducer.perPage
    }
@@ -26,6 +27,7 @@ export const propsMapping: Callbacks = {
   fetchApplicationSoftwares: sagaActions.applicationActions.fetchApplicationSoftwares,
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
+  setbusinessUnitId: actionCreators.setbusinessUnitId,
   setExpandSettings: actionCreators.setExpandSettings,
   resetResponse: actionCreators.resetResponse,
   fetchBusinessUnits: sagaActions.basicActions.fetchBusinessUnits,
@@ -45,8 +47,9 @@ export default compose(
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
+        // 'business_unit_id': 254460,
         'search': '',
-        'page_size': 10,
+        'page_size': this.props.perPage,
         'page': 1
       }
       this.props.fetchApplications && this.props.fetchApplications(payload)
@@ -88,6 +91,17 @@ export default compose(
         }
         this.props.fetchApplications && this.props.fetchApplications(payload)
       }
+      // if (nextProps.businessUnits && nextProps.businessUnits !== this.props.businessUnits) {
+      //   // eslint-disable-next-line
+      //   mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      //   let payload = {
+      //     'business_unit_id': nextProps.businessUnits.resources[0].id,
+      //     'search': '',
+      //     'page_size': 10,
+      //     'page': 1
+      //   }
+      //   this.props.fetchApplications && this.props.fetchApplications(payload)
+      // }
     }
   })
 )(ApplicationList)

@@ -29,6 +29,7 @@ export const initialState = {
   softwareSummary: '',
   currentPage: 1,
   softwareAgreements: '',
+  perPage: 10,
   expandSettings: {
     selectedId: '',
     expandFlag: false

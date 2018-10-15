@@ -7,6 +7,7 @@ const SET_EXPAND_SETTINGS = 'applicationsReducer/SET_EXPAND_SETTINGS'
 const RESET_RESPONSE = 'applicationsReducer/RESET_RESPONSE'
 const SET_DEFAULT_SELECT = 'applicationsReducer/SET_DEFAULT_SELECT'
 const SET_PER_PAGE = 'applicationsReducer/SET_PER_PAGE'
+const SET_BUSINESS_UNIT_ID = 'applicationsReducer/SET_BUSINESS_UNIT_ID'
 
 export const actions = {
 FETCH_APPLICATIONS_SUMMARY_SUCCESS,
@@ -17,7 +18,8 @@ FETCH_BUSINESS_UNITS_SUCCESS,
 SET_EXPAND_SETTINGS,
 RESET_RESPONSE,
 SET_DEFAULT_SELECT,
-SET_PER_PAGE
+SET_PER_PAGE,
+SET_BUSINESS_UNIT_ID
 }
 
 export const actionCreators = {
@@ -25,7 +27,8 @@ export const actionCreators = {
   setExpandSettings: createAction(SET_EXPAND_SETTINGS),
   resetResponse: createAction(RESET_RESPONSE),
   setDefaultSelect: createAction(SET_DEFAULT_SELECT),
-  setPerPage: createAction(SET_PER_PAGE)
+  setPerPage: createAction(SET_PER_PAGE),
+  setbusinessUnitId: createAction(SET_BUSINESS_UNIT_ID)
 }
 
 export const initialState = {
@@ -33,7 +36,9 @@ export const initialState = {
    applicationSummary: '',
    applicationSoftwares: '',
    businessUnits: '',
+   businessUnitId: '',
    currentPage: 1,
+   perPage: 10,
    expandSettings: {
     selectedId: '',
     expandFlag: false
@@ -77,6 +82,10 @@ export default handleActions(
     [SET_DEFAULT_SELECT]: (state, action) => ({
       ...state,
       defaultSelect: action.payload
+    }),
+    [SET_BUSINESS_UNIT_ID]: (state, action) => ({
+      ...state,
+      businessUnitId: action.payload
     })
   },
   initialState

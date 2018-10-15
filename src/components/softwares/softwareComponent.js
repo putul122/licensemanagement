@@ -17,12 +17,14 @@ export default function Softwarelists (props) {
 console.log('JSON data for Softwares', props.softwareSummary)
 console.log('softwarelist', props.software)
 console.log('props', props.expandSettings)
+console.log('******', props.perPage)
+console.log('&&&&', props.currentPage)
 let softwareCount
 let totalCost = ''
 let searchTextBox
 let softwareList = ''
 let totalNoPages
-let perPage = 10
+let perPage = props.perPage
 let currentPage = props.currentPage
 let nextClass = ''
 let previousClass = ''
@@ -30,6 +32,13 @@ let pageArray = []
 let listPage = []
 let paginationLimit = 6
 let totalSoftware
+let handleBlurdropdownChange = function (event) {
+  console.log('handle Blur change', event.target.value)
+}
+let handledropdownChange = function (event) {
+  console.log('handle change', event.target.value, typeof event.target.value)
+  props.setPerPage(parseInt(event.target.value))
+}
 // let softwareagreementList
 if (props.software && props.software !== '') {
   let sortedArray = _.orderBy(props.software.resources, ['name'], ['asc'])
@@ -83,13 +92,77 @@ listPage = _.filter(pageArray, function (group) {
   if (found.length > 0) { return group }
 })
 
+let handlePrevious = function (event) {
+  event.preventDefault()
+  if (currentPage === 1) {
+    previousClass = styles.disabled
+  } else {
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': currentPage - 1
+    }
+    props.fetchSoftwares(payload)
+  // eslint-disable-next-line
+  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  props.setCurrentPage(currentPage - 1)
+  }
+  listPage = _.filter(pageArray, function (group) {
+    let found = _.filter(group, {'number': currentPage - 1})
+    if (found.length > 0) { return group }
+  })
+}
+
+let handleNext = function (event) {
+  event.preventDefault()
+  if (currentPage === totalNoPages) {
+    nextClass = styles.disabled
+  } else {
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': currentPage + 1
+    }
+    softwareList = ''
+    props.fetchSoftwares(payload)
+   // eslint-disable-next-line
+   mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+   props.setCurrentPage(currentPage + 1)
+  }
+  listPage = _.filter(pageArray, function (group) {
+    let found = _.filter(group, {'number': currentPage + 1})
+    if (found.length > 0) { return group }
+  })
+}
+let handlePage = function (page) {
+  if (page === 1) {
+    previousClass = 'm-datatable__pager-link--disabled'
+  } else if (page === totalNoPages) {
+    nextClass = 'm-datatable__pager-link--disabled'
+  }
+  softwareList = ''
+  let payload = {
+    'search': searchTextBox.value ? searchTextBox.value : '',
+    'page_size': props.perPage,
+    'page': page
+  }
+  props.fetchSoftwares(payload)
+  // eslint-disable-next-line
+  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  props.setCurrentPage(page)
+
+  listPage = _.filter(pageArray, function (group) {
+    let found = _.filter(group, {'number': page})
+    if (found.length > 0) { return group }
+  })
+}
 let handleInputChange = debounce((e) => {
   console.log(e)
   const value = searchTextBox.value
   softwareList = ''
   let payload = {
     'search': value || '',
-    'page_size': 10,
+    'page_size': props.perPage,
     'page': currentPage
   }
   // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
@@ -106,74 +179,7 @@ let handleInputChange = debounce((e) => {
     if (found.length > 0) { return group }
   })
 }, 500)
-let handlePage = function (page) {
-  if (page === 1) {
-    previousClass = 'm-datatable__pager-link--disabled'
-  } else if (page === totalNoPages) {
-    nextClass = 'm-datatable__pager-link--disabled'
-  }
-  softwareList = ''
-  let payload = {
-    'search': searchTextBox.value ? searchTextBox.value : '',
-    'page_size': 10,
-    'page': page
-  }
-  props.fetchSoftwares(payload)
-  // eslint-disable-next-line
-  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-  // eslint-disable-next-line
-  props.setCurrentPage(page)
 
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': page})
-    if (found.length > 0) { return group }
-  })
-}
-
-let handlePrevious = function (event) {
-  event.preventDefault()
-  if (currentPage === 1) {
-    previousClass = styles.disabled
-  } else {
-    let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
-      'page_size': 10,
-      'page': currentPage - 1
-    }
-    props.fetchSoftwares(payload)
-  // eslint-disable-next-line
-  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-  // eslint-disable-next-line
-    props.setCurrentPage(currentPage - 1)
-  }
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage - 1})
-    if (found.length > 0) { return group }
-  })
-}
-
-let handleNext = function (event) {
-  event.preventDefault()
-  if (currentPage === totalNoPages) {
-    nextClass = styles.disabled
-  } else {
-    let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
-      'page_size': 10,
-      'page': currentPage + 1
-    }
-    softwareList = ''
-    props.fetchSoftwares(payload)
-   // eslint-disable-next-line
-   mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-   // eslint-disable-next-line
-    props.setCurrentPage(currentPage + 1)
-  }
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage + 1})
-    if (found.length > 0) { return group }
-  })
-}
 if (props.softwareSummary && props.softwareSummary !== '') {
   softwareCount = props.softwareSummary.resources[0].software_count
   totalCost = props.softwareSummary.resources[0].cost
@@ -217,13 +223,6 @@ let handleClick = function (data) {
   props.fetchSoftwareAgreement && props.fetchSoftwareAgreement(payload)
   // eslint-disable-next-line
   mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-}
-let handleBlurdropdownChange = function (event) {
-  console.log('handle Blur change', event.target.value)
-}
-let handledropdownChange = function (event) {
-  console.log('handle change', event.target.value, typeof event.target.value)
-  props.setPerPage(parseInt(event.target.value))
 }
 
 if (props.softwareAgreements && props.softwareAgreements !== '') {
@@ -452,31 +451,31 @@ return (
                 </table>
               </div>
             </div>
+            <div className='row col-md-12' id='scrolling_vertical'>
+              <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
+                <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                  <ul className='m-datatable__pager-nav'>
+                    <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                    {listPage[0] && listPage[0].map(function (page, index) {
+                            if (page.number === currentPage) {
+                                    page.class = 'm-datatable__pager-link--active'
+                                  } else {
+                                    page.class = ''
+                                  }
+                                  return (<li key={index} >
+                                    <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                                  </li>)
+                                })}
+                    <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
     {/* The table structure ends */}
-    <div className='row col-md-12' id='scrolling_vertical'>
-      <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-        <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
-          <ul className='m-datatable__pager-nav'>
-            <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
-            {listPage[0] && listPage[0].map(function (page, index) {
-                    if (page.number === currentPage) {
-                            page.class = 'm-datatable__pager-link--active'
-                          } else {
-                            page.class = ''
-                          }
-                          return (<li key={index} >
-                            <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
-                          </li>)
-                        })}
-            <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
   </div>
       )
     }

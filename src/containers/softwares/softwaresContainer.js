@@ -39,10 +39,11 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      console.log('comp will mountct', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'search': '',
-        'page_size': 10,
+        'page_size': this.props.perPage,
         'page': 1
       }
       this.props.fetchSoftwares && this.props.fetchSoftwares(payload)

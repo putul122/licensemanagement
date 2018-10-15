@@ -12,23 +12,26 @@ const formatAmount = (x) => {
   return parts.join('.')
 }
 export default function Applicationlists (props) {
-  console.log(props.currentPage, props.application, props.applicationSoftwares)
+  console.log(props.currentPage, props.application, props.applicationSoftwares, props.businessUnits)
   console.log('props', props.expandSettings)
+  console.log('######UID', props.businessUnitId)
+  console.log('pagination', props.perPage)
   let applicationCount = ''
   let totalCost = ''
   let searchTextBox
   let applicationList = ''
   let selectOptionList = ''
   let totalNoPages
-  let perPage = 10
+  let perPage = props.perPage
   let currentPage = props.currentPage
+  // let businessUnitId = props.businessUnitId
   let nextClass = ''
   let previousClass = ''
   let pageArray = []
   let listPage = []
   let paginationLimit = 6
   let totalApplication
-
+  // let businessUnitId
   if (props.application && props.application !== '') {
     let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
     applicationList = sortedArray.map(function (data, index) {
@@ -76,20 +79,28 @@ export default function Applicationlists (props) {
     console.log(e)
     const value = searchTextBox.value
     applicationList = ''
-    let payload = {
-      'search': value || '',
-      'page_size': 10,
-      'page': currentPage
-    }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-    props.fetchApplications(payload)
-     // eslint-disable-next-line
-    mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-     // eslint-disable-next-line
+    if (props.businessUnitId === '') {
+      let payload = {
+        'search': value || null,
+        'page_size': props.perPage,
+        'page': currentPage
+      }
+      props.fetchApplications(payload)
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
-    // }
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    }
+    if (props.businessUnitId !== '') {
+      let payload = {
+        // 'business_unit_id': props.businessUnits.resources[0].id,
+        'business_unit_id': props.businessUnitId,
+        'search': value || '',
+        'page_size': props.perPage,
+        'page': currentPage
+      }
+      props.fetchApplications(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage})
       if (found.length > 0) { return group }
@@ -102,19 +113,41 @@ export default function Applicationlists (props) {
       nextClass = 'm-datatable__pager-link--disabled'
     }
     applicationList = ''
-    let payload = {
+    if (props.businessUnitId === '') {
+      let payload = {
       'search': searchTextBox.value ? searchTextBox.value : '',
-      'page_size': 10,
+      'page_size': props.perPage,
       'page': page
+      }
+      props.fetchApplications(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     }
-    props.fetchApplications(payload)
-    // eslint-disable-next-line
-    mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    if (props.businessUnitId !== '') {
+      let payload = {
+        // 'business_unit_id': props.businessUnits.resources[0].id,
+        'business_unit_id': props.businessUnitId,
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': page
+      }
+      props.fetchApplications(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    }
+    // let payload = {
+    //   // 'business_unit_id': props.businessUnits.resources[0].id,
+    //   'search': searchTextBox.value ? searchTextBox.value : '',
+    //   'page_size': 10,
+    //   'page': page
+    // }
+    // props.fetchApplications(payload)
+    // // props.fetchBusinessUnits(payload)
+    // // eslint-disable-next-line
+    // mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     // eslint-disable-next-line
     // eslint-disable-next-line
     // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    props.setCurrentPage(page)
-
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': page})
       if (found.length > 0) { return group }
@@ -126,18 +159,30 @@ export default function Applicationlists (props) {
     if (currentPage === 1) {
       previousClass = styles.disabled
     } else {
-      let payload = {
+    if (props.businessUnitId === '') {
+        let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage - 1
+        }
+        props.fetchApplications(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // props.setCurrentPage(currentPage - 1)
       }
-      props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // eslint-disable-next-line
-      // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      props.setCurrentPage(currentPage - 1)
+      if (props.businessUnitId !== '') {
+        let payload = {
+          // 'business_unit_id': props.businessUnits.resources[0].id,
+          'business_unit_id': props.businessUnitId,
+          'search': searchTextBox.value ? searchTextBox.value : '',
+          'page_size': props.perPage,
+          'page': currentPage - 1
+        }
+        props.fetchApplications(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        }
+        props.setCurrentPage(currentPage - 1)
     }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage - 1})
@@ -150,18 +195,30 @@ export default function Applicationlists (props) {
     if (currentPage === totalNoPages) {
       nextClass = styles.disabled
     } else {
-      let payload = {
+    if (props.businessUnitId === '') {
+        let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage + 1
+        }
+        props.fetchApplications(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       }
-      applicationList = ''
-      props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // eslint-disable-next-line
-      // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // props.setCurrentPage(currentPage + 1)
+      if (props.businessUnitId !== '') {
+        let payload = {
+          // 'business_unit_id': props.businessUnits.resources[0].id,
+          'business_unit_id': props.businessUnitId,
+          'search': searchTextBox.value ? searchTextBox.value : '',
+          'page_size': props.perPage,
+          'page': currentPage + 1
+        }
+        props.fetchApplications(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // props.setCurrentPage(currentPage + 1)
+      }
       props.setCurrentPage(currentPage + 1)
     }
     listPage = _.filter(pageArray, function (group) {
@@ -288,12 +345,30 @@ export default function Applicationlists (props) {
     console.log('handle Blur change', event.target.value)
   }
   let handleChange = function (event) {
-    console.log('handle change', event.target.value, typeof event.target.value)
+    console.log('handle change', event.target.value, event.target.name, typeof event.target.value)
     if (parseInt(event.target.value) !== -111111) {
       let payload = {
         'business_unit_id': event.target.value,
-        'page_size': 10,
-        'page': 2
+        'search': '',
+        'page_size': props.perPage,
+        'page': 1
+      }
+      props.setDefaultSelect(event.target.value)
+      props.setbusinessUnitId(event.target.value)
+      // eslint-disable-next-line
+      mApp.block('#applicationSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.fetchApplicationsSummary && props.fetchApplicationsSummary(payload)
+      props.fetchApplications && props.fetchApplications(payload)
+      // props.fetchBusinessUnits && props.fetchBusinessUnits(payload)
+    }
+    if (parseInt(event.target.value) === -111111) {
+      let payload = {
+        // 'business_unit_id': event.target.value,
+        'search': '',
+        'page_size': props.perPage,
+        'page': 1
       }
       props.setDefaultSelect(event.target.value)
       // eslint-disable-next-line
@@ -302,6 +377,7 @@ export default function Applicationlists (props) {
       mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.fetchApplicationsSummary && props.fetchApplicationsSummary(payload)
       props.fetchApplications && props.fetchApplications(payload)
+      // props.fetchBusinessUnits && props.fetchBusinessUnits(payload)
     }
   }
 
@@ -528,5 +604,6 @@ return (
   applicationSoftwares: PropTypes.any,
   expandSettings: PropTypes.any,
   businessUnits: PropTypes.any,
-  perPage: PropTypes.any
+  perPage: PropTypes.any,
+  businessUnitId: PropTypes.any
  }
