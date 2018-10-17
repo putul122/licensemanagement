@@ -13,6 +13,9 @@ export const FETCH_USER_AUTHENTICATION_FAILURE = 'saga/Basic/FETCH_USER_AUTHENTI
 export const FETCH_BUSINESS_UNITS = 'saga/Basic/FETCH_BUSINESS_UNITS'
 export const FETCH_BUSINESS_UNITS_SUCCESS = 'saga/Basic/FETCH_BUSINESS_UNITS_SUCCESS'
 export const FETCH_BUSINESS_UNITS_FAILURE = 'saga/Basic/FETCH_BUSINESS_UNITS_FAILURE'
+export const UPDATE_NOTIFICATION_VIEW_STATUS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS'
+export const UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS'
+export const UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -23,14 +26,18 @@ export const actionCreators = {
   fetchUserAuthenticationFailure: createAction(FETCH_USER_AUTHENTICATION_FAILURE),
   fetchBusinessUnits: createAction(FETCH_BUSINESS_UNITS),
   fetchBusinessUnitsSuccess: createAction(FETCH_BUSINESS_UNITS_SUCCESS),
-  fetchBusinessUnitsFailure: createAction(FETCH_BUSINESS_UNITS_FAILURE)
+  fetchBusinessUnitsFailure: createAction(FETCH_BUSINESS_UNITS_FAILURE),
+  updateNotificationViewStatus: createAction(UPDATE_NOTIFICATION_VIEW_STATUS),
+  updateNotificationViewStatusSuccess: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS),
+  updateNotificationViewStatusFailure: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE)
 }
 
 export default function * watchBasic () {
   yield [
     takeLatest(FETCH_CLIENT_ACCESS_TOKEN, getClientAccessToken),
     takeLatest(FETCH_USER_AUTHENTICATION, getUserAuthentication),
-    takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits)
+    takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits),
+    takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus)
   ]
 }
 
@@ -70,5 +77,18 @@ export function * getBusinessUnits (action) {
     yield put(actionCreators.fetchBusinessUnitsSuccess(businessUnits.data))
   } catch (error) {
     yield put(actionCreators.fetchBusinessUnitsFailure(error))
+  }
+}
+
+export function * updateNotificationViewStatus (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const updateNotificationViewStatus = yield call(
+      axios.patch,
+      api.updateNotificationViewStatus
+    )
+    yield put(actionCreators.updateNotificationViewStatusSuccess(updateNotificationViewStatus.data))
+  } catch (error) {
+    yield put(actionCreators.updateNotificationViewStatusFailure(error))
   }
 }

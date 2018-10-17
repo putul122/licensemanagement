@@ -1,0 +1,126 @@
+{
+	"resources": [{
+			"author": 1,
+			"author_name": "Luke",
+			"context": 1,
+			"context_name": "Component 1",
+			"discussion": 2,
+			"discussion_name": "Capability of specific component",
+			"discussion_type": 2,
+			"discussion_type_name": "User",
+			"message_type": 2,
+			"message_type_name": "Message",
+			"name": "<m i=0>Mark</m>, This is a message about the <r i=0>IVR</r> <r i=1>app</r><t>coolstuff</t>",
+			"description": "@Mark, This is a message about the #IVR #app #coolstuff",
+			"id": 123,
+			"type": "Message",
+			"created": "2018-04-18T18:50:00",
+			"links": [{
+					"rel": "self",
+					"action_key": "GetMessage",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/0"
+				}, {
+					"rel": "author",
+					"action_key": "GetUser",
+					"href": "https://ecocomposermockapis.azurewebsites.net/users/1"
+				}, {
+					"rel": "author_avatar",
+					"action_key": "GetIcon",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/2"
+				}, {
+					"rel": "discussion",
+					"action_key": "GetDiscussion",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/0"
+				}, {
+					"rel": "context",
+					"action_key": "GetComponent",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-account/users/0"
+				}, {
+					"rel": "context_icon",
+					"action_key": "GetIcon",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/1"
+				}, {
+					"rel": "m_0",
+					"action_key": "GetUser",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/0"
+				}, {
+					"rel": "m_0_icon",
+					"action_key": "GetIcon",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/2"
+				}, {
+					"rel": "r_0",
+					"action_key": "GetComponent",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-account/users/0"
+				}, {
+					"rel": "r_1",
+					"action_key": "GetComponentType",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-account/users/0"
+				}
+			]
+		},{
+			"author": 1,
+			"author_name": "Luke",
+			"context": 1,
+			"context_name": "Component 1",
+			"discussion": 2,
+			"discussion_name": "Activities",
+			"discussion_type": 1,
+			"discussion_type_name": "System",
+			"message_type": 1,
+			"message_type_name": "Activity",
+			"name": "<m i=0>Mark</m>, This is a message about the <r i=0>IVR</r> <r i=1>app</r><t>coolstuff</t>",
+			"description": "@Mark, This is a message about the #IVR #app #coolstuff",
+			"id": 123,
+			"type": "Message",
+			"created": "2018-04-18T18:50:00",
+			"links": [{
+					"rel": "self",
+					"action_key": "GetMessage",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/0"
+				}, {
+					"rel": "author",
+					"action_key": "GetUser",
+					"href": "https://ecocomposermockapis.azurewebsites.net/users/1"
+				}, {
+					"rel": "author_avatar",
+					"action_key": "GetIcon",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/2"
+				}, {
+					"rel": "discussion",
+					"action_key": "GetDiscussion",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/0"
+				}, {
+					"rel": "context",
+					"action_key": "GetComponent",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-account/users/0"
+				}, {
+					"rel": "context_icon",
+					"action_key": "GetIcon",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/6"
+				}, {
+					"rel": "m_0",
+					"action_key": "GetUser",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/0"
+				}, {
+					"rel": "m_0_icon",
+					"action_key": "GetIcon",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/10"
+				}, {
+					"rel": "r_0",
+					"action_key": "GetComponent",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-account/users/0"
+				}, {
+					"rel": "r_1",
+					"action_key": "GetComponentType",
+					"href": "https://ecocomposermockapis.azurewebsites.net/ecocomposer-account/users/0"
+				}
+			]
+		}
+	],
+	"result_code": 0,
+	"error_code": null,
+	"error_message": null,
+	"count": 10,
+	"total_count": 832,
+	"_links": []
+}

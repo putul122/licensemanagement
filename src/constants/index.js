@@ -77,6 +77,16 @@ const api = {
   },
   updateComponent: function (payload) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId
+  },
+  getDiscussions: 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions',
+  getDiscussionMessages: function (id) {
+      return 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions/' + id + '/messages'
+  },
+  getAccountArtefacts: 'https://account-eco-dev.ecoconductor.com/artefacts',
+  getModelArtefacts: 'https://model-eco-dev.ecoconductor.com/artefacts',
+  updateNotificationViewStatus: 'https://notification-eco-dev.ecoconductor.com/notification_view_status',
+  getActivityMessage: function () {
+    return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
   }
 }
 

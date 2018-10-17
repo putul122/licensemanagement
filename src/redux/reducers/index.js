@@ -12,6 +12,8 @@ import softwaresReducer from './softwaresReducer/softwaresReducerReducer'
 import loginReducer from './loginReducer/loginReducerReducer'
 import entitlementsReducer from './entitlementsReducer/entitlementsReducerReducer'
 import entitlementDetailReducer from './entitlementDetailReducer/entitlementDetailReducerReducer'
+import discussionReducer from './discussionReducer/discussionReducerReducer'
+import applicationActivityReducer from './applicationActivityReducer/applicationActivityReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -25,5 +27,7 @@ export default combineReducers({
     softwareDetailReducer,
     loginReducer,
     entitlementsReducer,
-    entitlementDetailReducer
+    entitlementDetailReducer,
+    discussionReducer,
+    applicationActivityReducer
 })

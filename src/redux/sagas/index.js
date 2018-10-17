@@ -5,6 +5,8 @@ import watchSuppliers, {actionCreators as supplierActions} from './supplier/supp
 import watchSoftwares, {actionCreators as softwareActions} from './software/softwareSaga'
 import watchEntitlements, {actionCreators as entitlementActions} from './entitlement/entitlementSaga'
 import watchLoginUser, {actionCreators as loginActions} from './login/loginSaga'
+import watchDiscussions, {actionCreators as discussionActions} from './discussion/discussionSaga'
+import watchApplicationActivity, {actionCreators as applicationActivityActions} from './applicationActivity/applicationActivitySaga'
 
 export const actions = {
   basicActions,
@@ -13,7 +15,9 @@ export const actions = {
   supplierActions,
   softwareActions,
   entitlementActions,
-  loginActions
+  loginActions,
+  discussionActions,
+  applicationActivityActions
 }
 export default function * rootSaga () {
   yield [
@@ -23,6 +27,8 @@ export default function * rootSaga () {
     watchSuppliers(),
     watchSoftwares(),
     watchEntitlements(),
-    watchLoginUser()
+    watchLoginUser(),
+    watchDiscussions(),
+    watchApplicationActivity()
   ]
 }

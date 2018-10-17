@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 import _ from 'lodash'
+import Discussion from '../../containers/discussion/discussionContainer'
 import styles from './supplierDetailComponent.scss'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
@@ -490,6 +491,7 @@ export default function Suppliers (props) {
           </div>
         </div>
         {/* The table structure ends */}
+        <Discussion name={supplierName} type='Component' {...props} />
       </div>
       )
     }

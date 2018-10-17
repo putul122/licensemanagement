@@ -7,6 +7,7 @@ import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import Discussion from '../../containers/discussion/discussionContainer'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
@@ -1573,6 +1574,7 @@ export default function AgreementDetail (props) {
           </ReactModal>
         </div>
         {/* The table structure ends */}
+        <Discussion name={agreementName} type='Component' {...props} />
       </div>
       )
     }

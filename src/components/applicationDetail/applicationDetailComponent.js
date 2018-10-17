@@ -4,6 +4,7 @@ import moment from 'moment'
 import PropTypes from 'prop-types'
 import styles from './applicationDetailComponent.scss'
 import DataModelComponent from '../dataModel/dataModelComponent'
+import Discussion from '../../containers/discussion/discussionContainer'
 import _ from 'lodash'
 var divStyle = {
   width: '900px',
@@ -321,6 +322,7 @@ export default function Applicationview (props) {
             {/* <img alt='model' src='https://via.placeholder.com/900x545?text=Model%20Visualization' /> */}
           </div>
         </div>
+        <Discussion name={applicationName} type='Component' {...props} />
       </div>
       )
     }

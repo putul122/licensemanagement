@@ -4,6 +4,7 @@ import styles from './softwareDetailComponent.scss'
 import moment from 'moment'
 import DataModelComponent from '../dataModel/dataModelComponent'
 import _ from 'lodash'
+import Discussion from '../../containers/discussion/discussionContainer'
 var divStyle = {
   width: '900px',
   height: '600px',
@@ -319,6 +320,7 @@ export default function Softwareview (props) {
             </div>
           </div>
         </div>
+        <Discussion name={softwareName} type='Component' {...props} />
       </div>
       )
     }

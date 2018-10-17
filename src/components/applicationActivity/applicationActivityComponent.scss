@@ -1,0 +1,86 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+p{
+	margin-bottom: 0px;
+}
+
+ul{
+	display: inline;
+}
+
+.iconcenter{
+	text-align: center;
+}
+
+.iconlabel{
+	font-size:10px; 
+}
+
+.activity{
+	margin-left: 90px;
+}
+
+.socialicon{
+	list-style: none;
+}
+.socialicon ul li{
+	list-style: none;
+	display: inline-block;
+
+}
+a{
+	color:#22b9ff;
+	font-size:13px; 
+	margin-left: 5px;
+}
+
+.activityline{
+	border-radius: 10px;
+	// height: 750px;
+	// overflow-y: scroll;
+	// background: #fff;
+
+}
+.activityline h2{
+	margin-left: 20px;
+}
+.activityline ul li{
+	list-style: none;
+	margin-left: 10px;
+	padding: 3px;
+	text-align: justify;
+}
+
+.iconcenter{
+	font-size: 15px;
+}
+.groupspace{
+	// margin-top: 10px;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+	left: 0px;
+	bottom: 18px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

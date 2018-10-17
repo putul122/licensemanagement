@@ -9,6 +9,7 @@ import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import Discussion from '../../containers/discussion/discussionContainer'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
 const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
@@ -1442,6 +1443,7 @@ export default function EntitlementDetail (props) {
             </div>
           </ReactModal>
         </div>
+        <Discussion name={entitlementName} type='Component' {...props} />
       </div>
       )
     }
