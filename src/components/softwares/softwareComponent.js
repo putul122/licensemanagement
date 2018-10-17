@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './softwareComponent.scss'
 import debounce from 'lodash/debounce'
-// import Softwares from '../../mockData/mockGetSoftwares'
+import Discussion from '../../containers/discussion/discussionContainer'
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -476,6 +476,7 @@ return (
       </div>
     </div>
     {/* The table structure ends */}
+    <Discussion name={'Softwares'} TypeKey='Software' type='ComponentType' {...props} />
   </div>
       )
     }

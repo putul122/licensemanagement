@@ -16,6 +16,9 @@ export const FETCH_BUSINESS_UNITS_FAILURE = 'saga/Basic/FETCH_BUSINESS_UNITS_FAI
 export const UPDATE_NOTIFICATION_VIEW_STATUS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS'
 export const UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS'
 export const UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE'
+export const FETCH_PACKAGE = 'saga/Basic/FETCH_PACKAGE'
+export const FETCH_PACKAGE_SUCCESS = 'saga/Basic/FETCH_PACKAGE_SUCCESS'
+export const FETCH_PACKAGE_FAILURE = 'saga/Basic/FETCH_PACKAGE_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -29,7 +32,10 @@ export const actionCreators = {
   fetchBusinessUnitsFailure: createAction(FETCH_BUSINESS_UNITS_FAILURE),
   updateNotificationViewStatus: createAction(UPDATE_NOTIFICATION_VIEW_STATUS),
   updateNotificationViewStatusSuccess: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS),
-  updateNotificationViewStatusFailure: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE)
+  updateNotificationViewStatusFailure: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE),
+  fetchPackage: createAction(FETCH_PACKAGE),
+  fetchPackageSuccess: createAction(FETCH_PACKAGE_SUCCESS),
+  fetchPackageFailure: createAction(FETCH_PACKAGE_FAILURE)
 }
 
 export default function * watchBasic () {
@@ -37,7 +43,8 @@ export default function * watchBasic () {
     takeLatest(FETCH_CLIENT_ACCESS_TOKEN, getClientAccessToken),
     takeLatest(FETCH_USER_AUTHENTICATION, getUserAuthentication),
     takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits),
-    takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus)
+    takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus),
+    takeLatest(FETCH_PACKAGE, getPackage)
   ]
 }
 
@@ -90,5 +97,18 @@ export function * updateNotificationViewStatus (action) {
     yield put(actionCreators.updateNotificationViewStatusSuccess(updateNotificationViewStatus.data))
   } catch (error) {
     yield put(actionCreators.updateNotificationViewStatusFailure(error))
+  }
+}
+
+export function * getPackage (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const packages = yield call(
+      axios.get,
+      api.getPackage
+    )
+    yield put(actionCreators.fetchPackageSuccess(packages.data))
+  } catch (error) {
+    yield put(actionCreators.fetchPackageFailure(error))
   }
 }

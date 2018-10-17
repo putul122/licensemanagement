@@ -14,7 +14,8 @@ export function mapStateToProps (state, props) {
     entitlementSummary: state.dashboardReducer.entitlementSummary,
     softwareSummary: state.dashboardReducer.softwareSummary,
     businessUnits: state.dashboardReducer.businessUnits,
-    defaultSelect: state.dashboardReducer.defaultSelect
+    defaultSelect: state.dashboardReducer.defaultSelect,
+    packages: state.basicReducer.packages
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -26,7 +27,8 @@ export const propsMapping: Callbacks = {
   fetchSoftwaresSummary: sagaActions.softwareActions.fetchSoftwaresSummary,
   fetchEntitlementsSummary: sagaActions.entitlementActions.fetchEntitlementsSummary,
   fetchBusinessUnits: sagaActions.basicActions.fetchBusinessUnits,
-  setDefaultSelect: actionCreators.setDefaultSelect
+  setDefaultSelect: actionCreators.setDefaultSelect,
+  fetchPackage: sagaActions.basicActions.fetchPackage
 }
 
 // If you want to use the function mapping
@@ -40,6 +42,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      this.props.fetchPackage && this.props.fetchPackage()
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
       this.props.fetchApplicationsSummary && this.props.fetchApplicationsSummary()
@@ -66,21 +69,9 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      // if (nextProps.businessUnits && this.props.businessUnits === '' && nextProps.businessUnits !== this.props.businessUnits) {
-      //   if (nextProps.businessUnits.error_code === null) {
-      //     console.log('again run')
-      //     let payload = {
-      //       'business_unit_id': nextProps.businessUnits.resources[0].id
-      //     }
-      //     this.props.fetchApplicationsSummary && this.props.fetchApplicationsSummary(payload)
-      //     this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary(payload)
-      //     this.props.fetchSuppliersSummary && this.props.fetchSuppliersSummary(payload)
-      //     this.props.fetchSoftwaresSummary && this.props.fetchSoftwaresSummary(payload)
-      //     this.props.fetchEntitlementsSummary && this.props.fetchEntitlementsSummary(payload)
-      //   } else {
-      //     this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
-      //   }
-      // }
+      if (nextProps.packages && nextProps.packages !== this.props.packages) {
+        localStorage.setItem('packages', JSON.stringify(nextProps.packages))
+      }
       if (nextProps.supplierSummary && nextProps.supplierSummary !== this.props.supplierSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierSummary')

@@ -5,6 +5,7 @@ import styles from './agreementsComponent.scss'
 import moment from 'moment'
 import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
+import Discussion from '../../containers/discussion/discussionContainer'
 import {defaults, Doughnut} from 'react-chartjs-2'
 ReactModal.setAppElement('#root')
 defaults.global.legend.display = false
@@ -511,6 +512,7 @@ export default function Agreements (props) {
             </div>
           </ReactModal>
         </div>
+        <Discussion name={'Agreements'} TypeKey='Agreement' type='ComponentType' {...props} />
       </div>
       )
     }

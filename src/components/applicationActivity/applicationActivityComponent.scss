@@ -30,7 +30,7 @@ ul{
 	display: inline-block;
 
 }
-a{
+.socialicon ul li a{
 	color:#22b9ff;
 	font-size:13px; 
 	margin-left: 5px;
@@ -38,10 +38,6 @@ a{
 
 .activityline{
 	border-radius: 10px;
-	// height: 750px;
-	// overflow-y: scroll;
-	// background: #fff;
-
 }
 .activityline h2{
 	margin-left: 20px;

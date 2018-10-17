@@ -87,7 +87,8 @@ const api = {
   updateNotificationViewStatus: 'https://notification-eco-dev.ecoconductor.com/notification_view_status',
   getActivityMessage: function () {
     return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
-  }
+  },
+  getPackage: 'https://model-eco-dev.ecoconductor.com/model_packages/LM'
 }
 
 export default api

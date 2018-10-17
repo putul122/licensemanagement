@@ -3,6 +3,7 @@ import _ from 'lodash'
 import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
+import Discussion from '../../containers/discussion/discussionContainer'
 import styles from './entitlementsComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
@@ -438,6 +439,7 @@ return (
         </div>
       </div>
     </div>
+    <Discussion name={'Entitlements'} TypeKey='Entitlement' type='ComponentType' {...props} />
   </div>
       )
     }

@@ -19,14 +19,11 @@ connection.start().then(function () {
 }).catch(err => console.error('connection error --------------', err))
 
 export default function HeaderComponent (props) {
-    console.log(props)
     let quickSlideClass = 'm-quick-sidebar--off'
     let isQuickSlideOpen = props.isQuickSlideOpen
     let notificationFlag = props.notificationFlag
     connection.on('ReceiveMessage', (payload) => {
-      console.log('1111111111111111111111111111111111111110000000000000000000000000000000000')
       payload = JSON.parse(payload)
-      console.log('ReceiveMessage -----------------------', payload)
       if (payload.notify) {
         props.setNotificationFlag(true)
       } else {

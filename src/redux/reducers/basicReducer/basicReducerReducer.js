@@ -1,5 +1,5 @@
 import { createAction, handleActions } from 'redux-actions'
-import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS, UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS } from '../../sagas/basic/basicSaga'
+import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS, UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS, FETCH_PACKAGE_SUCCESS } from '../../sagas/basic/basicSaga'
 // Name Spaced Action Types
 const INCREMENT = 'BasicReducer/INCREMENT'
 const DECREMENT = 'BasicReducer/DECREMENT'
@@ -18,7 +18,8 @@ export const actions = {
   SET_MODAL_OPEN_STATUS,
   SET_QUICKSLIDE_FLAG,
   SET_NOTIFICATION_FLAG,
-  RESET_NOTIFICATION_RESPONSE
+  RESET_NOTIFICATION_RESPONSE,
+  FETCH_PACKAGE_SUCCESS
 }
 
 export const actionCreators = {
@@ -44,7 +45,8 @@ export const initialState = {
   authenticateUser: '',
   isQuickSlideOpen: false,
   notificationFlag: false,
-  updateNotificationViewStatusResponse: ''
+  updateNotificationViewStatusResponse: '',
+  packages: ''
 }
 
 export default handleActions(
@@ -86,6 +88,9 @@ export default handleActions(
     }),
     [RESET_NOTIFICATION_RESPONSE]: (state, action) => ({ ...state,
       updateNotificationViewStatusResponse: ''
+    }),
+    [FETCH_PACKAGE_SUCCESS]: (state, action) => ({ ...state,
+      packages: action.payload
     })
   },
   initialState

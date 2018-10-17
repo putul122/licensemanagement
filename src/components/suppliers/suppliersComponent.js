@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './suppliersComponent.scss'
 import debounce from 'lodash/debounce'
+import Discussion from '../../containers/discussion/discussionContainer'
 import {defaults, Doughnut} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -503,6 +504,7 @@ export default function Suppliers (props) {
           </div>
         </div>
         {/* The table structure ends */}
+        <Discussion name={'Suppliers'} TypeKey='Supplier' type='ComponentType' {...props} />
       </div>
       )
     }

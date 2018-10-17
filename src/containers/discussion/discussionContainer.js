@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import Discusson from '../../components/discussion/discussionComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
+import _ from 'lodash'
 import { actionCreators } from '../../redux/reducers/discussionReducer/discussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
@@ -47,10 +48,16 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       let contextId = ''
+      let TypeKey = this.props.TypeKey
       if (this.props.type === 'Component') {
         contextId = this.props.match.params.id
       } else {
-        contextId = this.props.match.params.id
+        let appPackage = JSON.parse(localStorage.getItem('packages'))
+        let componentTypes = appPackage.resources[0].component_types
+        let componentId = _.result(_.find(componentTypes, function (obj) {
+            return obj.key === TypeKey
+        }), 'component_type')
+        contextId = componentId
       }
       let payload = {
         'context_type_key': this.props.type,

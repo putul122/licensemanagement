@@ -3,6 +3,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import styles from './applicationsComponent.scss'
 import debounce from 'lodash/debounce'
+import Discussion from '../../containers/discussion/discussionContainer'
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -594,6 +595,7 @@ return (
         </div>
       </div>
     </div>
+    <Discussion name={'Applications'} TypeKey='Application' type='ComponentType' {...props} />
   </div>
       )
     }
