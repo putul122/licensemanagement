@@ -4,6 +4,7 @@ import _ from 'lodash'
 import styles from './suppliersComponent.scss'
 import debounce from 'lodash/debounce'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import {defaults, Doughnut} from 'react-chartjs-2'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -34,7 +35,17 @@ export default function Suppliers (props) {
   let supplierCount = ''
   let agreementCount = ''
   let supplierAgreementCost = ''
-
+  let contextId = ''
+  let appPackage = JSON.parse(localStorage.getItem('packages'))
+  let componentTypes = appPackage.resources[0].component_types
+  let componentId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Supplier'
+  }), 'component_type')
+  contextId = componentId
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   // Code for formating pie chart data
   if (props.suppliersSummary && props.suppliersSummary !== '') {
     supplierCount = props.suppliersSummary.resources[0].supplier_count
@@ -103,26 +114,27 @@ export default function Suppliers (props) {
     if (found.length > 0) { return group }
   })
 
-  let handleInputChange = debounce((e) => {
-    console.log(e)
-    const value = searchTextBox.value
-    suppliersList = ''
-    let payload = {
-      'search': value || '',
-      'page_size': 10,
-      'page': currentPage
-    }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchSuppliers(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
-  }, 500)
+    let handleInputChange = debounce((e) => {
+      console.log(e)
+      console.log(searchTextBox.value)
+      const value = searchTextBox.value
+      suppliersList = ''
+      let payload = {
+        'search': value || '',
+        'page_size': 10,
+        'page': currentPage
+      }
+      // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+        props.fetchSuppliers(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // }
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
+    }, 500)
   let handlePage = function (page) {
     if (page === 1) {
       previousClass = 'm-datatable__pager-link--disabled'
@@ -289,6 +301,14 @@ export default function Suppliers (props) {
   }
     return (
       <div>
+        <div className='row'>
+          <div className='col-md-10'>
+            <h3>Suppliers</h3>
+          </div>
+          <div className='col-md-2'>
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          </div>
+        </div>
         <div className='row' id='supplierSummary' >
           <div className='col-md-4'>
             {/* <div className='m-portlet m-portlet--full-height'>
@@ -505,6 +525,7 @@ export default function Suppliers (props) {
         </div>
         {/* The table structure ends */}
         <Discussion name={'Suppliers'} TypeKey='Supplier' type='ComponentType' {...props} />
+        <NewDiscussion contextId={contextId} name={'Suppliers'} type='ComponentType' {...props} />
       </div>
       )
     }

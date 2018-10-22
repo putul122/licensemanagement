@@ -4,6 +4,7 @@ import _ from 'lodash'
 import styles from './softwareComponent.scss'
 import debounce from 'lodash/debounce'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -32,6 +33,17 @@ let pageArray = []
 let listPage = []
 let paginationLimit = 6
 let totalSoftware
+let contextId = ''
+let appPackage = JSON.parse(localStorage.getItem('packages'))
+let componentTypes = appPackage.resources[0].component_types
+let componentId = _.result(_.find(componentTypes, function (obj) {
+    return obj.key === 'Software'
+}), 'component_type')
+contextId = componentId
+let openDiscussionModal = function (event) {
+  event.preventDefault()
+  props.setDiscussionModalOpenStatus(true)
+}
 let handleBlurdropdownChange = function (event) {
   console.log('handle Blur change', event.target.value)
 }
@@ -283,6 +295,15 @@ if (props.softwareAgreements && props.softwareAgreements !== '') {
 }
 return (
   <div>
+    <div className='row'>
+      <div className='col-md-9'>
+        <h3>Softwares</h3>
+      </div>
+      <div className='col-md-3'>
+        {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp; */}
+        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+      </div>
+    </div>
     <div className='row' id='softwareSummary'>
       <div className='col-xl-6'>
         {/* <div className='m-portlet m-portlet--full-height'>
@@ -477,6 +498,7 @@ return (
     </div>
     {/* The table structure ends */}
     <Discussion name={'Softwares'} TypeKey='Software' type='ComponentType' {...props} />
+    <NewDiscussion contextId={contextId} name={'Softwares'} type='ComponentType' {...props} />
   </div>
       )
     }

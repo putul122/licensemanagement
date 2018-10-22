@@ -64,7 +64,9 @@ export default compose(
         'context_id': contextId
       }
       let initialPayload = {
-        'search': ''
+        'search': '',
+        page_size: 100,
+        page: 1
       }
       this.props.fetchDiscussions && this.props.fetchDiscussions(payload)
       this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(initialPayload)
@@ -74,16 +76,16 @@ export default compose(
         console.log('component did mount')
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('run next props', nextProps)
       if (nextProps.artefactAccounts && nextProps.artefactAccounts !== this.props.artefactAccounts) {
         if (nextProps.artefactAccounts.result_code === 0) {
           let accountsData = nextProps.artefactAccounts.resources.map(function (account, index) {
             let obj = {}
             obj.id = account.id
-            obj.display = account.name
-            obj.artefactId = account.artefact_type.id
-            obj.artefactKey = account.artefact_type.key
+            obj.display = account.name.trim()
             return obj
           })
+          accountsData.shift()
           this.props.setFormattedAccountData && this.props.setFormattedAccountData(accountsData)
         }
       }
@@ -92,9 +94,7 @@ export default compose(
           let modelData = nextProps.artefactModels.resources.map(function (model, index) {
             let obj = {}
             obj.id = model.id
-            obj.display = model.name
-            obj.artefactId = model.artefact_type.id
-            obj.artefactKey = model.artefact_type.key
+            obj.display = model.name.trim()
             return obj
           })
           this.props.setFormattedModelData && this.props.setFormattedModelData(modelData)

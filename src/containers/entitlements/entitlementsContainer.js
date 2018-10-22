@@ -4,6 +4,7 @@ import EntitlementsList from '../../components/entitlements/entitlementsComponen
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/entitlementsReducer/entitlementsReducerReducer'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -22,7 +23,8 @@ export const propsMapping: Callbacks = {
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
   addEntitlement: sagaActions.entitlementActions.addEntitlement,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }
 
 // If you want to use the function mapping

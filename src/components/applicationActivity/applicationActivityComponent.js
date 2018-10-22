@@ -12,7 +12,7 @@ export default function ApplicationActivity (props) {
     let temp = []
     let equal
     for (var i = 0; i < activityMessages.length; i += 1) {
-      console.log(i)
+      // console.log(i)
       if (activityMessages[i] && activityMessages[i + 1] && activityMessages[i].discussion !== null && activityMessages[i].discussion.context !== null && activityMessages[i + 1].discussion.context !== null) {
         if (equal !== ((activityMessages[i] && activityMessages[i + 1] && activityMessages[i].discussion.context.name === activityMessages[i + 1].discussion.context.name) && (activityMessages[i] && activityMessages[i + 1] && activityMessages[i].discussion.name === activityMessages[i + 1].discussion.name))) {
           if (activityMessages[i + 1]) {

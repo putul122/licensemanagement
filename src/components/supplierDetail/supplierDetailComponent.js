@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import _ from 'lodash'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import styles from './supplierDetailComponent.scss'
 import {defaults, Pie} from 'react-chartjs-2'
 defaults.global.legend.display = false
@@ -40,7 +41,11 @@ export default function Suppliers (props) {
   let listAgreementPage = []
   let listSoftwarePage = []
   let paginationLimit = 6
-
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   if (props.supplier && props.supplier !== '') {
     supplierName = props.supplier.resources[0].name
     agreementCount = props.supplier.resources[0].agreement_count
@@ -301,7 +306,14 @@ export default function Suppliers (props) {
   }
     return (
       <div>
-        <h2>{supplierName}</h2>
+        <div className='row'>
+          <div className='col-md-10'>
+            <h2>{supplierName}</h2>
+          </div>
+          <div className='col-md-2'>
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          </div>
+        </div>
         <div className='row' id='supplier'>
           <div className='col-md-3'>
             <div className='m-portlet m-portlet--full-height'>
@@ -492,10 +504,12 @@ export default function Suppliers (props) {
         </div>
         {/* The table structure ends */}
         <Discussion name={supplierName} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={supplierName} type='Component' {...props} />
       </div>
       )
     }
     Suppliers.propTypes = {
+      match: PropTypes.any,
       supplier: PropTypes.any,
       supplierApplications: PropTypes.any,
       supplierSoftwares: PropTypes.any,

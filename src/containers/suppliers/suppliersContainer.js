@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import Suppliers from '../../components/suppliers/suppliersComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/suppliersReducer/suppliersReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -25,7 +26,8 @@ export const propsMapping: Callbacks = {
   setCurrentPage: actionCreators.setCurrentPage,
   setExpandSettings: actionCreators.setExpandSettings,
   resetResponse: actionCreators.resetResponse,
-  setPerPage: actionCreators.setPerPage
+  setPerPage: actionCreators.setPerPage,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

@@ -19,6 +19,9 @@ export const FETCH_MODEL_ARTEFACTS_FAILURE = 'saga/Discussion/FETCH_MODEL_ARTEFA
 export const REPLY_DISCUSSION_MESSAGES = 'saga/Discussion/REPLY_DISCUSSION_MESSAGES'
 export const REPLY_DISCUSSION_MESSAGES_SUCCESS = 'saga/Discussion/REPLY_DISCUSSION_MESSAGES_SUCCESS'
 export const REPLY_DISCUSSION_MESSAGES_FAILURE = 'saga/Discussion/REPLY_DISCUSSION_MESSAGES_FAILURE'
+export const CREATE_DISCUSSION = 'saga/Discussion/CREATE_DISCUSSION'
+export const CREATE_DISCUSSION_SUCCESS = 'saga/Discussion/CREATE_DISCUSSION_SUCCESS'
+export const CREATE_DISCUSSION_FAILURE = 'saga/Discussion/CREATE_DISCUSSION_FAILURE'
 
 export const actionCreators = {
   fetchDiscussions: createAction(FETCH_DISCUSSIONS),
@@ -35,7 +38,10 @@ export const actionCreators = {
   fetchModelArtefactsFailure: createAction(FETCH_MODEL_ARTEFACTS_FAILURE),
   replyDiscussionMessages: createAction(REPLY_DISCUSSION_MESSAGES),
   replyDiscussionMessagesSuccess: createAction(REPLY_DISCUSSION_MESSAGES_SUCCESS),
-  replyDiscussionMessagesFailure: createAction(REPLY_DISCUSSION_MESSAGES_FAILURE)
+  replyDiscussionMessagesFailure: createAction(REPLY_DISCUSSION_MESSAGES_FAILURE),
+  createDiscussion: createAction(CREATE_DISCUSSION),
+  createDiscussionSuccess: createAction(CREATE_DISCUSSION_SUCCESS),
+  createDiscussionFailure: createAction(CREATE_DISCUSSION_FAILURE)
 }
 
 export default function * watchDiscussions () {
@@ -44,7 +50,8 @@ export default function * watchDiscussions () {
     takeLatest(FETCH_DISCUSSION_MESSAGES, getDiscussionMessages),
     takeLatest(FETCH_ACCOUNT_ARTEFACTS, getAccountArtefacts),
     takeLatest(FETCH_MODEL_ARTEFACTS, getModelArtefacts),
-    takeLatest(REPLY_DISCUSSION_MESSAGES, replyDiscussionMessages)
+    takeLatest(REPLY_DISCUSSION_MESSAGES, replyDiscussionMessages),
+    takeLatest(CREATE_DISCUSSION, createDiscussion)
   ]
 }
 
@@ -114,5 +121,19 @@ export function * getModelArtefacts (action) {
     yield put(actionCreators.fetchModelArtefactsSuccess(viewModelArtefact.data))
   } catch (error) {
     yield put(actionCreators.fetchModelArtefactsFailure(error))
+  }
+}
+
+export function * createDiscussion (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const createDiscussion = yield call(
+      axios.post,
+      api.createDiscussion,
+      action.payload
+    )
+    yield put(actionCreators.createDiscussionSuccess(createDiscussion.data))
+  } catch (error) {
+    yield put(actionCreators.createDiscussionFailure(error))
   }
 }

@@ -12,7 +12,6 @@ class EntitlementsPageRoute extends React.Component {
         <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
           <LeftNavigation />
           <div className='m-content col-xl-12'>
-            <h2>Entitlements</h2>
             <EntitlementsList {...this.props} />
           </div>
         </div>

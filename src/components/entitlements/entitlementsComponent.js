@@ -4,6 +4,7 @@ import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import styles from './entitlementsComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
@@ -45,6 +46,17 @@ export default function Entitlementlists (props) {
   let totalEntitlement
   let newEntitlementName = ''
   let newEntitlementDescription = ''
+  let contextId = ''
+  let appPackage = JSON.parse(localStorage.getItem('packages'))
+  let componentTypes = appPackage.resources[0].component_types
+  let componentId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Entitlement'
+  }), 'component_type')
+  contextId = componentId
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   console.log('props', props.setModalOpenStatus)
 
   if (props.entitlements && props.entitlements !== '') {
@@ -206,7 +218,15 @@ export default function Entitlementlists (props) {
   }
 return (
   <div>
-    <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>
+    <div className='row'>
+      <div className='col-md-9'>
+        <h3>Entitlements</h3>
+      </div>
+      <div className='col-md-3'>
+        <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp;
+        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+      </div>
+    </div>
     <div>
       <ReactModal isOpen={props.modalIsOpen}
         onRequestClose={closeModal} style={customStyles}
@@ -440,6 +460,7 @@ return (
       </div>
     </div>
     <Discussion name={'Entitlements'} TypeKey='Entitlement' type='ComponentType' {...props} />
+    <NewDiscussion contextId={contextId} name={'Entitlements'} type='ComponentType' {...props} />
   </div>
       )
     }

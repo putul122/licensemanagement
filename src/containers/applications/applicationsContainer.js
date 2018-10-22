@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import ApplicationList from '../../components/applications/applicationsComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/applicationsReducer/applicationsReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -31,7 +32,8 @@ export const propsMapping: Callbacks = {
   setExpandSettings: actionCreators.setExpandSettings,
   resetResponse: actionCreators.resetResponse,
   fetchBusinessUnits: sagaActions.basicActions.fetchBusinessUnits,
-  setDefaultSelect: actionCreators.setDefaultSelect
+  setDefaultSelect: actionCreators.setDefaultSelect,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }
 
 // If you want to use the function mapping

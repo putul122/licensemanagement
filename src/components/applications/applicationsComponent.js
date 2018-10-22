@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import styles from './applicationsComponent.scss'
 import debounce from 'lodash/debounce'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -32,6 +33,17 @@ export default function Applicationlists (props) {
   let listPage = []
   let paginationLimit = 6
   let totalApplication
+  let contextId = ''
+  let appPackage = JSON.parse(localStorage.getItem('packages'))
+  let componentTypes = appPackage.resources[0].component_types
+  let componentId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Application'
+  }), 'component_type')
+  contextId = componentId
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   // let businessUnitId
   if (props.application && props.application !== '') {
     let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
@@ -393,6 +405,15 @@ export default function Applicationlists (props) {
 
 return (
   <div>
+    <div className='row'>
+      <div className='col-md-9'>
+        <h3>Applications</h3>
+      </div>
+      <div className='col-md-3'>
+        {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp; */}
+        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+      </div>
+    </div>
     <div className='row' style={{'marginBottom': '20px'}}>
       <div className={'col-md-3'}>
         <select className='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onBlur={handleBlurChange} onChange={handleChange}>
@@ -596,6 +617,7 @@ return (
       </div>
     </div>
     <Discussion name={'Applications'} TypeKey='Application' type='ComponentType' {...props} />
+    <NewDiscussion contextId={contextId} name={'Applications'} type='ComponentType' {...props} />
   </div>
       )
     }

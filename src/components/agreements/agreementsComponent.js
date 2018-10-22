@@ -5,6 +5,7 @@ import styles from './agreementsComponent.scss'
 import moment from 'moment'
 import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import {defaults, Doughnut} from 'react-chartjs-2'
 ReactModal.setAppElement('#root')
@@ -49,6 +50,17 @@ export default function Agreements (props) {
   let paginationLimit = 6
   let totalAgreement
   let agreementPieChartData = {}
+  let contextId = ''
+  let appPackage = JSON.parse(localStorage.getItem('packages'))
+  let componentTypes = appPackage.resources[0].component_types
+  let componentId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Agreement'
+  }), 'component_type')
+  contextId = componentId
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   // Code for add new agreement
   let newAgreementName = ''
   let newAgreementDescription = ''
@@ -244,11 +256,12 @@ export default function Agreements (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-10'>
+          <div className='col-md-9'>
             <h3>Agreements</h3>
           </div>
-          <div className='col-md-2'>
+          <div className='col-md-3'>
             <button onClick={addAgreement} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
           </div>
         </div>
         <div className='row' id='agreementSummary'>
@@ -513,6 +526,7 @@ export default function Agreements (props) {
           </ReactModal>
         </div>
         <Discussion name={'Agreements'} TypeKey='Agreement' type='ComponentType' {...props} />
+        <NewDiscussion contextId={contextId} name={'Agreements'} type='ComponentType' {...props} />
       </div>
       )
     }

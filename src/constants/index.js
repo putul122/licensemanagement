@@ -88,7 +88,8 @@ const api = {
   getActivityMessage: function () {
     return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
   },
-  getPackage: 'https://model-eco-dev.ecoconductor.com/model_packages/LM'
+  getPackage: 'https://model-eco-dev.ecoconductor.com/model_packages/LM',
+  createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions'
 }
 
 export default api
