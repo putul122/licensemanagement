@@ -36,7 +36,8 @@ export default function NewDiscussion (props) {
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      let formattedMessage = tempMessageStorage.replace(display, formattedText)
+      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      let formattedMessage = buildMessage.replace(display, formattedText)
       let payload = {}
       payload.message = formattedMessage
       payload.tags = tempTagStorage

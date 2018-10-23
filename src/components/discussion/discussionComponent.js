@@ -95,7 +95,8 @@ export default function Discussion (props) {
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      let formattedMessage = tempMessageStorage.replace(display, formattedText)
+      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      let formattedMessage = buildMessage.replace(display, formattedText)
       let payload = {}
       payload.message = formattedMessage
       payload.tags = tempTagStorage
@@ -110,7 +111,7 @@ export default function Discussion (props) {
     // ":" ---> 8285
     setTimeout(function () {
       console.log('onselect', id, display)
-      let originalMessage = props.newMessage
+      let originalMessage = props.replySettings.messageReply
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
       console.log(formattedText)
       console.log(display)
@@ -121,7 +122,8 @@ export default function Discussion (props) {
         tempTagStorage.push({id: 1, display: '...'})
       }
       console.log(props)
-      let formattedMessage = tempMessageStorage.replace(display, formattedText)
+      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      let formattedMessage = buildMessage.replace(display, formattedText)
       console.log(formattedMessage)
       let payload = {...props.replySettings, 'messageReply': formattedMessage, 'tags': tempTagStorage}
       props.setReplySettings(payload)
