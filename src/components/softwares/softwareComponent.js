@@ -81,28 +81,26 @@ if (props.software && props.software !== '') {
 
   totalSoftware = props.software.total_count
   totalNoPages = Math.ceil(totalSoftware / perPage)
+  if (currentPage === 1) {
+    previousClass = 'm-datatable__pager-link--disabled'
+  }
+  if (currentPage === totalNoPages) {
+    nextClass = 'm-datatable__pager-link--disabled'
+  }
+  let i = 1
+  while (i <= totalNoPages) {
+    let pageParameter = {}
+    pageParameter.number = i
+    pageParameter.class = ''
+    pageArray.push(pageParameter)
+    i++
+  }
+  pageArray = _.chunk(pageArray, paginationLimit)
+  listPage = _.filter(pageArray, function (group) {
+    let found = _.filter(group, {'number': currentPage})
+    if (found.length > 0) { return group }
+  })
 }
-if (currentPage === 1) {
-  previousClass = 'm-datatable__pager-link--disabled'
-}
-
-if (currentPage === totalNoPages) {
-  nextClass = 'm-datatable__pager-link--disabled'
-}
-
-let i = 1
-while (i <= totalNoPages) {
-  let pageParameter = {}
-  pageParameter.number = i
-  pageParameter.class = ''
-  pageArray.push(pageParameter)
-  i++
-}
-pageArray = _.chunk(pageArray, paginationLimit)
-listPage = _.filter(pageArray, function (group) {
-  let found = _.filter(group, {'number': currentPage})
-  if (found.length > 0) { return group }
-})
 
 let handlePrevious = function (event) {
   event.preventDefault()
@@ -135,7 +133,6 @@ let handleNext = function (event) {
       'page_size': props.perPage,
       'page': currentPage + 1
     }
-    softwareList = ''
     props.fetchSoftwares(payload)
    // eslint-disable-next-line
    mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -152,7 +149,6 @@ let handlePage = function (page) {
   } else if (page === totalNoPages) {
     nextClass = 'm-datatable__pager-link--disabled'
   }
-  softwareList = ''
   let payload = {
     'search': searchTextBox.value ? searchTextBox.value : '',
     'page_size': props.perPage,
@@ -297,7 +293,7 @@ return (
   <div>
     <div className='row'>
       <div className='col-md-9'>
-        <h3>Softwares</h3>
+        <h2>Softwares</h2>
       </div>
       <div className='col-md-3'>
         {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp; */}
@@ -306,31 +302,17 @@ return (
     </div>
     <div className='row' id='softwareSummary'>
       <div className='col-xl-6'>
-        {/* <div className='m-portlet m-portlet--full-height'>
-          <div className='m-portlet__body'>
-            <div className='m-widget12'>
-              <div className='m-widget12__item'>
-                <span className='m-widget12__text1'>
-                  <h1>Total</h1>
-                </span>
-                <span className='m-widget12__text2'>
-                  <h1>{softwareCount}</h1>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div> */}
-        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
-                <h3 className='m-portlet__head-text m--font-light'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
                  Activity
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>
-          <div className='m-portlet__body'>
+          <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                 <div className='m-widget17__chart'>
@@ -343,13 +325,13 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-file m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h1>Total</h1>
-                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{softwareCount}</h1>
+                      <h3>Total</h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{softwareCount}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -362,30 +344,17 @@ return (
         </div>
       </div>
       <div className='col-xl-6'>
-        {/* <div className='m-portlet m-portlet--full-height'>
-          <div className='m-portlet__body'>
-            <div className='m-widget12'>
-              <div className='m-widget12__item'>
-                <span className='m-widget12__text1'>
-                  <h1>Total Cost</h1>
-                  <br />
-                  <h2 className=''>{'R' + formatAmount(totalCost)}</h2>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
-                <h3 className='m-portlet__head-text m--font-light'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
                  Activity
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>
-          <div className='m-portlet__body'>
+          <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                 <div className='m-widget17__chart'>
@@ -398,13 +367,13 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-coins m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h1>Total Cost</h1>
-                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'R' + formatAmount(totalCost)}</h1>
+                      <h3>Total Cost</h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'R' + formatAmount(totalCost)}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>

@@ -24,6 +24,7 @@ export const initialState = {
   agreements: '',
   agreementsSummary: '',
   currentPage: 1,
+  perPage: 10,
   addAgreementResponse: '',
   addAgreementSettings: {
     isAddModalOpen: false,

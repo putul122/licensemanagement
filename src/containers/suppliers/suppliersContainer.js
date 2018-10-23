@@ -46,7 +46,7 @@ export default compose(
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         'search': '',
-        'page_size': 10,
+        'page_size': this.props.perPage,
         'page': 1
       }
       this.props.fetchSuppliers && this.props.fetchSuppliers(payload)

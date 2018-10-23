@@ -24,6 +24,7 @@ export const initialState = {
    entitlements: '',
    entitlementsSummary: '',
    currentPage: 1,
+   perPage: 10,
    addEntitlementResponse: ''
 }
 

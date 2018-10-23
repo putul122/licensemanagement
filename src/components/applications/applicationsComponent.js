@@ -44,6 +44,13 @@ export default function Applicationlists (props) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
   }
+  let handleBlurdropdownChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handledropdownChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
   // let businessUnitId
   if (props.application && props.application !== '') {
     let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
@@ -65,28 +72,27 @@ export default function Applicationlists (props) {
 
     totalApplication = props.application.total_count
     totalNoPages = Math.ceil(totalApplication / perPage)
+    console.log('%%%%%%', totalNoPages)
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    let i = 1
+    while (i <= totalNoPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': 1})
+      if (found.length > 0) { return group }
+    })
   }
-  if (currentPage === 1) {
-    previousClass = 'm-datatable__pager-link--disabled'
-  }
-
-  if (currentPage === totalNoPages) {
-    nextClass = 'm-datatable__pager-link--disabled'
-  }
-
-  let i = 1
-  while (i <= totalNoPages) {
-    let pageParameter = {}
-    pageParameter.number = i
-    pageParameter.class = ''
-    pageArray.push(pageParameter)
-    i++
-  }
-  pageArray = _.chunk(pageArray, paginationLimit)
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage})
-    if (found.length > 0) { return group }
-  })
 
   let handleInputChange = debounce((e) => {
     console.log(e)
@@ -119,55 +125,8 @@ export default function Applicationlists (props) {
       if (found.length > 0) { return group }
     })
   }, 500)
-  let handlePage = function (page) {
-    if (page === 1) {
-      previousClass = 'm-datatable__pager-link--disabled'
-    } else if (page === totalNoPages) {
-      nextClass = 'm-datatable__pager-link--disabled'
-    }
-    applicationList = ''
-    if (props.businessUnitId === '') {
-      let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
-      'page_size': props.perPage,
-      'page': page
-      }
-      props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    }
-    if (props.businessUnitId !== '') {
-      let payload = {
-        // 'business_unit_id': props.businessUnits.resources[0].id,
-        'business_unit_id': props.businessUnitId,
-        'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': props.perPage,
-        'page': page
-      }
-      props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    }
-    // let payload = {
-    //   // 'business_unit_id': props.businessUnits.resources[0].id,
-    //   'search': searchTextBox.value ? searchTextBox.value : '',
-    //   'page_size': 10,
-    //   'page': page
-    // }
-    // props.fetchApplications(payload)
-    // // props.fetchBusinessUnits(payload)
-    // // eslint-disable-next-line
-    // mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // eslint-disable-next-line
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': page})
-      if (found.length > 0) { return group }
-    })
-  }
 
-  let handlePrevious = function (event) {
+    let handlePrevious = function (event) {
     event.preventDefault()
     if (currentPage === 1) {
       previousClass = styles.disabled
@@ -217,6 +176,7 @@ export default function Applicationlists (props) {
         props.fetchApplications(payload)
         // eslint-disable-next-line
         mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // props.setCurrentPage(currentPage + 1)
       }
       // props.setCurrentPage(currentPage + 1)
       if (props.businessUnitId !== '') {
@@ -239,12 +199,58 @@ export default function Applicationlists (props) {
       if (found.length > 0) { return group }
     })
   }
-  let handleBlurdropdownChange = function (event) {
-    console.log('handle Blur change', event.target.value)
-  }
-  let handledropdownChange = function (event) {
-    console.log('handle change', event.target.value, typeof event.target.value)
-    props.setPerPage(parseInt(event.target.value))
+
+  let handlePage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    // applicationList = ''
+    if (props.businessUnitId === '') {
+      let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': page
+      }
+      props.fetchApplications(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // props.setCurrentPage(page)
+    }
+    if (props.businessUnitId !== '') {
+      let payload = {
+        // 'business_unit_id': props.businessUnits.resources[0].id,
+        'business_unit_id': props.businessUnitId,
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': page
+      }
+      props.fetchApplications(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // props.setCurrentPage(page)
+    }
+    // let payload = {
+    //   // 'business_unit_id': props.businessUnits.resources[0].id,
+    //   'search': searchTextBox.value ? searchTextBox.value : '',
+    //   'page_size': 10,
+    //   'page': page
+    // }
+    // props.fetchApplications(payload)
+    // // props.fetchBusinessUnits(payload)
+    // // eslint-disable-next-line
+    // mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    // eslint-disable-next-line
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(page)
+    console.log('&&&&', page)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+      console.log('&&&&', listPage)
+    })
   }
   // applicationList = ApplicationsDatalist.map(function (application, index) {
   //   return (
@@ -407,7 +413,7 @@ return (
   <div>
     <div className='row'>
       <div className='col-md-9'>
-        <h3>Applications</h3>
+        <h2>Applications</h2>
       </div>
       <div className='col-md-3'>
         {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp; */}
@@ -423,27 +429,13 @@ return (
     </div>
     <div className='row' id='applicationSummary'>
       <div className='col-xl-6'>
-        {/* <div className='m-portlet m-portlet--full-height'>
-          <div className='m-portlet__body'>
-            <div className='m-widget12'>
-              <div className='m-widget12__item'>
-                <span className='m-widget12__text1'>
-                  <h1>Total</h1>
-                </span>
-                <span className='m-widget12__text2'>
-                  <h1>{applicationCount}</h1>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div> */}
-        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
-                <h3 className='m-portlet__head-text m--font-light'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
                  Activity
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>
@@ -460,13 +452,13 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-file m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h1>Total </h1>
-                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{applicationCount}</h1>
+                      <h3>Total </h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{applicationCount}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -478,7 +470,7 @@ return (
           </div>
         </div>
       </div>
-      <div className='col-md-offset-1 col-xl-6'>
+      <div className='col-xl-6'>
         {/* <div className='m-portlet m-portlet--full-height'>
           <div className='m-portlet__body'>
             <div className='m-widget12'>
@@ -492,13 +484,13 @@ return (
             </div>
           </div>
         </div> */}
-        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit  m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
-                <h3 className='m-portlet__head-text m--font-light'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
                  Activity
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>
@@ -515,13 +507,13 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-file m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h1>Total Cost</h1>
-                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'R' + formatAmount(totalCost)}</h1>
+                      <h3>Total Cost</h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'R' + formatAmount(totalCost)}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>

@@ -69,7 +69,7 @@ export default function Dashboard (props) {
           display: true,
           scaleLabel: {
             display: true,
-            fontStyle: 'bold',
+            fontStyle: 'normal',
             labelString: 'Software'
           },
           stacked: false
@@ -421,8 +421,8 @@ export default function Dashboard (props) {
           EntitlementContent.push(
             <span key={index++}>
               <div className='row'>
-                <div className='col-sm-3' style={{'marginTop': '6px'}}><span style={{'fontWeight': 'normal'}}>{supplier || 'No Supplier'}</span></div>
-                <div className='col-sm-9 pull-left'>
+                <div className='col-sm-4' style={{'marginTop': '6px'}}><p style={{'width': '165px', 'fontSize': '0.7vw'}}>{supplier || 'No Supplier'}</p></div>
+                <div className='col-sm-8 pull-left'>
                   <div className='m--space-10' />
                   <div className='progress'>
                     <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100'><div style={{'fontSize': '12px'}}>{formatAmount(liability)}%</div></div>
@@ -526,17 +526,17 @@ export default function Dashboard (props) {
         <div className='col-md-8'>
           <div className='row' id='supplierSummary'>
             <div className='col-md-6'>
-              <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+              <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
                 <div className='m-portlet__head'>
                   <div className='m-portlet__head-caption'>
                     <div className='m-portlet__head-title'>
-                      <h3 className='m-portlet__head-text m--font-light'>
+                      {/* <h3 className='m-portlet__head-text m--font-light'>
                         Activity
-                      </h3>
+                      </h3> */}
                     </div>
                   </div>
                 </div>
-                <div className='m-portlet__body'>
+                <div className='m-portlet__body' style={{'height': '150px'}}>
                   <div className='m-widget17'>
                     <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                       <div className='m-widget17__chart'>
@@ -549,15 +549,15 @@ export default function Dashboard (props) {
                     </div>
                     <div className='m-widget17__stats'>
                       <div className='m-widget17__items m-widget17__items-col2'>
-                        <div className='m-widget17__item'>
+                        <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                           <span className='m-widget17__icon'>
                             <i className='flaticon-truck m--font-brand' />
                           </span>
                           <span className='m-widget17__subtitle'>
-                            <h3><a href='/suppliers'>Suppliers</a></h3>
+                            <h4><a href='/suppliers'>Suppliers</a></h4>
                           </span>
                           <span className='m-widget17__desc'>
-                            <h5>{supplierCount}</h5>
+                            <h4>{supplierCount}</h4>
                           </span>
                         </div>
                       </div>
@@ -567,15 +567,15 @@ export default function Dashboard (props) {
               </div>
             </div>
             <div className='col-md-6'>
-              <div className='m-portlet m-portlet--full-height'>
+              <div className='m-portlet'>
                 <div className='m-portlet__body'>
                   <div className='m-widget12'>
                     <div className='m-widget12__item'>
                       <div className='col m-widget12__text1'>
                         <span className=''>
-                          <h4>Cost Per</h4>
+                          <h4 style={{'position': 'relative', 'top': '-67px', 'color': '#5867dd'}}>Cost Per</h4>
                           <br />
-                          <h5>Top 10 Suppliers</h5>
+                          <h5 style={{'position': 'relative', 'top': '-81px'}}>Top 10 Suppliers</h5>
                         </span>
                       </div>
                       <div className='col'>
@@ -590,95 +590,14 @@ export default function Dashboard (props) {
               </div>
             </div>
           </div>
-          <div className='row' id='agreementSummary'>
-            <div className='col-md-6'>
-              {/* <div className='m-portlet m-portlet--full-height'>
-                <div className='m-portlet__body'>
-                  <div className='m-widget12'>
-                    <div className='m-widget12__item'>
-                      <span className='m-widget12__text1'>
-                        <h4><a href='/agreements'>Agreements</a></h4>
-                        <br /><br /><br /><br />
-                        <h4>R {formatAmount(agreementCost)}</h4>
-                      </span>
-                      <span className='m-widget12__text1'>
-                        <h4 style={{'float': 'right'}}>{agreementCount}</h4>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-              <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
-                <div className='m-portlet__head'>
-                  <div className='m-portlet__head-caption'>
-                    <div className='m-portlet__head-title'>
-                      <h3 className='m-portlet__head-text m--font-light'>
-                        Activity
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-                <div className='m-portlet__body'>
-                  <div className='m-widget17'>
-                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
-                      <div className='m-widget17__chart'>
-                        <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
-                          <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
-                          <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
-                            <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
-                        <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
-                      </div>
-                    </div>
-                    <div className='m-widget17__stats'>
-                      <div className='m-widget17__items m-widget17__items-col2'>
-                        <div className='m-widget17__item'>
-                          <span className='m-widget17__icon'>
-                            <i className='flaticon-business m--font-brand' />
-                            <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{agreementCount}</h4>
-                          </span>
-                          <span className='m-widget17__subtitle'>
-                            <h3><a href='/agreements'>Agreements</a></h3>
-                            <h4>R {formatAmount(agreementCost)}</h4>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className='col-md-6' style={{'overflow': 'visible'}}>
-              <div className='m-portlet m-portlet--full-height'>
-                <div className='m-portlet__body'>
-                  <div className='m-widget12'>
-                    <div className='m-widget12__item'>
-                      <div className='col m-widget12__text1'>
-                        <span className=''>
-                          <h4>Cost Per</h4>
-                          <br />
-                          <h5>Agreement Type</h5>
-                        </span>
-                      </div>
-                      <div className='col'>
-                        <span className='m-widget12__text2'>
-                          <Doughnut id='agreementChart' width={180} data={agreementPieChartData} options={chartOptionAgreement} />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
         <div className='col-md-4' id='entitlementSummary'>
-          <div className='m-portlet m-portlet--full-height'>
+          <div className='m-portlet' style={{'height': '285px'}}>
             <div className='m-portlet__body'>
               <div className='m-widget12'>
                 <div className='m-widget12__item'>
                   <span className='m-widget12__text1 row'>
                     <h4><a href='/entitlements'>Entitlements</a></h4>
-                    <br />
                     <h5>Liability/Overspend</h5>
                     <div className='row'>
                       <div className='col-sm-12'>
@@ -692,17 +611,81 @@ export default function Dashboard (props) {
           </div>
         </div>
       </div>
-      <div className='row' style={{'overflow': 'visible'}}>
+      <div className='row'>
         <div className='col-md-8'>
-          <div className='row' id='applicationSummary'>
-            <div className='col-md-6'>
+          <div className='row' id='agreementSummary'>
+            <div className='col-md-6' style={{'position': 'relative', 'top': '-75px'}}>
               <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
                 <div className='m-portlet__head'>
                   <div className='m-portlet__head-caption'>
                     <div className='m-portlet__head-title'>
-                      <h3 className='m-portlet__head-text m--font-light'>
+                      {/* <h3 className='m-portlet__head-text m--font-light'>
                         Activity
-                      </h3>
+                      </h3> */}
+                    </div>
+                  </div>
+                </div>
+                <div className='m-portlet__body' style={{'height': '150px'}}>
+                  <div className='m-widget17'>
+                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                      <div className='m-widget17__chart'>
+                        <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                          <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                          <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                            <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                        <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                      </div>
+                    </div>
+                    <div className='m-widget17__stats'>
+                      <div className='m-widget17__items m-widget17__items-col2'>
+                        <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                          <span className='m-widget17__icon'>
+                            <i className='flaticon-business m--font-brand' />
+                            <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{agreementCount}</h4>
+                          </span>
+                          <span className='m-widget17__subtitle'>
+                            <h4><a href='/agreements'>Agreements</a></h4>
+                            <h4>R {formatAmount(agreementCost)}</h4>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='col-md-6' style={{'position': 'relative', 'top': '-75px', 'overflow': 'visible'}}>
+              <div className='m-portlet'>
+                <div className='m-portlet__body'>
+                  <div className='m-widget12'>
+                    <div className='m-widget12__item' >
+                      <div className='col m-widget12__text1'>
+                        <span className=''>
+                          <h4 style={{'position': 'relative', 'top': '-67px', 'color': '#5867dd'}}>Cost Per</h4>
+                          <br />
+                          <h5 style={{'position': 'relative', 'top': '-81px'}}>Agreement Type</h5>
+                        </span>
+                      </div>
+                      <div className='col'>
+                        <span className='m-widget12__text2'>
+                          <Doughnut id='agreementChart' width={180} data={agreementPieChartData} options={chartOptionAgreement} />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='row' id='applicationSummary'>
+            <div className='col-md-6' style={{'position': 'relative', 'top': '-75px'}}>
+              <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
+                <div className='m-portlet__head'>
+                  <div className='m-portlet__head-caption'>
+                    <div className='m-portlet__head-title'>
+                      {/* <h3 className='m-portlet__head-text m--font-light'>
+                        Activity
+                      </h3> */}
                     </div>
                   </div>
                 </div>
@@ -719,13 +702,13 @@ export default function Dashboard (props) {
                     </div>
                     <div className='m-widget17__stats'>
                       <div className='m-widget17__items m-widget17__items-col2'>
-                        <div className='m-widget17__item'>
+                        <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                           <span className='m-widget17__icon'>
                             <i className='flaticon-folder-4 m--font-brand' />
                             <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{applicationCount}</h4>
                           </span>
                           <span className='m-widget17__subtitle'>
-                            <h3><a href='/applications'>Applications</a></h3>
+                            <h4><a href='/applications'>Applications</a></h4>
                             <h4>R {formatAmount(applicationCost)}</h4>
                           </span>
                         </div>
@@ -735,16 +718,16 @@ export default function Dashboard (props) {
                 </div>
               </div>
             </div>
-            <div className='col-md-6'>
-              <div className='m-portlet m-portlet--full-height'>
+            <div className='col-md-6' style={{'position': 'relative', 'top': '-75px'}}>
+              <div className='m-portlet'>
                 <div className='m-portlet__body'>
                   <div className='m-widget12'>
-                    <div className='m-widget12__item'>
+                    <div className='m-widget12__item' >
                       <div className='col m-widget12__text1'>
                         <span className=''>
-                          <h4>Cost Per</h4>
+                          <h4 style={{'position': 'relative', 'top': '-67px', 'color': '#5867dd'}}>Cost Per</h4>
                           <br />
-                          <h5>Top 10 Applications</h5>
+                          <h5 style={{'position': 'relative', 'top': '-81px'}}>Top 10 Applications</h5>
                         </span>
                       </div>
                       <div className='col'>
@@ -760,12 +743,13 @@ export default function Dashboard (props) {
           </div>
         </div>
         <div className='col-md-4' id='softwareSummary'>
-          <div className='m-portlet m-portlet--full-height'>
+          <div className='m-portlet'>
             <div className='m-portlet__body'>
               <div className='m-widget12'>
                 <div className='m-widget12__item'>
                   <div className='m-widget12__text1'>
                     <span className=''>
+                      <h4><a href='/softwares'>Software per Technology Category</a></h4>
                       <Bar
                         id='softwareChart'
                         data={softwareSummaryData}
@@ -774,7 +758,6 @@ export default function Dashboard (props) {
                         options={chartOptionSoftware}
                       />
                       <br />
-                      <h4><a href='/softwares'>Software per Technology Category</a></h4>
                     </span>
                   </div>
                 </div>

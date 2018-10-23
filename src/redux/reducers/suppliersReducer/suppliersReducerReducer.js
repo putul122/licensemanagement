@@ -28,6 +28,7 @@ export const initialState = {
   suppliersSummary: '',
   supplierSoftwares: '',
   currentPage: 1,
+  perPage: 10,
   expandSettings: {
     selectedId: '',
     expandFlag: false

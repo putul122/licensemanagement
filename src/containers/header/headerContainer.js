@@ -9,6 +9,7 @@ export function mapStateToProps (state, props) {
   return {
     isQuickSlideOpen: state.basicReducer.isQuickSlideOpen,
     notificationFlag: state.basicReducer.notificationFlag,
+    isLoginSlideOpen: state.basicReducer.isLoginSlideOpen,
     updateNotificationViewStatusResponse: state.basicReducer.updateNotificationViewStatusResponse
   }
 }
@@ -16,6 +17,7 @@ export function mapStateToProps (state, props) {
 export const propsMapping: Callbacks = {
   setQuickslideFlag: actionCreators.setQuickslideFlag,
   setNotificationFlag: actionCreators.setNotificationFlag,
+  setLoginslideFlag: actionCreators.setLoginslideFlag,
   resetNotificationResponse: actionCreators.resetNotificationResponse,
   updateNotificationViewStatus: sagaActions.basicActions.updateNotificationViewStatus
 }

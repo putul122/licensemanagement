@@ -8,12 +8,6 @@ class LeftNavigation extends React.Component {
   <div>
     <button className='m-aside-left-close  m-aside-left-close--skin-light' id='m_aside_left_close_btn'><i className='la la-close' /></button>
     <div id='m_aside_left' className='m-grid__item	m-aside-left  m-aside-left--skin-light '>
-      <div className='m-brand  m-brand--skin-light '>
-        {/* <a href='/'>
-          <img alt='' src='/assets/Telkom.png' width='100px' style={{marginTop: '13'}} />
-        </a> */}
-        <h1 className={styles.logotext}>LM</h1>
-      </div>
       <div id='m_ver_menu' className='m-aside-menu  m-aside-menu--skin-light m-aside-menu--submenu-skin-light '>
         {/* <div className={styles.mainmenu}>
           <ul className='m-menu__nav  m-menu__nav--dropdown-submenu-arrow '>
@@ -26,6 +20,12 @@ class LeftNavigation extends React.Component {
           </ul>
         </div> */}
         <nav className={styles.mainmenu}>
+          <div className='m-brand  m-brand--skin-light '>
+            {/* <a href='/'>
+              <img alt='' src='/assets/Telkom.png' width='100px' style={{marginTop: '13'}} />
+            </a> */}
+            <h1 className={styles.logotext}>LM</h1>
+          </div>
           <ul>
             <li className={styles.navicon}>
               <a href='/dashboard'>

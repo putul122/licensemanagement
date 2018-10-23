@@ -36,7 +36,7 @@ export default function Entitlementlists (props) {
   let searchTextBox
   let entitlementsList = ''
   let totalNoPages
-  let perPage = 10
+  let perPage = props.perPage
   let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
@@ -58,6 +58,13 @@ export default function Entitlementlists (props) {
     props.setDiscussionModalOpenStatus(true)
   }
   console.log('props', props.setModalOpenStatus)
+  let handleBlurdropdownChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handledropdownChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
 
   if (props.entitlements && props.entitlements !== '') {
     entitlementsList = props.entitlements.resources.map(function (data, index) {
@@ -76,28 +83,27 @@ export default function Entitlementlists (props) {
 
     totalEntitlement = props.entitlements.total_count
     totalNoPages = Math.ceil(totalEntitlement / perPage)
-  }
-  if (currentPage === 1) {
-    previousClass = 'm-datatable__pager-link--disabled'
-  }
 
-  if (currentPage === totalNoPages) {
-    nextClass = 'm-datatable__pager-link--disabled'
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    let i = 1
+    while (i <= totalNoPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
   }
-
-  let i = 1
-  while (i <= totalNoPages) {
-    let pageParameter = {}
-    pageParameter.number = i
-    pageParameter.class = ''
-    pageArray.push(pageParameter)
-    i++
-  }
-  pageArray = _.chunk(pageArray, paginationLimit)
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage})
-    if (found.length > 0) { return group }
-  })
 
   let handleInputChange = debounce((e) => {
     console.log(e)
@@ -105,7 +111,7 @@ export default function Entitlementlists (props) {
     entitlementsList = ''
     let payload = {
       'search': value || '',
-      'page_size': 10,
+      'page_size': props.perPage,
       'page': currentPage
     }
     // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
@@ -119,29 +125,6 @@ export default function Entitlementlists (props) {
       if (found.length > 0) { return group }
     })
   }, 500)
-  let handlePage = function (page) {
-    if (page === 1) {
-      previousClass = 'm-datatable__pager-link--disabled'
-    } else if (page === totalNoPages) {
-      nextClass = 'm-datatable__pager-link--disabled'
-    }
-    entitlementsList = ''
-    let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
-      'page_size': 10,
-      'page': page
-    }
-    props.fetchEntitlements(payload)
-    // eslint-disable-next-line
-    mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    props.setCurrentPage(page)
-
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': page})
-      if (found.length > 0) { return group }
-    })
-  }
-
   let handlePrevious = function (event) {
     event.preventDefault()
     if (currentPage === 1) {
@@ -149,7 +132,7 @@ export default function Entitlementlists (props) {
     } else {
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage - 1
       }
       props.fetchEntitlements(payload)
@@ -162,7 +145,6 @@ export default function Entitlementlists (props) {
       if (found.length > 0) { return group }
     })
   }
-
   let handleNext = function (event) {
     event.preventDefault()
     if (currentPage === totalNoPages) {
@@ -170,10 +152,10 @@ export default function Entitlementlists (props) {
     } else {
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage + 1
       }
-      entitlementsList = ''
+      // entitlementsList = ''
       props.fetchEntitlements(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -181,6 +163,28 @@ export default function Entitlementlists (props) {
     }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage + 1})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handlePage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    // entitlementsList = ''
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': page
+    }
+    props.fetchEntitlements(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(page)
+
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
       if (found.length > 0) { return group }
     })
   }
@@ -209,21 +213,15 @@ export default function Entitlementlists (props) {
     props.addEntitlement(payload)
     props.setModalOpenStatus(false)
    }
-   let handleBlurdropdownChange = function (event) {
-    console.log('handle Blur change', event.target.value)
-  }
-  let handledropdownChange = function (event) {
-    console.log('handle change', event.target.value, typeof event.target.value)
-    props.setPerPage(parseInt(event.target.value))
-  }
+
 return (
   <div>
     <div className='row'>
       <div className='col-md-9'>
-        <h3>Entitlements</h3>
+        <h2>Entitlements</h2>
       </div>
       <div className='col-md-3'>
-        <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp;
+        <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Entitlment</button>&nbsp;
         <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
       </div>
     </div>
@@ -283,13 +281,13 @@ return (
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
-                <h3 className='m-portlet__head-text m--font-light'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
                  Activity
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>
-          <div className='m-portlet__body'>
+          <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                 <div className='m-widget17__chart'>
@@ -302,13 +300,13 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-file m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h1>Total</h1>
-                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{entitlementCount}</h1>
+                      <h3>Total</h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{entitlementCount}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -321,31 +319,17 @@ return (
         </div>
       </div>
       <div className='col-md-offset-1 col-xl-6'>
-        {/* <div className='m-portlet m-portlet--full-height'>
-          <div className='m-portlet__body'>
-            <div className='m-widget12'>
-              <div className='m-widget12__item'>
-                <span className='m-widget12__text1'>
-                  <h1>Consumed</h1>
-                </span>
-                <span className='m-widget12__text2'>
-                  <h1>{Number(consumed).toFixed(2) + '%'}</h1>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
-                <h3 className='m-portlet__head-text m--font-light'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
                  Activity
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>
-          <div className='m-portlet__body'>
+          <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                 <div className='m-widget17__chart'>
@@ -358,13 +342,13 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-coins m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h1>Consumed</h1>
-                      <h1 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{Number(consumed).toFixed(2) + '%'}</h1>
+                      <h3>Consumed</h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{Number(consumed).toFixed(2) + '%'}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>

@@ -41,7 +41,7 @@ export default function Agreements (props) {
   let expireIn90Days = ''
   let searchTextBox
   let totalNoPages
-  let perPage = 10
+  let perPage = props.perPage
   let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
@@ -86,6 +86,13 @@ export default function Agreements (props) {
     props.setAddAgreementSettings(addAgreementSettings)
   }
   // End code for add new agreement
+  let handleBlurdropdownChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handledropdownChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
   if (props.agreementsSummary && props.agreementsSummary !== '') {
     agreementCount = props.agreementsSummary.resources[0].agreement_count
     agreementCost = props.agreementsSummary.resources[0].cost
@@ -129,29 +136,27 @@ export default function Agreements (props) {
 
     totalAgreement = props.agreements.total_count
     totalNoPages = Math.ceil(totalAgreement / perPage)
-  }
 
-  if (currentPage === 1) {
-    previousClass = 'm-datatable__pager-link--disabled'
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    let i = 1
+    while (i <= totalNoPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
   }
-
-  if (currentPage === totalNoPages) {
-    nextClass = 'm-datatable__pager-link--disabled'
-  }
-
-  let i = 1
-  while (i <= totalNoPages) {
-    let pageParameter = {}
-    pageParameter.number = i
-    pageParameter.class = ''
-    pageArray.push(pageParameter)
-    i++
-  }
-  pageArray = _.chunk(pageArray, paginationLimit)
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage})
-    if (found.length > 0) { return group }
-  })
 
   let handleInputChange = debounce((e) => {
     console.log(e)
@@ -159,7 +164,7 @@ export default function Agreements (props) {
     agreementsList = ''
     let payload = {
       'search': value || '',
-      'page_size': 10,
+      'page_size': props.perPage,
       'page': currentPage
     }
     // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
@@ -175,30 +180,6 @@ export default function Agreements (props) {
       if (found.length > 0) { return group }
     })
   }, 500)
-  let handlePage = function (page) {
-    if (page === 1) {
-      previousClass = 'm-datatable__pager-link--disabled'
-    } else if (page === totalNoPages) {
-      nextClass = 'm-datatable__pager-link--disabled'
-    }
-    agreementsList = ''
-    let payload = {
-      'search': searchTextBox.value ? searchTextBox.value : '',
-      'page_size': 10,
-      'page': page
-    }
-    props.fetchAgreements(payload)
-    // eslint-disable-next-line
-    mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    props.setCurrentPage(page)
-
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': page})
-      if (found.length > 0) { return group }
-    })
-  }
 
   let handlePrevious = function (event) {
     event.preventDefault()
@@ -207,7 +188,7 @@ export default function Agreements (props) {
     } else {
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage - 1
       }
       props.fetchAgreements(payload)
@@ -230,7 +211,7 @@ export default function Agreements (props) {
     } else {
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage + 1
       }
       agreementsList = ''
@@ -246,18 +227,36 @@ export default function Agreements (props) {
       if (found.length > 0) { return group }
     })
   }
-  let handleBlurdropdownChange = function (event) {
-    console.log('handle Blur change', event.target.value)
+  let handlePage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    // agreementsList = ''
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': page
+    }
+    props.fetchAgreements(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(page)
+
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
   }
-  let handledropdownChange = function (event) {
-    console.log('handle change', event.target.value, typeof event.target.value)
-    props.setPerPage(parseInt(event.target.value))
-  }
+
     return (
       <div>
         <div className='row'>
           <div className='col-md-9'>
-            <h3>Agreements</h3>
+            <h2>Agreements</h2>
           </div>
           <div className='col-md-3'>
             <button onClick={addAgreement} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
@@ -266,30 +265,17 @@ export default function Agreements (props) {
         </div>
         <div className='row' id='agreementSummary'>
           <div className='col-md-4'>
-            {/* <div className='m-portlet m-portlet--full-height'>
-              <div className='m-portlet__body'>
-                <div className='m-widget12'>
-                  <div className='m-widget12__item'>
-                    <span className='m-widget12__text1'>
-                      <h3>Agreements&nbsp;&nbsp;&nbsp;{agreementCount}</h3>
-                      <br /><br /><br /><br />
-                      <h4 className='pull-right'>R {formatAmount(agreementCost)}</h4>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
                   <div className='m-portlet__head-title'>
-                    <h3 className='m-portlet__head-text m--font-light'>
+                    {/* <h3 className='m-portlet__head-text m--font-light'>
                       Activity
-                    </h3>
+                    </h3> */}
                   </div>
                 </div>
               </div>
-              <div className='m-portlet__body'>
+              <div className='m-portlet__body' style={{'height': '150px'}}>
                 <div className='m-widget17'>
                   <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                     <div className='m-widget17__chart'>
@@ -302,7 +288,7 @@ export default function Agreements (props) {
                   </div>
                   <div className='m-widget17__stats'>
                     <div className='m-widget17__items m-widget17__items-col2'>
-                      <div className='m-widget17__item'>
+                      <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                         <span className='m-widget17__icon'>
                           <i className='flaticon-truck m--font-brand' />
                         </span>
@@ -321,31 +307,17 @@ export default function Agreements (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            {/* <div className='m-portlet m-portlet--full-height'>
-              <div className='m-portlet__body'>
-                <div className='m-widget12'>
-                  <div className='m-widget12__item'>
-                    <span className='m-widget12__text1'>
-                      <h4>Expiry in 90 days</h4>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <h2>{expireIn90Days}</h2>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
                   <div className='m-portlet__head-title'>
-                    <h3 className='m-portlet__head-text m--font-light'>
+                    {/* <h3 className='m-portlet__head-text m--font-light'>
                       Activity
-                    </h3>
+                    </h3> */}
                   </div>
                 </div>
               </div>
-              <div className='m-portlet__body'>
+              <div className='m-portlet__body' style={{'height': '150px'}}>
                 <div className='m-widget17'>
                   <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                     <div className='m-widget17__chart'>
@@ -358,12 +330,12 @@ export default function Agreements (props) {
                   </div>
                   <div className='m-widget17__stats'>
                     <div className='m-widget17__items m-widget17__items-col2'>
-                      <div className='m-widget17__item'>
+                      <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                         <span className='m-widget17__icon'>
                           <i className='flaticon-calendar-1 m--font-brand' />
                         </span>
                         <span className='m-widget17__subtitle'>
-                          <h4>Expiry in 90 days</h4>
+                          <h3>Expiry in 90 days</h3>
                         </span>
                         <span className='m-widget17__desc'>
                           <h5>{expireIn90Days}</h5>
@@ -376,19 +348,20 @@ export default function Agreements (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            <div className='m-portlet m-portlet--full-height'>
-              <div className='m-portlet__body'>
+            <div className='m-portlet'>
+              <div className='m-portlet__body' style={{'height': '217px'}}>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
-                    <div className='col m-widget12__text1'>
+                    {/* <div className='col m-widget12__text1'>
                       <span className=''>
                         <h2>Cost Per</h2>
                         <br />
                         <h5>Agreement Type</h5>
                       </span>
-                    </div>
-                    <div className='col'>
-                      <span className='m-widget12__text2'>
+                    </div> */}
+                    <div className='col-md-4' style={{'marginLeft': '80px'}}>
+                      <span className='m-widget12__text2' >
+                        <h3 style={{'textAlign': 'center'}}>Cost per agreement type</h3>
                         <Doughnut data={agreementPieChartData}
                           // width={280}
                           options={{

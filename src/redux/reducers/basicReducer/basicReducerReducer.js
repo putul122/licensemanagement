@@ -7,6 +7,7 @@ const SET_TABLE_OPEN_STATUS = 'BasicReducer/SET_TABLE_OPEN_STATUS'
 const SET_MODAL_OPEN_STATUS = 'BasicReducer/SET_MODAL_OPEN_STATUS'
 const SET_QUICKSLIDE_FLAG = 'BasicReducer/SET_QUICKSLIDE_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
+const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
 const RESET_NOTIFICATION_RESPONSE = 'BasicReducer/RESET_NOTIFICATION_RESPONSE'
 
 export const actions = {
@@ -17,6 +18,7 @@ export const actions = {
   SET_TABLE_OPEN_STATUS,
   SET_MODAL_OPEN_STATUS,
   SET_QUICKSLIDE_FLAG,
+  SET_LOGINSLIDE_FLAG,
   SET_NOTIFICATION_FLAG,
   RESET_NOTIFICATION_RESPONSE,
   FETCH_PACKAGE_SUCCESS
@@ -28,6 +30,7 @@ export const actionCreators = {
   setTableOpenStatus: createAction(SET_TABLE_OPEN_STATUS),
   setModalOpenStatus: createAction(SET_MODAL_OPEN_STATUS),
   setQuickslideFlag: createAction(SET_QUICKSLIDE_FLAG),
+  setLoginslideFlag: createAction(SET_LOGINSLIDE_FLAG),
   setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
   resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE)
 }
@@ -44,6 +47,7 @@ export const initialState = {
   client_secret: 'SysHZjmhytHtZwQA4DRctXKU4TTvQajTu2zVANUU9PKmAUnC2gnMUfRxNpbXHJdu',
   authenticateUser: '',
   isQuickSlideOpen: false,
+  isLoginSlideOpen: false,
   notificationFlag: false,
   updateNotificationViewStatusResponse: '',
   packages: ''
@@ -78,6 +82,10 @@ export default handleActions(
     [SET_QUICKSLIDE_FLAG]: (state, action) => ({
       ...state,
       isQuickSlideOpen: action.payload
+    }),
+    [SET_LOGINSLIDE_FLAG]: (state, action) => ({
+      ...state,
+      isLoginSlideOpen: action.payload
     }),
     [SET_NOTIFICATION_FLAG]: (state, action) => ({ ...state,
       notificationFlag: action.payload,
