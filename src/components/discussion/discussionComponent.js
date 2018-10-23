@@ -88,6 +88,7 @@ export default function Discussion (props) {
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
       console.log(formattedText)
       console.log(display)
+      console.log(originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']')
       console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
       console.log(tempMessageStorage)
       console.log(tempTagStorage)

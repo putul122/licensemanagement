@@ -5,6 +5,7 @@ import moment from 'moment'
 import DataModelComponent from '../dataModel/dataModelComponent'
 import _ from 'lodash'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 var divStyle = {
   width: '900px',
   height: '600px',
@@ -33,6 +34,11 @@ export default function Softwareview (props) {
   let childSoftwareRelationshipList = ''
   let modelRelationshipData = ''
   let startNode = {}
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   if (props.softwarebyId && props.softwarebyId !== '') {
     softwareName = props.softwarebyId.resources[0].name
     softwareInstances = props.softwarebyId.resources[0].instances
@@ -242,7 +248,14 @@ export default function Softwareview (props) {
   }
     return (
       <div>
-        <h2>{softwareName}</h2>
+        <div className='row'>
+          <div className='col-md-10'>
+            <h2>{softwareName}</h2>
+          </div>
+          <div className='col-md-2'>
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          </div>
+        </div>
         <div className='row'>
           <div className='col-xl-4'>
             <div className='m-portlet m-portlet--full-height'>
@@ -321,11 +334,13 @@ export default function Softwareview (props) {
           </div>
         </div>
         <Discussion name={softwareName} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={softwareName} type='Component' {...props} />
       </div>
       )
     }
  Softwareview.propTypes = {
+  match: PropTypes.any,
   softwarebyId: PropTypes.any,
   softwareProperties: PropTypes.any,
   softwareRelationships: PropTypes.any
- }
+}

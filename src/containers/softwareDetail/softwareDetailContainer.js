@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import SoftwareView from '../../components/softwareDetail/softwareDetailComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
-// import { actionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -16,7 +16,8 @@ export function mapStateToProps (state, props) {
 export const propsMapping: Callbacks = {
   fetchSoftwareById: sagaActions.softwareActions.fetchSoftwareById,
   fetchSoftwareProperties: sagaActions.softwareActions.fetchSoftwareProperties,
-  fetchSoftwareRelationships: sagaActions.softwareActions.fetchSoftwareRelationships
+  fetchSoftwareRelationships: sagaActions.softwareActions.fetchSoftwareRelationships,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }
 
 // If you want to use the function mapping

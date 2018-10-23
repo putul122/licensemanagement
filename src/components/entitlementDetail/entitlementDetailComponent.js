@@ -10,6 +10,7 @@ import CreatableSelect from 'react-select/lib/Creatable'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
 const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
@@ -56,6 +57,11 @@ export default function EntitlementDetail (props) {
   let incomingApplicationRelationshipList = ''
   let childApplicationRelationshipList = ''
   let modelRelationshipData = ''
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   // Start Code for Delete Entitlement
   let deleteEntitlement = function () {
     let updateEntitlementSettings = {...props.updateEntitlementSettings, isDeleteModalOpen: true}
@@ -1113,7 +1119,7 @@ export default function EntitlementDetail (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-9'>
+          <div className='col-md-8'>
             {!props.isEditComponent && (<h2>{entitlementName}</h2>)}
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
               <input type='text' className='form-control m-input' onChange={editEntitlementName} value={entitlementName} placeholder='Entitlement Name' aria-describedby='basic-addon2' />
@@ -1124,13 +1130,14 @@ export default function EntitlementDetail (props) {
             </div>)}
           </div>
           {!props.isEditComponent && (
-          <div className='col-md-3 pull-right' >
+          <div className='col-md-4 pull-right' >
             <button onClick={updateEntitlement} className='btn btn-outline-info btn-sm'>Edit Entitlement</button>&nbsp;
             <button onClick={deleteEntitlement} className='btn btn-outline-info btn-sm'>Delete Entitlement</button>&nbsp;
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>
           </div>
           )}
           {props.isEditComponent && (
-          <div className='col-md-2' >
+          <div className='col-md-4' >
             <button onClick={cancelEditEntitlement} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
             <button onClick={saveEntitlementProperty} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;
           </div>
@@ -1444,22 +1451,24 @@ export default function EntitlementDetail (props) {
           </ReactModal>
         </div>
         <Discussion name={entitlementName} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={entitlementName} type='Component' {...props} />
       </div>
       )
     }
 EntitlementDetail.propTypes = {
-    entitlement: PropTypes.any,
-    entitlementProperties: PropTypes.any,
-    entitlementRelationships: PropTypes.any,
-    updateEntitlementSettings: PropTypes.any,
-    isEditComponent: PropTypes.any,
-    entitlementPropertiesPayload: PropTypes.any,
-    copiedEntitlementProperties: PropTypes.any,
-    copiedEntitlementData: PropTypes.any,
-    relationshipPropertyPayload: PropTypes.any,
-    relationshipProperty: PropTypes.any,
-    relationshipActionSettings: PropTypes.any,
-    addNewConnectionSettings: PropTypes.any,
-    componentTypeComponentConstraints: PropTypes.any,
-    componentTypeComponents: PropTypes.any
- }
+  match: PropTypes.any,
+  entitlement: PropTypes.any,
+  entitlementProperties: PropTypes.any,
+  entitlementRelationships: PropTypes.any,
+  updateEntitlementSettings: PropTypes.any,
+  isEditComponent: PropTypes.any,
+  entitlementPropertiesPayload: PropTypes.any,
+  copiedEntitlementProperties: PropTypes.any,
+  copiedEntitlementData: PropTypes.any,
+  relationshipPropertyPayload: PropTypes.any,
+  relationshipProperty: PropTypes.any,
+  relationshipActionSettings: PropTypes.any,
+  addNewConnectionSettings: PropTypes.any,
+  componentTypeComponentConstraints: PropTypes.any,
+  componentTypeComponents: PropTypes.any
+}

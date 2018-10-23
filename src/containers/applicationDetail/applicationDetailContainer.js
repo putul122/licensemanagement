@@ -4,6 +4,7 @@ import ApplicationDetail from '../../components/applicationDetail/applicationDet
 import { actions as sagaActions } from '../../redux/sagas/'
 import '../../redux/reducers/applicationsReducer/applicationsReducerReducer'
 // import '../../redux/reducers/applicationviewReducer/applicationviewReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -20,7 +21,8 @@ export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchApplicationById: sagaActions.applicationActions.fetchApplicationById,
   fetchApplicationProperties: sagaActions.applicationActions.fetchApplicationProperties,
-  fetchApplicationRelationships: sagaActions.applicationActions.fetchApplicationRelationships
+  fetchApplicationRelationships: sagaActions.applicationActions.fetchApplicationRelationships,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }
 
 // If you want to use the function mapping

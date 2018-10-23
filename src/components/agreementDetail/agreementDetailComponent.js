@@ -8,6 +8,7 @@ import CreatableSelect from 'react-select/lib/Creatable'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
@@ -55,6 +56,11 @@ export default function AgreementDetail (props) {
   let pageArray = []
   let listEntitlementPage = []
   let paginationLimit = 6
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
 
   // Code for Update Agreement
   let agreementProperties = props.agreementProperties.resources ? [...props.agreementProperties.resources] : ''
@@ -1209,7 +1215,7 @@ export default function AgreementDetail (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-9'>
+          <div className='col-md-8'>
             {!props.isEditComponent && (<h2>{agreementName}</h2>)}
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
               <input type='text' className='form-control m-input' onChange={editAgreementName} value={agreementName} placeholder='Agreement Name' aria-describedby='basic-addon2' />
@@ -1220,13 +1226,14 @@ export default function AgreementDetail (props) {
             </div>)}
           </div>
           {!props.isEditComponent && (
-            <div className='col-md-3' >
+            <div className='col-md-4' >
               <button onClick={updateAgreement} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
               <button onClick={deleteAgreement} className='btn btn-outline-info btn-sm'>Delete Agreement</button>&nbsp;
+              <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>
             </div>
           )}
           {props.isEditComponent && (
-            <div className='col-md-2' >
+            <div className='col-md-4' >
               <button onClick={cancelEditAgreement} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
               <button onClick={updateAgreementConfirm} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;
             </div>
@@ -1575,24 +1582,26 @@ export default function AgreementDetail (props) {
         </div>
         {/* The table structure ends */}
         <Discussion name={agreementName} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={agreementName} type='Component' {...props} />
       </div>
       )
     }
     AgreementDetail.propTypes = {
-    agreement: PropTypes.any,
-    agreementEntitlements: PropTypes.any,
-    agreementProperties: PropTypes.any,
-    agreementRelationships: PropTypes.any,
-    relationshipActionSettings: PropTypes.any,
-    addAgreementSettings: PropTypes.any,
-    isEditComponent: PropTypes.any,
-    agreementPropertiesPayload: PropTypes.any,
-    copiedAgreementProperties: PropTypes.any,
-    copiedAgreementData: PropTypes.any,
-    relationshipPropertyPayload: PropTypes.any,
-    relationshipProperty: PropTypes.any,
-    addNewConnectionSettings: PropTypes.any,
-    componentTypeComponentConstraints: PropTypes.any,
-    componentTypeComponents: PropTypes.any,
-    currentPage: PropTypes.any
- }
+      match: PropTypes.any,
+      agreement: PropTypes.any,
+      agreementEntitlements: PropTypes.any,
+      agreementProperties: PropTypes.any,
+      agreementRelationships: PropTypes.any,
+      relationshipActionSettings: PropTypes.any,
+      addAgreementSettings: PropTypes.any,
+      isEditComponent: PropTypes.any,
+      agreementPropertiesPayload: PropTypes.any,
+      copiedAgreementProperties: PropTypes.any,
+      copiedAgreementData: PropTypes.any,
+      relationshipPropertyPayload: PropTypes.any,
+      relationshipProperty: PropTypes.any,
+      addNewConnectionSettings: PropTypes.any,
+      componentTypeComponentConstraints: PropTypes.any,
+      componentTypeComponents: PropTypes.any,
+      currentPage: PropTypes.any
+  }

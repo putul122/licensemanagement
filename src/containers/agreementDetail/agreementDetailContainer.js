@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import AgreementDetail from '../../components/agreementDetail/agreementDetailComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/agreementDetailReducer/agreementDetailReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -60,7 +61,8 @@ export const propsMapping: Callbacks = {
   editComponentRelationshipPropertyPayload: actionCreators.editComponentRelationshipPropertyPayload,
   setAddConnectionSettings: actionCreators.setAddConnectionSettings,
   resetUpdateRelationshipResponse: actionCreators.resetUpdateRelationshipResponse,
-  setCurrentPage: actionCreators.setCurrentPage
+  setCurrentPage: actionCreators.setCurrentPage,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

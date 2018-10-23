@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import styles from './applicationDetailComponent.scss'
 import DataModelComponent from '../dataModel/dataModelComponent'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import _ from 'lodash'
 var divStyle = {
   width: '900px',
@@ -29,13 +30,17 @@ export default function Applicationview (props) {
   let applicationCount = ''
   let applicationCost = ''
   let applicationPropertiesList = ''
-  // let startNode = {}
   let parentApplicationRelationshipList = ''
   let outgoingApplicationRelationshipList = ''
   let incomingApplicationRelationshipList = ''
   let childApplicationRelationshipList = ''
   let modelRelationshipData = ''
   let startNode = {}
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   if (props.applicationbyId && props.applicationbyId !== '') {
     applicationName = props.applicationbyId.resources[0].name
     applicationCount = props.applicationbyId.resources[0].used_by_business_unit_count
@@ -245,7 +250,14 @@ export default function Applicationview (props) {
   }
     return (
       <div>
-        <h2>{applicationName}</h2>
+        <div className='row'>
+          <div className='col-md-10'>
+            <h2>{applicationName}</h2>
+          </div>
+          <div className='col-md-2'>
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          </div>
+        </div>
         <div className='row'>
           <div className='col-xl-4'>
             <div className='m-portlet m-portlet--full-height'>
@@ -323,10 +335,12 @@ export default function Applicationview (props) {
           </div>
         </div>
         <Discussion name={applicationName} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={applicationName} type='Component' {...props} />
       </div>
       )
     }
  Applicationview.propTypes = {
+  match: PropTypes.any,
   applicationbyId: PropTypes.any,
   applicationProperties: PropTypes.any,
   applicationRelationships: PropTypes.any
