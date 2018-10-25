@@ -17,6 +17,10 @@ export default function NewDiscussion (props) {
     tempMessageStorage = ''
     tempTagStorage = []
     props.setDiscussionModalOpenStatus(false)
+    let payload = {}
+    payload.message = ''
+    payload.tags = [{id: 1, display: '...'}]
+    props.setMessageData(payload)
   }
   let onAddReference = function (id, display) {
     // Unicode Replacement Mapping
@@ -24,25 +28,39 @@ export default function NewDiscussion (props) {
     // "]" ---> 8262
     // ":" ---> 8285
     setTimeout(function () {
-      console.log('on select')
+      console.log('on select new Com')
       let originalMessage = props.newMessage
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
-      console.log(formattedText)
-      console.log(formattedText.trim())
-      console.log(display)
-      console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
+      // console.log(formattedText)
+      // console.log(formattedText.trim())
+      // console.log(display)
+      // console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
       console.log(tempMessageStorage)
       console.log(tempTagStorage)
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
-      let formattedMessage = buildMessage.replace(display, formattedText)
-      let payload = {}
-      payload.message = formattedMessage
-      payload.tags = tempTagStorage
-      console.log(payload)
-      props.setMessageData(payload)
+      // eslint-disable-next-line
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]]{0,}\w*)/gi)
+      console.log('matches', matches)
+      console.log('tempMessageStorage', tempMessageStorage)
+      if (matches) {
+        let noRefText = originalMessage.replace(matches[0].trim(), '')
+        let buildMessage = noRefText + '@[' + formattedText + ':Reference:' + id + ']'
+        console.log('buildMessage', buildMessage)
+        let payload = {}
+        payload.message = buildMessage
+        payload.tags = tempTagStorage
+        console.log('set props', payload)
+        props.setMessageData(payload)
+      }
+      // let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      // let formattedMessage = buildMessage.replace(display, formattedText)
+      // let payload = {}
+      // payload.message = formattedMessage
+      // payload.tags = tempTagStorage
+      // console.log(payload)
+      // props.setMessageData(payload)
     }, 0)
   }
   let handleChange1 = debounce((e) => {
@@ -50,7 +68,7 @@ export default function NewDiscussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9]\w*)/gi)
       console.log('matches', matches)
       let reference = []
       if (matches !== null) {
@@ -80,7 +98,7 @@ export default function NewDiscussion (props) {
   }, 500)
   let handleChange = function (event) {
     let str = event.target.value
-    let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
+    let matches = str.match(/(?:^|\s)(\$[a-zA-Z0-9]\w*)/gi)
     let tags = []
     if (matches !== null) {
       matches.forEach(function (data, index) {

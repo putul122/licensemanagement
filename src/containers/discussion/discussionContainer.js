@@ -4,6 +4,7 @@ import Discusson from '../../components/discussion/discussionComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import _ from 'lodash'
 import { actionCreators } from '../../redux/reducers/discussionReducer/discussionReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -34,7 +35,8 @@ export const propsMapping: Callbacks = {
   setFormattedAccountData: actionCreators.setFormattedAccountData,
   setFormattedModelData: actionCreators.setFormattedModelData,
   setMessageData: actionCreators.setMessageData,
-  setReplySettings: actionCreators.setReplySettings
+  setReplySettings: actionCreators.setReplySettings,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

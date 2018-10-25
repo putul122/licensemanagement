@@ -19,8 +19,12 @@ export default function Discussion (props) {
   let discussionReplyList = ''
   let tempMessageStorage = ''
   let tempTagStorage = []
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    closeSlide()
+    props.setDiscussionModalOpenStatus(true)
+  }
   let getMessages = function (data) {
-    console.log(data)
     props.setMessageData('')
     if (props.discussionId !== data.id) {
       let payload = {
@@ -86,22 +90,30 @@ export default function Discussion (props) {
       console.log('on select')
       let originalMessage = props.newMessage
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
-      console.log(formattedText)
-      console.log(display)
-      console.log(originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']')
-      console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
-      console.log(tempMessageStorage)
-      console.log(tempTagStorage)
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
-      let formattedMessage = buildMessage.replace(display, formattedText)
-      let payload = {}
-      payload.message = formattedMessage
-      payload.tags = tempTagStorage
-      console.log('set props', payload)
-      props.setMessageData(payload)
+      // eslint-disable-next-line
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]]{0,}\w*)/gi)
+      console.log('matches', matches)
+      console.log('tempMessageStorage', tempMessageStorage)
+      if (matches) {
+        let noRefText = originalMessage.replace(matches[0].trim(), '')
+        let buildMessage = noRefText + '@[' + formattedText + ':Reference:' + id + ']'
+        console.log('buildMessage', buildMessage)
+        let payload = {}
+        payload.message = buildMessage
+        payload.tags = tempTagStorage
+        console.log('set props', payload)
+        props.setMessageData(payload)
+      }
+      // let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      // let formattedMessage = buildMessage.replace(display, formattedText)
+      // let payload = {}
+      // payload.message = formattedMessage
+      // payload.tags = tempTagStorage
+      // console.log('set props', payload)
+      // props.setMessageData(payload)
     }, 0)
   }
   let onAddReplyReference = function (id, display) {
@@ -113,20 +125,30 @@ export default function Discussion (props) {
       console.log('onselect', id, display)
       let originalMessage = props.replySettings.messageReply
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
-      console.log(formattedText)
-      console.log(display)
-      console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
+      // console.log(formattedText)
+      // console.log(display)
+      // console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
       console.log(tempMessageStorage)
-      console.log(tempTagStorage)
+      // console.log(tempTagStorage)
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      console.log(props)
-      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
-      let formattedMessage = buildMessage.replace(display, formattedText)
-      console.log(formattedMessage)
-      let payload = {...props.replySettings, 'messageReply': formattedMessage, 'tags': tempTagStorage}
-      props.setReplySettings(payload)
+      // eslint-disable-next-line
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]]{0,}\w*)/gi)
+      console.log('matches', matches)
+      if (matches) {
+        let noRefText = originalMessage.replace(matches[0].trim(), '')
+        let buildMessage = noRefText + '@[' + formattedText + ':Reference:' + id + ']'
+        console.log('buildMessage', buildMessage)
+        let payload = {...props.replySettings, 'messageReply': buildMessage, 'tags': tempTagStorage}
+        props.setReplySettings(payload)
+      }
+      // console.log(props)
+      // let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      // let formattedMessage = buildMessage.replace(display, formattedText)
+      // console.log(formattedMessage)
+      // let payload = {...props.replySettings, 'messageReply': formattedMessage, 'tags': tempTagStorage}
+      // props.setReplySettings(payload)
     }, 0)
   }
   let handleChange1 = debounce((e) => {
@@ -134,7 +156,7 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9]\w*)/gi)
       console.log('matches', matches)
       let reference = []
       if (matches !== null) {
@@ -166,7 +188,7 @@ export default function Discussion (props) {
       // console.log(props)
       console.log('handleChange', event.target.value)
     let str = event.target.value
-    let matches = str.match(/[^@!a-z$]\$[A-Za-z0-9.]+/gi)
+    let matches = str.match(/(?:^|\s)(\$[a-zA-Z0-9]\w*)/gi)
     let tags = []
     if (matches !== null) {
       matches.forEach(function (data, index) {
@@ -193,7 +215,7 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9]\w*)/gi)
       console.log('matches', matches)
       let reference = []
       if (matches !== null) {
@@ -224,7 +246,7 @@ export default function Discussion (props) {
   let handleMessageReply = function (event) {
     console.log('props', props)
     let str = event.target.value
-    let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
+    let matches = str.match(/(?:^|\s)(\$[a-zA-Z0-9]\w*)/gi)
     let tags = []
     if (matches !== null) {
       matches.forEach(function (data, index) {
@@ -557,6 +579,9 @@ export default function Discussion (props) {
           </ul>
           <div className='tab-content'>
             <div className='tab-pane active show' id='m_quick_sidebar_tabs_messenger' role='tabpanel'>
+              <div className='row'>
+                <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>&nbsp;
+              </div>
               <div className='m-accordion m-accordion--default m-accordion--solid m-accordion--section  m-accordion--toggle-arrow' id='m_accordion_7' role='tablist'>
                 {discussionList}
               </div>
