@@ -374,7 +374,7 @@ export default function Discussion (props) {
             return (<li>
               <div className='row'>
                 <div className='col-md-8'>
-                  <img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}
+                  <img src={userIconlink} alt={cdata.author.name} />{cdata.author.name} {ReactHtmlParser(messageContent)}
                 </div>
                 <div className='col-md-4'>
                   <span className=''>
@@ -488,7 +488,7 @@ export default function Discussion (props) {
               }
             })
           }
-          return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
+          return (<li><img src={userIconlink} alt={cdata.author.name} />{cdata.author.name} {ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
         })
       }
       return (

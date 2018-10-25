@@ -45,7 +45,7 @@ export default function ApplicationActivity (props) {
             })
           }
           return (<li>
-            <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser(messageContent)}
+            <img src={userIconlink} alt={message.author.name} />{message.author.name} {ReactHtmlParser(messageContent)}
             {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
           </li>)
         })
@@ -80,7 +80,7 @@ export default function ApplicationActivity (props) {
         // i is last
         temp.push(activityMessages[i])
         result.push(temp)
-        result = result.reverse()
+        // result = result.reverse()
         console.log('final result -------->', result)
         parseMessage(result)
       }
