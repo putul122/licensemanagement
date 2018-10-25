@@ -133,9 +133,7 @@ export default function Suppliers (props) {
         props.fetchSuppliers(payload)
         // eslint-disable-next-line
         mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // }
-      listPage = _.filter(pageArray, function (group) {
+        listPage = _.filter(pageArray, function (group) {
         let found = _.filter(group, {'number': currentPage})
         if (found.length > 0) { return group }
       })
@@ -153,7 +151,6 @@ export default function Suppliers (props) {
         props.fetchSuppliers(payload)
         // eslint-disable-next-line
         mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         props.setCurrentPage(currentPage - 1)
       }
       listPage = _.filter(pageArray, function (group) {
@@ -175,7 +172,6 @@ export default function Suppliers (props) {
         props.fetchSuppliers(payload)
         // eslint-disable-next-line
         mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         props.setCurrentPage(currentPage + 1)
       }
       listPage = _.filter(pageArray, function (group) {
@@ -458,81 +454,87 @@ export default function Suppliers (props) {
           </div>
         </div>
         <div id='supplierList'>
-          <div className='row'>
-            <div className={'col-md-3'}>
-              <div style={{'display': 'flex'}}>
-                <h5 style={{'margin': '10px'}}>Search</h5>
-                <div className='m-input-icon m-input-icon--left'>
-                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
-                  <span className='m-input-icon__icon m-input-icon__icon--left'>
-                    <span>
-                      <i className='la la-search' />
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4 col-md-6 pull-right'>
-              {/* <div className='row'> */}
-              <div className='col-sm-12 col-md-6'>
-                <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
-                  <h5 style={{'margin': '8px'}}>Show</h5>
-                  <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
-                  <h5 style={{'margin': '8px'}}>Entries</h5>
-                  {/* </label> */}
-                </div>
-              </div>
-              {/* </div> */}
-            </div>
-          </div>
           {/* The table structure begins */}
-          <div className='m-portlet m-portlet--mobile'>
+          <div className='m-portlet--mobile'>
             <div className='row' style={{'marginTop': '20px'}}>
               <div className='col-md-12'>
                 <div className='m_datatable' id='scrolling_vertical'>
                   <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '50vh'}}>
-                      <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                        <thead>
-                          <tr role='row'>
-                            <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                            <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                            <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                            <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
-                            <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
-                            <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
-                          </tr>
-                        </thead>
-                        {/* <tbody> */}
-                        {suppliersList}
-                        {/* </tbody> */}
-                      </table>
+                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
+                      <div className='m-portlet'>
+                        <div className='m-portlet__body'>
+                          <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
+                            <div className='row' style={{'marginBottom': '20px'}}>
+                              <div className='col-sm-12 col-md-6'>
+                                <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
+                                  <h5 style={{'margin': '8px'}}>Show</h5>
+                                  <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
+                                    <option value={10}>10</option>
+                                    <option value={25}>25</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                  </select>
+                                  <h5 style={{'margin': '8px'}}>Entries</h5>
+                                  {/* </label> */}
+                                </div>
+                              </div>
+                              <div className='col-sm-12 col-md-6'>
+                                <div className='dataTables_length pull-right' id='m_table_1_length' style={{'display': 'flex'}}>
+                                  <div style={{'display': 'flex'}}>
+                                    <h5 style={{'margin': '10px'}}>Search</h5>
+                                    <div className='m-input-icon m-input-icon--left'>
+                                      <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
+                                      <span className='m-input-icon__icon m-input-icon__icon--left'>
+                                        <span>
+                                          <i className='la la-search' />
+                                        </span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                            <thead>
+                              <tr role='row'>
+                                <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
+                                <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
+                                <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
+                                <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
+                                <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
+                                <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
+                              </tr>
+                            </thead>
+                            {/* <tbody> */}
+                            {suppliersList}
+                            {/* </tbody> */}
+                          </table>
+                          <div className='row'>
+                            <div className='col-md-12' id='scrolling_vertical'>
+                              <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
+                                <div className='m-datatable__pager m-datatable--paging-loaded clearfix'>
+                                  <ul className='m-datatable__pager-nav'>
+                                    <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                                    {listPage[0] && listPage[0].map(function (page, index) {
+                                            if (page.number === currentPage) {
+                                                    page.class = 'm-datatable__pager-link--active'
+                                                  } else {
+                                                    page.class = ''
+                                                  }
+                                                  return (<li key={index} >
+                                                    <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                                                  </li>)
+                                                })}
+                                    <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div className='row'>
-                <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-                  <div className='m-datatable__pager m-datatable--paging-loaded' style={{ 'textAlign': 'center' }}>
-                    <ul className='m-datatable__pager-nav'>
-                      <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
-                      {listPage[0] && listPage[0].map(function (page, index) {
-                              if (page.number === currentPage) {
-                                      page.class = 'm-datatable__pager-link--active'
-                                    } else {
-                                      page.class = ''
-                                    }
-                                    return (<li key={index} >
-                                      <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
-                                    </li>)
-                                  })}
-                      <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
-                    </ul>
                   </div>
                 </div>
               </div>

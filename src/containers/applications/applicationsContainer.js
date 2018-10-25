@@ -84,6 +84,7 @@ export default compose(
         mApp && mApp.unblock('#applicationList')
       }
       if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        this.props.setCurrentPage(1)
         // eslint-disable-next-line
         mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         let payload = {

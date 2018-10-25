@@ -2,8 +2,7 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import ApplicationDetail from '../../components/applicationDetail/applicationDetailComponent.js'
 import { actions as sagaActions } from '../../redux/sagas/'
-import '../../redux/reducers/applicationsReducer/applicationsReducerReducer'
-// import '../../redux/reducers/applicationviewReducer/applicationviewReducerReducer'
+import { actionCreators as applicationDetailActionCreators } from '../../redux/reducers/applicationDetailReducer/applicationDetailReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
@@ -12,7 +11,8 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     applicationbyId: state.applicationDetailReducer.applicationbyId,
     applicationProperties: state.applicationDetailReducer.applicationProperties,
-    applicationRelationships: state.applicationDetailReducer.applicationRelationships
+    applicationRelationships: state.applicationDetailReducer.applicationRelationships,
+    showTabs: state.applicationDetailReducer.showTabs
 
    }
 }
@@ -22,6 +22,7 @@ export const propsMapping: Callbacks = {
   fetchApplicationById: sagaActions.applicationActions.fetchApplicationById,
   fetchApplicationProperties: sagaActions.applicationActions.fetchApplicationProperties,
   fetchApplicationRelationships: sagaActions.applicationActions.fetchApplicationRelationships,
+  setCurrentTab: applicationDetailActionCreators.setCurrentTab,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }
 

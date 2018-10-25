@@ -35,11 +35,34 @@ export default function Applicationview (props) {
   let incomingApplicationRelationshipList = ''
   let childApplicationRelationshipList = ''
   let modelRelationshipData = ''
+  let showProperties = props.showTabs.showProperty
+  let showRelationships = props.showTabs.showRelationship
+  let applicationProperties = props.applicationProperties.resources
+  console.log('%%%%', applicationProperties)
   let startNode = {}
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  let toggleExpandIcon = function (index) {
+    // eslint-disable-next-line
+    let iconClass = $('#expandIcon' + index).attr('class')
+    if (iconClass === 'fa fa-plus') {
+      // eslint-disable-next-line
+      $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
+    } else {
+      // eslint-disable-next-line
+      $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+    }
+  }
+  let showProperty = function (event) {
+    let payload = {'showProperty': ' active show', 'showRelationship': ''}
+    props.setCurrentTab(payload)
+  }
+  let showRelationship = function (event) {
+    let payload = {'showProperty': '', 'showRelationship': ' active show'}
+    props.setCurrentTab(payload)
   }
   if (props.applicationbyId && props.applicationbyId !== '') {
     applicationName = props.applicationbyId.resources[0].name
@@ -48,8 +71,8 @@ export default function Applicationview (props) {
     startNode.name = props.applicationbyId.resources[0].name
     startNode.title = props.applicationbyId.resources[0].name
   }
-  if (props.applicationProperties && props.applicationProperties !== '') {
-    applicationPropertiesList = props.applicationProperties.resources.map(function (property, index) {
+  if (props.applicationProperties !== '') {
+    applicationPropertiesList = applicationProperties.map(function (property, index) {
       let propertyProperties = property.properties
       let childProperties = propertyProperties.map(function (childProperty, childIndex) {
         let value
@@ -85,17 +108,138 @@ export default function Applicationview (props) {
         )
       })
       return (
+        // <tbody key={index} className={'col-6'}>
+        //   <tr>
+        //     <td><span className={styles.title}>Type</span></td>
+        //     <td><span className={styles.labelbold}>{property.name}</span></td>
+        //   </tr>
+        //   {childProperties}
+        // </tbody>
         <tbody key={index} className={'col-6'}>
-          <tr>
-            <td><span className={styles.title}>Type</span></td>
+          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
             <td><span className={styles.labelbold}>{property.name}</span></td>
           </tr>
-          {childProperties}
+          <tr className='collapse' id={'expand' + index}>
+            <td colSpan='2'>
+              <table>
+                {childProperties}
+              </table>
+            </td>
+          </tr>
         </tbody>
       )
     })
     console.log('-------------', applicationPropertiesList)
   }
+  // if (applicationProperties !== '') {
+  //   console.log('original', applicationProperties)
+  //   applicationPropertiesList = applicationPropertiesList.map(function (property, index) {
+  //     let propertyProperties = property.properties
+  //     let childProperties = propertyProperties.map(function (childProperty, childIndex) {
+  //       let value
+  //       let htmlElement
+  //       // console.log('childProperty', childProperty)
+  //       if (childProperty.property_type.key === 'Integer') {
+  //         value = childProperty.int_value
+  //         htmlElement = function () {
+  //           return (<div className='col-8 form-group m-form__group has-info'>
+  //             <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {true && (<div className='form-control-feedback'>should be Number</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'Decimal') {
+  //         value = childProperty.float_value
+  //         htmlElement = function () {
+  //           return (<div className='col-8 form-group m-form__group has-info'>
+  //             <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {true && (<div className='form-control-feedback'>should be Number</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'DateTime') {
+  //         value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
+  //         htmlElement = function () {
+  //           return (<div className='col-8 form-group m-form__group has-info'>
+  //             <DatePicker
+  //               className='input-sm form-control m-input'
+  //               selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
+  //               dateFormat='DD MMM YYYY'
+  //               onSelect={(date) => { editDateProperty(index, childIndex, date) }}
+  //               />
+  //             {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+  //             {true && (<div className='form-control-feedback'>should be Date</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'Text') {
+  //         value = childProperty.text_value
+  //         htmlElement = function () {
+  //           return (<div className='col-8 form-group m-form__group has-info'>
+  //             <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {true && (<div className='form-control-feedback'>should be Text</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'List') {
+  //         let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
+  //           option.label = option.name
+  //           option.value = option.id
+  //           return option
+  //         })
+  //         let dvalue = childProperty.value_set_value
+  //         if (childProperty.value_set_value !== null) {
+  //           dvalue.label = childProperty.value_set_value.name
+  //           dvalue.value = childProperty.value_set_value.id
+  //         }
+  //         value = childProperty.value_set_value ? childProperty.value_set_value.name : null
+  //         htmlElement = function () {
+  //           return (<Select
+  //             className='col-7 input-sm m-input'
+  //             placeholder='Select Options'
+  //             isClearable
+  //             defaultValue={dvalue}
+  //             onChange={handlePropertySelect(index, childIndex)}
+  //             isSearchable={false}
+  //             name={'selectProperty'}
+  //             options={childPropertyOption}
+  //           />)
+  //         }
+  //       } else {
+  //         value = childProperty.other_value
+  //         htmlElement = function () {
+  //           return (<div className='col-8 form-group m-form__group has-info'>
+  //             <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {true && (<div className='form-control-feedback'>should be Text</div>)}
+  //           </div>)
+  //         }
+  //       }
+  //       return (
+  //         <tr key={'child' + childIndex}>
+  //           <td><span className={styles.labelbold}>{childProperty.name}</span></td>
+  //           <td>
+  //             {!props.isEditComponent && (<span>{value}</span>)}
+  //             {props.isEditComponent && htmlElement()}
+  //           </td>
+  //         </tr>
+  //       )
+  //     })
+  //     return (
+  //       <tbody key={index} className={'col-6'}>
+  //         <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+  //           <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
+  //           <td><span className={styles.labelbold}>{property.name}</span></td>
+  //         </tr>
+  //         <tr className='collapse' id={'expand' + index}>
+  //           <td colSpan='2'>
+  //             <table>
+  //               {childProperties}
+  //             </table>
+  //           </td>
+  //         </tr>
+  //       </tbody>
+  //     )
+  //   })
+  // } else {
+  //   console.log('check properties else', props)
+  // }
   if (props.applicationRelationships && props.applicationRelationships !== '') {
     modelRelationshipData = props.applicationRelationships.resources
     let parent = _.filter(props.applicationRelationships.resources, {'relationship_type': 'Parent'})
@@ -341,7 +485,7 @@ export default function Applicationview (props) {
         {/* The table structure ends */}
         <div className='row col-sm-12'>
           <div className='col-md-5 m-portlet'>
-            <div className={styles.tabsprops}>
+            {/* <div className={styles.tabsprops}>
               <ul className='nav nav-tabs nav-fill' role='tablist'>
                 <li className='nav-item'>
                   <a className='nav-link active show' data-toggle='tab' href='#m_tabs_3_1'>Properties</a>
@@ -361,6 +505,37 @@ export default function Applicationview (props) {
                   </div>
                   <div className='tab-pane' id='m_tabs_3_2' role='tabpanel'>
                     <div className='m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist'>
+                      {parentApplicationRelationshipList}
+                      {outgoingApplicationRelationshipList}
+                      {incomingApplicationRelationshipList}
+                      {childApplicationRelationshipList}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> */}
+            <div className={styles.tabsprops}>
+              <ul className='nav nav-tabs' role='tablist'>
+                <li className='nav-item'>
+                  <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
+                </li>
+                <li className='nav-item'>
+                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
+                </li>
+              </ul>
+              <div className='tab-content'>
+                <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
+                  <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
+                    {applicationPropertiesList}
+                  </table>
+                </div>
+                <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
+                  {/* <div className='pull-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  </div> */}
+                  <div className={'row'} style={{'marginTop': '20px'}}>
+                    <div className='m--space-10' />
+                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
                       {parentApplicationRelationshipList}
                       {outgoingApplicationRelationshipList}
                       {incomingApplicationRelationshipList}
@@ -390,5 +565,6 @@ export default function Applicationview (props) {
   match: PropTypes.any,
   applicationbyId: PropTypes.any,
   applicationProperties: PropTypes.any,
-  applicationRelationships: PropTypes.any
+  applicationRelationships: PropTypes.any,
+  showTabs: PropTypes.any
  }

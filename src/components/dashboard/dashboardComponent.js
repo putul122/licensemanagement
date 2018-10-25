@@ -566,7 +566,7 @@ export default function Dashboard (props) {
                 </div>
               </div>
             </div>
-            <div className='col-md-6'>
+            {/* <div className='col-md-6'>
               <div className='m-portlet'>
                 <div className='m-portlet__body'>
                   <div className='m-widget12'>
@@ -583,7 +583,28 @@ export default function Dashboard (props) {
                           <Doughnut id='supplierChart' ref='chart' width={180} data={supplierPieChartData} options={chartOptionSupplier} />
                         </span>
                       </div>
-                      {/* <div className='m-widget12__text2'></div> */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> */}
+            <div className='col-md-6' style={{'overflow': 'visible'}}>
+              <div className='m-portlet'>
+                <div className='m-portlet__body'>
+                  <div className='m-widget12'>
+                    <div className='m-widget12__item' >
+                      <div className='col m-widget12__text1'>
+                        <span className=''>
+                          <h4 style={{'position': 'relative', 'top': '-67px', 'color': '#5867dd', 'width': '100px'}}>Cost Per</h4>
+                          <br />
+                          <h5 style={{'position': 'relative', 'top': '-81px'}}>Top 10 Suppliers</h5>
+                        </span>
+                      </div>
+                      <div className='col'>
+                        <span className='m-widget12__text2'>
+                          <Doughnut id='supplierChart' ref='chart' width={180} data={supplierPieChartData} options={chartOptionSupplier} />
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -689,7 +710,7 @@ export default function Dashboard (props) {
                     </div>
                   </div>
                 </div>
-                <div className='m-portlet__body'>
+                <div className='m-portlet__body' style={{'height': '150px'}}>
                   <div className='m-widget17'>
                     <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                       <div className='m-widget17__chart'>

@@ -97,6 +97,7 @@ export default compose(
         this.props.resetResponse()
       }
       if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        this.props.setCurrentPage(1)
         // eslint-disable-next-line
         mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         let payload = {
