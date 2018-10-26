@@ -94,7 +94,7 @@ export default function Discussion (props) {
         tempTagStorage.push({id: 1, display: '...'})
       }
       // eslint-disable-next-line
-      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]]{0,}\w*)/gi)
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]\s]{0,}\w*)/gi)
       console.log('matches', matches)
       console.log('tempMessageStorage', tempMessageStorage)
       if (matches) {
@@ -134,7 +134,7 @@ export default function Discussion (props) {
         tempTagStorage.push({id: 1, display: '...'})
       }
       // eslint-disable-next-line
-      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]]{0,}\w*)/gi)
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]\s]{0,}\w*)/gi)
       console.log('matches', matches)
       if (matches) {
         let noRefText = originalMessage.replace(matches[0].trim(), '')
