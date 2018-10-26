@@ -1336,27 +1336,35 @@ export default function AgreementDetail (props) {
           <div className='tab-content'>
             <div className='tab-pane active' id='m_tabs_2_1' role='tabpanel'>
               <div className='col-md-12'>
-                <table className={'table ' + styles.borderless}>
-                  {agreementPropertiesList}
-                </table>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <table className={'table ' + styles.borderless}>
+                      {agreementPropertiesList}
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
             <div className='tab-pane' id='m_tabs_2_2' role='tabpanel'>
               <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
-                <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                  <thead>
-                    <tr role='row'>
-                      <th className=''><h5>Name</h5></th>
-                      <th className=''><h5>Purchased</h5></th>
-                      <th className=''><h5>Consumed</h5></th>
-                      <th className=''><h5>Cost per Unit</h5></th>
-                      <th className=''><h5>Total Cost</h5></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {agreementEntitlementList}
-                  </tbody>
-                </table>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className=''><h5>Name</h5></th>
+                          <th className=''><h5>Purchased</h5></th>
+                          <th className=''><h5>Consumed</h5></th>
+                          <th className=''><h5>Cost per Unit</h5></th>
+                          <th className=''><h5>Total Cost</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {agreementEntitlementList}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
                 {agreementEntitlementList.length > 0 && (
                   <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
@@ -1382,7 +1390,7 @@ export default function AgreementDetail (props) {
                 <div className='pull-right'>
                   <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
                 </div>
-                <div className={'row col-md-12'} style={{'marginTop': '20px'}}>
+                <div className='' style={{'marginTop': '20px'}}>
                   <div className='m--space-10' />
                   <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
                     {parentComponentRelationshipList}

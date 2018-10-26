@@ -398,54 +398,31 @@ export default function Suppliers (props) {
               </div>
             </div>
           </div>
-          <div className='col-md-4'>
+          <div className='col-md-4' style={{'textAlign': 'center'}}>
             <div className='m-portlet'>
               <div className='m-portlet__body' style={{'height': '217px'}}>
-                <div className='m-widget12'>
-                  <div className='m-widget12__item'>
-                    {/* <div className='col m-widget12__text1'>
-                      <span className=''>
-                        <h2>Cost Per</h2>
-                        <br />
-                        <h5>Top 10 Suppliers</h5>
-                      </span>
-                    </div> */}
-                    {/* <div className='col'>
-                      <span className='m-widget12__text2'>
-                        <Doughnut
-                          id='supplierChart'
-                          // width={180}
-                          data={supplierPieChartData}
-                          options={{
-                            tooltips: {
-                              callbacks: {
-                                label: function (tooltipItem) {
-                                    return supplierPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(supplierPieChartData.datasets[0].data[tooltipItem.index])
-                                }
+                <div className='m-widget14__header'>
+                  <span className='m-widget14__desc'>
+                    <h3>Cost per Top 10 Suppliers</h3>
+                  </span>
+                </div>
+                <div className='row  align-items-center'>
+                  <div className='col-md-9'>
+                    <div style={{'marginLeft': '100px'}}>
+                      <Doughnut
+                        id='supplierChart'
+                        // width={50} height={50}
+                        data={supplierPieChartData}
+                        options={{
+                          tooltips: {
+                            callbacks: {
+                              label: function (tooltipItem) {
+                                  return supplierPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(supplierPieChartData.datasets[0].data[tooltipItem.index])
                               }
                             }
-                          }}
-                           />
-                      </span>
-                    </div> */}
-                    <div className='col-md-4' style={{'marginLeft': '80px'}}>
-                      <span className='m-widget12__text2' >
-                        <h3 style={{'textAlign': 'center', 'color': '#5867dd'}}>Cost per Top 10 Suppliers</h3>
-                        <Doughnut
-                          id='supplierChart'
-                          // width={180}
-                          data={supplierPieChartData}
-                          options={{
-                            tooltips: {
-                              callbacks: {
-                                label: function (tooltipItem) {
-                                    return supplierPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(supplierPieChartData.datasets[0].data[tooltipItem.index])
-                                }
-                              }
-                            }
-                          }}
-                           />
-                      </span>
+                          }
+                        }}
+                        />
                     </div>
                   </div>
                 </div>

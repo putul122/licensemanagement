@@ -347,18 +347,11 @@ export default function Agreements (props) {
               </div>
             </div>
           </div>
-          <div className='col-md-4'>
+          <div className='col-md-4' style={{'textAlign': 'center'}}>
             <div className='m-portlet'>
-              <div className='m-portlet__body' style={{'height': '217px'}}>
+              {/* <div className='m-portlet__body' style={{'height': '217px'}}>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
-                    {/* <div className='col m-widget12__text1'>
-                      <span className=''>
-                        <h2>Cost Per</h2>
-                        <br />
-                        <h5>Agreement Type</h5>
-                      </span>
-                    </div> */}
                     <div className='col-md-4' style={{'marginLeft': '80px'}}>
                       <span className='m-widget12__text2' >
                         <h3 style={{'textAlign': 'center'}}>Cost per agreement type</h3>
@@ -374,6 +367,31 @@ export default function Agreements (props) {
                             }
                           }} />
                       </span>
+                    </div>
+                  </div>
+                </div>
+              </div> */}
+              <div className='m-portlet__body' style={{'height': '217px'}}>
+                <div className='m-widget14__header'>
+                  <span className='m-widget14__desc'>
+                    <h3>Cost per agreement type</h3>
+                  </span>
+                </div>
+                <div className='row  align-items-center'>
+                  <div className='col-md-9'>
+                    <div style={{'marginLeft': '100px'}}>
+                      <Doughnut data={agreementPieChartData}
+                          // width={280}
+                        options={{
+                          tooltips: {
+                            callbacks: {
+                              label: function (tooltipItem) {
+                                  return agreementPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(agreementPieChartData.datasets[0].data[tooltipItem.index])
+                              }
+                            }
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                 </div>

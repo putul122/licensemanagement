@@ -58,9 +58,30 @@ export default function EntitlementDetail (props) {
   let childApplicationRelationshipList = ''
   let modelRelationshipData = ''
   let contextId = props.match.params.id
+  let showProperties = props.showTabs.showProperty
+  let showRelationships = props.showTabs.showRelationship
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  let toggleExpandIcon = function (index) {
+    // eslint-disable-next-line
+    let iconClass = $('#expandIcon' + index).attr('class')
+    if (iconClass === 'fa fa-plus') {
+      // eslint-disable-next-line
+      $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
+    } else {
+      // eslint-disable-next-line
+      $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+    }
+  }
+  let showProperty = function (event) {
+    let payload = {'showProperty': ' active show', 'showRelationship': ''}
+    props.setCurrentTab(payload)
+  }
+  let showRelationship = function (event) {
+    let payload = {'showProperty': '', 'showRelationship': ' active show'}
+    props.setCurrentTab(payload)
   }
   // Start Code for Delete Entitlement
   let deleteEntitlement = function () {
@@ -394,11 +415,17 @@ export default function EntitlementDetail (props) {
       })
       return (
         <tbody key={index} className={'col-6'}>
-          <tr>
-            <td><span className={styles.title}>Type</span></td>
+          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
             <td><span className={styles.labelbold}>{property.name}</span></td>
           </tr>
-          {childProperties}
+          <tr className='collapse' id={'expand' + index}>
+            <td colSpan='2'>
+              <table>
+                {childProperties}
+              </table>
+            </td>
+          </tr>
         </tbody>
       )
     })
@@ -967,11 +994,17 @@ export default function EntitlementDetail (props) {
       })
       return (
         <tbody key={index} className={'col-6'}>
-          <tr>
-            <td><span className={styles.labelbold}>Type</span></td>
-            <td><span>{property.name}</span></td>
+          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
+            <td><span className={styles.labelbold}>{property.name}</span></td>
           </tr>
-          {childProperties}
+          <tr className='collapse' id={'expand' + index}>
+            <td colSpan='2'>
+              <table>
+                {childProperties}
+              </table>
+            </td>
+          </tr>
         </tbody>
       )
     })
@@ -1145,7 +1178,7 @@ export default function EntitlementDetail (props) {
         </div>
         <div className='row'>
           <div className='col-md-4'>
-            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
+            <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
                   <div className='m-portlet__head-title'>
@@ -1159,9 +1192,9 @@ export default function EntitlementDetail (props) {
                 <div className='m-widget17'>
                   <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                     <div className='m-widget17__chart'>
-                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}>
                         <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
-                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}>
                           <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
                       <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
                     </div>
@@ -1184,7 +1217,7 @@ export default function EntitlementDetail (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
+            <div className='m-portlet m-portlet--bordered-semi  m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
                   <div className='m-portlet__head-title'>
@@ -1198,9 +1231,9 @@ export default function EntitlementDetail (props) {
                 <div className='m-widget17'>
                   <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                     <div className='m-widget17__chart'>
-                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}>
                         <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
-                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}>
                           <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
                       <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
                     </div>
@@ -1223,7 +1256,7 @@ export default function EntitlementDetail (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
+            <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
                   <div className='m-portlet__head-title'>
@@ -1237,9 +1270,9 @@ export default function EntitlementDetail (props) {
                 <div className='m-widget17'>
                   <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                     <div className='m-widget17__chart'>
-                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden'}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}>
                         <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
-                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                        <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', visibility: 'hidden', zIndex: -1}}>
                           <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
                       <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
                     </div>
@@ -1265,7 +1298,7 @@ export default function EntitlementDetail (props) {
         {/* The table structure ends */}
         <div className='row col-sm-12'>
           <div className='col-md-5 m-portlet'>
-            <div className={styles.tabsprops}>
+            {/* <div className={styles.tabsprops}>
               <ul className='nav nav-tabs nav-fill' role='tablist'>
                 <li className='nav-item'>
                   <a className='nav-link active show' data-toggle='tab' href='#m_tabs_3_1'>Properties</a>
@@ -1297,6 +1330,37 @@ export default function EntitlementDetail (props) {
                           {childApplicationRelationshipList}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> */}
+            <div className={styles.tabsprops}>
+              <ul className='nav nav-tabs' role='tablist'>
+                <li className='nav-item'>
+                  <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
+                </li>
+                <li className='nav-item'>
+                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
+                </li>
+              </ul>
+              <div className='tab-content'>
+                <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
+                  <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
+                    {entitlementPropertiesList}
+                  </table>
+                </div>
+                <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
+                  <div className='pull-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  </div>
+                  <div className={'row'} style={{'marginTop': '20px'}}>
+                    <div className='m--space-10' />
+                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                      {parentApplicationRelationshipList}
+                      {outgoingApplicationRelationshipList}
+                      {incomingApplicationRelationshipList}
+                      {childApplicationRelationshipList}
                     </div>
                   </div>
                 </div>
@@ -1540,5 +1604,6 @@ EntitlementDetail.propTypes = {
   relationshipActionSettings: PropTypes.any,
   addNewConnectionSettings: PropTypes.any,
   componentTypeComponentConstraints: PropTypes.any,
-  componentTypeComponents: PropTypes.any
+  componentTypeComponents: PropTypes.any,
+  showTabs: PropTypes.any
 }

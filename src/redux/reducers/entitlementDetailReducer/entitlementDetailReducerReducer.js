@@ -30,6 +30,7 @@ const RESET_COMPONENT_RELATIONSHIP_PROPERTY = 'EntitlementDetailReducer/RESET_CO
 const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'EntitlementDetailReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD'
 const SET_ADD_CONNECTION_SETTINGS = 'EntitlementDetailReducer/SET_ADD_CONNECTION_SETTINGS'
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'EntitlementDetailReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
+const SET_CURRENT_TAB = 'EntitlementDetailReducer/SET_CURRENT_TAB'
 
 export const actions = {
     FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
@@ -70,7 +71,8 @@ export const actionCreators = {
   resetComponentRelationshipProperties: createAction(RESET_COMPONENT_RELATIONSHIP_PROPERTY),
   editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD),
   setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
-  resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE)
+  resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
+  setCurrentTab: createAction(SET_CURRENT_TAB)
 }
 
 export const initialState = {
@@ -123,7 +125,8 @@ export const initialState = {
   componentTypeComponents: '',
   updateRelationshipResponse: '',
   updateRelationshipPropertyResponse: '',
-  deleteRelationshipResponse: ''
+  deleteRelationshipResponse: '',
+  showTabs: {'showProperty': ' active show', 'showRelationship': ''}
 }
 
 export default handleActions(
@@ -163,6 +166,10 @@ export default handleActions(
     [SET_EDIT_COMPONENT_FLAG]: (state, action) => ({
       ...state,
       isEditComponent: action.payload
+    }),
+    [SET_CURRENT_TAB]: (state, action) => ({
+      ...state,
+      showTabs: action.payload
     }),
     [PUSH_ENTITLEMENT_PROPERTY_PAYLOAD]: (state, action) => ({
       ...state,

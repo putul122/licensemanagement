@@ -33,11 +33,32 @@ export default function Softwareview (props) {
   let incomingSoftwareRelationshipList = ''
   let childSoftwareRelationshipList = ''
   let modelRelationshipData = ''
+  let showProperties = props.showTabs.showProperty
+  let showRelationships = props.showTabs.showRelationship
   let startNode = {}
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  let toggleExpandIcon = function (index) {
+    // eslint-disable-next-line
+    let iconClass = $('#expandIcon' + index).attr('class')
+    if (iconClass === 'fa fa-plus') {
+      // eslint-disable-next-line
+      $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
+    } else {
+      // eslint-disable-next-line
+      $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+    }
+  }
+  let showProperty = function (event) {
+    let payload = {'showProperty': ' active show', 'showRelationship': ''}
+    props.setCurrentTab(payload)
+  }
+  let showRelationship = function (event) {
+    let payload = {'showProperty': '', 'showRelationship': ' active show'}
+    props.setCurrentTab(payload)
   }
   if (props.softwarebyId && props.softwarebyId !== '') {
     softwareName = props.softwarebyId.resources[0].name
@@ -83,12 +104,25 @@ export default function Softwareview (props) {
         )
       })
       return (
+        // <tbody key={index} className={'col-6'}>
+        //   <tr>
+        //     <td><span className={styles.title}>Type</span></td>
+        //     <td><span className={styles.labelbold}>{property.name}</span></td>
+        //   </tr>
+        //   {childProperties}
+        // </tbody>
         <tbody key={index} className={'col-6'}>
-          <tr>
-            <td><span className={styles.title}>Type</span></td>
+          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
             <td><span className={styles.labelbold}>{property.name}</span></td>
           </tr>
-          {childProperties}
+          <tr className='collapse' id={'expand' + index}>
+            <td colSpan='2'>
+              <table>
+                {childProperties}
+              </table>
+            </td>
+          </tr>
         </tbody>
       )
     })
@@ -358,7 +392,7 @@ export default function Softwareview (props) {
         {/* The table structure ends */}
         <div className='row col-sm-12'>
           <div className='col-md-5 m-portlet'>
-            <div className={styles.tabsprops}>
+            {/* <div className={styles.tabsprops}>
               <ul className='nav nav-tabs nav-fill' role='tablist'>
                 <li className='nav-item'>
                   <a className='nav-link active show' data-toggle='tab' href='#m_tabs_3_1'>Properties</a>
@@ -378,6 +412,37 @@ export default function Softwareview (props) {
                   </div>
                   <div className='tab-pane' id='m_tabs_3_2' role='tabpanel'>
                     <div className='m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist'>
+                      {parentSoftwareRelationshipList}
+                      {outgoingSoftwareRelationshipList}
+                      {incomingSoftwareRelationshipList}
+                      {childSoftwareRelationshipList}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> */}
+            <div className={styles.tabsprops}>
+              <ul className='nav nav-tabs' role='tablist'>
+                <li className='nav-item'>
+                  <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
+                </li>
+                <li className='nav-item'>
+                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
+                </li>
+              </ul>
+              <div className='tab-content'>
+                <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
+                  <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
+                    {softwarePropertiesList}
+                  </table>
+                </div>
+                <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
+                  {/* <div className='pull-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  </div> */}
+                  <div className={'row'} style={{'marginTop': '20px'}}>
+                    <div className='m--space-10' />
+                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
                       {parentSoftwareRelationshipList}
                       {outgoingSoftwareRelationshipList}
                       {incomingSoftwareRelationshipList}
@@ -408,5 +473,6 @@ export default function Softwareview (props) {
   match: PropTypes.any,
   softwarebyId: PropTypes.any,
   softwareProperties: PropTypes.any,
-  softwareRelationships: PropTypes.any
+  softwareRelationships: PropTypes.any,
+  showTabs: PropTypes.any
 }

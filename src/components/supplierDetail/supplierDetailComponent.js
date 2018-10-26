@@ -490,20 +490,24 @@ export default function Suppliers (props) {
           <div className='tab-content'>
             <div className='tab-pane active' id='m_tabs_2_1' role='tabpanel'>
               <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
-                <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                  <thead>
-                    <tr role='row'>
-                      <th className='' ><h5>Name</h5></th>
-                      <th className='' ><h5>Expiry Date</h5></th>
-                      <th className='' ><h5>Agreement Type</h5></th>
-                      <th className='' ><h5># Entitlements</h5></th>
-                      <th className='' ><h5>Cost</h5></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {supplierAgreementList}
-                  </tbody>
-                </table>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className='' ><h5>Name</h5></th>
+                          <th className='' ><h5>Expiry Date</h5></th>
+                          <th className='' ><h5>Agreement Type</h5></th>
+                          <th className='' ><h5># Entitlements</h5></th>
+                          <th className='' ><h5>Cost</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {supplierAgreementList}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
                 {supplierAgreementList.length > 0 && (
                   <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
@@ -526,17 +530,21 @@ export default function Suppliers (props) {
             </div>
             <div className='tab-pane' id='m_tabs_2_2' role='tabpanel'>
               <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
-                <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                  <thead>
-                    <tr role='row'>
-                      <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
-                      <th className='' style={{width: '58.25px'}}><h5>Cost</h5></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {supplierSoftwareList}
-                  </tbody>
-                </table>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
+                          <th className='' style={{width: '58.25px'}}><h5>Cost</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {supplierSoftwareList}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
                 {supplierSoftwareList.length > 0 && (
                   <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
@@ -559,19 +567,23 @@ export default function Suppliers (props) {
             </div>
             <div className='tab-pane' id='m_tabs_2_3' role='tabpanel'>
               <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' >
-                <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                  <thead>
-                    <tr role='row'>
-                      <th className='' ><h5>Name</h5></th>
-                      <th className='' ><h5>Stage</h5></th>
-                      <th className='' ><h5>Owner</h5></th>
-                      <th className='' ><h5>Cost</h5></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {supplierApplicationList}
-                  </tbody>
-                </table>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className='' ><h5>Name</h5></th>
+                          <th className='' ><h5>Stage</h5></th>
+                          <th className='' ><h5>Owner</h5></th>
+                          <th className='' ><h5>Cost</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {supplierApplicationList}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
                 {supplierApplicationList.length > 0 && (
                   <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
                     <ul className='m-datatable__pager-nav'>

@@ -3,13 +3,15 @@ import { compose, lifecycle } from 'recompose'
 import SoftwareView from '../../components/softwareDetail/softwareDetailComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actionCreators as softwareDetailActionCreators } from '../../redux/reducers/softwareDetailReducer/softwareDetailReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
   return {
     softwarebyId: state.softwareDetailReducer.softwarebyId,
     softwareProperties: state.softwareDetailReducer.softwareProperties,
-    softwareRelationships: state.softwareDetailReducer.softwareRelationships
+    softwareRelationships: state.softwareDetailReducer.softwareRelationships,
+    showTabs: state.softwareDetailReducer.showTabs
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -17,7 +19,8 @@ export const propsMapping: Callbacks = {
   fetchSoftwareById: sagaActions.softwareActions.fetchSoftwareById,
   fetchSoftwareProperties: sagaActions.softwareActions.fetchSoftwareProperties,
   fetchSoftwareRelationships: sagaActions.softwareActions.fetchSoftwareRelationships,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  setCurrentTab: softwareDetailActionCreators.setCurrentTab
  }
 
 // If you want to use the function mapping
