@@ -319,7 +319,7 @@ return (
         </div>
       </div>
       <div className='col-md-offset-1 col-xl-6'>
-        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
