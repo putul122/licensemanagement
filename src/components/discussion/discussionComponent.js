@@ -588,8 +588,12 @@ export default function Discussion (props) {
           <div className='tab-content'>
             <div className='tab-pane active show' id='m_quick_sidebar_tabs_messenger' role='tabpanel'>
               <div className='row'>
-                <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>&nbsp;
+                <div className='col-6' />
+                <div className='col-6 float-right'>
+                  <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm pull-right'>New Discussion</button>
+                </div>
               </div>
+              <br />
               <div className='m-accordion m-accordion--default m-accordion--solid m-accordion--section  m-accordion--toggle-arrow' id='m_accordion_7' role='tablist'>
                 {discussionList}
               </div>
