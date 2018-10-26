@@ -14,26 +14,29 @@ const SET_FORMATTED_ACCOUNT_DATA = 'DiscussionReducer/SET_FORMATTED_ACCOUNT_DATA
 const SET_FORMATTED_MODEL_DATA = 'DiscussionReducer/SET_FORMATTED_MODEL_DATA'
 const SET_MESSAGE_DATA = 'DiscussionReducer/SET_MESSAGE_DATA'
 const SET_REPLY_SETTINGS = 'DiscussionReducer/SET_REPLY_SETTINGS'
+const SET_ACCORDIAN_OPEN_FLAG = 'DiscussionReducer/SET_ACCORDIAN_OPEN_FLAG'
 
 export const actions = {
-    SET_QUICKSLIDE_DISCUSSION,
-    FETCH_DISCUSSIONS_SUCCESS,
-    FETCH_DISCUSSION_MESSAGES_SUCCESS,
-    SET_DISCUSSION_ID,
-    SET_FORMATTED_ACCOUNT_DATA,
-    SET_FORMATTED_MODEL_DATA,
-    SET_MESSAGE_DATA,
-    SET_REPLY_SETTINGS,
-    REPLY_DISCUSSION_MESSAGES_SUCCESS
+  SET_QUICKSLIDE_DISCUSSION,
+  FETCH_DISCUSSIONS_SUCCESS,
+  FETCH_DISCUSSION_MESSAGES_SUCCESS,
+  SET_DISCUSSION_ID,
+  SET_FORMATTED_ACCOUNT_DATA,
+  SET_FORMATTED_MODEL_DATA,
+  SET_MESSAGE_DATA,
+  SET_REPLY_SETTINGS,
+  REPLY_DISCUSSION_MESSAGES_SUCCESS,
+  SET_ACCORDIAN_OPEN_FLAG
 }
 
 export const actionCreators = {
-    setQuickslideDiscussion: createAction(SET_QUICKSLIDE_DISCUSSION),
-    setDiscussionId: createAction(SET_DISCUSSION_ID),
-    setFormattedAccountData: createAction(SET_FORMATTED_ACCOUNT_DATA),
-    setFormattedModelData: createAction(SET_FORMATTED_MODEL_DATA),
-    setMessageData: createAction(SET_MESSAGE_DATA),
-    setReplySettings: createAction(SET_REPLY_SETTINGS)
+  setQuickslideDiscussion: createAction(SET_QUICKSLIDE_DISCUSSION),
+  setDiscussionId: createAction(SET_DISCUSSION_ID),
+  setFormattedAccountData: createAction(SET_FORMATTED_ACCOUNT_DATA),
+  setFormattedModelData: createAction(SET_FORMATTED_MODEL_DATA),
+  setMessageData: createAction(SET_MESSAGE_DATA),
+  setReplySettings: createAction(SET_REPLY_SETTINGS),
+  setAccordianOpenFlag: createAction(SET_ACCORDIAN_OPEN_FLAG)
 }
 
 export const initialState = {
@@ -42,6 +45,7 @@ export const initialState = {
   discussions: '',
   discussionMessages: '',
   discussionId: '',
+  isAccordianOpen: false,
   artefactAccounts: '',
   artefactModels: '',
   formattedAccounts: '',
@@ -103,6 +107,10 @@ export default handleActions(
     [REPLY_DISCUSSION_MESSAGES_SUCCESS]: (state, action) => ({
       ...state,
       createMessageResponse: action.payload
+    }),
+    [SET_ACCORDIAN_OPEN_FLAG]: (state, action) => ({
+      ...state,
+      isAccordianOpen: action.payload
     })
   },
   initialState

@@ -20,7 +20,8 @@ export function mapStateToProps (state, props) {
     formattedTags: state.discussionReducer.formattedTags,
     newMessage: state.discussionReducer.newMessage,
     replySettings: state.discussionReducer.replySettings,
-    createMessageResponse: state.discussionReducer.createMessageResponse
+    createMessageResponse: state.discussionReducer.createMessageResponse,
+    isAccordianOpen: state.discussionReducer.isAccordianOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -36,6 +37,7 @@ export const propsMapping: Callbacks = {
   setFormattedModelData: actionCreators.setFormattedModelData,
   setMessageData: actionCreators.setMessageData,
   setReplySettings: actionCreators.setReplySettings,
+  setAccordianOpenFlag: actionCreators.setAccordianOpenFlag,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 

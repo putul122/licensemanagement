@@ -31,7 +31,10 @@ export default function Discussion (props) {
         id: data.id
       }
       props.setDiscussionId(data.id)
+      props.setAccordianOpenFlag(true)
       props.fetchDiscussionMessages && props.fetchDiscussionMessages(payload)
+    } else {
+      props.setAccordianOpenFlag(false)
     }
   }
   let openSlide = function (event) {
@@ -470,7 +473,16 @@ export default function Discussion (props) {
     console.log(props.discussionId)
     discussionList = props.discussions.resources.map(function (data, index) {
       let childElement = ''
+      let collapsedClass = ''
+      let showClass = ''
       if (props.discussionId === data.id) {
+        if (props.isAccordianOpen) {
+          collapsedClass = 'collapsed'
+          showClass = 'show'
+        } else {
+          collapsedClass = ''
+          showClass = ''
+        }
         childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
           let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
           // For old Static Message Format
@@ -512,18 +524,17 @@ export default function Discussion (props) {
       }
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
-          <a className='m-accordion__item-head collapsed' onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
+          <a className={'m-accordion__item-head ' + collapsedClass} onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
             {/* <span className='m-accordion__item-icon'><i className='fa flaticon-user-ok' /></span> */}
             <span className='m-accordion__item-title'>{data.name}</span>
             <span className='m-accordion__item-mode' />
           </a>
-          <div className='m-accordion__item-body collapse' id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
+          <div className={'m-accordion__item-body collapse' + showClass} id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
             <div className='m-accordion__item-content' >
               <div className='m-messenger m-messenger--message-arrow m-messenger--skin-light'>
                 <br />
                 <div className='m-messenger__form'>
                   <div className='m-messenger__form-controls'>
-                    {/* <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' /> */}
                     <MentionsInput allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleChange1} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                       <Mention
                         type='Mention'
@@ -788,5 +799,7 @@ Discussion.propTypes = {
   discussionId: PropTypes.any,
   // eslint-disable-next-line
   newMessage: PropTypes.any,
-  replySettings: PropTypes.any
+  replySettings: PropTypes.any,
+  // eslint-disable-next-line
+  isAccordianOpen: PropTypes.any
 }
