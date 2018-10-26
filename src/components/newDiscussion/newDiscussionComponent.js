@@ -41,7 +41,7 @@ export default function NewDiscussion (props) {
         tempTagStorage.push({id: 1, display: '...'})
       }
       // eslint-disable-next-line
-      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]\s]{0,}\w*)/gi)
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
       console.log('matches', matches)
       console.log('tempMessageStorage', tempMessageStorage)
       if (matches) {
@@ -68,7 +68,9 @@ export default function NewDiscussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9]\w*)/gi)
+      console.log('str', str)
+      // eslint-disable-next-line
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
       console.log('matches', matches)
       let reference = []
       if (matches !== null) {

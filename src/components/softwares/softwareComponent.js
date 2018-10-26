@@ -15,11 +15,7 @@ const formatAmount = (x) => {
 }
 
 export default function Softwarelists (props) {
-console.log('JSON data for Softwares', props.softwareSummary)
-console.log('softwarelist', props.software)
 console.log('props', props.expandSettings)
-console.log('******', props.perPage)
-console.log('&&&&', props.currentPage)
 let softwareCount
 let totalCost = ''
 let searchTextBox
@@ -302,7 +298,7 @@ return (
     </div>
     <div className='row' id='softwareSummary'>
       <div className='col-xl-6'>
-        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>
@@ -344,7 +340,7 @@ return (
         </div>
       </div>
       <div className='col-xl-6'>
-        <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title'>

@@ -94,7 +94,7 @@ export default function Discussion (props) {
         tempTagStorage.push({id: 1, display: '...'})
       }
       // eslint-disable-next-line
-      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]\s]{0,}\w*)/gi)
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
       console.log('matches', matches)
       console.log('tempMessageStorage', tempMessageStorage)
       if (matches) {
@@ -134,7 +134,7 @@ export default function Discussion (props) {
         tempTagStorage.push({id: 1, display: '...'})
       }
       // eslint-disable-next-line
-      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9\[\]\s]{0,}\w*)/gi)
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
       console.log('matches', matches)
       if (matches) {
         let noRefText = originalMessage.replace(matches[0].trim(), '')
@@ -156,12 +156,11 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9]\w*)/gi)
-      console.log('matches', matches)
+      // eslint-disable-next-line
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
       let reference = []
       if (matches !== null) {
         matches.forEach(function (data, index) {
-          console.log('inside for', data.trim().substring(1, data.trim().length))
           reference.push(data.trim().substring(1, data.trim().length))
         })
       }
@@ -215,12 +214,11 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9]\w*)/gi)
-      console.log('matches', matches)
+      // eslint-disable-next-line
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
       let reference = []
       if (matches !== null) {
         matches.forEach(function (data, index) {
-          console.log('inside for', data.trim().substring(1, data.trim().length))
           reference.push(data.trim().substring(1, data.trim().length))
         })
       }
@@ -244,7 +242,6 @@ export default function Discussion (props) {
     }
   }, 500)
   let handleMessageReply = function (event) {
-    console.log('props', props)
     let str = event.target.value
     let matches = str.match(/(?:^|\s)(\$[a-zA-Z0-9]\w*)/gi)
     let tags = []
