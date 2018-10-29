@@ -581,9 +581,9 @@ export default function Discussion (props) {
             <li className='nav-item m-tabs__item'>
               <a className='nav-link m-tabs__link active show' data-toggle='tab' href='#m_quick_sidebar_tabs_messenger' role='tab' aria-selected='false'>Discussions</a>
             </li>
-            <li className='nav-item m-tabs__item'>
+            {/* <li className='nav-item m-tabs__item'>
               <a className='nav-link m-tabs__link' data-toggle='tab' href='#m_quick_sidebar_tabs_logs' role='tab' aria-selected='false'>Activity</a>
-            </li>
+            </li> */}
           </ul>
           <div className='tab-content'>
             <div className='tab-pane active show' id='m_quick_sidebar_tabs_messenger' role='tabpanel'>
@@ -598,7 +598,7 @@ export default function Discussion (props) {
                 {discussionList}
               </div>
             </div>
-            <div className='tab-pane' id='m_quick_sidebar_tabs_logs' role='tabpanel'>
+            {/* <div className='tab-pane' id='m_quick_sidebar_tabs_logs' role='tabpanel'>
               <div className='m-list-timeline m-scrollable m-scroller ps' style={{height: '452px', overflow: 'hidden'}}>
                 <div className='m-list-timeline__group'>
                   <div className='m-list-timeline__heading'>
@@ -744,7 +744,7 @@ export default function Discussion (props) {
                 <div className='ps__rail-x' style={{left: '0px', bottom: '0px'}}><div className='ps__thumb-x' style={{left: '0px', width: '0px'}} /></div>
                 <div className='ps__rail-y' style={{top: '0px', right: '4px'}}><div className='ps__thumb-y' style={{top: '0px', height: '0px'}} /></div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
