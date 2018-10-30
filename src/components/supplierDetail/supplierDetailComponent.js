@@ -247,25 +247,22 @@ export default function Suppliers (props) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalAgreementPages) {
         nextClass = 'm-datatable__pager-link--disabled'
-      } else {
-        handleListAndPagination(page)
       }
+      handleListAndPagination(page)
     } else if (props.activeTab === 'software') {
       if (page === 1) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalSoftwarePages) {
         nextClass = 'm-datatable__pager-link--disabled'
-      } else {
-        handleListAndPagination(page)
       }
+      handleListAndPagination(page)
     } else if (props.activeTab === 'application') {
       if (page === 1) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalApplicationPages) {
         nextClass = 'm-datatable__pager-link--disabled'
-      } else {
-        handleListAndPagination(page)
       }
+      handleListAndPagination(page)
     }
   }
 

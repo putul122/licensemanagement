@@ -8,13 +8,10 @@ class LandingPage extends React.Component {
 	return (
   <div>
     <LandingHeader />
-    <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
+    <div className=''>
       <div className='m-content col-xl-12'>
         <div>
-          <div className='row'>
-            <img alt='' src='/assets/LMlandingpage.jpg' style={{'width': '100%'}} />
-            {/* <h1 className={styles.logotext}>LM</h1> */}
-          </div>
+          <img alt='' src='/assets/LMlandingpage.jpg' style={{'width': '100%'}} />
         </div>
       </div>
     </div>

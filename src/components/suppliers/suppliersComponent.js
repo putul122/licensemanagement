@@ -437,7 +437,7 @@ export default function Suppliers (props) {
               <div className='col-md-12'>
                 <div className='m_datatable' id='scrolling_vertical'>
                   <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
+                    <div>
                       <div className='m-portlet'>
                         <div className='m-portlet__body'>
                           <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
@@ -472,21 +472,23 @@ export default function Suppliers (props) {
                               </div>
                             </div>
                           </div>
-                          <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                            <thead>
-                              <tr role='row'>
-                                <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
-                                <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
-                                <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
-                                <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
-                                <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
-                                <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
-                              </tr>
-                            </thead>
-                            {/* <tbody> */}
-                            {suppliersList}
-                            {/* </tbody> */}
-                          </table>
+                          <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}} >
+                            <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                              <thead>
+                                <tr role='row'>
+                                  <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
+                                  <th className='' style={{width: '58.25px'}}><h5>Software</h5></th>
+                                  <th className='' style={{width: '108.25px'}}><h5># Agreements</h5></th>
+                                  <th className='' style={{width: '137.25px'}}><h5># Application Managed</h5></th>
+                                  <th className='' style={{width: '171.25px'}}><h5># Software Supplied</h5></th>
+                                  <th className='' style={{width: '132.25px'}}><h5>Total Cost</h5></th>
+                                </tr>
+                              </thead>
+                              {/* <tbody> */}
+                              {suppliersList}
+                              {/* </tbody> */}
+                            </table>
+                          </div>
                           <div className='row'>
                             <div className='col-md-12' id='scrolling_vertical'>
                               <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>

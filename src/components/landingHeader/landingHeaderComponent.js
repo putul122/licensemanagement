@@ -12,7 +12,7 @@ class LandingHeaderComponent extends React.Component {
               <img alt='' src='/assets/Telkom.png' width='80px' className={styles.logo} />
             </a>
           </div>
-          <div className='pull-left col-md-11' style={{'backgroundColor': '#2196f3', 'height': '70px'}}>
+          <div className='pull-left col-md-11' style={{'backgroundColor': '#2196f3', 'height': '70px', 'zIndex': 99999}}>
             <h1 className={styles.slogan}>Licence Management</h1><button onClick={() => { window.location.href = window.location.origin + '/account' }} className={styles.loginbutton} >Login</button>
           </div>
         </header>
