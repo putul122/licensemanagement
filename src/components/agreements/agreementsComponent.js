@@ -405,7 +405,7 @@ export default function Agreements (props) {
             <div className='col-md-12'>
               <div className='m_datatable' id='scrolling_vertical'>
                 <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-                  <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
+                  <div >
                     <div className='m-portlet'>
                       <div className='m-portlet__body'>
                         <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
@@ -440,21 +440,23 @@ export default function Agreements (props) {
                             </div>
                           </div>
                         </div>
-                        <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                          <thead>
-                            <tr role='row'>
-                              <th className=''><h5># Agreements</h5></th>
-                              <th className=''><h5>Supplier</h5></th>
-                              <th className=''><h5>Expiry Date</h5></th>
-                              <th className=''><h5>Type</h5></th>
-                              <th className=''><h5># Entitlements</h5></th>
-                              <th className=''><h5>Cost</h5></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {agreementsList}
-                          </tbody>
-                        </table>
+                        <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
+                          <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                            <thead>
+                              <tr role='row'>
+                                <th className=''><h5># Agreements</h5></th>
+                                <th className=''><h5>Supplier</h5></th>
+                                <th className=''><h5>Expiry Date</h5></th>
+                                <th className=''><h5>Type</h5></th>
+                                <th className=''><h5># Entitlements</h5></th>
+                                <th className=''><h5>Cost</h5></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {agreementsList}
+                            </tbody>
+                          </table>
+                        </div>
                         <div className='row'>
                           <div className='col-md-12' id='scrolling_vertical'>
                             <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>

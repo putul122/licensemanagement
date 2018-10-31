@@ -391,7 +391,7 @@ return (
         <div className='col-md-12'>
           <div className='m_datatable' id='scrolling_vertical'>
             <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-              <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
+              <div >
                 <div className='m-portlet'>
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
@@ -426,20 +426,22 @@ return (
                         </div>
                       </div>
                     </div>
-                    <table className='table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                      <thead>
-                        <tr role='row'>
-                          <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
-                          <th className='' style={{width: '58.25px'}}><h5>Agreement type</h5></th>
-                          <th className='' style={{width: '108.25px'}}><h5>Suppliers</h5></th>
-                          <th className='' style={{width: '137.25px'}}><h5>#Instances</h5></th>
-                          <th className='' style={{width: '171.25px'}}><h5>Total cost</h5></th>
-                        </tr>
-                      </thead>
-                      {/* <tbody> */}
-                      {softwareList}
-                      {/* </tbody> */}
-                    </table>
+                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
+                      <table className='table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                        <thead>
+                          <tr role='row'>
+                            <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
+                            <th className='' style={{width: '58.25px'}}><h5>Agreement type</h5></th>
+                            <th className='' style={{width: '108.25px'}}><h5>Suppliers</h5></th>
+                            <th className='' style={{width: '137.25px'}}><h5>#Instances</h5></th>
+                            <th className='' style={{width: '171.25px'}}><h5>Total cost</h5></th>
+                          </tr>
+                        </thead>
+                        {/* <tbody> */}
+                        {softwareList}
+                        {/* </tbody> */}
+                      </table>
+                    </div>
                     <div className='row'>
                       <div className='col-md-12' id='scrolling_vertical'>
                         <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
