@@ -1,13 +1,18 @@
 import React from 'react'
 import styles from './applicationActivityComponent.scss'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 // import _ from 'lodash'
 import ReactHtmlParser from 'react-html-parser'
+const liStyle = {
+  margin: '0 0 6px 0'
+}
 export default function ApplicationActivity (props) {
   console.log('activity message props', props.activityMessages, props.notificationReceived, props)
   let activityMessages = props.activityMessages.resources ? props.activityMessages.resources : ''
   let activityMessagesList = ''
   let parseMessage = function (result) {
+    let now = moment()
     activityMessagesList = result.map(function (messageGroup, index) {
       // console.log('------>messag ', index, messageGroup)
       messageGroup = messageGroup.reverse()
@@ -44,15 +49,24 @@ export default function ApplicationActivity (props) {
               }
             })
           }
+          let messageCreated = moment(message.created)
+          let differenceInDays = now.diff(messageCreated, 'days')
+          let messageTime = ''
+          if (differenceInDays === 0) {
+            messageTime = moment(message.created).fromNow()
+          } else {
+            messageTime = moment(message.created).format('MM MMM h:mA')
+          }
+          let timeContent = '<span class="pull-right">' + messageTime + '</span>'
           return (<li>
-            <img src={userIconlink} alt={message.author.name} />{message.author.name} {ReactHtmlParser(messageContent)}
+            <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser('<span style="font-zise:10px">' + message.author.name + '</span>' + ' :')} {ReactHtmlParser(messageContent + timeContent)}
             {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
           </li>)
         })
       return (
-        <li key={index} >
+        <li key={index} style={liStyle} >
           <div className={styles.groupspace}>
-            <img src={contextIconlink} alt={context} /><div className={styles.tooltip}><a href='javascript:void(0);'>{context}</a><span className={styles.tooltiptext}>{description}</span></div>::<a href='javascript:void(0);'>{discussion}</a>
+            <img src={contextIconlink} alt={context} /><div className={styles.tooltip} style={{'fontSize': '14px'}} ><b><a href='javascript:void(0);'>{context}</a></b><span className={styles.tooltiptext}>{description}</span></div>:&nbsp;<a href='javascript:void(0);'>{discussion}</a>
             <ul>
               {messageList}
             </ul>
