@@ -81,7 +81,7 @@ export default compose(
             obj.display = account.name.trim()
             return obj
           })
-          accountsData.shift()
+          // accountsData.shift()
           this.props.setFormattedAccountData && this.props.setFormattedAccountData(accountsData)
         }
       }
