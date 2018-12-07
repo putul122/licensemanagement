@@ -89,7 +89,14 @@ const api = {
     return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
   },
   getPackage: 'https://model-eco-dev.ecoconductor.com/model_packages/LM',
-  createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions'
+  createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions',
+  getModelPerspectives: 'https://model-eco-dev.ecoconductor.com/model_perspectives',
+  updateModelPerspectives: function (metaModelPerspectiveId) {
+    return 'https://model-eco-dev.ecoconductor.com/model_perspectives?meta_model_perspective_id=' + metaModelPerspectiveId
+  },
+  getMetaModelPerspective: function (perspectiveId) {
+    return 'https://model-eco-dev.ecoconductor.com/meta_model_perspectives/' + perspectiveId
+  }
 }
 
 export default api

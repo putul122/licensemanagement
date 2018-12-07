@@ -75,90 +75,19 @@ class LeftNavigation extends React.Component {
                 </span>
               </a>
             </li>
+            <li className={styles.navicon}>
+              <a href='/sheets'>
+                <i className='fa 	fa-file-excel fa-2x' />
+                <span className={styles.navtext}>
+                Sheets
+                </span>
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
     </div>
   </div>
-// <div>
-//     <button className='m-aside-left-close  m-aside-left-close--skin-light' id='m_aside_left_close_btn'><i className='la la-close' /></button>
-//     <div id='m_aside_left' className='m-grid__item	m-aside-left  m-aside-left--skin-light '>
-//       <div className='m-brand  m-brand--skin-light '>
-//         {/* <a href='/'>
-//           <img alt='' src='/assets/Telkom.png' width='100px' style={{marginTop: '13'}} />
-//         </a> */}
-//         <h1 className={styles.logotext}>LM</h1>
-//       </div>
-//       <div id='m_ver_menu' className='m-aside-menu  m-aside-menu--skin-light m-aside-menu--submenu-skin-light '>
-//       <div className={styles.area} />
-//       <nav className={styles.mainmenu}>
-//         <ul>
-//           <li>
-//             <a href='http://justinfarrow.com'>
-//               <i className='fa fa-home fa-2x' />
-//               <span className={styles.navtext}>
-//                   Dashboard
-//               </span>
-//             </a>
-//           </li>
-//           <li>
-//             <a href='http://justinfarrow.com'>
-//               <i className='fa fa-home fa-2x' />
-//               <span className={styles.navtext}>
-//                   Dashboard
-//               </span>
-//             </a>
-//           </li>
-//           <li>
-//             <a href='http://justinfarrow.com'>
-//               <i className='fa fa-home fa-2x' />
-//               <span className={styles.navtext}>
-//                   Dashboard
-//               </span>
-//             </a>
-//           </li>
-//         </ul>
-//       </nav>
-//     </div>
-//   </div>
-// </div>
-  // </div>
-  // <div>
-  //   <div id='m_aside_left' className='m-grid__item	m-aside-left  m-aside-left--skin-light '>
-  //     <div className='m-brand  m-brand--skin-light '>
-  //       <h1 className={styles.logotext}>LM</h1>
-  //     </div>
-  //     <div className={styles.area} />
-  //     <nav className={styles.mainmenu}>
-  //       <ul>
-  //         <li>
-  //           <a href='http://justinfarrow.com'>
-  //             <i className='fa fa-home fa-2x' />
-  //             <span className={styles.navtext}>
-  //                 Dashboard
-  //             </span>
-  //           </a>
-  //         </li>
-  //         <li>
-  //           <a href='http://justinfarrow.com'>
-  //             <i className='fa fa-home fa-2x' />
-  //             <span className={styles.navtext}>
-  //                 Dashboard
-  //             </span>
-  //           </a>
-  //         </li>
-  //         <li>
-  //           <a href='http://justinfarrow.com'>
-  //             <i className='fa fa-home fa-2x' />
-  //             <span className={styles.navtext}>
-  //                 Dashboard
-  //             </span>
-  //           </a>
-  //         </li>
-  //       </ul>
-  //     </nav>
-  //   </div>
-  // </div>
  )
 	}
 }

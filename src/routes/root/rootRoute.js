@@ -151,6 +151,15 @@ export default class Root extends Component {
             }
             resolve(require('../entitlementDetailPage/entitlementDetailPageRoute').default)
             break
+          case 'sheets':
+            if (module.hot) {
+              module.hot.accept('../sheetsPage/sheetsPageRoute', () => {
+                        require('../sheetsPage/sheetsPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../sheetsPage/sheetsPageRoute').default)
+            break
           case 'landing':
             if (module.hot) {
               module.hot.accept('../landingPage/landingPageRoute', () => {
@@ -194,6 +203,7 @@ export default class Root extends Component {
             <Route exact path='/entitlements/:id' component={(props) => this.loadView('entitlementDetail', props)} />
             <Route exact path='/account' component={(props) => this.loadView('account', props)} />
             <Route exact path='/handleAzure' component={(props) => this.loadView('handleAzure', props)} />
+            <Route exact path='/sheets' component={(props) => this.loadView('sheets', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

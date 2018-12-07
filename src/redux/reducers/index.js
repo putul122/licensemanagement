@@ -15,6 +15,7 @@ import entitlementDetailReducer from './entitlementDetailReducer/entitlementDeta
 import discussionReducer from './discussionReducer/discussionReducerReducer'
 import applicationActivityReducer from './applicationActivityReducer/applicationActivityReducerReducer'
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
+import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -31,5 +32,6 @@ export default combineReducers({
     entitlementDetailReducer,
     discussionReducer,
     applicationActivityReducer,
-    newDiscussionReducer
+    newDiscussionReducer,
+    sheetsReducer
 })
