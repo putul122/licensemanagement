@@ -26,11 +26,17 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('Activity feed will mount', this.props)
-      this.props.activityMessage && this.props.activityMessage()
+      let payload = {}
+      payload.page_size = 100
+      payload.page = 1
+      this.props.activityMessage && this.props.activityMessage(payload)
     },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.notificationReceived && nextProps.isMessageSlideOpen) {
-        this.props.activityMessage && this.props.activityMessage()
+      if (nextProps.notificationReceived) {
+        let payload = {}
+        payload.page_size = 100
+        payload.page = 1
+        this.props.activityMessage && this.props.activityMessage(payload)
       }
     }
   })

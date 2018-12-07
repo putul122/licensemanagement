@@ -43,7 +43,9 @@ export const initialState = {
     enterFileName: '',
     fileData: [],
     apiData: [],
-    isFileLoading: false
+    updateResponse: null,
+    isFileLoading: false,
+    exportValidationClass: 'form-group m-form__group row'
   }
 }
 

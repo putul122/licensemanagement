@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import LandingPage from '../../components/landingPage/landingPageComponent'
+import { actionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actions as sagaActions } from '../../redux/sagas/'
 // import { authContext } from '../../config/adal'
 // Global State
@@ -8,12 +9,14 @@ export function mapStateToProps (state, props) {
   return {
     client_id: state.basicReducer.client_id,
     client_secret: state.basicReducer.client_secret,
-    clientAccessToken: state.basicReducer.clientAccessToken
+    clientAccessToken: state.basicReducer.clientAccessToken,
+    flipInX: state.basicReducer.flipInX
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchClientAccessToken: sagaActions.basicActions.fetchClientAccessToken
+  fetchClientAccessToken: sagaActions.basicActions.fetchClientAccessToken,
+  toggleFlipInX: actionCreators.toggleFlipInX
 }
 
 // If you want to use the function mapping

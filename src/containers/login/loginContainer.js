@@ -42,6 +42,8 @@ export default compose(
         if (!nextProps.loggedInresponse.error_code) {
           localStorage.setItem('userAccessToken', nextProps.loggedInresponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
+          // eslint-disable-next-line
+          toastr.success('You are logged in', 'Success !')
           this.props.history.push('/dashboard')
         } else {
           // error in login

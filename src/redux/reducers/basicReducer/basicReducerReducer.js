@@ -9,6 +9,8 @@ const SET_QUICKSLIDE_FLAG = 'BasicReducer/SET_QUICKSLIDE_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
 const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
 const RESET_NOTIFICATION_RESPONSE = 'BasicReducer/RESET_NOTIFICATION_RESPONSE'
+const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
+const SET_API_CALLING_STATUS = 'BasicReducer/SET_API_CALLING_STATUS'
 
 export const actions = {
   INCREMENT,
@@ -21,7 +23,9 @@ export const actions = {
   SET_LOGINSLIDE_FLAG,
   SET_NOTIFICATION_FLAG,
   RESET_NOTIFICATION_RESPONSE,
-  FETCH_PACKAGE_SUCCESS
+  FETCH_PACKAGE_SUCCESS,
+  SET_API_CALLING_STATUS,
+  TOGGLE_FLIPIN_X
 }
 
 export const actionCreators = {
@@ -32,7 +36,9 @@ export const actionCreators = {
   setQuickslideFlag: createAction(SET_QUICKSLIDE_FLAG),
   setLoginslideFlag: createAction(SET_LOGINSLIDE_FLAG),
   setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
-  resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE)
+  resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE),
+  setApiCallingStatus: createAction(SET_API_CALLING_STATUS),
+  toggleFlipInX: createAction(TOGGLE_FLIPIN_X)
 }
 
 export const initialState = {
@@ -50,6 +56,7 @@ export const initialState = {
   isLoginSlideOpen: false,
   notificationFlag: false,
   updateNotificationViewStatusResponse: '',
+  flipInX: 'm-login--signin',
   packages: ''
 }
 
@@ -70,6 +77,13 @@ export default handleActions(
     [FETCH_USER_AUTHENTICATION_SUCCESS]: (state, action) => ({
       ...state,
       authenticateUser: action.payload
+    }),
+    [SET_API_CALLING_STATUS]: (state, action) => ({
+      ...state,
+      isApiCalling: action.payload
+    }),
+    [TOGGLE_FLIPIN_X]: (state, action) => ({ ...state,
+      flipInX: action.payload
     }),
     [SET_TABLE_OPEN_STATUS]: (state, action) => ({
       ...state,

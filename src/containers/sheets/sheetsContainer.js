@@ -25,6 +25,7 @@ export const propsMapping: Callbacks = {
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
   setModalSetting: actionCreators.setModalSetting,
+  resetResponse: actionCreators.resetResponse,
   setPerspectivesData: actionCreators.setPerspectivesData
 }
 
@@ -87,6 +88,11 @@ export default compose(
       if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
         console.log(nextProps.perPage, this.props.perPage)
         this.props.setCurrentPage(1)
+      }
+      if (nextProps.updateMetaModelPerspectiveResponse && nextProps.updateMetaModelPerspectiveResponse !== '') {
+        this.props.resetResponse()
+        let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse}
+        this.props.setModalSetting(modalSettings)
       }
     }
   })

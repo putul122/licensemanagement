@@ -23,7 +23,8 @@ export function * activityMessage (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const activityMessage = yield call(
       axios.get,
-      api.getActivityMessage()
+      api.getActivityMessage(),
+      {params: action.payload}
     )
     yield put(actionCreators.activityMessageSuccess(activityMessage.data))
   } catch (error) {

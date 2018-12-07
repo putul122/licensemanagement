@@ -25,6 +25,7 @@ export default function Sheets (props) {
   let tableHeader = []
   let labels = []
   let disabledClass = ''
+  let messageList = ''
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -41,8 +42,14 @@ export default function Sheets (props) {
     props.setModalSetting(modalSettings)
   }
   let handleInputName = function (event) {
-    let modalSettings = {...props.modalSettings, 'enterFileName': event.target.value}
-    props.setModalSetting(modalSettings)
+    let value = event.target.value
+    if (value.trim() !== '') {
+      let modalSettings = {...props.modalSettings, 'enterFileName': value, 'exportValidationClass': 'form-group m-form__group row'}
+      props.setModalSetting(modalSettings)
+    } else {
+      let modalSettings = {...props.modalSettings, 'enterFileName': value}
+      props.setModalSetting(modalSettings)
+    }
   }
   let handleFile = function (e) {
     let modalSettings = {...props.modalSettings, 'isFileLoading': true}
@@ -66,7 +73,6 @@ export default function Sheets (props) {
         let columnLength = columnParts.length
         let fileData = []
         let columnRow = data.shift()
-        console.log('columnRow', columnRow)
         data.forEach(function (value, index) {
           let obj = {}
           for (let i = 0; i < columnLength; i++) {
@@ -115,6 +121,12 @@ export default function Sheets (props) {
               value = partData.value.text_value || ''
             } else if (labelParts[ix].type_property === 'DateTime') {
               value = partData.value.date_time_value || ''
+            } else if (labelParts[ix].type_property === 'Boolean') {
+              value = partData.value.boolean_value || ''
+            } else if (labelParts[ix].type_property === 'List') {
+              value = partData.value.value_set_value || ''
+            } else {
+              value = partData.value.other_value || ''
             }
             obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
           })
@@ -128,57 +140,39 @@ export default function Sheets (props) {
     }
   }
   let closeModal = function () {
-    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false, 'isImportModalOpen': false}
+    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false, 'isImportModalOpen': false, 'updateResponse': null}
     props.setModalSetting(modalSettings)
   }
   let exportToSheet = function () {
     let fileName = props.modalSettings.enterFileName
-    let data = props.modalSettings.apiData
-    // props.modelPrespectives.forEach(function (modelPrespective, index) {
-    //   console.log(index)
-    //   let obj = {}
-    //   let labelParts = props.metaModelPerspective.resources[0].parts
-    //   if (modelPrespective.parts) {
-    //     modelPrespective.parts.forEach(function (partData, ix) {
-    //       let value = ''
-    //       if (labelParts[ix].type_property === null) {
-    //         value = partData.value.constructor === Array ? '' : partData.value || ''
-    //       } else if (labelParts[ix].type_property === 'Integer') {
-    //         value = partData.value.int_value || ''
-    //       } else if (labelParts[ix].type_property === 'Decimal') {
-    //         value = partData.value.float_value || ''
-    //       } else if (labelParts[ix].type_property === 'Text') {
-    //         value = partData.value.text_value || ''
-    //       } else if (labelParts[ix].type_property === 'DateTime') {
-    //         value = partData.value.date_time_value || ''
-    //       }
-    //       obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
-    //     })
-    //   }
-    //   data.push(obj)
-    // })
-    // make the worksheet
-    let workSheet = XLSX.utils.json_to_sheet(data)
+    if (fileName.trim() === '') {
+      let modalSettings = {...props.modalSettings, 'exportValidationClass': 'form-group m-form__group row has-danger'}
+      props.setModalSetting(modalSettings)
+    } else {
+      let data = props.modalSettings.apiData
+      // make the worksheet
+      let workSheet = XLSX.utils.json_to_sheet(data)
 
-    // add to workbook
-    let workBook = XLSX.utils.book_new()
-    let sheetName = props.modalSettings.selectedMetaModel.label
-    XLSX.utils.book_append_sheet(workBook, workSheet, sheetName)
+      // add to workbook
+      let workBook = XLSX.utils.book_new()
+      let sheetName = props.modalSettings.selectedMetaModel.label
+      XLSX.utils.book_append_sheet(workBook, workSheet, sheetName)
 
-    // write workbook (use type 'binary')
-    let workBookOutput = XLSX.write(workBook, {bookType: 'xlsx', type: 'binary'})
+      // write workbook (use type 'binary')
+      let workBookOutput = XLSX.write(workBook, {bookType: 'xlsx', type: 'binary'})
 
-    // generate a download
-    let s2ab = function (str) {
-      var buf = new ArrayBuffer(str.length)
-      var view = new Uint8Array(buf)
-      for (var i = 0; i !== str.length; ++i) view[i] = str.charCodeAt(i) & 0xFF
-      return buf
+      // generate a download
+      let s2ab = function (str) {
+        var buf = new ArrayBuffer(str.length)
+        var view = new Uint8Array(buf)
+        for (var i = 0; i !== str.length; ++i) view[i] = str.charCodeAt(i) & 0xFF
+        return buf
+      }
+      saveAs(new Blob([s2ab(workBookOutput)], {type: 'application/octet-stream'}), fileName + '.xlsx')
+      console.log('excelData', data)
+      let modalSettings = {...props.modalSettings, 'isExportModalOpen': false}
+      props.setModalSetting(modalSettings)
     }
-    saveAs(new Blob([s2ab(workBookOutput)], {type: 'application/octet-stream'}), fileName + '.xlsx')
-    console.log('excelData', data)
-    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false}
-    props.setModalSetting(modalSettings)
   }
   let ImportData = function (event) {
     let apiData = props.modalSettings.apiData
@@ -186,7 +180,7 @@ export default function Sheets (props) {
     let arrayLength = fileData.length
     let patchPayload = []
     let columnRow = props.modalSettings.columnRow
-    console.log('calculating patch')
+    let labelParts = props.metaModelPerspective.resources[0].parts
     for (let i = 0; i < arrayLength; i++) {
       // console.log('iterate', i)
       let patch = createPatch(apiData[i], fileData[i])
@@ -195,7 +189,29 @@ export default function Sheets (props) {
         patch = patch.map(function (data, idx) {
           let column = data.path.substring(1)
           let index = columnRow.indexOf(column)
-          data.path = '/' + modelPrespective.subject_id + '/parts/' + index
+          let metaModelPrespective = labelParts[index]
+          let valueType = ''
+          if (metaModelPrespective.type_property) {
+            let propertyType = metaModelPrespective.type_property.property_type.key
+            if (propertyType === 'Integer') {
+              valueType = 'int_value' || ''
+            } else if (propertyType === 'Decimal') {
+              valueType = 'float_value' || ''
+            } else if (propertyType === 'Text') {
+              valueType = 'text_value' || ''
+            } else if (propertyType === 'DateTime') {
+              valueType = 'date_time_value' || ''
+            } else if (propertyType === 'Boolean') {
+              valueType = 'boolean_value' || ''
+            } else if (propertyType === 'List') {
+              valueType = 'value_set_value' || ''
+            } else {
+              valueType = 'other_value' || ''
+            }
+          } else {
+            valueType = metaModelPrespective.standard_property
+          }
+          data.path = '/' + modelPrespective.subject_id + '/parts/' + index + '/' + valueType
           return data
         })
         patchPayload = patchPayload.concat(patch)
@@ -230,23 +246,24 @@ export default function Sheets (props) {
   }
   let handleInputChange = debounce((e) => {
     console.log(e)
-    const value = searchTextBox.value
-    // entitlementsList = ''
-    let payload = {
-      'search': value || '',
-      'page_size': props.perPage,
-      'page': currentPage
-    }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchCheckItems(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
+    console.log(searchTextBox)
+    // const value = searchTextBox.value
+    // // entitlementsList = ''
+    // let payload = {
+    //   'search': value || '',
+    //   'page_size': props.perPage,
+    //   'page': currentPage
     // }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
+    // // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+    //   props.fetchCheckItems(payload)
+    //   // eslint-disable-next-line
+    //   mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    //   // props.setComponentTypeLoading(true)
+    // // }
+    // listPage = _.filter(pageArray, function (group) {
+    //   let found = _.filter(group, {'number': currentPage})
+    //   if (found.length > 0) { return group }
+    // })
   }, 500)
   if (props.metaModelPerspective && props.metaModelPerspective !== '' && props.metaModelPerspective.error_code === null) {
     if (props.metaModelPerspective.resources[0].parts.length > 0) {
@@ -274,6 +291,12 @@ export default function Sheets (props) {
               value = partData.value.text_value
             } else if (labelParts[ix].type_property === 'DateTime') {
               value = partData.value.date_time_value
+            } else if (labelParts[ix].type_property === 'Boolean') {
+              value = partData.value.boolean_value
+            } else if (labelParts[ix].type_property === 'List') {
+              value = partData.value.value_set_value
+            } else {
+              value = partData.value.other_value
             }
             childList.push(<td className='' key={'ch_' + index + '_' + ix}>{value}</td>)
           })
@@ -348,6 +371,11 @@ export default function Sheets (props) {
       nextClass = 'm-datatable__pager-link--disabled'
     }
     handleListAndPagination(page)
+  }
+  if (props.modalSettings.updateResponse !== null) {
+    messageList = props.modalSettings.updateResponse.map(function (data, index) {
+      return (<li>{data.message}</li>)
+    })
   }
 return (
   <div>
@@ -425,14 +453,6 @@ return (
                         <thead>
                           <tr role='row'>
                             {tableHeader}
-                            {/* <th className=''><h5>Name</h5></th>
-                            <th className=''><h5>Purchased</h5></th>
-                            <th className=''><h5>Consumer</h5></th>
-                            <th className=''><h5>Allocated</h5></th>
-                            <th className=''><h5>Cost per Unit</h5></th>
-                            <th className=''><h5>Total Cost</h5></th>
-                            <th className=''><h5>Agreement Entitles</h5></th>
-                            <th className=''><h5>Implemented by Software</h5></th> */}
                           </tr>
                         </thead>
                         <tbody>
@@ -481,20 +501,18 @@ return (
         <div className={''}>
           <div className=''>
             <div className='modal-content'>
-              {/* <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'></h4>
+              <div className='modal-header'>
+                <h4 className='modal-title' id='exampleModalLabel'>Export to Excel sheet</h4>
                 <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
-              </div> */}
+              </div>
               <div className='modal-body'>
-                <div className='col-md-12'>
+                <div className='col-md-12 m-form m-form--state m-form--fit'>
                   {/* {messageBlock} */}
-                  <div className='form-group m-form__group row'>
+                  <div className={props.modalSettings.exportValidationClass}>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Enter Filename</label>
-                    <div className='col-8'>
-                      <input className='form-control m-input' value={props.modalSettings.enterFileName} onChange={handleInputName} type='email' placeholder='Enter Filename' id='example-userName-input' />
-                    </div>
+                    <input className='col-8 form-control m-input' value={props.modalSettings.enterFileName} onChange={handleInputName} type='email' placeholder='Enter Filename' id='example-userName-input' />
                   </div>
                 </div>
               </div>
@@ -515,26 +533,30 @@ return (
         <div className={''}>
           <div className=''>
             <div className='modal-content'>
-              {/* <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'></h4>
+              <div className='modal-header'>
+                {props.modalSettings.updateResponse === null && (<h4 className='modal-title' id='exampleModalLabel'>Import from Excel sheet</h4>)}
+                {props.modalSettings.updateResponse !== null && (<h4 className='modal-title' id='exampleModalLabel'>Import Report</h4>)}
                 <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
-              </div> */}
+              </div>
               <div className='modal-body'>
                 <div className='col-md-12'>
                   {/* {messageBlock} */}
-                  <div className='form-group m-form__group row'>
+                  {props.modalSettings.updateResponse === null && (<div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Select File</label>
                     <div className='col-8'>
                       <input className='form-control m-input' type='file' onChange={handleFile} placeholder='Select File to import' id='example-userName-input' />
                     </div>
-                  </div>
+                  </div>)}
+                  {props.modalSettings.updateResponse !== null && (<ul className=''>
+                    {messageList}
+                  </ul>)}
                 </div>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button onClick={ImportData} className='btn btn-outline-info btn-sm' >Import</button>
+                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Close</button>
+                {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className='btn btn-outline-info btn-sm' >Import</button>)}
               </div>
             </div>
           </div>

@@ -16,6 +16,7 @@ import discussionReducer from './discussionReducer/discussionReducerReducer'
 import applicationActivityReducer from './applicationActivityReducer/applicationActivityReducerReducer'
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
 import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
+import signUpReducer from './signUpReducer/signUpReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -33,5 +34,6 @@ export default combineReducers({
     discussionReducer,
     applicationActivityReducer,
     newDiscussionReducer,
+    signUpReducer,
     sheetsReducer
 })

@@ -8,6 +8,7 @@ import watchLoginUser, {actionCreators as loginActions} from './login/loginSaga'
 import watchDiscussions, {actionCreators as discussionActions} from './discussion/discussionSaga'
 import watchApplicationActivity, {actionCreators as applicationActivityActions} from './applicationActivity/applicationActivitySaga'
 import watchModelActivity, {actionCreators as modelActions} from './model/modelSaga'
+import watchCreateUser, {actionCreators as signUpActions} from './signUp/signUpSaga'
 
 export const actions = {
   basicActions,
@@ -17,6 +18,7 @@ export const actions = {
   softwareActions,
   entitlementActions,
   loginActions,
+  signUpActions,
   discussionActions,
   applicationActivityActions,
   modelActions
@@ -30,6 +32,7 @@ export default function * rootSaga () {
     watchSoftwares(),
     watchEntitlements(),
     watchLoginUser(),
+    watchCreateUser(),
     watchDiscussions(),
     watchApplicationActivity(),
     watchModelActivity()
