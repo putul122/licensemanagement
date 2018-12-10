@@ -259,24 +259,33 @@ export default function Sheets (props) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let searchText = searchTextBox.value
+    let originalData = copyModelPrespectives
     if (searchText.trim() !== '') {
-      let originalData = copyModelPrespectives
-      let list = originalData.filter(function (data, index) {
-        if (data.parts) {
-          if ((data.parts[0].value).toLowerCase().match(searchText)) {
-            return data
+      if (originalData !== '') {
+        let list = originalData.filter(function (data, index) {
+          if (data.parts) {
+            if ((data.parts[0].value).toLowerCase().match(searchText)) {
+              return data
+            }
           }
-        }
-      })
-      let payload = {}
-      payload.data = list
-      payload.copyData = props.copyModelPrespectives
-      props.setModalPerspectivesData(payload)
+        })
+        let payload = {}
+        payload.data = list
+        payload.copyData = props.copyModelPrespectives
+        props.setModalPerspectivesData(payload)
+      } else {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+      }
     } else {
       let payload = {}
       payload.data = props.copyModelPrespectives
       payload.copyData = props.copyModelPrespectives
       props.setModalPerspectivesData(payload)
+      if (originalData === '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+      }
     }
   }, 500)
   if (props.metaModelPerspective && props.metaModelPerspective !== '' && props.metaModelPerspective.error_code === null) {
