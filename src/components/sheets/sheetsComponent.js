@@ -12,6 +12,7 @@ ReactModal.setAppElement('#root')
 
 export default function Sheets (props) {
   console.log(props)
+  let copyModelPrespectives = props.copyModelPrespectives
   let searchTextBox
   let perPage = props.perPage
   let currentPage = props.currentPage
@@ -25,6 +26,7 @@ export default function Sheets (props) {
   let tableHeader = []
   let labels = []
   let disabledClass = ''
+  let wrapperClass = ''
   let messageList = ''
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
@@ -89,14 +91,17 @@ export default function Sheets (props) {
   }
   if (props.modalSettings.selectedMetaModel) {
     disabledClass = ''
+    wrapperClass = ''
   } else {
     disabledClass = styles.disabled
+    wrapperClass = styles.wrapper
   }
   if (props.modelPrespectives !== '') {
     if (props.modalSettings.isFileLoading) {
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     } else {
+      console.log('not loader')
       // eslint-disable-next-line
       mApp && mApp.unblockPage()
     }
@@ -113,17 +118,17 @@ export default function Sheets (props) {
             let value = ''
             if (labelParts[ix].type_property === null) {
               value = partData.value.constructor === Array ? '' : partData.value || ''
-            } else if (labelParts[ix].type_property === 'Integer') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
               value = partData.value.int_value || ''
-            } else if (labelParts[ix].type_property === 'Decimal') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
               value = partData.value.float_value || ''
-            } else if (labelParts[ix].type_property === 'Text') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Text') {
               value = partData.value.text_value || ''
-            } else if (labelParts[ix].type_property === 'DateTime') {
+            } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
               value = partData.value.date_time_value || ''
-            } else if (labelParts[ix].type_property === 'Boolean') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
               value = partData.value.boolean_value || ''
-            } else if (labelParts[ix].type_property === 'List') {
+            } else if (labelParts[ix].type_property.property_type.key === 'List') {
               value = partData.value.value_set_value || ''
             } else {
               value = partData.value.other_value || ''
@@ -242,28 +247,37 @@ export default function Sheets (props) {
     if (actionMeta.action === 'clear') {
       let modalSettings = {...props.modalSettings, 'selectedMetaModel': null, 'apiData': []}
       props.setModalSetting(modalSettings)
+      let payload = {}
+      payload.data = ''
+      payload.copyData = ''
+      props.setModalPerspectivesData(payload)
     }
   }
   let handleInputChange = debounce((e) => {
     console.log(e)
-    console.log(searchTextBox)
-    // const value = searchTextBox.value
-    // // entitlementsList = ''
-    // let payload = {
-    //   'search': value || '',
-    //   'page_size': props.perPage,
-    //   'page': currentPage
-    // }
-    // // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-    //   props.fetchCheckItems(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // props.setComponentTypeLoading(true)
-    // // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage})
-    //   if (found.length > 0) { return group }
-    // })
+    console.log(searchTextBox, searchTextBox.value, copyModelPrespectives)
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let searchText = searchTextBox.value
+    if (searchText.trim() !== '') {
+      let originalData = copyModelPrespectives
+      let list = originalData.filter(function (data, index) {
+        if (data.parts) {
+          if ((data.parts[0].value).toLowerCase().match(searchText)) {
+            return data
+          }
+        }
+      })
+      let payload = {}
+      payload.data = list
+      payload.copyData = props.copyModelPrespectives
+      props.setModalPerspectivesData(payload)
+    } else {
+      let payload = {}
+      payload.data = props.copyModelPrespectives
+      payload.copyData = props.copyModelPrespectives
+      props.setModalPerspectivesData(payload)
+    }
   }, 500)
   if (props.metaModelPerspective && props.metaModelPerspective !== '' && props.metaModelPerspective.error_code === null) {
     if (props.metaModelPerspective.resources[0].parts.length > 0) {
@@ -282,18 +296,18 @@ export default function Sheets (props) {
           data.parts.forEach(function (partData, ix) {
             let value
             if (labelParts[ix].type_property === null) {
-              value = partData.value
-            } else if (labelParts[ix].type_property === 'Integer') {
+              value = partData.value.constructor === Array ? '' : partData.value || ''
+            } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
               value = partData.value.int_value
-            } else if (labelParts[ix].type_property === 'Decimal') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
               value = partData.value.float_value
-            } else if (labelParts[ix].type_property === 'Text') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Text') {
               value = partData.value.text_value
-            } else if (labelParts[ix].type_property === 'DateTime') {
+            } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
               value = partData.value.date_time_value
-            } else if (labelParts[ix].type_property === 'Boolean') {
+            } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
               value = partData.value.boolean_value
-            } else if (labelParts[ix].type_property === 'List') {
+            } else if (labelParts[ix].type_property.property_type.key === 'List') {
               value = partData.value.value_set_value
             } else {
               value = partData.value.other_value
@@ -373,9 +387,16 @@ export default function Sheets (props) {
     handleListAndPagination(page)
   }
   if (props.modalSettings.updateResponse !== null) {
-    messageList = props.modalSettings.updateResponse.map(function (data, index) {
-      return (<li>{data.message}</li>)
-    })
+    if (props.modalSettings.updateResponse.length > 0) {
+      messageList = props.modalSettings.updateResponse.map(function (data, index) {
+        return (<li key={index}>{data.message}</li>)
+      })
+    } else {
+      messageList = []
+      messageList.push((
+        <li key={0}>{'No changes in data to update'}</li>
+      ))
+    }
   }
 return (
   <div>
@@ -411,9 +432,9 @@ return (
                           </div>
                         </div>
                         <div className='col-sm-12 col-md-5 pull-left'>
-                          <span className='pull-left'>
-                            <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info' + disabledClass}><i className='fa fa-angle-double-left fa-2x' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info' + disabledClass}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Import</button>
+                          <span className={'pull-left ' + wrapperClass}>
+                            <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-left fa-2x' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Import</button>
                           </span>
                         </div>
                       </div>
@@ -448,7 +469,7 @@ return (
                         </div>
                       </div>
                     </div>
-                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '100vh'}}>
+                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '100vh'}} id='ModelPerspectiveList'>
                       <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                         <thead>
                           <tr role='row'>
@@ -571,6 +592,7 @@ return (
   perspectives: PropTypes.any,
   metaModelPerspective: PropTypes.any,
   modelPrespectives: PropTypes.any,
+  copyModelPrespectives: PropTypes.any,
   currentPage: PropTypes.any,
   perPage: PropTypes.any,
   setModalSetting: PropTypes.func

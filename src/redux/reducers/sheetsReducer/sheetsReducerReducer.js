@@ -7,6 +7,7 @@ const SET_CURRENT_PAGE = 'sheetsReducer/SET_CURRENT_PAGE'
 const RESET_RESPONSE = 'sheetsReducer/RESET_RESPONSE'
 const SET_PER_PAGE = 'sheetsReducer/SET_PER_PAGE'
 const SET_PERSPECTIVES_DATA = 'sheetsReducer/SET_PERSPECTIVES_DATA'
+const SET_MODAL_PERSPECTIVES_DATA = 'sheetsReducer/SET_MODAL_PERSPECTIVES_DATA'
 const SET_MODAL_SETTING = 'sheetsReducer/SET_MODAL_SETTING'
 
 export const actions = {
@@ -17,7 +18,8 @@ export const actions = {
   SET_PER_PAGE,
   SET_PERSPECTIVES_DATA,
   SET_MODAL_SETTING,
-  UPDATE_MODEL_PRESPECTIVES_SUCCESS
+  UPDATE_MODEL_PRESPECTIVES_SUCCESS,
+  SET_MODAL_PERSPECTIVES_DATA
 }
 
 export const actionCreators = {
@@ -25,11 +27,14 @@ export const actionCreators = {
   resetResponse: createAction(RESET_RESPONSE),
   setPerPage: createAction(SET_PER_PAGE),
   setPerspectivesData: createAction(SET_PERSPECTIVES_DATA),
+  setModalPerspectivesData: createAction(SET_MODAL_PERSPECTIVES_DATA),
   setModalSetting: createAction(SET_MODAL_SETTING)
 }
 
 export const initialState = {
    modelPrespectives: '',
+   copyModelPrespectives: '',
+   modelPrespectiveData: '',
    currentPage: 1,
    perPage: 10,
    metaModelPerspective: '',
@@ -61,7 +66,7 @@ export default handleActions(
     }),
     [FETCH_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
       ...state,
-      modelPrespectives: action.payload
+      modelPrespectiveData: action.payload
     }),
     [SET_PER_PAGE]: (state, action) => ({
       ...state,
@@ -69,7 +74,8 @@ export default handleActions(
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
-      updateMetaModelPerspectiveResponse: ''
+      updateMetaModelPerspectiveResponse: '',
+      modelPrespectiveData: ''
     }),
     [SET_PERSPECTIVES_DATA]: (state, action) => ({
       ...state,
@@ -82,6 +88,11 @@ export default handleActions(
     [UPDATE_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
       ...state,
       updateMetaModelPerspectiveResponse: action.payload
+    }),
+    [SET_MODAL_PERSPECTIVES_DATA]: (state, action) => ({
+      ...state,
+      modelPrespectives: action.payload.data,
+      copyModelPrespectives: action.payload.copyData
     })
   },
   initialState

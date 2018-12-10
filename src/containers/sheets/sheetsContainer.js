@@ -10,6 +10,8 @@ export function mapStateToProps (state, props) {
     perspectives: state.sheetsReducer.perspectives,
     metaModelPerspective: state.sheetsReducer.metaModelPerspective,
     modelPrespectives: state.sheetsReducer.modelPrespectives,
+    copyModelPrespectives: state.sheetsReducer.copyModelPrespectives,
+    modelPrespectiveData: state.sheetsReducer.modelPrespectiveData,
     modalSettings: state.sheetsReducer.modalSettings,
     updateMetaModelPerspectiveResponse: state.sheetsReducer.updateMetaModelPerspectiveResponse,
     currentPage: state.sheetsReducer.currentPage,
@@ -26,6 +28,7 @@ export const propsMapping: Callbacks = {
   setPerPage: actionCreators.setPerPage,
   setModalSetting: actionCreators.setModalSetting,
   resetResponse: actionCreators.resetResponse,
+  setModalPerspectivesData: actionCreators.setModalPerspectivesData,
   setPerspectivesData: actionCreators.setPerspectivesData
 }
 
@@ -80,10 +83,17 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      if (nextProps.modelPrespectives && nextProps.modelPrespectives !== this.props.modelPrespectives) {
+      if (nextProps.modelPrespectiveData && nextProps.modelPrespectiveData !== '' && nextProps.modelPrespectiveData !== this.props.modelPrespectives) {
+        this.props.resetResponse()
         console.log('why disable', nextProps)
+        let payload = {}
+        payload.data = nextProps.modelPrespectiveData
+        payload.copyData = nextProps.modelPrespectiveData
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#ModelPerspectiveList')
+        nextProps.setModalPerspectivesData(payload)
       }
       if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
         console.log(nextProps.perPage, this.props.perPage)
@@ -93,6 +103,10 @@ export default compose(
         this.props.resetResponse()
         let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse}
         this.props.setModalSetting(modalSettings)
+        let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.perspective}
+        nextProps.fetchModelPrespectives(payload)
+        // eslint-disable-next-line
+        mApp.block('#ModelPerspectiveList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       }
     }
   })
