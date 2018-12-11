@@ -154,8 +154,8 @@ export default function Sheets (props) {
             obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
           })
           obj['subject_id'] = modelPrespective.subject_id
+          data.push(obj)
         }
-        data.push(obj)
       })
       let modalSettings = {...props.modalSettings, 'apiData': data}
       props.setModalSetting(modalSettings)
@@ -310,11 +310,12 @@ export default function Sheets (props) {
     }
   }
   let handleInputChange = debounce((e) => {
+    props.setCurrentPage(1)
     console.log(e)
-    console.log(searchTextBox, searchTextBox.value, copyModelPrespectives)
+    console.log(searchTextBox, copyModelPrespectives)
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let searchText = searchTextBox.value
+    let searchText = searchTextBox ? searchTextBox.value : ''
     let originalData = copyModelPrespectives
     if (searchText.trim() !== '') {
       if (originalData !== '') {
@@ -358,28 +359,31 @@ export default function Sheets (props) {
         modelPrespectivesList = props.modelPrespectives.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           let childList = []
           let labelParts = props.metaModelPerspective.resources[0].parts
-          data.parts.forEach(function (partData, ix) {
-            let value
-            // console.log('partData', partData, labelParts, ix)
-            if (labelParts[ix].type_property === null) {
-              value = partData.value.constructor === Array ? '' : partData.value || ''
-            } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
-              value = partData.value !== null ? partData.value.int_value : null
-            } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-              value = partData.value !== null ? partData.value.float_value : null
-            } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-              value = partData.value !== null ? partData.value.text_value : null
-            } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-              value = partData.value !== null ? partData.value.date_time_value : null
-            } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-              value = partData.value !== null ? partData.value.boolean_value : null
-            } else if (labelParts[ix].type_property.property_type.key === 'List') {
-              value = partData.value !== null ? partData.value.value_set_value : null
-            } else {
-              value = partData.value !== null ? partData.value.other_value : null
-            }
-            childList.push(<td className='' key={'ch_' + index + '_' + ix}>{value}</td>)
-          })
+          console.log(data, index)
+          if (data.parts) {
+            data.parts.forEach(function (partData, ix) {
+              let value
+              // console.log('partData', partData, labelParts, ix)
+              if (labelParts[ix].type_property === null) {
+                value = partData.value.constructor === Array ? '' : partData.value || ''
+              } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
+                value = partData.value !== null ? partData.value.int_value : null
+              } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+                value = partData.value !== null ? partData.value.float_value : null
+              } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+                value = partData.value !== null ? partData.value.text_value : null
+              } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+                value = partData.value !== null ? partData.value.date_time_value : null
+              } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+                value = partData.value !== null ? partData.value.boolean_value : null
+              } else if (labelParts[ix].type_property.property_type.key === 'List') {
+                value = partData.value !== null ? partData.value.value_set_value : null
+              } else {
+                value = partData.value !== null ? partData.value.other_value : null
+              }
+              childList.push(<td className='' key={'ch_' + index + '_' + ix}>{value}</td>)
+            })
+          }
           return (<tr key={index}>{childList}</tr>)
         })
       } else {
