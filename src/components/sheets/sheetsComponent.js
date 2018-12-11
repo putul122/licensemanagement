@@ -80,6 +80,7 @@ export default function Sheets (props) {
           for (let i = 0; i < columnLength; i++) {
             obj[columnParts[i].name.toLowerCase().trim().replace(/ /g, '_')] = value[i] || ''
           }
+          obj['subject_id'] = value[columnLength] || ''
           fileData.push(obj)
         })
         console.log('fileData', fileData)
@@ -110,7 +111,7 @@ export default function Sheets (props) {
       mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let data = []
       props.modelPrespectives.forEach(function (modelPrespective, index) {
-        console.log(index)
+        // console.log(index)
         let obj = {}
         let labelParts = props.metaModelPerspective.resources[0].parts
         if (modelPrespective.parts) {
@@ -119,22 +120,40 @@ export default function Sheets (props) {
             if (labelParts[ix].type_property === null) {
               value = partData.value.constructor === Array ? '' : partData.value || ''
             } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
-              value = partData.value.int_value || ''
+              value = partData.value !== null ? partData.value.int_value : ''
             } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-              value = partData.value.float_value || ''
+              value = partData.value !== null ? partData.value.float_value : ''
             } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-              value = partData.value.text_value || ''
+              value = partData.value !== null ? partData.value.text_value : ''
             } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-              value = partData.value.date_time_value || ''
+              value = partData.value !== null ? partData.value.date_time_value : ''
             } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-              value = partData.value.boolean_value || ''
+              value = partData.value !== null ? partData.value.boolean_value : ''
             } else if (labelParts[ix].type_property.property_type.key === 'List') {
-              value = partData.value.value_set_value || ''
+              value = partData.value !== null ? partData.value.value_set_value : ''
             } else {
-              value = partData.value.other_value || ''
+              value = partData.value !== null ? partData.value.other_value : ''
             }
+            // if (labelParts[ix].type_property === null) {
+            //   value = partData.value.constructor === Array ? '' : partData.value || ''
+            // } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
+            //   value = partData.value.int_value || ''
+            // } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+            //   value = partData.value.float_value || ''
+            // } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+            //   value = partData.value.text_value || ''
+            // } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+            //   value = partData.value.date_time_value || ''
+            // } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+            //   value = partData.value.boolean_value || ''
+            // } else if (labelParts[ix].type_property.property_type.key === 'List') {
+            //   value = partData.value.value_set_value || ''
+            // } else {
+            //   value = partData.value.other_value || ''
+            // }
             obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
           })
+          obj['subject_id'] = modelPrespective.subject_id
         }
         data.push(obj)
       })
@@ -186,42 +205,79 @@ export default function Sheets (props) {
     let patchPayload = []
     let columnRow = props.modalSettings.columnRow
     let labelParts = props.metaModelPerspective.resources[0].parts
+    console.log('apiData', apiData)
+    console.log('fileData', fileData)
     for (let i = 0; i < arrayLength; i++) {
-      // console.log('iterate', i)
-      let patch = createPatch(apiData[i], fileData[i])
-      if (patch.length > 0) {
-        let modelPrespective = props.modelPrespectives[i]
-        patch = patch.map(function (data, idx) {
-          let column = data.path.substring(1)
-          let index = columnRow.indexOf(column)
-          let metaModelPrespective = labelParts[index]
-          let valueType = ''
-          if (metaModelPrespective.type_property) {
-            let propertyType = metaModelPrespective.type_property.property_type.key
-            if (propertyType === 'Integer') {
-              valueType = 'int_value' || ''
-            } else if (propertyType === 'Decimal') {
-              valueType = 'float_value' || ''
-            } else if (propertyType === 'Text') {
-              valueType = 'text_value' || ''
-            } else if (propertyType === 'DateTime') {
-              valueType = 'date_time_value' || ''
-            } else if (propertyType === 'Boolean') {
-              valueType = 'boolean_value' || ''
-            } else if (propertyType === 'List') {
-              valueType = 'value_set_value' || ''
-            } else {
-              valueType = 'other_value' || ''
-            }
-          } else {
-            valueType = metaModelPrespective.standard_property
-          }
-          data.path = '/' + modelPrespective.subject_id + '/parts/' + index + '/' + valueType
-          return data
+      let subjectId = fileData[i].subject_id
+      if (subjectId !== '') {
+        let apiObject = _.find(apiData, function (obj) {
+          return obj.subject_id === subjectId
         })
-        patchPayload = patchPayload.concat(patch)
+        let patch = createPatch(apiObject, fileData[i])
+        if (patch.length > 0) {
+          // let modelPrespective = props.modelPrespectives[i]
+          patch = patch.map(function (data, idx) {
+            let column = data.path.substring(1)
+            let index = columnRow.indexOf(column)
+            let metaModelPrespective = labelParts[index]
+            let valueType = ''
+            if (metaModelPrespective.type_property) {
+              let propertyType = metaModelPrespective.type_property.property_type.key
+              if (propertyType === 'Integer') {
+                valueType = 'int_value' || ''
+              } else if (propertyType === 'Decimal') {
+                valueType = 'float_value' || ''
+              } else if (propertyType === 'Text') {
+                valueType = 'text_value' || ''
+              } else if (propertyType === 'DateTime') {
+                valueType = 'date_time_value' || ''
+              } else if (propertyType === 'Boolean') {
+                valueType = 'boolean_value' || ''
+              } else if (propertyType === 'List') {
+                valueType = 'value_set_value' || ''
+              } else {
+                valueType = 'other_value' || ''
+              }
+            } else {
+              valueType = metaModelPrespective.standard_property
+            }
+            data.path = '/' + subjectId + '/parts/' + index + '/' + valueType
+            return data
+          })
+          patchPayload = patchPayload.concat(patch)
+        }
+      } else {
+        let newPatch = {}
+        newPatch.op = 'add'
+        newPatch.path = '/-'
+        let parts = []
+        labelParts.forEach(function (partData, index) {
+          let obj = {}
+          if (partData.type_property === null) {
+            obj.value = fileData[i][partData.standard_property] || ''
+          } else {
+            let propertyType = partData.type_property.property_type.key
+            if (propertyType === 'Integer') {
+              obj.value = {'int_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            } else if (propertyType === 'Decimal') {
+              obj.value = {'float_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            } else if (propertyType === 'Text') {
+              obj.value = {'text_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            } else if (propertyType === 'DateTime') {
+              obj.value = {'date_time_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            } else if (propertyType === 'Boolean') {
+              obj.value = {'boolean_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            } else if (propertyType === 'List') {
+              obj.value = {'value_set_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            } else {
+              obj.value = {'other_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+            }
+          }
+          parts.push(obj)
+        })
+        newPatch.value = {'parts': parts}
+        patchPayload = patchPayload.concat(newPatch)
       }
-      // console.log('patch', patch)
     }
     let payload = {}
     payload.metaModelPerspectiveId = props.modalSettings.selectedMetaModel.perspective
@@ -304,22 +360,23 @@ export default function Sheets (props) {
           let labelParts = props.metaModelPerspective.resources[0].parts
           data.parts.forEach(function (partData, ix) {
             let value
+            // console.log('partData', partData, labelParts, ix)
             if (labelParts[ix].type_property === null) {
               value = partData.value.constructor === Array ? '' : partData.value || ''
             } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
-              value = partData.value.int_value
+              value = partData.value !== null ? partData.value.int_value : null
             } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-              value = partData.value.float_value
+              value = partData.value !== null ? partData.value.float_value : null
             } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-              value = partData.value.text_value
+              value = partData.value !== null ? partData.value.text_value : null
             } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-              value = partData.value.date_time_value
+              value = partData.value !== null ? partData.value.date_time_value : null
             } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-              value = partData.value.boolean_value
+              value = partData.value !== null ? partData.value.boolean_value : null
             } else if (labelParts[ix].type_property.property_type.key === 'List') {
-              value = partData.value.value_set_value
+              value = partData.value !== null ? partData.value.value_set_value : null
             } else {
-              value = partData.value.other_value
+              value = partData.value !== null ? partData.value.other_value : null
             }
             childList.push(<td className='' key={'ch_' + index + '_' + ix}>{value}</td>)
           })
@@ -447,7 +504,7 @@ return (
                           </span>
                         </div>
                       </div>
-                      <div className='row' style={{'marginBottom': '20px'}}>
+                      {props.modalSettings.selectedMetaModel !== null && (<div className='row' style={{'marginBottom': '20px'}}>
                         <div className='col-sm-12 col-md-6'>
                           <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
@@ -476,9 +533,9 @@ return (
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div>)}
                     </div>
-                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '100vh'}} id='ModelPerspectiveList'>
+                    {props.modalSettings.selectedMetaModel !== null && (<div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '100vh'}} id='ModelPerspectiveList'>
                       <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                         <thead>
                           <tr role='row'>
@@ -489,8 +546,8 @@ return (
                           {modelPrespectivesList}
                         </tbody>
                       </table>
-                    </div>
-                    <div className='row'>
+                    </div>)}
+                    {props.modalSettings.selectedMetaModel !== null && (<div className='row'>
                       <div className='col-md-12' id='scrolling_vertical'>
                         <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
                           <div className='m-datatable__pager m-datatable--paging-loaded clearfix'>
@@ -511,7 +568,7 @@ return (
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div>)}
                   </div>
                 </div>
               </div>

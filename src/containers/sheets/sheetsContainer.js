@@ -101,7 +101,7 @@ export default compose(
       }
       if (nextProps.updateMetaModelPerspectiveResponse && nextProps.updateMetaModelPerspectiveResponse !== '') {
         this.props.resetResponse()
-        let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse}
+        let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse, 'apiData': []}
         this.props.setModalSetting(modalSettings)
         let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.perspective}
         nextProps.fetchModelPrespectives(payload)
