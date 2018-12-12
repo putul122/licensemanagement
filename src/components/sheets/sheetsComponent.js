@@ -76,12 +76,14 @@ export default function Sheets (props) {
         let fileData = []
         let columnRow = data.shift()
         data.forEach(function (value, index) {
-          let obj = {}
-          for (let i = 0; i < columnLength; i++) {
-            obj[columnParts[i].name.toLowerCase().trim().replace(/ /g, '_')] = value[i] || ''
+          if (value.length > 0) {
+            let obj = {}
+            for (let i = 0; i < columnLength; i++) {
+              obj[columnParts[i].name.toLowerCase().trim().replace(/ /g, '_')] = value[i] === undefined ? '' : value[i]
+            }
+            obj['subject_id'] = value[columnLength] || ''
+            fileData.push(obj)
           }
-          obj['subject_id'] = value[columnLength] || ''
-          fileData.push(obj)
         })
         console.log('fileData', fileData)
         modalSettings = {...props.modalSettings, 'isFileLoading': false, 'fileData': fileData, 'columnRow': columnRow}
@@ -110,16 +112,26 @@ export default function Sheets (props) {
       // eslint-disable-next-line
       mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let data = []
-      props.modelPrespectives.forEach(function (modelPrespective, index) {
+      copyModelPrespectives.forEach(function (modelPrespective, index) {
         // console.log(index)
         let obj = {}
         let labelParts = props.metaModelPerspective.resources[0].parts
         if (modelPrespective.parts) {
           modelPrespective.parts.forEach(function (partData, ix) {
             let value = ''
-            if (labelParts[ix].type_property === null) {
-              value = partData.value.constructor === Array ? '' : partData.value || ''
-            } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
+            if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
+              value = partData ? partData.value : ''
+            } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
+              if (partData.value.constructor === Array) {
+                let targetComponents = []
+                partData.value.forEach(function (data, index) {
+                  targetComponents.push(data.target_component.name)
+                })
+                value = targetComponents.toString()
+              } else {
+                value = partData.value || ''
+              }
+            } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
               value = partData.value !== null ? partData.value.int_value : ''
             } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
               value = partData.value !== null ? partData.value.float_value : ''
@@ -134,23 +146,6 @@ export default function Sheets (props) {
             } else {
               value = partData.value !== null ? partData.value.other_value : ''
             }
-            // if (labelParts[ix].type_property === null) {
-            //   value = partData.value.constructor === Array ? '' : partData.value || ''
-            // } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
-            //   value = partData.value.int_value || ''
-            // } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-            //   value = partData.value.float_value || ''
-            // } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-            //   value = partData.value.text_value || ''
-            // } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-            //   value = partData.value.date_time_value || ''
-            // } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-            //   value = partData.value.boolean_value || ''
-            // } else if (labelParts[ix].type_property.property_type.key === 'List') {
-            //   value = partData.value.value_set_value || ''
-            // } else {
-            //   value = partData.value.other_value || ''
-            // }
             obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
           })
           obj['subject_id'] = modelPrespective.subject_id
@@ -218,10 +213,17 @@ export default function Sheets (props) {
           // let modelPrespective = props.modelPrespectives[i]
           patch = patch.map(function (data, idx) {
             let column = data.path.substring(1)
+            console.log('column', column, data)
             let index = columnRow.indexOf(column)
+            console.log('index', index, labelParts)
             let metaModelPrespective = labelParts[index]
             let valueType = ''
-            if (metaModelPrespective.type_property) {
+            if (metaModelPrespective.standard_property !== null && metaModelPrespective.type_property === null) { // Standard Property
+              valueType = metaModelPrespective.standard_property
+            } else if (metaModelPrespective.standard_property === null && metaModelPrespective.type_property === null) { // Connection Property
+              valueType = 'value/-'
+              data.value = data.value.split(',')
+            } else if (metaModelPrespective.type_property !== null) { // below are Customer Property
               let propertyType = metaModelPrespective.type_property.property_type.key
               if (propertyType === 'Integer') {
                 valueType = 'int_value' || ''
@@ -238,8 +240,6 @@ export default function Sheets (props) {
               } else {
                 valueType = 'other_value' || ''
               }
-            } else {
-              valueType = metaModelPrespective.standard_property
             }
             data.path = '/' + subjectId + '/parts/' + index + '/' + valueType
             return data
@@ -365,9 +365,19 @@ export default function Sheets (props) {
             data.parts.forEach(function (partData, ix) {
               let value
               // console.log('partData', partData, labelParts, ix)
-              if (labelParts[ix].type_property === null) {
-                value = partData.value.constructor === Array ? '' : partData.value || ''
-              } else if (labelParts[ix].type_property.property_type.key === 'Integer') {
+              if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
+                value = partData ? partData.value : ''
+              } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
+                if (partData.value.constructor === Array) {
+                  let targetComponents = []
+                  partData.value.forEach(function (data, index) {
+                    targetComponents.push(data.target_component.name)
+                  })
+                  value = targetComponents.toString()
+                } else {
+                  value = partData.value || ''
+                }
+              } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
                 value = partData.value !== null ? partData.value.int_value : null
               } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
                 value = partData.value !== null ? partData.value.float_value : null
