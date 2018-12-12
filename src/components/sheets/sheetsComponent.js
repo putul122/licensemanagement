@@ -221,6 +221,7 @@ export default function Sheets (props) {
             if (metaModelPrespective.standard_property !== null && metaModelPrespective.type_property === null) { // Standard Property
               valueType = metaModelPrespective.standard_property
             } else if (metaModelPrespective.standard_property === null && metaModelPrespective.type_property === null) { // Connection Property
+              data.op = 'add'
               valueType = 'value/-'
               data.value = data.value.split(',')
             } else if (metaModelPrespective.type_property !== null) { // below are Customer Property
