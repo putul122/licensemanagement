@@ -120,7 +120,7 @@ export default function Sheets (props) {
           modelPrespective.parts.forEach(function (partData, ix) {
             let value = ''
             if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
-              value = partData ? partData.value : ''
+              value = partData.value
             } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
               if (partData.value.constructor === Array) {
                 let targetComponents = []
@@ -226,19 +226,19 @@ export default function Sheets (props) {
             } else if (metaModelPrespective.type_property !== null) { // below are Customer Property
               let propertyType = metaModelPrespective.type_property.property_type.key
               if (propertyType === 'Integer') {
-                valueType = 'int_value' || ''
+                valueType = 'int_value'
               } else if (propertyType === 'Decimal') {
-                valueType = 'float_value' || ''
+                valueType = 'float_value'
               } else if (propertyType === 'Text') {
-                valueType = 'text_value' || ''
+                valueType = 'text_value'
               } else if (propertyType === 'DateTime') {
-                valueType = 'date_time_value' || ''
+                valueType = 'date_time_value'
               } else if (propertyType === 'Boolean') {
-                valueType = 'boolean_value' || ''
+                valueType = 'boolean_value'
               } else if (propertyType === 'List') {
-                valueType = 'value_set_value' || ''
+                valueType = 'value_set_value'
               } else {
-                valueType = 'other_value' || ''
+                valueType = 'other_value'
               }
             }
             data.path = '/' + subjectId + '/parts/' + index + '/' + valueType
@@ -378,19 +378,19 @@ export default function Sheets (props) {
                   value = partData.value || ''
                 }
               } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
-                value = partData.value !== null ? partData.value.int_value : null
+                value = partData.value !== null ? partData.value.int_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-                value = partData.value !== null ? partData.value.float_value : null
+                value = partData.value !== null ? partData.value.float_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-                value = partData.value !== null ? partData.value.text_value : null
+                value = partData.value !== null ? partData.value.text_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-                value = partData.value !== null ? partData.value.date_time_value : null
+                value = partData.value !== null ? partData.value.date_time_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-                value = partData.value !== null ? partData.value.boolean_value : null
+                value = partData.value !== null ? partData.value.boolean_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'List') {
-                value = partData.value !== null ? partData.value.value_set_value : null
+                value = partData.value !== null ? partData.value.value_set_value : ''
               } else {
-                value = partData.value !== null ? partData.value.other_value : null
+                value = partData.value !== null ? partData.value.other_value : ''
               }
               childList.push(<td className='' key={'ch_' + index + '_' + ix}>{value}</td>)
             })
