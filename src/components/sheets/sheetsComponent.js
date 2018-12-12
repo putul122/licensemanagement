@@ -310,7 +310,6 @@ export default function Sheets (props) {
     }
   }
   let handleInputChange = debounce((e) => {
-    props.setCurrentPage(1)
     console.log(e)
     console.log(searchTextBox, copyModelPrespectives)
     // eslint-disable-next-line
@@ -319,6 +318,7 @@ export default function Sheets (props) {
     let originalData = copyModelPrespectives
     if (searchText.trim() !== '') {
       if (originalData !== '') {
+        console.log('in original', originalData)
         let list = originalData.filter(function (data, index) {
           if (data.parts) {
             if ((data.parts[0].value).toLowerCase().match(searchText)) {
@@ -344,6 +344,7 @@ export default function Sheets (props) {
         mApp && mApp.unblockPage()
       }
     }
+    props.setCurrentPage(1)
   }, 500)
   if (props.metaModelPerspective && props.metaModelPerspective !== '' && props.metaModelPerspective.error_code === null) {
     if (props.metaModelPerspective.resources[0].parts.length > 0) {
@@ -355,10 +356,10 @@ export default function Sheets (props) {
   }
   let listModelPrespectives = function () {
     if (props.modelPrespectives !== '') {
-      if (props.modelPrespectives.length > 0) {
+      let labelParts = props.metaModelPerspective.resources[0].parts
+      if (props.modelPrespectives.length > 1) {
         modelPrespectivesList = props.modelPrespectives.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           let childList = []
-          let labelParts = props.metaModelPerspective.resources[0].parts
           console.log(data, index)
           if (data.parts) {
             data.parts.forEach(function (partData, ix) {
@@ -390,7 +391,7 @@ export default function Sheets (props) {
         modelPrespectivesList = []
         modelPrespectivesList.push((
           <tr key={0}>
-            <td colSpan='4'>{'No data to display'}</td>
+            <td colSpan={labelParts.length}>{'No data to display'}</td>
           </tr>
         ))
       }
