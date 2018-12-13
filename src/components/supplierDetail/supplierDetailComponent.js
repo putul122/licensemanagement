@@ -18,13 +18,7 @@ const formatAmount = (x) => {
 }
 
 export default function Suppliers (props) {
-  // console.log(props.supplierPropertiesPayload)
-  console.log('****', props.supplierProperties)
-  console.log('^&^&^', props.setSupplierProperties)
-  console.log('*&*&', props.pushSupplierPropertyPayload)
-  let supplierPropertiesPayload = {...props.supplierPropertiesPayload}
-  let supplierPropertiesList = ''
-  let sixProperties = []
+  console.log(props)
   let supplierSoftwareList = ''
   let supplierApplicationList = ''
   let supplierAgreementList = ''
@@ -38,9 +32,6 @@ export default function Suppliers (props) {
   let totalApplicationPages
   let totalSoftwarePages
   let perPage = 10
-  let index
-  let supplier = props.supplier
-  let supplierProperties = props.supplierProperties
   let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
@@ -52,17 +43,17 @@ export default function Suppliers (props) {
   let listSoftwarePage = []
   let paginationLimit = 6
   let DepartmentName
-  let functionname
+  let functionName
   let Product
   let PersonName
   let email
   let cellNumber
-  let emailvalue
-  let DepartmentNamevalue
-  let PersonNamevalue
-  let functionnamevalue
-  let Productvalue
-  let cellNumbervalue
+  let emailValue
+  let DepartmentNameValue
+  let PersonNameValue
+  let functionNameValue
+  let ProductValue
+  let cellNumberValue
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -71,7 +62,6 @@ export default function Suppliers (props) {
   if (props.supplier && props.supplier !== '') {
     supplierName = props.supplier.resources[0].name
     supplierId = props.supplier.resources[0].id
-    console.log(supplierId)
     agreementCount = props.supplier.resources[0].agreement_count
     agreementCost = props.supplier.resources[0].cost
     suppliedSoftwareCount = props.supplier.resources[0].supplied_software_count
@@ -98,142 +88,127 @@ export default function Suppliers (props) {
     agreementPieChartData.datasets.push(datasetAgreementObject)
   }
   // code for supplier properties ends
-  if (supplierProperties && supplierProperties !== '') {
-    console.log('******Properties', supplierProperties.resources[0])
-    sixProperties = supplierProperties.resources[0].properties
-    supplierPropertiesList = sixProperties.map(function (property, index) {
-      if (property.type_property === 346) {
+  if (props.supplierDetails && props.supplierDetails !== '') {
+    props.supplierDetails.forEach(function (property, index) {
+      if (property.name === 'department_name') {
         DepartmentName = property.name
-        DepartmentNamevalue = property.text_value
+        DepartmentNameValue = property.value
       }
-      if (property.type_property === 339) {
+      if (property.name === 'person_name') {
         PersonName = property.name
-        PersonNamevalue = property.text_value
+        PersonNameValue = property.value
       }
-      if (property.type_property === 337) {
-        functionname = property.name
-        functionnamevalue = property.text_value
+      if (property.name === 'function') {
+        functionName = property.name
+        functionNameValue = property.value
       }
-      if (property.type_property === 341) {
+      if (property.name === 'email') {
         email = property.name
-        emailvalue = property.text_value
+        emailValue = property.value
       }
-      if (property.type_property === 338) {
+      if (property.name === 'product') {
         Product = property.name
-        Productvalue = property.text_value
+        ProductValue = property.value
       }
-      if (property.type_property === 342) {
+      if (property.name === 'cell_number') {
         cellNumber = property.name
-        cellNumbervalue = property.text_value
+        cellNumberValue = property.value
       }
-  //   let editTextProperty = function (index, value) {
-  //   let payload
-  //   let typeProperty = supplierProperties.resources[0].properties[index].type_property
-  //   if (supplierProperties.resources[0].properties[index].property_type.key === 'Text') {
-  //       supplierProperties.resources[0].properties[index].text_value = value
-  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-  //   }
-  //   if (supplierPropertiesPayload.property.length === 0) {
-  //     supplierPropertiesPayload.property.push(payload)
-  //   } else {
-  //    if (payload.path === supplierPropertiesPayload.property[supplierPropertiesPayload.property.length - 1].path) {
-  //     supplierPropertiesPayload.property[supplierPropertiesPayload.property.length - 1] = payload
-  //     } else {
-  //       supplierPropertiesPayload.property.push(payload)
-  //     }
-  //    }
-  //   let editPayload = {}
-  //   editPayload.property = {resources: supplierProperties}
-  //   props.editSupplierProperties(editPayload)
-  //   // props.pushSupplierPropertyPayload(supplierPropertiesPayload)
-  // }
     })
-      console.log('&&&&&&', supplierPropertiesList)
-}
+  }
   /* Code for edit functionality begins */
-  let editTextProperty = function (index, value) {
-    let payload
-    sixProperties = supplierProperties.resources[0].properties
-    supplierPropertiesList = sixProperties.map(function (property, index) {
-      let typeProperty = property.type_property
-      if (property.type_property === 346 && property.property_type.key === 'Text') {
-         property.text_value = value
-         payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-      } else if (property.type_property === 339 && property.property_type.key === 'Text') {
-        property.text_value = value
-        payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-      } else if (property.type_property === 337 && property.property_type.key === 'Text') {
-        property.text_value = value
-        payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-      } else if (property.type_property === 341 && property.property_type.key === 'Text') {
-        property.text_value = value
-        payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-      } else if (property.type_property === 338 && property.property_type.key === 'Text') {
-        property.text_value = value
-        payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-     } else if (property.type_property === 342 && property.property_type.key === 'Text') {
-      property.text_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-     }
-     index++
-  })
-  //   // let payload
-  //   // let typeProperty = supplierProperties.resources[0].properties[4].type_property
-  //   // if (supplierProperties.resources[0].properties[4].property_type.key === 'Text') {
-  //   //     supplierProperties.resources[0].properties[4].text_value = value
-  //   //   payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-  //   // }
-    if (supplierPropertiesPayload.property.length === 0) {
-      supplierPropertiesPayload.property.push(payload)
-    } else {
-     if (payload.path === supplierPropertiesPayload.property[supplierPropertiesPayload.property.length - 1].path) {
-      supplierPropertiesPayload.property[supplierPropertiesPayload.property.length - 1] = payload
-      } else {
-        supplierPropertiesPayload.property.push(payload)
-      }
-     }
-    let editPayload = {}
-    editPayload.property = {resources: supplierProperties}
-    props.editSupplierProperties(editPayload)
-    // props.pushSupplierPropertyPayload(supplierPropertiesPayload)
-  // }
-}
-  // let editTextProperty = function (event) {
-  //   let value = event.target.value
-  //   let payload
-  //   let typeProperty = supplierProperties.resources[0].properties[0].type_property
-  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-  //   if (supplierPropertiesPayload.property.length === 0) {
-  //     supplierPropertiesPayload.property.push(payload)
-  //   }
-  //   // else {
-  //   //  if (payload.path === supplierPropertiesPayload.property[supplierPropertiesPayload.property.length - 1].path) {
-  //   //   supplierPropertiesPayload.property[supplierPropertiesPayload.property.length - 1] = payload
-  //   //   } else {
-  //   //     supplierPropertiesPayload.property.push(payload)
-  //   //   }
-  //   //  }
-  //   let editPayload = {}
-  //   editPayload.property = {resources: supplierProperties}
-  //   props.editSupplierProperties(editPayload)
-  //   console.log('***edit', editPayload)
-  // }
+  let editDetailProperty = function (key, value) {
+    let supplierPropertySettings = {...props.supplierPropertySettings}
+    supplierPropertySettings[key] = value
+    console.log(supplierPropertySettings)
+    props.setSupplierPropertySettings(supplierPropertySettings)
+  }
 
   let submitUpdates = function (event) {
-    console.log('***', supplier)
     event.preventDefault()
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let propertyPayload = []
+    let supplierPropertySettings = {...props.supplierPropertySettings, 'isEditFlag': false}
+    props.supplierDetails.forEach(function (property, index) {
+      if (property.name === 'department_name') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.department_name }
+        propertyPayload.push(propertyPayloadObject)
+      }
+      if (property.name === 'person_name') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.department_name }
+        propertyPayload.push(propertyPayloadObject)
+      }
+      if (property.name === 'function') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.function }
+        propertyPayload.push(propertyPayloadObject)
+      }
+      if (property.name === 'email') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.email }
+        propertyPayload.push(propertyPayloadObject)
+      }
+      if (property.name === 'product') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.product }
+        propertyPayload.push(propertyPayloadObject)
+      }
+      if (property.name === 'cell_number') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.cell_number }
+        propertyPayload.push(propertyPayloadObject)
+      }
+    })
     let payload = {}
-    payload.componentId = supplier.resources[0].id
-    payload.property = supplierPropertiesPayload.property
+    payload.componentId = supplierId
+    payload.propertyData = propertyPayload
+    console.log(payload)
     props.updateSupplierProperties(payload)
   }
-  let editSuppliersPropsCancel = function () {
-    let supplierPropertiesSettings = {...props.supplierPropertiesSettings, 'isEditFlag': true}
-    props.setSupplierProperties(supplierPropertiesSettings)
+  let editSupplierPropertyCancel = function () {
+    let supplierPropertySettings = {...props.supplierPropertySettings, 'isEditFlag': false}
+    props.supplierDetails.forEach(function (property, index) {
+      if (property.name === 'department_name') {
+        supplierPropertySettings.department_name = property.value
+      }
+      if (property.name === 'person_name') {
+        supplierPropertySettings.person_name = property.value
+      }
+      if (property.name === 'function') {
+        supplierPropertySettings.function = property.value
+      }
+      if (property.name === 'email') {
+        supplierPropertySettings.email = property.value
+      }
+      if (property.name === 'product') {
+        supplierPropertySettings.product = property.value
+      }
+      if (property.name === 'cell_number') {
+        supplierPropertySettings.cell_number = property.value
+      }
+    })
+    props.setSupplierPropertySettings(supplierPropertySettings)
   }
-  let editSuppliersProperties = function () {
-    let supplierPropertiesSettings = {...props.supplierPropertiesSettings, 'isEditFlag': false}
-    props.setSupplierProperties(supplierPropertiesSettings)
+  let editSuppliersProperty = function () {
+    let supplierPropertySettings = {...props.supplierPropertySettings, 'isEditFlag': true}
+    props.supplierDetails.forEach(function (property, index) {
+      if (property.name === 'department_name') {
+        supplierPropertySettings.department_name = property.value
+      }
+      if (property.name === 'person_name') {
+        supplierPropertySettings.person_name = property.value
+      }
+      if (property.name === 'function') {
+        supplierPropertySettings.function = property.value
+      }
+      if (property.name === 'email') {
+        supplierPropertySettings.email = property.value
+      }
+      if (property.name === 'product') {
+        supplierPropertySettings.product = property.value
+      }
+      if (property.name === 'cell_number') {
+        supplierPropertySettings.cell_number = property.value
+      }
+    })
+    props.setSupplierPropertySettings(supplierPropertySettings)
   }
   /* Code for edit functionality begins */
   // code for suppliers properties ends
@@ -477,22 +452,6 @@ export default function Suppliers (props) {
         </div>
         <div className='row' id='supplier'>
           <div className='col-md-4'>
-            {/* <div className='m-portlet m-portlet--full-height'>
-              <div className='m-portlet__body'>
-                <div className='m-widget12'>
-                  <div className='m-widget12__item'>
-                    <span className='m-widget12__text1'>
-                      <h2>Agreements&nbsp;&nbsp;&nbsp;</h2>
-                      <br /><br /><br /><br />
-                      <h2 className='pull-right'>R {formatAmount(agreementCost)}</h2>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <h2>{agreementCount}</h2>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
@@ -533,28 +492,10 @@ export default function Suppliers (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            {/* <div className='m-portlet m-portlet--full-height'>
-              <div className='m-portlet__body'>
-                <div className='m-widget12'>
-                  <div className='m-widget12__item'>
-                    <span className='m-widget12__text1'>
-                      <h2>Software</h2>
-                    </span>
-                    <span className='m-widget12__text2'>
-                      <h2>{suppliedSoftwareCount}</h2>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit  m-portlet--skin-light  m-portlet--rounded-force'>
               <div className='m-portlet__head'>
                 <div className='m-portlet__head-caption'>
-                  <div className='m-portlet__head-title'>
-                    {/* <h3 className='m-portlet__head-text m--font-light'>
-                      Activity
-                    </h3> */}
-                  </div>
+                  <div className='m-portlet__head-title' />
                 </div>
               </div>
               <div className='m-portlet__body' style={{'height': '150px'}}>
@@ -617,10 +558,10 @@ export default function Suppliers (props) {
         <div className='' style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist'>
             <li className='nav-item'>
-              <a className='nav-link' onClick={() => { props.setCurrentPage(1); props.setActiveTab('suppliersdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Suppliers Details</a>
+              <a className='nav-link active' onClick={() => { props.setCurrentPage(1); props.setActiveTab('suppliersdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Suppliers Details</a>
             </li>
             <li className='nav-item'>
-              <a className='nav-link active' onClick={() => { props.setCurrentPage(1); props.setActiveTab('agreement') }} data-toggle='tab' href='#m_tabs_2_1'>Agreements</a>
+              <a className='nav-link' onClick={() => { props.setCurrentPage(1); props.setActiveTab('agreement') }} data-toggle='tab' href='#m_tabs_2_1'>Agreements</a>
             </li>
             <li className='nav-item'>
               <a className='nav-link' onClick={() => { props.setCurrentPage(1); props.setActiveTab('software') }} data-toggle='tab' href='#m_tabs_2_2'>Supplied Software</a>
@@ -630,7 +571,7 @@ export default function Suppliers (props) {
             </li>
           </ul>
           <div className='tab-content'>
-            <div className='tab-pane active' id='m_tabs_2_1' role='tabpanel'>
+            <div className='tab-pane' id='m_tabs_2_1' role='tabpanel'>
               <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
                 <div className='m-portlet'>
                   <div className='m-portlet__body'>
@@ -707,25 +648,7 @@ export default function Suppliers (props) {
                 )}
               </div>
             </div>
-            {/* <div className='tab-pane' id='m_tabs_2_4' role='tabpanel'>
-              <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' >
-                <div className='m-portlet'>
-                  <div className='m-portlet__body' style={{'height': '540px'}}>
-                    {props.supplierPropertiesSettings.isEditFlag && <div><button type='button' onClick={editSuppliersProperties} className='btn btn-outline-info btn-sm pull-right m--margin-bottom-30'>Edit Suppliers Details</button></div>}
-                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                      <tbody>
-                        {supplierPropertiesList}
-                      </tbody>
-                    </table>
-                    {!props.supplierPropertiesSettings.isEditFlag && <div className='pull-right'>
-                      <button type='button' onClick={editSuppliersPropsCancel} className='btn btn-outline-info btn-sm m--margin-left-10'>Cancel</button>
-                      <button type='button' onClick={submitUpdates} className='btn btn-outline-info btn-sm m--margin-left-10'>Save</button>
-                    </div>}
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            <div className='tab-pane' id='m_tabs_2_4' role='tabpanel'>
+            <div className='tab-pane active' id='m_tabs_2_4' role='tabpanel'>
               <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
                 <div className='m-portlet__body'>
                   <div className='row'>
@@ -734,7 +657,7 @@ export default function Suppliers (props) {
                         <div className='m-section__content'>
                           <div className='m-demo'>
                             <div className='m-demo__preview'>
-                              <div className='pull-right'><button type='button' onClick={editSuppliersProperties} className='btn btn-outline-info btn-sm'>Edit Suppliers Details</button></div>
+                              {!props.supplierPropertySettings.isEditFlag && (<div className='pull-right'><button type='button' onClick={editSuppliersProperty} className='btn btn-outline-info btn-sm'>Edit Suppliers Details</button></div>)}
                               <div className='m-list-search'>
                                 <div className='m-list-search__results'>
                                   <div className='m-widget13'>
@@ -742,70 +665,70 @@ export default function Suppliers (props) {
                                       <span className='m-widget13__desc m-widget13__text' style={{'width': '10%', 'color': '#000000'}}>
                                         {DepartmentName}
                                       </span>
-                                      {props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3'>
-                                        <span className='m-widget13__text'>{DepartmentNamevalue}</span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{DepartmentNameValue}</span>
                                       </div>}
-                                      {!props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
-                                        <input type='text' className='form-control m-input' value={DepartmentNamevalue} onChange={(event) => { editTextProperty(index, event.target.value) }} aria-describedby='basic-addon2' />
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.department_name} onChange={(event) => { editDetailProperty('department_name', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
                                       <span className='m-widget13__desc m-widget13__text' style={{'width': '10%', 'color': '#000000'}}>
-                                        {functionname}
+                                        {functionName}
                                       </span>
-                                      {props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3'>
-                                        <span className='m-widget13__text'>{functionnamevalue}</span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{functionNameValue}</span>
                                       </div>}
-                                      {!props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
-                                        <input type='text' className='form-control m-input' value={functionnamevalue} onChange={(event) => { editTextProperty(index, event.target.value) }} aria-describedby='basic-addon2' />
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.function} onChange={(event) => { editDetailProperty('function', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
                                       <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
                                         {Product}
                                       </span>
-                                      {props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3'>
-                                        <span className='m-widget13__text'>{Productvalue}</span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{ProductValue}</span>
                                       </div>}
-                                      {!props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
-                                        <input type='text' className='form-control m-input' value={Productvalue} onChange={(event) => { editTextProperty(index, event.target.value) }} aria-describedby='basic-addon2' />
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.product} onChange={(event) => { editDetailProperty('product', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
                                       <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
                                         {PersonName}
                                       </span>
-                                      {props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3'>
-                                        <span className='m-widget13__text'>{PersonNamevalue}</span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{PersonNameValue}</span>
                                       </div>}
-                                      {!props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
-                                        <input type='text' className='form-control m-input' value={PersonNamevalue} onChange={(event) => { editTextProperty(index, event.target.value) }} aria-describedby='basic-addon2' />
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.person_name} onChange={(event) => { editDetailProperty('person_name', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
                                       <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
                                         {email}
                                       </span>
-                                      {props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3'>
-                                        <span className='m-widget13__text'>{emailvalue}</span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{emailValue}</span>
                                       </div>}
-                                      {!props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
-                                        <input type='text' className='form-control m-input' value={emailvalue} onChange={(event) => { editTextProperty(index, event.target.value) }} aria-describedby='basic-addon2' />
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.email} onChange={(event) => { editDetailProperty('email', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
                                       <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
                                         {cellNumber}
                                       </span>
-                                      {props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3'>
-                                        <span className='m-widget13__text'>{cellNumbervalue}</span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{cellNumberValue}</span>
                                       </div>}
-                                      {!props.supplierPropertiesSettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
-                                        <input type='text' className='form-control m-input' value={cellNumbervalue} onChange={(event) => { editTextProperty(index, event.target.value) }} aria-describedby='basic-addon2' />
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.cell_number} onChange={(event) => { editDetailProperty('cell_number', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
-                                    {!props.supplierPropertiesSettings.isEditFlag && <div className='pull-right' style={{'paddingBottom': '20px'}}>
-                                      <button type='button' onClick={editSuppliersPropsCancel} className='btn btn-outline-info btn-sm m--margin-left-10'>Cancel</button>
+                                    {props.supplierPropertySettings.isEditFlag && <div className='pull-right' style={{'paddingBottom': '20px'}}>
+                                      <button type='button' onClick={editSupplierPropertyCancel} className='btn btn-outline-info btn-sm m--margin-left-10'>Cancel</button>
                                       <button type='button' onClick={submitUpdates} className='btn btn-outline-info btn-sm m--margin-left-10'>Save</button>
                                     </div>}
                                   </div>
@@ -873,13 +796,13 @@ export default function Suppliers (props) {
       supplierApplications: PropTypes.any,
       supplierSoftwares: PropTypes.any,
       supplierAgreements: PropTypes.any,
-      supplierPropertiesSettings: PropTypes.any,
-      supplierPropertiesPayload: PropTypes.any,
+      supplierPropertySettings: PropTypes.any,
+      // supplierPropertiesPayload: PropTypes.any,
       currentPage: PropTypes.any,
       activeTab: PropTypes.any,
       setCurrentPage: PropTypes.func,
       setActiveTab: PropTypes.func,
-      pushSupplierPropertyPayload: PropTypes.func,
-      supplierProperties: PropTypes.any,
-      setSupplierProperties: PropTypes.func
+      // pushSupplierPropertyPayload: PropTypes.func,
+      supplierDetails: PropTypes.any
+      // setSupplierPropertySettings: PropTypes.func
  }

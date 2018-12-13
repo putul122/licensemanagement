@@ -29,7 +29,7 @@ export default function * watchDashboard () {
 
 export function * getApplications (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const applications = yield call(
       axios.get,
       api.getApplications
@@ -43,7 +43,7 @@ export function * getApplications (action) {
 
 export function * getApplicationsSummary (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const applicationsSummary = yield call(
         axios.get,
         api.getApplicationsSummary

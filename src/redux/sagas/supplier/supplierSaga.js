@@ -71,7 +71,7 @@ export default function * watchSuppliers () {
 
 export function * getSuppliers (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const suppliers = yield call(
       axios.get,
       api.getSuppliers,
@@ -102,8 +102,7 @@ export function * updateSupplierProperties (action) {
     const suppliers = yield call(
       axios.patch,
       api.updateSuppliersProperties(action.payload),
-      action.payload.property
-      // {params: action.payload}
+      action.payload.propertyData
     )
     yield put(actionCreators.updateSupplierPropertiesSuccess(suppliers.data))
   } catch (error) {
@@ -113,7 +112,7 @@ export function * updateSupplierProperties (action) {
 
 export function * getSuppliersSummary (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const suppliersSummary = yield call(
       axios.get,
       api.getSuppliersSummary,
@@ -127,7 +126,7 @@ export function * getSuppliersSummary (action) {
 
 export function * getSupplierById (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const supplier = yield call(
       axios.get,
       api.getSupplier,
@@ -141,7 +140,7 @@ export function * getSupplierById (action) {
 
 export function * getSupplierApplications (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const suppliersApplications = yield call(
       axios.get,
       api.getSupplierApplications,
@@ -155,7 +154,7 @@ export function * getSupplierApplications (action) {
 
 export function * getSupplierAgreements (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const suppliersAgreements = yield call(
       axios.get,
       api.getSupplierAgreements,
@@ -169,7 +168,7 @@ export function * getSupplierAgreements (action) {
 
 export function * getSupplierSoftwares (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const suppliersSoftwares = yield call(
       axios.get,
       api.getSupplierSoftwares,

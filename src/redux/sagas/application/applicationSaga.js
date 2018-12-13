@@ -83,7 +83,7 @@ export function * getApplicationRelationships (action) {
 
 export function * getApplications (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const applications = yield call(
       axios.get,
       api.getApplications,
@@ -97,7 +97,7 @@ export function * getApplications (action) {
 
 export function * getApplicationsSummary (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const applicationsSummary = yield call(
         axios.get,
         api.getApplicationsSummary,
@@ -124,7 +124,7 @@ export function * getApplicationById (action) {
 
   export function * getApplicationSoftwares (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const applicationSoftwares = yield call(
         axios.get,
         api.getApplicationSoftwares,

@@ -12,10 +12,9 @@ import {
 // Name Spaced Action Types
 const SET_CURRENT_PAGE = 'SuppliersReducer/SET_CURRENT_PAGE'
 const SET_ACTIVE_TAB = 'SuppliersReducer/SET_ACTIVE_TAB'
-const SET_SUPPLIER_PROPERTIES = 'SuppliersReducer/SET_SUPPLIER_PROPERTIES'
+const SET_SUPPLIER_PROPERTY_SETTINGS = 'SuppliersReducer/SET_SUPPLIER_PROPERTY_SETTINGS'
 const RESET_RESPONSE = 'SuppliersReducer/RESET_RESPONSE'
-const EDIT_SUPPLIER_PROPERTIES = 'SuppliersReducer/EDIT_SUPPLIER_PROPERTIES'
-const PUSH_SUPPLIER_PROPERTY_PAYLOAD = 'SupplierReducer/PUSH_SUPPLIER_PROPERTY_PAYLOAD'
+const SET_SUPPLIER_DETAILS = 'SuppliersReducer/SET_SUPPLIER_DETAILS'
 
 export const actions = {
     FETCH_SUPPLIERS_SUCCESS,
@@ -27,18 +26,17 @@ export const actions = {
     FETCH_SUPPLIER_PROPERTIES_SUCCESS,
     SET_CURRENT_PAGE,
     SET_ACTIVE_TAB,
-    SET_SUPPLIER_PROPERTIES,
+    SET_SUPPLIER_PROPERTY_SETTINGS,
     UPDATE_SUPPLIER_PROPERTIES_SUCCESS,
-    EDIT_SUPPLIER_PROPERTIES,
-    PUSH_SUPPLIER_PROPERTY_PAYLOAD
+    SET_SUPPLIER_DETAILS
 }
 
 export const actionCreators = {
     setCurrentPage: createAction(SET_CURRENT_PAGE),
     setActiveTab: createAction(SET_ACTIVE_TAB),
-    setSupplierProperties: createAction(SET_SUPPLIER_PROPERTIES),
-    editSupplierProperties: createAction(EDIT_SUPPLIER_PROPERTIES),
-    pushSupplierPropertyPayload: createAction(PUSH_SUPPLIER_PROPERTY_PAYLOAD)
+    setSupplierPropertySettings: createAction(SET_SUPPLIER_PROPERTY_SETTINGS),
+    setSupplierDetails: createAction(SET_SUPPLIER_DETAILS),
+    resetResponse: createAction(RESET_RESPONSE)
 }
 
 export const initialState = {
@@ -46,15 +44,21 @@ export const initialState = {
   supplierApplications: '',
   suppliersSummary: '',
   supplierAgreements: '',
+  supplierDetails: '',
   supplierSoftwares: '',
   currentPage: 1,
   activeTab: 'agreement',
-  supplierPropertiesSettings: {
-    isEditFlag: true
+  supplierPropertySettings: {
+    isEditFlag: false,
+    person_name: '',
+    department_name: '',
+    function: '',
+    email: '',
+    cell_number: '',
+    product: ''
   },
   supplierProperties: '',
-  updateSupplierResponse: '',
-  supplierPropertiesPayload: {property: []}
+  updateSupplierResponse: ''
 }
 
 export default handleActions(
@@ -91,10 +95,6 @@ export default handleActions(
       ...state,
       updateSupplierPropertyResponse: action.payload
     }),
-    [PUSH_SUPPLIER_PROPERTY_PAYLOAD]: (state, action) => ({
-      ...state,
-      supplierPropertiesPayload: action.payload
-    }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       updateSupplierPropertyResponse: ''
@@ -103,13 +103,13 @@ export default handleActions(
       ...state,
       activeTab: action.payload
     }),
-    [SET_SUPPLIER_PROPERTIES]: (state, action) => ({
+    [SET_SUPPLIER_PROPERTY_SETTINGS]: (state, action) => ({
       ...state,
-      supplierPropertiesSettings: action.payload
+      supplierPropertySettings: action.payload
     }),
-    [EDIT_SUPPLIER_PROPERTIES]: (state, action) => ({
+    [SET_SUPPLIER_DETAILS]: (state, action) => ({
       ...state,
-      supplierProperties: action.payload.property
+      supplierDetails: action.payload
     })
   },
   initialState

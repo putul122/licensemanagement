@@ -127,7 +127,7 @@ export default function * watchAgreements () {
 
 export function * getAgreements (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const agreements = yield call(
       axios.get,
       api.getAgreements,
@@ -141,7 +141,7 @@ export function * getAgreements (action) {
 
 export function * getAgreementsSummary (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const agreementsSummary = yield call(
       axios.get,
       api.getAgreementsSummary,
@@ -155,7 +155,7 @@ export function * getAgreementsSummary (action) {
 
 export function * getAgreementById (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const agreement = yield call(
       axios.get,
       api.getAgreement,
@@ -169,7 +169,7 @@ export function * getAgreementById (action) {
 
 export function * getAgreementEntitlements (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const agreementEntitlements = yield call(
       axios.get,
       api.getAgreementEntitlements,

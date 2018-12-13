@@ -83,7 +83,7 @@ export function * getSoftwareRelationships (action) {
 
 export function * getSoftwares (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const softwares = yield call(
       axios.get,
       api.getSoftwares,
@@ -97,7 +97,7 @@ export function * getSoftwares (action) {
 
 export function * getSoftwaresSummary (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const softwaresSummary = yield call(
         axios.get,
         api.getSoftwareSummary,
@@ -111,7 +111,7 @@ export function * getSoftwaresSummary (action) {
 
   export function * getSoftwareById (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const software = yield call(
         axios.get,
         api.getSoftware,
@@ -125,7 +125,7 @@ export function * getSoftwaresSummary (action) {
 
   export function * getSoftwareAgreements (action) {
     try {
-      // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const softwareAgreements = yield call(
         axios.get,
         api.getSoftwareAgreements,

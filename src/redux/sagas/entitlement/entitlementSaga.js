@@ -78,7 +78,7 @@ export default function * watchEntitlements () {
 
 export function * getEntitlements (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const entitlements = yield call(
       axios.get,
       api.getEntitlements,
@@ -92,7 +92,7 @@ export function * getEntitlements (action) {
 
 export function * getEntitlementsSummary (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const entitlementsSummary = yield call(
       axios.get,
       api.getEntitlementsSummary,
@@ -106,7 +106,7 @@ export function * getEntitlementsSummary (action) {
 
 export function * getEntitlementById (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const entitlement = yield call(
       axios.get,
       api.getEntitlement,
