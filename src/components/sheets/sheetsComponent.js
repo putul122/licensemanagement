@@ -296,13 +296,17 @@ export default function Sheets (props) {
   }
   let handleSelect = function (newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
+      let payload = {}
+      payload.data = ''
+      payload.copyData = ''
+      props.setModalPerspectivesData(payload)
       // let selectedStandard = newValue
       let perspectiveId = newValue.perspective
-      let payload = {'meta_model_perspective_id': perspectiveId}
+      let modelPrespectivesPayload = {'meta_model_perspective_id': perspectiveId}
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.fetchMetaModelPrespective(perspectiveId)
-      props.fetchModelPrespectives(payload)
+      props.fetchModelPrespectives(modelPrespectivesPayload)
       let modalSettings = {...props.modalSettings, 'selectedMetaModel': newValue, 'apiData': []}
       props.setModalSetting(modalSettings)
     }

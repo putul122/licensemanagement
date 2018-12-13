@@ -13,6 +13,9 @@ const api = {
   getSupplierAgreements: 'https://lm-eco-dev.ecoconductor.com/api/supplier/GetSupplierAgreements',
   getSupplierApplications: 'https://lm-eco-dev.ecoconductor.com/api/supplier/GetSupplierApplications',
   getSupplierSoftwares: 'https://lm-eco-dev.ecoconductor.com/api/supplier/GetSupplierSoftwares',
+  updateSuppliersProperties: function (payload) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_properties'
+  },
   getAgreements: 'https://lm-eco-dev.ecoconductor.com/api/agreement/GetAgreements',
   getAgreementsSummary: 'https://lm-eco-dev.ecoconductor.com/api/agreement/GetAgreementsSummary',
   getAgreement: 'https://lm-eco-dev.ecoconductor.com/api/agreement/GetAgreement',

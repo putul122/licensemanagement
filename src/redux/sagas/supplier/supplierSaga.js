@@ -22,6 +22,12 @@ export const FETCH_SUPPLIER_AGREEMENTS_FAILURE = 'saga/supplier/FETCH_SUPPLIER_A
 export const FETCH_SUPPLIER_SOFTWARES = 'saga/supplier/FETCH_SUPPLIER_SOFTWARES'
 export const FETCH_SUPPLIER_SOFTWARES_SUCCESS = 'saga/supplier/FETCH_SUPPLIER_SOFTWARES_SUCCESS'
 export const FETCH_SUPPLIER_SOFTWARES_FAILURE = 'saga/supplier/FETCH_SUPPLIER_SOFTWARES_FAILURE'
+export const FETCH_SUPPLIER_PROPERTIES = 'saga/supplier/FETCH_SUPPLIER_PROPERTIES'
+export const FETCH_SUPPLIER_PROPERTIES_SUCCESS = 'saga/supplier/FETCH_SUPPLIER_PROPERTIES_SUCCESS'
+export const FETCH_SUPPLIER_PROPERTIES_FAILURE = 'saga/supplier/FETCH_SUPPLIER_PROPERTIES_FAILURE'
+export const UPDATE_SUPPLIER_PROPERTIES = 'saga/supplier/UPDATE_SUPPLIER_PROPERTIES'
+export const UPDATE_SUPPLIER_PROPERTIES_SUCCESS = 'saga/supplier/UPDATE_SUPPLIER_PROPERTIES_SUCCESS'
+export const UPDATE_SUPPLIER_PROPERTIES_FAILURE = 'saga/supplier/UPDATE_SUPPLIER_PROPERTIES_FAILURE'
 
 export const actionCreators = {
   fetchSuppliers: createAction(FETCH_SUPPLIERS),
@@ -41,7 +47,13 @@ export const actionCreators = {
   fetchSupplierAgreementsFailure: createAction(FETCH_SUPPLIER_AGREEMENTS_FAILURE),
   fetchSupplierSoftwares: createAction(FETCH_SUPPLIER_SOFTWARES),
   fetchSupplierSoftwaresSuccess: createAction(FETCH_SUPPLIER_SOFTWARES_SUCCESS),
-  fetchSupplierSoftwaresFailure: createAction(FETCH_SUPPLIER_SOFTWARES_FAILURE)
+  fetchSupplierSoftwaresFailure: createAction(FETCH_SUPPLIER_SOFTWARES_FAILURE),
+  fetchSupplierProperties: createAction(FETCH_SUPPLIER_PROPERTIES),
+  fetchSupplierPropertiesSuccess: createAction(FETCH_SUPPLIER_PROPERTIES_SUCCESS),
+  fetchSupplierPropertiesFailure: createAction(FETCH_SUPPLIER_PROPERTIES_FAILURE),
+  updateSupplierProperties: createAction(UPDATE_SUPPLIER_PROPERTIES),
+  updateSupplierPropertiesSuccess: createAction(UPDATE_SUPPLIER_PROPERTIES_SUCCESS),
+  updateSupplierPropertiesFailure: createAction(UPDATE_SUPPLIER_PROPERTIES_FAILURE)
 }
 
 export default function * watchSuppliers () {
@@ -51,7 +63,9 @@ export default function * watchSuppliers () {
       takeLatest(FETCH_SUPPLIER_BY_ID, getSupplierById),
       takeLatest(FETCH_SUPPLIER_APPLICATIONS, getSupplierApplications),
       takeLatest(FETCH_SUPPLIER_AGREEMENTS, getSupplierAgreements),
-      takeLatest(FETCH_SUPPLIER_SOFTWARES, getSupplierSoftwares)
+      takeLatest(FETCH_SUPPLIER_SOFTWARES, getSupplierSoftwares),
+      takeLatest(FETCH_SUPPLIER_PROPERTIES, getSupplierProperties),
+      takeLatest(UPDATE_SUPPLIER_PROPERTIES, updateSupplierProperties)
   ]
 }
 
@@ -66,6 +80,34 @@ export function * getSuppliers (action) {
     yield put(actionCreators.fetchSuppliersSuccess(suppliers.data))
   } catch (error) {
     yield put(actionCreators.fetchSuppliersFailure(error))
+  }
+}
+
+export function * getSupplierProperties (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const supplierProperties = yield call(
+      axios.get,
+      api.getSoftwareProperties(action.payload.supplier_id)
+    )
+    yield put(actionCreators.fetchSupplierPropertiesSuccess(supplierProperties.data))
+  } catch (error) {
+    yield put(actionCreators.fetchSupplierPropertiesFailure(error))
+  }
+}
+
+export function * updateSupplierProperties (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const suppliers = yield call(
+      axios.patch,
+      api.updateSuppliersProperties(action.payload),
+      action.payload.property
+      // {params: action.payload}
+    )
+    yield put(actionCreators.updateSupplierPropertiesSuccess(suppliers.data))
+  } catch (error) {
+    yield put(actionCreators.updateSupplierPropertiesFailure(error))
   }
 }
 
