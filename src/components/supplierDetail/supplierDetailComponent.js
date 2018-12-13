@@ -54,6 +54,8 @@ export default function Suppliers (props) {
   let functionNameValue
   let ProductValue
   let cellNumberValue
+  let Surname
+  let SurnameValue
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -91,28 +93,32 @@ export default function Suppliers (props) {
   if (props.supplierDetails && props.supplierDetails !== '') {
     props.supplierDetails.forEach(function (property, index) {
       if (property.name === 'department_name') {
-        DepartmentName = property.name
+        DepartmentName = property.displayName
         DepartmentNameValue = property.value
       }
       if (property.name === 'person_name') {
-        PersonName = property.name
+        PersonName = property.displayName
         PersonNameValue = property.value
       }
       if (property.name === 'function') {
-        functionName = property.name
+        functionName = property.displayName
         functionNameValue = property.value
       }
       if (property.name === 'email') {
-        email = property.name
+        email = property.displayName
         emailValue = property.value
       }
       if (property.name === 'product') {
-        Product = property.name
+        Product = property.displayName
         ProductValue = property.value
       }
       if (property.name === 'cell_number') {
-        cellNumber = property.name
+        cellNumber = property.displayName
         cellNumberValue = property.value
+      }
+      if (property.name === 'surname') {
+        Surname = property.displayName
+        SurnameValue = property.value
       }
     })
   }
@@ -155,6 +161,10 @@ export default function Suppliers (props) {
         let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.cell_number }
         propertyPayload.push(propertyPayloadObject)
       }
+      if (property.name === 'surname') {
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.surname }
+        propertyPayload.push(propertyPayloadObject)
+      }
     })
     let payload = {}
     payload.componentId = supplierId
@@ -183,6 +193,9 @@ export default function Suppliers (props) {
       if (property.name === 'cell_number') {
         supplierPropertySettings.cell_number = property.value
       }
+      if (property.name === 'surname') {
+        supplierPropertySettings.surname = property.value
+      }
     })
     props.setSupplierPropertySettings(supplierPropertySettings)
   }
@@ -206,6 +219,9 @@ export default function Suppliers (props) {
       }
       if (property.name === 'cell_number') {
         supplierPropertySettings.cell_number = property.value
+      }
+      if (property.name === 'surname') {
+        supplierPropertySettings.surname = property.value
       }
     })
     props.setSupplierPropertySettings(supplierPropertySettings)
@@ -703,6 +719,17 @@ export default function Suppliers (props) {
                                       </div>}
                                       {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
                                         <input type='text' className='form-control m-input' value={props.supplierPropertySettings.person_name} onChange={(event) => { editDetailProperty('person_name', event.target.value) }} aria-describedby='basic-addon2' />
+                                      </div>}
+                                    </div>
+                                    <div className='m-widget13__item'>
+                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
+                                        {Surname}
+                                      </span>
+                                      {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
+                                        <span className='m-widget13__text'>{SurnameValue}</span>
+                                      </div>}
+                                      {props.supplierPropertySettings.isEditFlag && <div className='col-md-3 m--margin-bottom-20'>
+                                        <input type='text' className='form-control m-input' value={props.supplierPropertySettings.surname} onChange={(event) => { editDetailProperty('surname', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>

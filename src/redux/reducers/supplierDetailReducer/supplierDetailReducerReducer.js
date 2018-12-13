@@ -55,7 +55,8 @@ export const initialState = {
     function: '',
     email: '',
     cell_number: '',
-    product: ''
+    product: '',
+    surname: ''
   },
   supplierProperties: '',
   updateSupplierResponse: ''

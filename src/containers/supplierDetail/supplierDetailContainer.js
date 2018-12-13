@@ -99,10 +99,11 @@ export default compose(
       if (nextProps.supplierProperties && nextProps.supplierProperties !== '' && nextProps.supplierProperties !== this.props.supplierProperties) {
         if (nextProps.supplierProperties.error_code === null) {
           let supplierDetails = []
-          let processProperty = function (property, type) {
+          let processProperty = function (property, type, displayName) {
             let propertyType = property.property_type
             let obj = {}
             obj.name = type
+            obj.displayName = displayName
             obj.typeProperty = property.type_property
             if (propertyType.key === 'Integer') {
               obj.value = property.int_value
@@ -148,6 +149,9 @@ export default compose(
           let cellNumberTypeProperty = _.result(_.find(componentTypeProperties, function (obj) {
             return obj.key === 'Supplier~Cell Number'
           }), 'component_type_property')
+          let surnameTypeProperty = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Supplier~Surname'
+          }), 'component_type_property')
           if (nextProps.supplierProperties.resources.length > 0) {
             nextProps.supplierProperties.resources.forEach(function (data, index) {
               console.log('data-------------', data)
@@ -155,37 +159,43 @@ export default compose(
                 return obj.type_property === personNameTypeProperty
               })
               if (personNameProperty) {
-                processProperty(personNameProperty, 'person_name')
+                processProperty(personNameProperty, 'person_name', 'Person Nname')
               }
               let departmentNameProperty = _.find(data.properties, function (obj) {
                 return obj.type_property === departmentNameTypeProperty
               })
               if (departmentNameProperty) {
-                processProperty(departmentNameProperty, 'department_name')
+                processProperty(departmentNameProperty, 'department_name', 'Department Name')
               }
               let functionProperty = _.find(data.properties, function (obj) {
                 return obj.type_property === functionTypeProperty
               })
               if (functionProperty) {
-                processProperty(functionProperty, 'function')
+                processProperty(functionProperty, 'function', 'Function')
               }
               let productProperty = _.find(data.properties, function (obj) {
                 return obj.type_property === productTypeProperty
               })
               if (productProperty) {
-                processProperty(productProperty, 'product')
+                processProperty(productProperty, 'product', 'Product')
               }
               let emailProperty = _.find(data.properties, function (obj) {
                 return obj.type_property === emailTypeProperty
               })
               if (emailProperty) {
-                processProperty(emailProperty, 'email')
+                processProperty(emailProperty, 'email', 'Email')
               }
               let cellNumberProperty = _.find(data.properties, function (obj) {
                 return obj.type_property === cellNumberTypeProperty
               })
               if (cellNumberProperty) {
-                processProperty(cellNumberProperty, 'cell_number')
+                processProperty(cellNumberProperty, 'cell_number', 'Cell Number')
+              }
+              let surnameProperty = _.find(data.properties, function (obj) {
+                return obj.type_property === surnameTypeProperty
+              })
+              if (surnameProperty) {
+                processProperty(surnameProperty, 'surname', 'Surname')
               }
             })
             console.log('supplierDetails -----', supplierDetails)
@@ -217,6 +227,9 @@ export default compose(
           }
           if (property.name === 'cell_number') {
             supplierPropertySettings.cell_number = property.value
+          }
+          if (property.name === 'surname') {
+            supplierPropertySettings.surname = property.value
           }
         })
         this.props.setSupplierPropertySettings(supplierPropertySettings)
