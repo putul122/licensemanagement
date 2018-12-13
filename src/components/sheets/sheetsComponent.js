@@ -121,7 +121,7 @@ export default function Sheets (props) {
             if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
               value = partData.value
             } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
-              if (partData.value.constructor === Array) {
+              if (partData.value) {
                 let targetComponents = []
                 partData.value.forEach(function (data, index) {
                   targetComponents.push(data.target_component.name)
@@ -372,7 +372,7 @@ export default function Sheets (props) {
               if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
                 value = partData ? partData.value : ''
               } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
-                if (partData.value.constructor === Array) {
+                if (partData.value) {
                   let targetComponents = []
                   partData.value.forEach(function (data, index) {
                     targetComponents.push(data.target_component.name)
