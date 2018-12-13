@@ -99,7 +99,11 @@ const api = {
   },
   getMetaModelPerspective: function (perspectiveId) {
     return 'https://model-eco-dev.ecoconductor.com/meta_model_perspectives/' + perspectiveId
-  }
+  },
+  notificationURL: 'https://notification-eco-dev.ecoconductor.com/notification',
+  iconURL: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/',
+  iconURL1: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1',
+  iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
 }
 
 export default api

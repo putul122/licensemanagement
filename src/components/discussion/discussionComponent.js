@@ -5,6 +5,7 @@ import { MentionsInput, Mention } from 'react-mentions'
 import debounce from 'lodash/debounce'
 import defaultStyle from './defaultStyle.js'
 import defaultMentionStyle from './defaultMentionStyle.js'
+import api from '../../constants'
 // import axios from 'axios'
 // import api from '../../constants'
 import styles from './discussionComponent.scss'
@@ -360,7 +361,7 @@ export default function Discussion (props) {
         let childElement = ''
         // if (props.discussionId === data.id) {
           childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
-            let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+            let userIconlink = cdata.author.icon ? api.iconURL + cdata.author.icon : api.iconURL18
             // For old Static Message Format
             let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
             .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
@@ -484,7 +485,7 @@ export default function Discussion (props) {
           showClass = ''
         }
         childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
-          let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+          let userIconlink = cdata.author.icon ? api.iconURL + cdata.author.icon : api.iconURL18
           // For old Static Message Format
           let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
           .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')

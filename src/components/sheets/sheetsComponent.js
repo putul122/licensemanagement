@@ -8,7 +8,18 @@ import { createPatch } from 'rfc6902'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import styles from './sheetsComponent.scss'
+import moment from 'moment'
 ReactModal.setAppElement('#root')
+const parseDateExcel = (excelTimestamp) => {
+  const secondsInDay = 24 * 60 * 60
+  const excelEpoch = new Date(1899, 11, 31)
+  const excelEpochAsUnixTimestamp = excelEpoch.getTime()
+  const missingLeapYearDay = secondsInDay * 1000
+  const delta = excelEpochAsUnixTimestamp - missingLeapYearDay
+  const excelTimestampAsUnixTimestamp = excelTimestamp * secondsInDay * 1000
+  const parsed = excelTimestampAsUnixTimestamp + delta
+  return isNaN(parsed) ? null : parsed
+}
 
 export default function Sheets (props) {
   console.log(props)
@@ -35,11 +46,101 @@ export default function Sheets (props) {
     props.setPerPage(parseInt(event.target.value))
   }
   let openExportModal = function () {
-    let modalSettings = {...props.modalSettings, 'isExportModalOpen': true, 'enterFileName': ''}
+    // eslint-disable-next-line
+    mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let data = []
+    copyModelPrespectives.forEach(function (modelPrespective, index) {
+      // console.log(index)
+      let obj = {}
+      let labelParts = props.metaModelPerspective.resources[0].parts
+      if (modelPrespective.parts) {
+        modelPrespective.parts.forEach(function (partData, ix) {
+          let value = ''
+          if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
+            value = partData.value
+          } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
+            if (partData.value) {
+              let targetComponents = []
+              partData.value.forEach(function (data, index) {
+                targetComponents.push(data.target_component.name)
+              })
+              value = targetComponents.toString()
+            } else {
+              value = partData.value || ''
+            }
+          } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
+            value = partData.value !== null ? partData.value.int_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+            value = partData.value !== null ? partData.value.float_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+            value = partData.value !== null ? partData.value.text_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+            value = partData.value !== null ? partData.value.date_time_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+            value = partData.value !== null ? partData.value.boolean_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'List') {
+            value = partData.value !== null ? partData.value.value_set_value : ''
+          } else {
+            value = partData.value !== null ? partData.value.other_value : ''
+          }
+          obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
+        })
+        obj['subject_id'] = modelPrespective.subject_id
+        data.push(obj)
+      }
+    })
+    // eslint-disable-next-line
+    mApp && mApp.unblockPage()
+    let modalSettings = {...props.modalSettings, 'isExportModalOpen': true, 'enterFileName': '', 'apiData': data}
     props.setModalSetting(modalSettings)
   }
   let openImportModal = function () {
-    let modalSettings = {...props.modalSettings, 'isImportModalOpen': true}
+    // eslint-disable-next-line
+    mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let data = []
+    copyModelPrespectives.forEach(function (modelPrespective, index) {
+      // console.log(index)
+      let obj = {}
+      let labelParts = props.metaModelPerspective.resources[0].parts
+      if (modelPrespective.parts) {
+        modelPrespective.parts.forEach(function (partData, ix) {
+          let value = ''
+          if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
+            value = partData.value
+          } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
+            if (partData.value) {
+              let targetComponents = []
+              partData.value.forEach(function (data, index) {
+                targetComponents.push(data.target_component.name)
+              })
+              value = targetComponents.toString()
+            } else {
+              value = partData.value || ''
+            }
+          } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
+            value = partData.value !== null ? partData.value.int_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+            value = partData.value !== null ? partData.value.float_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+            value = partData.value !== null ? partData.value.text_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+            value = partData.value !== null ? partData.value.date_time_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+            value = partData.value !== null ? partData.value.boolean_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'List') {
+            value = partData.value !== null ? partData.value.value_set_value : ''
+          } else {
+            value = partData.value !== null ? partData.value.other_value : ''
+          }
+          obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
+        })
+        obj['subject_id'] = modelPrespective.subject_id
+        data.push(obj)
+      }
+    })
+    // eslint-disable-next-line
+    mApp && mApp.unblockPage()
+    let modalSettings = {...props.modalSettings, 'isImportModalOpen': true, 'apiData': data}
     props.setModalSetting(modalSettings)
   }
   let handleInputName = function (event) {
@@ -104,55 +205,6 @@ export default function Sheets (props) {
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     } else {
       console.log('not loader')
-      // eslint-disable-next-line
-      mApp && mApp.unblockPage()
-    }
-    if ((props.modalSettings.isImportModalOpen || props.modalSettings.isExportModalOpen) && props.modalSettings.apiData.length === 0) {
-      // eslint-disable-next-line
-      mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      let data = []
-      copyModelPrespectives.forEach(function (modelPrespective, index) {
-        // console.log(index)
-        let obj = {}
-        let labelParts = props.metaModelPerspective.resources[0].parts
-        if (modelPrespective.parts) {
-          modelPrespective.parts.forEach(function (partData, ix) {
-            let value = ''
-            if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
-              value = partData.value
-            } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
-              if (partData.value) {
-                let targetComponents = []
-                partData.value.forEach(function (data, index) {
-                  targetComponents.push(data.target_component.name)
-                })
-                value = targetComponents.toString()
-              } else {
-                value = partData.value || ''
-              }
-            } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
-              value = partData.value !== null ? partData.value.int_value : ''
-            } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-              value = partData.value !== null ? partData.value.float_value : ''
-            } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-              value = partData.value !== null ? partData.value.text_value : ''
-            } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-              value = partData.value !== null ? partData.value.date_time_value : ''
-            } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-              value = partData.value !== null ? partData.value.boolean_value : ''
-            } else if (labelParts[ix].type_property.property_type.key === 'List') {
-              value = partData.value !== null ? partData.value.value_set_value : ''
-            } else {
-              value = partData.value !== null ? partData.value.other_value : ''
-            }
-            obj[labelParts[ix].name.toLowerCase().trim().replace(/ /g, '_')] = value
-          })
-          obj['subject_id'] = modelPrespective.subject_id
-          data.push(obj)
-        }
-      })
-      let modalSettings = {...props.modalSettings, 'apiData': data}
-      props.setModalSetting(modalSettings)
       // eslint-disable-next-line
       mApp && mApp.unblockPage()
     }
@@ -235,6 +287,11 @@ export default function Sheets (props) {
                 valueType = 'text_value'
               } else if (propertyType === 'DateTime') {
                 valueType = 'date_time_value'
+                let timeStamp = data.value
+                if (timeStamp !== '') {
+                  let convertedDate = new Date(parseDateExcel(timeStamp))
+                  data.value = moment(convertedDate).format('YYYY-MM-DD')
+                }
               } else if (propertyType === 'Boolean') {
                 valueType = 'boolean_value'
               } else if (propertyType === 'List') {
@@ -273,7 +330,13 @@ export default function Sheets (props) {
             } else if (propertyType === 'Text') {
               obj.value = {'text_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
             } else if (propertyType === 'DateTime') {
-              obj.value = {'date_time_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
+              let timeStamp = fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
+              if (timeStamp !== '') {
+                let convertedDate = new Date(parseDateExcel(timeStamp))
+                obj.value = {'date_time_value': moment(convertedDate).format('YYYY-MM-DD')}
+              } else {
+                obj.value = {'date_time_value': ''}
+              }
             } else if (propertyType === 'Boolean') {
               obj.value = {'boolean_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
             } else if (propertyType === 'List') {
@@ -686,6 +749,5 @@ return (
   modelPrespectives: PropTypes.any,
   copyModelPrespectives: PropTypes.any,
   currentPage: PropTypes.any,
-  perPage: PropTypes.any,
-  setModalSetting: PropTypes.func
+  perPage: PropTypes.any
  }

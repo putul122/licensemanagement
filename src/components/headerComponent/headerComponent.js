@@ -3,6 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ApplicationActivity from '../../containers/applicationActivity/applicationActivityContainer'
 import * as signalR from '@aspnet/signalr'
+import api from '../../constants'
 // import { authContext } from '../../config/adal'
 const notificationAlert = {
   background: '#ff006c',
@@ -10,7 +11,7 @@ const notificationAlert = {
 }
 let userToken = localStorage.getItem('userAccessToken')
 var connection = new signalR.HubConnectionBuilder()
-          .withUrl('https://notification-eco-dev.ecoconductor.com/notification', {
+          .withUrl(api.notificationURL, {
             accessTokenFactory: () => {
               return userToken
             }

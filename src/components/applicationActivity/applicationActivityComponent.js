@@ -3,6 +3,7 @@ import styles from './applicationActivityComponent.scss'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 // import _ from 'lodash'
+import api from '../../constants'
 import ReactHtmlParser from 'react-html-parser'
 const liStyle = {
   margin: '0 0 6px 0'
@@ -16,7 +17,7 @@ export default function ApplicationActivity (props) {
     activityMessagesList = result.map(function (messageGroup, index) {
       // console.log('------>messag ', index, messageGroup)
       messageGroup = messageGroup.reverse()
-      let contextIconlink = messageGroup[0].discussion.context.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + messageGroup[0].discussion.context.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
+      let contextIconlink = messageGroup[0].discussion.context.icon ? api.iconURL + messageGroup[0].discussion.context.icon : api.iconURL1
       // console.log('context icon link', contextIconlink)
       //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
     //   console.log(contextIconlink)
@@ -25,7 +26,7 @@ export default function ApplicationActivity (props) {
         let description = messageGroup[0].discussion.context.description
         let messageList = messageGroup.map(function (message, i) {
           // let userIconlink = message.links.find(function (link) { return link.rel === 'author_avatar' })
-          let userIconlink = message.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + message.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+          let userIconlink = message.author.icon ? api.iconURL + message.author.icon : api.iconURL18
           let messageContent = message.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
           .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
