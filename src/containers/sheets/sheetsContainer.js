@@ -101,6 +101,8 @@ export default compose(
       }
       if (nextProps.updateMetaModelPerspectiveResponse && nextProps.updateMetaModelPerspectiveResponse !== '') {
         this.props.resetResponse()
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#ModelPerspectiveList')
         let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse, 'apiData': []}
         this.props.setModalSetting(modalSettings)
         let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.perspective}

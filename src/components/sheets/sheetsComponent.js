@@ -32,7 +32,6 @@ export default function Sheets (props) {
     console.log('handle Blur change', event.target.value)
   }
   let handledropdownChange = function (event) {
-    console.log('handle change', event.target.value, typeof event.target.value)
     props.setPerPage(parseInt(event.target.value))
   }
   let openExportModal = function () {
@@ -194,6 +193,8 @@ export default function Sheets (props) {
     }
   }
   let ImportData = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let apiData = props.modalSettings.apiData
     let fileData = props.modalSettings.fileData
     let arrayLength = fileData.length
@@ -254,9 +255,16 @@ export default function Sheets (props) {
         let parts = []
         labelParts.forEach(function (partData, index) {
           let obj = {}
-          if (partData.type_property === null) {
+          if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
             obj.value = fileData[i][partData.standard_property] || ''
-          } else {
+          } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
+            let connectionValue = fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
+            if (connectionValue.trim() !== '') {
+              obj.value = connectionValue.split(',')
+            } else {
+              obj.value = []
+            }
+          } else if (partData.type_property !== null) { // below are Customer Property
             let propertyType = partData.type_property.property_type.key
             if (propertyType === 'Integer') {
               obj.value = {'int_value': fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''}
@@ -287,7 +295,6 @@ export default function Sheets (props) {
     props.updateModelPrespectives(payload)
   }
   let handleSelect = function (newValue: any, actionMeta: any) {
-    console.log('newValue', newValue)
     if (actionMeta.action === 'select-option') {
       // let selectedStandard = newValue
       let perspectiveId = newValue.perspective
@@ -296,8 +303,6 @@ export default function Sheets (props) {
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.fetchMetaModelPrespective(perspectiveId)
       props.fetchModelPrespectives(payload)
-      console.log(perspectiveId)
-      console.log(payload)
       let modalSettings = {...props.modalSettings, 'selectedMetaModel': newValue, 'apiData': []}
       props.setModalSetting(modalSettings)
     }
@@ -319,7 +324,6 @@ export default function Sheets (props) {
     let originalData = copyModelPrespectives
     if (searchText.trim() !== '') {
       if (originalData !== '') {
-        console.log('in original', originalData)
         let list = originalData.filter(function (data, index) {
           if (data.parts) {
             if ((data.parts[0].value).toLowerCase().match(searchText)) {
@@ -361,7 +365,6 @@ export default function Sheets (props) {
       if (props.modelPrespectives.length > 1) {
         modelPrespectivesList = props.modelPrespectives.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           let childList = []
-          console.log(data, index)
           if (data.parts) {
             data.parts.forEach(function (partData, ix) {
               let value
@@ -411,7 +414,6 @@ export default function Sheets (props) {
   }
   if (props.modelPrespectives && props.modelPrespectives !== '') {
     totalPages = Math.ceil(props.modelPrespectives.length / perPage)
-    console.log('totalPages', totalPages)
     let i = 1
     while (i <= totalPages) {
       let pageParameter = {}
