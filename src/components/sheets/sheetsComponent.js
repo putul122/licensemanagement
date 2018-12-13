@@ -473,7 +473,11 @@ export default function Sheets (props) {
   if (props.modalSettings.updateResponse !== null) {
     if (props.modalSettings.updateResponse.length > 0) {
       messageList = props.modalSettings.updateResponse.map(function (data, index) {
-        return (<li key={index}>{data.message}</li>)
+        if (data.error_code === null) {
+          return (<li key={index}>{data.message}</li>)
+        } else {
+          return (<li key={index}>{'Error Code: ' + data.error_code + 'Message: ' + data.error_message}</li>)
+        }
       })
     } else {
       messageList = []
