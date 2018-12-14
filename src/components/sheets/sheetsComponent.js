@@ -383,7 +383,6 @@ export default function Sheets (props) {
     }
   }
   let handleInputChange = debounce((e) => {
-    console.log(e)
     console.log(searchTextBox, copyModelPrespectives)
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -391,9 +390,7 @@ export default function Sheets (props) {
     let originalData = copyModelPrespectives
     if (searchText.trim() !== '') {
       if (originalData !== '') {
-        console.log('original data not null', searchText)
         let list = _.filter(originalData, function (data, index) {
-          console.log(data)
           if (data.parts) {
             if ((data.parts[0].value.toLowerCase()).match(searchText.toLowerCase())) {
               return data
@@ -405,12 +402,10 @@ export default function Sheets (props) {
         payload.copyData = props.copyModelPrespectives
         props.setModalPerspectivesData(payload)
       } else {
-        console.log('original data null')
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
       }
     } else {
-      console.log('outer else')
       let payload = {}
       payload.data = props.copyModelPrespectives
       payload.copyData = props.copyModelPrespectives
