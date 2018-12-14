@@ -428,7 +428,7 @@ export default function Sheets (props) {
   let listModelPrespectives = function () {
     if (props.modelPrespectives !== '') {
       let labelParts = props.metaModelPerspective.resources[0].parts
-      if (props.modelPrespectives.length > 1) {
+      if (props.modelPrespectives.length > 0) {
         modelPrespectivesList = props.modelPrespectives.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           let childList = []
           if (data.parts) {
