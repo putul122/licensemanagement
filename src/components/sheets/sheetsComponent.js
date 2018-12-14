@@ -401,10 +401,9 @@ export default function Sheets (props) {
         payload.data = list
         payload.copyData = props.copyModelPrespectives
         props.setModalPerspectivesData(payload)
-      } else {
-        // eslint-disable-next-line
-        mApp && mApp.unblockPage()
       }
+      // eslint-disable-next-line
+      mApp && mApp.unblockPage()
     } else {
       let payload = {}
       payload.data = props.copyModelPrespectives
