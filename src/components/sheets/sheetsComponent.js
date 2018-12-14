@@ -391,9 +391,11 @@ export default function Sheets (props) {
     let originalData = copyModelPrespectives
     if (searchText.trim() !== '') {
       if (originalData !== '') {
-        let list = originalData.filter(function (data, index) {
+        console.log('original data not null', searchText)
+        let list = _.filter(originalData, function (data, index) {
+          console.log(data)
           if (data.parts) {
-            if ((data.parts[0].value).toLowerCase().match(searchText)) {
+            if ((data.parts[0].value.toLowerCase()).match(searchText.toLowerCase())) {
               return data
             }
           }
@@ -403,10 +405,12 @@ export default function Sheets (props) {
         payload.copyData = props.copyModelPrespectives
         props.setModalPerspectivesData(payload)
       } else {
+        console.log('original data null')
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
       }
     } else {
+      console.log('outer else')
       let payload = {}
       payload.data = props.copyModelPrespectives
       payload.copyData = props.copyModelPrespectives
