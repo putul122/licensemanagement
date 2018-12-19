@@ -71,9 +71,14 @@ export default function Agreements (props) {
   let createNewAgreement = function () {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let componentTypes = appPackage.resources[0].component_types
+    let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Agreement'
+    }), 'component_type')
     let payload = {
       'component_type': {
-        'id': 961
+        'id': componentTypeId
       },
       'name': newAgreementName.value,
       'description': newAgreementDescription.value

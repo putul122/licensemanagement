@@ -202,10 +202,14 @@ export default function Entitlementlists (props) {
   }
   let createEntitlement = function (event) {
     event.preventDefault()
-    // messageBlock = addComponentMessageResponse('')
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let componentTypes = appPackage.resources[0].component_types
+    let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Entitlement'
+    }), 'component_type')
     let payload = {
       'component_type': {
-        'id': 975
+        'id': componentTypeId
       },
       'name': newEntitlementName.value,
       'description': newEntitlementDescription.value
