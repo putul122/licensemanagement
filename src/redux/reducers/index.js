@@ -17,6 +17,8 @@ import applicationActivityReducer from './applicationActivityReducer/application
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
 import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
 import signUpReducer from './signUpReducer/signUpReducerReducer'
+import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
+
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -35,5 +37,6 @@ export default combineReducers({
     applicationActivityReducer,
     newDiscussionReducer,
     signUpReducer,
-    sheetsReducer
+    sheetsReducer,
+    componentModalViewReducer
 })

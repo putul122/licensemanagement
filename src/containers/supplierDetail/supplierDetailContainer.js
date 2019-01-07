@@ -159,7 +159,7 @@ export default compose(
                 return obj.type_property === personNameTypeProperty
               })
               if (personNameProperty) {
-                processProperty(personNameProperty, 'person_name', 'Person Nname')
+                processProperty(personNameProperty, 'person_name', 'Person Name')
               }
               let departmentNameProperty = _.find(data.properties, function (obj) {
                 return obj.type_property === departmentNameTypeProperty

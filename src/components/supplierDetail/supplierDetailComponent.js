@@ -142,7 +142,7 @@ export default function Suppliers (props) {
         propertyPayload.push(propertyPayloadObject)
       }
       if (property.name === 'person_name') {
-        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.department_name }
+        let propertyPayloadObject = { 'op': 'replace', 'path': `/${property.typeProperty}/${property.valueType}`, 'value': supplierPropertySettings.person_name }
         propertyPayload.push(propertyPayloadObject)
       }
       if (property.name === 'function') {
