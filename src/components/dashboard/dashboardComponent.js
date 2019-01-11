@@ -388,7 +388,8 @@ export default function Dashboard (props) {
         let sortedCostByTechnology = _.orderBy(costByTechnology, ['cost'], ['desc'])
         let labels = []
         let data = []
-        for (let i = 0; i < 5; i++) {
+        let limit = sortedCostByTechnology.length > 5 ? 5 : sortedCostByTechnology.length
+        for (let i = 0; i < limit; i++) {
           // let names = sortedCostByTechnology[i].name.toString().split(' ')
           labels.push(sortedCostByTechnology[i].name)
           data.push(sortedCostByTechnology[i].cost)
