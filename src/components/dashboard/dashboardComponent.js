@@ -3,9 +3,6 @@ import PropTypes from 'prop-types'
 import {defaults, Doughnut, Bar} from 'react-chartjs-2'
 import styles from './dashboardComponent.scss'
 import _ from 'lodash'
-console.log(styles)
-// import SuppliersSummaryData from '../../mockData/GetSuppliersSummary'
-// import EntitlementSummaryData from '../../mockData/GetEntitlementSummary'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
 const formatAmount = (x) => {
@@ -340,7 +337,6 @@ export default function Dashboard (props) {
     console.log('handle Blur change', event.target.value)
   }
   let handleChange = function (event) {
-    console.log('handle change', event.target.value, typeof event.target.value)
     if (parseInt(event.target.value) !== -111111) {
       let payload = {
         'business_unit_id': event.target.value

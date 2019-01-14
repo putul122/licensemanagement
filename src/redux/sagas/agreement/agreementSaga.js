@@ -222,6 +222,7 @@ export function * addAgreement (action) {
 }
 
 export function * updateAgreementData (action) {
+  console.log('track agreement data api call', action)
   try {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const agreement = yield call(
@@ -249,6 +250,7 @@ export function * deleteAgreement (action) {
 }
 
 export function * updateAgreementProperties (action) {
+  console.log('track agreement property api call', action)
   try {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const agreementProperty = yield call(

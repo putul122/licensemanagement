@@ -134,7 +134,7 @@ export default function AgreementDetail (props) {
     editPayload.property = {resources: agreementProperties}
     props.editComponentProperties(editPayload)
   }
-  let updateAgreement = function () {
+  let updateAgreementData = function () {
     let payloadAgreementData = JSON.parse(JSON.stringify(props.agreement))
     props.copyAgreementProperties({'resources': JSON.parse(JSON.stringify(agreementProperties))})
     props.copyAgreementData(payloadAgreementData)
@@ -154,12 +154,12 @@ export default function AgreementDetail (props) {
     props.restoreAgreementProperties(payload)
     props.setEditComponentFlag(false)
   }
-  let closeUpdateModal = function () {
-    let addAgreementSettings = {...props.addAgreementSettings, isUpdateModalOpen: false}
-    props.setAddAgreementSettings(addAgreementSettings)
-    props.setEditComponentFlag(false)
-    cancelEditAgreement()
-  }
+  // let closeUpdateModal = function () {
+  //   let addAgreementSettings = {...props.addAgreementSettings, isUpdateModalOpen: false}
+  //   props.setAddAgreementSettings(addAgreementSettings)
+  //   props.setEditComponentFlag(false)
+  //   cancelEditAgreement()
+  // }
   let closeConfirmationModal = function (event) {
     event.preventDefault()
     let addAgreementSettings = {...props.addAgreementSettings, isConfirmationModalOpen: false}
@@ -167,6 +167,7 @@ export default function AgreementDetail (props) {
     cancelEditAgreement()
   }
   let submitUpdates = function (event) {
+    console.log('run submit time detector')
     event.preventDefault()
     props.setEditComponentFlag(false)
     // eslint-disable-next-line
@@ -581,7 +582,7 @@ export default function AgreementDetail (props) {
         let htmlElement
         // console.log('childProperty', childProperty)
         if (childProperty.property_type.key === 'Integer') {
-          value = childProperty.int_value
+          value = childProperty.int_value || ''
           htmlElement = function () {
             return (<div className='col-8 form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
@@ -589,7 +590,7 @@ export default function AgreementDetail (props) {
             </div>)
           }
         } else if (childProperty.property_type.key === 'Decimal') {
-          value = childProperty.float_value
+          value = childProperty.float_value || ''
           htmlElement = function () {
             return (<div className='col-8 form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
@@ -611,7 +612,7 @@ export default function AgreementDetail (props) {
             </div>)
           }
         } else if (childProperty.property_type.key === 'Text') {
-          value = childProperty.text_value
+          value = childProperty.text_value || ''
           htmlElement = function () {
             return (<div className='col-8 form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
@@ -643,7 +644,7 @@ export default function AgreementDetail (props) {
             /></div>)
           }
         } else {
-          value = childProperty.other_value
+          value = childProperty.other_value || ''
           htmlElement = function () {
             return (<div className='col-8 form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
@@ -1227,7 +1228,7 @@ export default function AgreementDetail (props) {
           </div>
           {!props.isEditComponent && (
             <div className='col-md-4' >
-              <button onClick={updateAgreement} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
+              <button onClick={updateAgreementData} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
               <button onClick={deleteAgreement} className='btn btn-outline-info btn-sm'>Delete Agreement</button>&nbsp;
               <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>
             </div>
@@ -1404,10 +1405,9 @@ export default function AgreementDetail (props) {
           </div>
         </div>
         <div>
-          <ReactModal isOpen={props.addAgreementSettings.isUpdateModalOpen}
+          {/* <ReactModal isOpen={props.addAgreementSettings.isUpdateModalOpen}
             onRequestClose={closeUpdateModal}
             >
-            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''}>
               <div className='modal-dialog modal-lg'>
                 <div className='modal-content'>
@@ -1431,7 +1431,7 @@ export default function AgreementDetail (props) {
                 </div>
               </div>
             </div>
-          </ReactModal>
+          </ReactModal> */}
           <ReactModal isOpen={props.addAgreementSettings.isConfirmationModalOpen}
             style={customStyles} >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}

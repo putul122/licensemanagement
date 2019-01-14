@@ -2,36 +2,34 @@ import React from 'react'
 import styles from './applicationActivityComponent.scss'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-// import _ from 'lodash'
 import api from '../../constants'
-import ReactHtmlParser from 'react-html-parser'
+import _ from 'lodash'
+import ComponentModalView from '../../containers/componentModalView/componentModalViewContainer'
+// import ReactHtmlParser from 'react-html-parser'
 const liStyle = {
   margin: '0 0 6px 0'
 }
 export default function ApplicationActivity (props) {
-  console.log('activity message props', props.activityMessages, props.notificationReceived, props)
   let activityMessages = props.activityMessages.resources ? props.activityMessages.resources : ''
   let activityMessagesList = ''
+  let componentId = props.componentId
+  console.log('componentId', componentId, props)
   let parseMessage = function (result) {
     let now = moment()
     activityMessagesList = result.map(function (messageGroup, index) {
       // console.log('------>messag ', index, messageGroup)
       messageGroup = messageGroup.reverse()
       let contextIconlink = messageGroup[0].discussion.context.icon ? api.iconURL + messageGroup[0].discussion.context.icon : api.iconURL1
-      // console.log('context icon link', contextIconlink)
-      //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
-    //   console.log(contextIconlink)
+      // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
         let context = messageGroup[0].discussion.context.name
         let discussion = messageGroup[0].discussion.name
         let description = messageGroup[0].discussion.context.description
         let messageList = messageGroup.map(function (message, i) {
           // let userIconlink = message.links.find(function (link) { return link.rel === 'author_avatar' })
           let userIconlink = message.author.icon ? api.iconURL + message.author.icon : api.iconURL18
-          let messageContent = message.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-          .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-          .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-          .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
           let mentionArray = message.name.match(/\[(.*?)\]/g)
+          let messageArrayBlock = []
+          let testMessage = message.name
           if (mentionArray) {
             mentionArray.forEach(function (data, index) {
               data = data.substring(1, data.length - 1)
@@ -40,13 +38,59 @@ export default function ApplicationActivity (props) {
               // let str = `\\@\\[${data}\\]`
               // let reg = new RegExp(str, 'g')
               let match = '@[' + data + ']'
+              let test = function (reference, referenceArray) {
+                let referenceParts = reference.toString().split(':')
+                let referenceId = parseInt(referenceParts[2])
+                let artefactType = _.result(_.find(referenceArray, function (obj) {
+                  return obj.id === referenceId
+                }), 'artefact_type')
+                console.log('artefactType', artefactType)
+                if (artefactType) {
+                  if (artefactType.key === 'Component') {
+                    // componentId = referenceId
+                    props.setComponentId(referenceId)
+                    let payload = {}
+                    payload.isModalOpen = true
+                    payload.callAPI = true
+                    props.setModalSettings(payload)
+                    props.setQuickslideFlag(false)
+                  } else {
+                    // componentId = null
+                    props.setComponentId(null)
+                  }
+                } else {
+                  // componentId = null
+                  props.setComponentId(null)
+                }
+              }
               if (parts[1] === 'Mention') {
-                messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
+                let messageParts = testMessage.split(match)
+                messageArrayBlock.push((<span>{messageParts[0]}</span>))
+                messageArrayBlock.push((<a href='javascript:void(0);' className='search-term-match'>{'@' + parts[0]}</a>))
+                if (messageParts[1].match(/\[(.*?)\]/g) === null) {
+                  messageArrayBlock.push((<span>{messageParts[1]}</span>))
+                } else {
+                  testMessage = messageParts[1]
+                }
               } else if (parts[1] === 'Reference') {
-                messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
-                messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
+                let messageParts = testMessage.split(match)
+                parts[0] = parts[0].replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
+                messageArrayBlock.push((<span>{messageParts[0]}</span>))
+                messageArrayBlock.push((<a onClick={(event) => { event.preventDefault(); test(data, message.references) }} href='javascript:void(0);' className='search-term-match'>{'#' + parts[0]}</a>))
+                if (messageParts[1].match(/\[(.*?)\]/g) === null) {
+                  messageArrayBlock.push((<span>{messageParts[1]}</span>))
+                } else {
+                  testMessage = messageParts[1]
+                }
               } else if (parts[1] === 'Tag') {
-                messageContent = messageContent.replace(match, '#' + parts[0] + '')
+                let messageParts = testMessage.split(match)
+                messageArrayBlock.push((<span>{messageParts[0]}</span>))
+                messageArrayBlock.push((<span>{'#' + parts[0] + ''}</span>))
+                if (messageParts[1].match(/\[(.*?)\]/g) === null) {
+                  messageArrayBlock.push((<span>{messageParts[1]}</span>))
+                } else {
+                  testMessage = messageParts[1]
+                }
               }
             })
           }
@@ -58,9 +102,9 @@ export default function ApplicationActivity (props) {
           } else {
             messageTime = moment(message.created).format('MM MMM h:mA')
           }
-          let timeContent = '<span class="pull-right">' + messageTime + '</span>'
+          // let timeContent = '<span class="pull-right">' + messageTime + '</span>'
           return (<li>
-            <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser('<span style="font-zise:10px">' + message.author.name + '</span>' + ' :')} {ReactHtmlParser(messageContent + timeContent)}
+            <img src={userIconlink} alt={message.author.name} /><span style={{'fontSize': '10px'}}> {message.author.name + ' :'} </span>{messageArrayBlock}<span className='pull-right'>{messageTime}</span>
             {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
           </li>)
         })
@@ -96,7 +140,7 @@ export default function ApplicationActivity (props) {
         temp.push(activityMessages[i])
         result.push(temp)
         // result = result.reverse()
-        console.log('final result -------->', result)
+        // console.log('final result -------->', result)
         parseMessage(result)
       }
     }
@@ -104,14 +148,16 @@ export default function ApplicationActivity (props) {
 
   return (
     <div className={styles.activityline}>
-      {/* <h2>Activity Feed </h2> */}
       <ul>
         {activityMessagesList}
       </ul>
+      <ComponentModalView componentId={componentId} />
     </div>
   )
 }
 ApplicationActivity.propTypes = {
   activityMessages: PropTypes.any,
-  notificationReceived: PropTypes.any
+  // eslint-disable-next-line
+  notificationReceived: PropTypes.any,
+  componentId: PropTypes.any
 }

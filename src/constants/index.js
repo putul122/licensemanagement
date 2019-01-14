@@ -61,6 +61,15 @@ const api = {
   deleteRelationship: function (payload) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
   },
+  getComponent: function (componentId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
+  },
+  getComponentProperty: function (componentId) {
+      return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/component_properties'
+  },
+  getComponentRelationships: function (componentId) {
+      return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/component_relationships'
+  },
   getComponentConstraints: function (componentId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/constraints'
   },

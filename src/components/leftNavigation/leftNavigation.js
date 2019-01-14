@@ -76,6 +76,14 @@ class LeftNavigation extends React.Component {
               </a>
             </li>
             <li className={styles.navicon}>
+              <a href='/projects'>
+                <i className='fa fa-file-powerpoint fa-2x' />
+                <span className={styles.navtext}>
+                Projects
+                </span>
+              </a>
+            </li>
+            <li className={styles.navicon}>
               <a href='/sheets'>
                 <i className='fa flaticon-interface-11' />
                 <span className={styles.navtext}>

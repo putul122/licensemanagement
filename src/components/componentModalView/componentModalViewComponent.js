@@ -6,7 +6,7 @@ import ComponentModelComponent from '../componentModel/componentModelComponent'
 import styles from './componentModalViewComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
-const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
+const customStylescrud = { content: { top: '15%', background: 'none', border: '0px', overflow: 'none', width: '90%', margin: 'auto' } }
 var divStyle = {
     // width: '900px',
     // height: '700px',
@@ -18,7 +18,9 @@ var divStyle = {
 export default function ComponentModalView (props) {
     console.log('modal view props', props)
     let closeModal = function (event) {
-        props.setModalSettings(false)
+      let modalSettings = JSON.parse(JSON.stringify(props.modalSettings))
+      modalSettings.isModalOpen = false
+      props.setModalSettings(modalSettings)
     }
     let componentTypeComponentPropertiesList = ''
     let showProperties = props.showTabs.showProperty
@@ -50,6 +52,13 @@ export default function ComponentModalView (props) {
           $('#expandIconModalContent' + index).removeClass('fa-minus').addClass('fa-plus')
         }
       }
+
+    if (props.componentTypeComponentData !== '') {
+      if (props.componentTypeComponentData.error_code === null) {
+        startNode.name = props.componentTypeComponentData.resources[0].name
+        startNode.title = props.componentTypeComponentData.resources[0].name
+      }
+    }
     // Display Component Properties
     if (componentTypeComponentProperties !== '') {
         console.log('original', componentTypeComponentProperties)
@@ -102,8 +111,6 @@ export default function ComponentModalView (props) {
 
       if (componentTypeComponentRelationships !== '') {
         modelRelationshipData = componentTypeComponentRelationships.resources
-        startNode.name = 'test'
-        startNode.title = 'test'
         let parent = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Parent'})
         let outgoing = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectFrom'})
         outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
@@ -314,16 +321,16 @@ export default function ComponentModalView (props) {
         childComponentRelationshipList = childComponentRelationshipListFn()
       }
   return (
-    <div>
-      <ReactModal isOpen={props.isModalOpen}
+    <div id='m_modal_4'>
+      <ReactModal isOpen={props.modalSettings.isModalOpen}
             // onRequestClose={closeModal}
         shouldCloseOnOverlayClick={false}
-        className=''
+        className='modal-dialog modal-lg'
         style={customStylescrud}
             >
         {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
-        <div>
-          <div className='modal-dialog modal-lg'>
+        <div >
+          <div className=''>
             <div className='modal-content'>
               <div className='modal-header'>
                 <h4 className='modal-title' id='exampleModalLabel'>{'View Component'}</h4>
@@ -383,10 +390,11 @@ export default function ComponentModalView (props) {
   )
 }
 ComponentModalView.propTypes = {
-  isModalOpen: PropTypes.any,
+  modalSettings: PropTypes.any,
   // setCurrentTab: PropTypes.func,
   // setModalSettings: PropTypes.func,
   componentTypeComponentProperties: PropTypes.any,
   componentTypeComponentRelationships: PropTypes.any,
-  showTabs: PropTypes.any
+  showTabs: PropTypes.any,
+  componentTypeComponentData: PropTypes.any
 }

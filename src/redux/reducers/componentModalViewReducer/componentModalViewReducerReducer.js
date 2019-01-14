@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions'
 import {
-  // FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS
  } from '../../sagas/componentModalView/componentModalViewSaga'
@@ -10,7 +10,7 @@ const SET_CURRENT_TAB = 'ComponentModalViewReducer/SET_CURRENT_TAB'
 const SET_MODAL_SETTINGS = 'ComponentModalViewReducer/SET_MODAL_SETTINGS'
 
 export const actions = {
-  // FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_CURRENT_TAB,
@@ -24,20 +24,23 @@ export const actionCreators = {
 }
 
 export const initialState = {
-  component: '',
+  componentId: '',
   componentTypeComponentData: '',
   componentTypeComponentProperties: '',
   componentTypeComponentRelationships: '',
   showTabs: {'showProperty': ' active show', 'showRelationship': ''},
-  isModalOpen: true
+  modalSettings: {
+    isModalOpen: false,
+    callAPI: false
+  }
 }
 
 export default handleActions(
   {
-    // [FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   componentTypeComponentData: action.payload
-    // }),
+    [FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeComponentData: action.payload
+    }),
     [FETCH_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS]: (state, action) => ({
       ...state,
       componentTypeComponentProperties: action.payload,
@@ -53,7 +56,7 @@ export default handleActions(
     }),
     [SET_MODAL_SETTINGS]: (state, action) => ({
       ...state,
-      isModalOpen: action.payload
+      modalSettings: action.payload
     })
   },
   initialState
