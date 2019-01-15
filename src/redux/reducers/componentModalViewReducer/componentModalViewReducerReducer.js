@@ -8,19 +8,22 @@ import {
 const SET_DATA_LOADING = 'ComponentModalViewReducer/SET_DATA_LOADING'
 const SET_CURRENT_TAB = 'ComponentModalViewReducer/SET_CURRENT_TAB'
 const SET_MODAL_SETTINGS = 'ComponentModalViewReducer/SET_MODAL_SETTINGS'
+const RESET_RESPONSE = 'ComponentModalViewReducer/RESET_RESPONSE'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_CURRENT_TAB,
-  SET_MODAL_SETTINGS
+  SET_MODAL_SETTINGS,
+  RESET_RESPONSE
 }
 
 export const actionCreators = {
   setDataLoading: createAction(SET_DATA_LOADING),
   setCurrentTab: createAction(SET_CURRENT_TAB),
-  setModalSettings: createAction(SET_MODAL_SETTINGS)
+  setModalSettings: createAction(SET_MODAL_SETTINGS),
+  resetResponse: createAction(RESET_RESPONSE)
 }
 
 export const initialState = {
@@ -57,6 +60,12 @@ export default handleActions(
     [SET_MODAL_SETTINGS]: (state, action) => ({
       ...state,
       modalSettings: action.payload
+    }),
+    [RESET_RESPONSE]: (state, action) => ({
+      ...state,
+      componentTypeComponentData: '',
+      componentTypeComponentProperties: '',
+      componentTypeComponentRelationships: ''
     })
   },
   initialState

@@ -18,6 +18,7 @@ var divStyle = {
 export default function ComponentModalView (props) {
     console.log('modal view props', props)
     let closeModal = function (event) {
+      props.resetResponse()
       let modalSettings = JSON.parse(JSON.stringify(props.modalSettings))
       modalSettings.isModalOpen = false
       props.setModalSettings(modalSettings)
