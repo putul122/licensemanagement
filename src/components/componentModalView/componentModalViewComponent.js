@@ -6,7 +6,7 @@ import ComponentModelComponent from '../componentModel/componentModelComponent'
 import styles from './componentModalViewComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
-const customStylescrud = { content: { top: '15%', background: 'none', border: '0px', overflow: 'none', width: '90%', margin: 'auto' } }
+const customStylescrud = { content: { top: '15%', left: '8%', background: 'none', border: '0px', overflow: 'none', margin: 'auto' } }
 var divStyle = {
     // width: '900px',
     // height: '700px',
@@ -326,7 +326,7 @@ export default function ComponentModalView (props) {
       <ReactModal isOpen={props.modalSettings.isModalOpen}
             // onRequestClose={closeModal}
         shouldCloseOnOverlayClick={false}
-        className='modal-dialog modal-lg'
+        // className='modal-dialog modal-lg'
         style={customStylescrud}
             >
         {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}

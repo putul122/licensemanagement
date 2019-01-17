@@ -160,6 +160,15 @@ export default class Root extends Component {
             }
             resolve(require('../projectDetailPage/projectDetailPageRoute').default)
             break
+          case 'projects':
+            if (module.hot) {
+              module.hot.accept('../projectsPage/projectsPageRoute', () => {
+                        require('../projectsPage/projectsPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../projectsPage/projectsPageRoute').default)
+            break
           case 'sheets':
             if (module.hot) {
               module.hot.accept('../sheetsPage/sheetsPageRoute', () => {
@@ -214,6 +223,7 @@ export default class Root extends Component {
             <Route exact path='/account' component={(props) => this.loadView('account', props)} />
             <Route exact path='/handleAzure' component={(props) => this.loadView('handleAzure', props)} />
             <Route exact path='/sheets' component={(props) => this.loadView('sheets', props)} />
+            <Route exact path='/projects' component={(props) => this.loadView('projects', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

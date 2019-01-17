@@ -31,7 +31,8 @@ const customStyles = {
 
 export default function Projects (props) {
 //   console.log(props.currentPage, props.entitlements)
-//   let entitlementCount = ''
+  let projectCount = ''
+  let totalLicenseCost = ''
 //   let consumed = ''
 //   let searchTextBox
 //   let entitlementsList = ''
@@ -188,10 +189,10 @@ export default function Projects (props) {
 //       if (found.length > 0) { return group }
 //     })
 //   }
-//   if (props.entitlementsSummary && props.entitlementsSummary !== '') {
-//     entitlementCount = props.entitlementsSummary.resources[0].entitlement_count
-//     consumed = props.entitlementsSummary.resources[0].consumption_ratio_percent
-//   }
+  if (props.projectsSummary && props.projectsSummary !== '') {
+    projectCount = props.projectsSummary.resources[0].project_count
+    totalLicenseCost = props.projectsSummary.resources[0].total_license_cost
+  }
   let openModal = function (event) {
     event.preventDefault()
     props.setModalOpenStatus(true)
@@ -296,7 +297,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Total</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>100</h5>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{projectCount}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -337,8 +338,8 @@ return (
                       <i className='flaticon-coins m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Total License Co</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>R 6 123 456 .00</h5>
+                      <h3>Total License Cost</h3>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>R {totalLicenseCost}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -465,7 +466,7 @@ return (
       )
     }
  Projects.propTypes = {
-//   entitlementsSummary: PropTypes.any,
+  projectsSummary: PropTypes.any,
 //   entitlements: PropTypes.any,
 //   currentPage: PropTypes.any,
   modalIsOpen: PropTypes.any,

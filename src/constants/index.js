@@ -112,7 +112,17 @@ const api = {
   notificationURL: 'https://notification-eco-dev.ecoconductor.com/notification',
   iconURL: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/',
   iconURL1: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1',
-  iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+  iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18',
+  getProjectsSummary: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectsSummary',
+  getProjects: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjects',
+  getProject: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProject',
+  getProjectProperty: function (projectId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + projectId + '/component_properties'
+  },
+  updateProjectProperties: function (payload) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_properties'
+  },
+  getProjectEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectEntitlements'
 }
 
 export default api

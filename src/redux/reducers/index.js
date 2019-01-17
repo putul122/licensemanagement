@@ -17,6 +17,8 @@ import applicationActivityReducer from './applicationActivityReducer/application
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
 import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
 import signUpReducer from './signUpReducer/signUpReducerReducer'
+import projectsReducer from './projectsReducer/projectsReducerReducer'
+import projectDetailReducer from './projectDetailReducer/projectDetailReducerReducer'
 import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
 
 export default combineReducers({
@@ -38,5 +40,7 @@ export default combineReducers({
     newDiscussionReducer,
     signUpReducer,
     sheetsReducer,
+    projectsReducer,
+    projectDetailReducer,
     componentModalViewReducer
 })
