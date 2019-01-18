@@ -109,7 +109,7 @@ export default function Projects (props) {
     const value = searchTextBox.value
     projectsList = ''
     let payload = {
-      'search': value || '',
+      'search': value || null,
       'page_size': props.perPage,
       'page': currentPage
     }
