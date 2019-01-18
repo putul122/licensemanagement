@@ -150,6 +150,7 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
         if (nextProps.addProjectEntitlementResponse.error_code === null) {
+          this.props.fetchProjectById && this.props.fetchProjectById(payload)
           this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
           // eslint-disable-next-line
           toastr.success('The project entitlement was successfully added', 'Connecting the dots!')
@@ -163,6 +164,7 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
         if (nextProps.updateProjectEntitlementResponse.error_code === null) {
+          this.props.fetchProjectById && this.props.fetchProjectById(payload)
           this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
           // eslint-disable-next-line
           toastr.success('The project entitlement was successfully updated', 'Good Stuff!')
@@ -176,6 +178,7 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
         if (nextProps.deleteProjectEntitlementResponse.error_code === null) {
+          this.props.fetchProjectById && this.props.fetchProjectById(payload)
           this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
           // eslint-disable-next-line
           toastr.success('The project entitlement was successfully deleted', 'Disconnected')
