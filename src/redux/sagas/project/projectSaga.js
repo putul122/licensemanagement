@@ -40,6 +40,9 @@ export const DELETE_PROJECT_ENTITLEMENTS_FAILURE = 'saga/project/DELETE_PROJECT_
 export const DELETE_PROJECT = 'saga/project/DELETE_PROJECT'
 export const DELETE_PROJECT_SUCCESS = 'saga/project/DELETE_PROJECT_SUCCESS'
 export const DELETE_PROJECT_FAILURE = 'saga/project/DELETE_PROJECT_FAILURE'
+export const CREATE_PROJECT = 'saga/project/CREATE_PROJECT'
+export const CREATE_PROJECT_SUCCESS = 'saga/project/CREATE_PROJECT_SUCCESS'
+export const CREATE_PROJECT_FAILURE = 'saga/project/CREATE_PROJECT_FAILURE'
 
 export const actionCreators = {
   fetchProjects: createAction(FETCH_PROJECTS),
@@ -77,7 +80,10 @@ export const actionCreators = {
   deleteProjectEntitlementsFailure: createAction(DELETE_PROJECT_ENTITLEMENTS_FAILURE),
   deleteProject: createAction(DELETE_PROJECT),
   deleteProjectSuccess: createAction(DELETE_PROJECT_SUCCESS),
-  deleteProjectFailure: createAction(DELETE_PROJECT_FAILURE)
+  deleteProjectFailure: createAction(DELETE_PROJECT_FAILURE),
+  createProject: createAction(CREATE_PROJECT),
+  createProjectSuccess: createAction(CREATE_PROJECT_SUCCESS),
+  createProjectFailure: createAction(CREATE_PROJECT_FAILURE)
 }
 
 export default function * watchProjects () {
@@ -93,7 +99,8 @@ export default function * watchProjects () {
       takeLatest(ADD_PROJECT_ENTITLEMENTS, addProjectEntitlements),
       takeLatest(UPDATE_PROJECT_ENTITLEMENTS, updateProjectEntitlements),
       takeLatest(DELETE_PROJECT_ENTITLEMENTS, deleteProjectEntitlements),
-      takeLatest(DELETE_PROJECT, deleteProject)
+      takeLatest(DELETE_PROJECT, deleteProject),
+      takeLatest(CREATE_PROJECT, createProject)
   ]
 }
 
@@ -122,6 +129,20 @@ export function * getProjectsSummary (action) {
     yield put(actionCreators.fetchProjectsSummarySuccess(projectsSummary.data))
   } catch (error) {
     yield put(actionCreators.fetchProjectsSummaryFailure(error))
+  }
+}
+
+export function * createProject (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const project = yield call(
+      axios.post,
+      api.createProject,
+      action.payload
+    )
+    yield put(actionCreators.createProjectSuccess(project.data))
+  } catch (error) {
+    yield put(actionCreators.createProjectFailure(error))
   }
 }
 

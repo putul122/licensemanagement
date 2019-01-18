@@ -4,8 +4,8 @@ import _ from 'lodash'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-// import Discussion from '../../containers/discussion/discussionContainer'
-// import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
+import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Select from 'react-select'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -48,6 +48,11 @@ export default function ProjectDetail (props) {
   let previousClass = ''
   let pageArray = []
   let totalPages = ''
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   let toggleExpandIcon = function (index) {
     // eslint-disable-next-line
     let iconClass = $('#expandIcon' + index).attr('class')
@@ -590,7 +595,7 @@ return (
       {!props.isEditComponent && (<div className='col-md-5 float-right'>
         <button type='button' onClick={updateProjectData} className='btn btn-outline-info btn-sm'>Edit Project</button>&nbsp;
         <button type='button' className='btn btn-outline-info btn-sm' onClick={openDeleteProjectModal}>Delete Project</button>&nbsp;
-        {/* <button className='btn btn-outline-info btn-sm'>New Discussion</button>&nbsp; */}
+        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>
       </div>)}
       {props.isEditComponent && (
         <div className='col-md-4' >
@@ -934,12 +939,13 @@ return (
         </div>
       </ReactModal>
     </div>
-    {/* <Discussion name={'Entitlements'} TypeKey='Entitlement' type='ComponentType' {...props} />
-    <NewDiscussion contextId={contextId} name={'Entitlements'} type='ComponentType' {...props} /> */}
+    <Discussion name={ProjectName} type='Component' {...props} />
+    <NewDiscussion contextId={contextId} name={ProjectName} type='Component' {...props} />
   </div>
       )
     }
     ProjectDetail.propTypes = {
+      match: PropTypes.any,
       entitlementActionSettings: PropTypes.any,
       projectData: PropTypes.any,
       projectEntitlements: PropTypes.any,

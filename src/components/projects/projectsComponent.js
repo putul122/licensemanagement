@@ -1,11 +1,11 @@
 import React from 'react'
-// import _ from 'lodash'
-// import debounce from 'lodash/debounce'
+import _ from 'lodash'
+import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
-// import Discussion from '../../containers/discussion/discussionContainer'
-// import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
-// import styles from './projectscomponent.scss'
+import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
+import styles from './projectsComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
   content: {
@@ -20,45 +20,45 @@ const customStyles = {
     width: '100%'
   }
 }
-// const formatAmount = (x) => {
-//   let parts = x.toString().split('.')
-//   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-//   if (typeof parts[1] !== 'undefined') {
-//     parts[1] = parts[1].substring(0, 2)
-//   }
-//   return parts.join('.')
-// }
+const formatAmount = (x) => {
+  let parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  if (typeof parts[1] !== 'undefined') {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
 
 export default function Projects (props) {
-//   console.log(props.currentPage, props.entitlements)
+  console.log(props.currentPage, props.projects, props.createProject, props.createProjectResponse)
   let projectCount = ''
   let totalLicenseCost = ''
 //   let consumed = ''
-//   let searchTextBox
-//   let entitlementsList = ''
-//   let totalNoPages
-//   let perPage = props.perPage
-//   let currentPage = props.currentPage
-//   let nextClass = ''
-//   let previousClass = ''
-//   let pageArray = []
-//   let listPage = []
-//   let paginationLimit = 6
-//   let totalEntitlement
-//   let newEntitlementName = ''
-//   let newEntitlementDescription = ''
-//   let contextId = ''
-//   let appPackage = JSON.parse(localStorage.getItem('packages'))
-//   let componentTypes = appPackage.resources[0].component_types
-//   let componentId = _.result(_.find(componentTypes, function (obj) {
-//       return obj.key === 'Entitlement'
-//   }), 'component_type')
-//   contextId = componentId
-//   let openDiscussionModal = function (event) {
-//     event.preventDefault()
-//     props.setDiscussionModalOpenStatus(true)
-//   }
-//   console.log('props', props.setModalOpenStatus)
+  let searchTextBox
+  let projectsList = ''
+  let totalNoPages
+  let perPage = props.perPage
+  let currentPage = props.currentPage
+  let nextClass = ''
+  let previousClass = ''
+  let pageArray = []
+  let listPage = []
+  let paginationLimit = 6
+  let totalProject
+  let newProjectName = ''
+  let newProjectDescription = ''
+  let contextId = ''
+  let appPackage = JSON.parse(localStorage.getItem('packages'))
+  let componentTypes = appPackage.resources[0].component_types
+  let componentId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Project'
+  }), 'component_type')
+  contextId = componentId
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
+  console.log('props', props.setModalOpenStatus)
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -67,128 +67,126 @@ export default function Projects (props) {
     props.setPerPage(parseInt(event.target.value))
   }
 
-//   if (props.entitlements && props.entitlements !== '') {
-//     entitlementsList = props.entitlements.resources.map(function (data, index) {
-//       return (
-//         <tr key={index}>
-//           <td><a href={'/entitlements/' + data.id} >{data.name}</a></td>
-//           <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
-//           <td>{data.purchased}</td>
-//           <td>{data.consumed}</td>
-//           <td>{'R ' + formatAmount(data.cost)}</td>
-//           <td>{'R ' + formatAmount(data.total_cost)}</td>
-//           {/* <td>{data.cost}</td> */}
-//         </tr>
-//       )
-//     })
+  if (props.projects && props.projects !== '') {
+    projectsList = props.projects.resources.map(function (data, index) {
+      return (
+        <tr key={index}>
+          <td><a href={'/projects/' + data.id} >{data.name}</a></td>
+          <td>{data.status}</td>
+          <td>{data.wbs_element}</td>
+          <td>{data.entitlement_count}</td>
+          <td>{'R ' + formatAmount(data.total_license_cost)}</td>
+        </tr>
+      )
+    })
 
-//     totalEntitlement = props.entitlements.total_count
-//     totalNoPages = Math.ceil(totalEntitlement / perPage)
+    totalProject = props.projects.total_count
+    totalNoPages = Math.ceil(totalProject / perPage)
 
-//     if (currentPage === 1) {
-//       previousClass = 'm-datatable__pager-link--disabled'
-//     }
-//     if (currentPage === totalNoPages) {
-//       nextClass = 'm-datatable__pager-link--disabled'
-//     }
-//     let i = 1
-//     while (i <= totalNoPages) {
-//       let pageParameter = {}
-//       pageParameter.number = i
-//       pageParameter.class = ''
-//       pageArray.push(pageParameter)
-//       i++
-//     }
-//     pageArray = _.chunk(pageArray, paginationLimit)
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage})
-//       if (found.length > 0) { return group }
-//     })
-//   }
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    let i = 1
+    while (i <= totalNoPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+  }
 
-//   let handleInputChange = debounce((e) => {
-//     console.log(e)
-//     const value = searchTextBox.value
-//     // entitlementsList = ''
-//     let payload = {
-//       'search': value || '',
-//       'page_size': props.perPage,
-//       'page': currentPage
-//     }
-//     // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-//       props.fetchEntitlements(payload)
-//       // eslint-disable-next-line
-//       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//       // props.setComponentTypeLoading(true)
-//     // }
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage})
-//       if (found.length > 0) { return group }
-//     })
-//   }, 500)
-//   let handlePrevious = function (event) {
-//     event.preventDefault()
-//     if (currentPage === 1) {
-//       previousClass = styles.disabled
-//     } else {
-//       let payload = {
-//         'search': searchTextBox.value ? searchTextBox.value : '',
-//         'page_size': props.perPage,
-//         'page': currentPage - 1
-//       }
-//       props.fetchEntitlements(payload)
-//       // eslint-disable-next-line
-//       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//       props.setCurrentPage(currentPage - 1)
-//     }
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage - 1})
-//       if (found.length > 0) { return group }
-//     })
-//   }
-//   let handleNext = function (event) {
-//     event.preventDefault()
-//     if (currentPage === totalNoPages) {
-//       nextClass = styles.disabled
-//     } else {
-//       let payload = {
-//         'search': searchTextBox.value ? searchTextBox.value : '',
-//         'page_size': props.perPage,
-//         'page': currentPage + 1
-//       }
-//       // entitlementsList = ''
-//       props.fetchEntitlements(payload)
-//       // eslint-disable-next-line
-//       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//       props.setCurrentPage(currentPage + 1)
-//     }
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage + 1})
-//       if (found.length > 0) { return group }
-//     })
-//   }
-//   let handlePage = function (page) {
-//     if (page === 1) {
-//       previousClass = 'm-datatable__pager-link--disabled'
-//     } else if (page === totalNoPages) {
-//       nextClass = 'm-datatable__pager-link--disabled'
-//     }
-//     // entitlementsList = ''
-//     let payload = {
-//       'search': searchTextBox.value ? searchTextBox.value : '',
-//       'page_size': props.perPage,
-//       'page': page
-//     }
-//     props.fetchEntitlements(payload)
-//     // eslint-disable-next-line
-//     mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//     props.setCurrentPage(page)
+  let handleInputChange = debounce((e) => {
+    console.log(e)
+    const value = searchTextBox.value
+    projectsList = ''
+    let payload = {
+      'search': value || '',
+      'page_size': props.perPage,
+      'page': currentPage
+    }
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+      props.fetchProjects(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // props.setComponentTypeLoading(true)
+    // }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+  }, 500)
+  let handlePrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = styles.disabled
+    } else {
+      let payload = {
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': currentPage - 1
+      }
+      props.fetchProjects(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage - 1)
+    }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage - 1})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handleNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalNoPages) {
+      nextClass = styles.disabled
+    } else {
+      let payload = {
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': currentPage + 1
+      }
+      // entitlementsList = ''
+      props.fetchProjects(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage + 1)
+    }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage + 1})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handlePage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    // entitlementsList = ''
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': page
+    }
+    props.fetchProjects(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(page)
 
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': page})
-//       if (found.length > 0) { return group }
-//     })
-//   }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
+  }
   if (props.projectsSummary && props.projectsSummary !== '') {
     projectCount = props.projectsSummary.resources[0].project_count
     totalLicenseCost = props.projectsSummary.resources[0].total_license_cost
@@ -201,23 +199,23 @@ export default function Projects (props) {
   let closeModal = function () {
     props.setModalOpenStatus(false)
   }
-//   let createEntitlement = function (event) {
-//     event.preventDefault()
-//     let appPackage = JSON.parse(localStorage.getItem('packages'))
-//     let componentTypes = appPackage.resources[0].component_types
-//     let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-//       return obj.key === 'Entitlement'
-//     }), 'component_type')
-//     let payload = {
-//       'component_type': {
-//         'id': componentTypeId
-//       },
-//       'name': newEntitlementName.value,
-//       'description': newEntitlementDescription.value
-//     }
-//     props.addEntitlement(payload)
-//     props.setModalOpenStatus(false)
-//    }
+  let createProject = function (event) {
+    event.preventDefault()
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let componentTypes = appPackage.resources[0].component_types
+    let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Project'
+    }), 'component_type')
+    let payload = {
+      'component_type': {
+        'id': componentTypeId
+      },
+      'name': newProjectName.value,
+      'description': newProjectDescription.value
+    }
+    props.createProject(payload)
+    props.setModalOpenStatus(false)
+   }
 
 return (
   <div>
@@ -227,7 +225,7 @@ return (
       </div>
       <div className='col-md-3'>
         <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Project</button>&nbsp;
-        {/* <button onClick={''} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp; */}
+        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>&nbsp;
       </div>
     </div>
     <div>
@@ -249,17 +247,17 @@ return (
                   {/* {messageBlock} */}
                   <div className='form-group'>
                     <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                    <input type='text' className='form-control' id='agreement-name' autoComplete='off' required />
+                    <input type='text' className='form-control' id='agreement-name' ref={input => (newProjectName = input)} autoComplete='off' required />
                   </div>
                   <div className='form-group'>
                     <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                    <textarea className='form-control' defaultValue={''} autoComplete='off' required />
+                    <textarea className='form-control' ref={textarea => (newProjectDescription = textarea)} defaultValue={''} autoComplete='off' required />
                   </div>
                 </form>
               </div>
               <div className='modal-footer'>
                 {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                <button type='button' onClick={''} id='m_login_signup' className='btn btn-sm btn-info' >Add { '' }</button>
+                <button type='button' onClick={createProject} id='m_login_signup' className='btn btn-sm btn-info' >Add { '' }</button>
               </div>
             </div>
           </div>
@@ -367,7 +365,7 @@ return (
                         <div className='col-sm-12 col-md-6'>
                           <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
-                            <select value={''} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
+                            <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
                               <option value={10}>10</option>
                               <option value={25}>25</option>
                               <option value={50}>50</option>
@@ -382,7 +380,7 @@ return (
                             <div style={{'display': 'flex'}}>
                               <h5 style={{'margin': '10px'}}>Search</h5>
                               <div className='m-input-icon m-input-icon--left'>
-                                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' onKeyUp={''} />
+                                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
                                 <span className='m-input-icon__icon m-input-icon__icon--left'>
                                   <span>
                                     <i className='la la-search' />
@@ -406,31 +404,11 @@ return (
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td><a href=''>NGN: SFG SOM WP2 BUILD</a></td>
-                            <td>REL</td>
-                            <td>C-O-U-001003-01</td>
-                            <td>10</td>
-                            <td>R 100 000.0</td>
-                          </tr>
-                          <tr>
-                            <td><a href=''>NGN: SFG SOM WP2 BUILD</a></td>
-                            <td>REL</td>
-                            <td>C-O-U-001003-01</td>
-                            <td>0</td>
-                            <td>R 100 000.0</td>
-                          </tr>
-                          <tr>
-                            <td><a href=''>NGN: SFG SOM WP2 BUILD</a></td>
-                            <td>REL</td>
-                            <td>C-O-U-001003-01</td>
-                            <td>5</td>
-                            <td>R 100 000.0</td>
-                          </tr>
+                          {projectsList}
                         </tbody>
                       </table>
                     </div>
-                    {/* <div className='row'>
+                    <div className='row'>
                       <div className='col-md-12' id='scrolling_vertical'>
                         <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
                           <div className='m-datatable__pager m-datatable--paging-loaded clearfix'>
@@ -451,7 +429,7 @@ return (
                           </div>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -460,16 +438,18 @@ return (
         </div>
       </div>
     </div>
-    {/* <Discussion name={'Entitlements'} TypeKey='Entitlement' type='ComponentType' {...props} />
-    <NewDiscussion contextId={contextId} name={'Entitlements'} type='ComponentType' {...props} /> */}
+    <Discussion name={'Projects'} TypeKey='Project' type='ComponentType' {...props} />
+    <NewDiscussion contextId={contextId} name={'Projects'} type='ComponentType' {...props} />
   </div>
       )
     }
  Projects.propTypes = {
   projectsSummary: PropTypes.any,
-//   entitlements: PropTypes.any,
-//   currentPage: PropTypes.any,
+  projects: PropTypes.any,
+  currentPage: PropTypes.any,
   modalIsOpen: PropTypes.any,
-  setModalOpenStatus: PropTypes.func
-//   perPage: PropTypes.any
+  setModalOpenStatus: PropTypes.func,
+  perPage: PropTypes.any,
+  createProjectResponse: PropTypes.any,
+  createProject: PropTypes.func
  }

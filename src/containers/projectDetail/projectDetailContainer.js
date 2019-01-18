@@ -4,6 +4,7 @@ import _ from 'lodash'
 import ProjectDetail from '../../components/projectDetail/projectDetailComponent'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actionCreators as projectsActionCreators } from '../../redux/reducers/projectDetailReducer/projectDetailReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 import { actions as sagaActions } from '../../redux/sagas/'
 // Global State
 export function mapStateToProps (state, props) {
@@ -52,7 +53,8 @@ export const propsMapping: Callbacks = {
   copyProjectData: projectsActionCreators.copyProjectData,
   restoreProjectProperties: projectsActionCreators.restoreProjectProperties,
   resetResponse: projectsActionCreators.resetResponse,
-  setCurrentPage: projectsActionCreators.setCurrentPage
+  setCurrentPage: projectsActionCreators.setCurrentPage,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

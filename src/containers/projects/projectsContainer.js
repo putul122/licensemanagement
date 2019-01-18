@@ -2,29 +2,31 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import ProjectsList from '../../components/projects/projectsComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
-// import { actionCreators } from '../../redux/reducers/entitlementsReducer/entitlementsReducerReducer'
+import { actionCreators } from '../../redux/reducers/projectsReducer/projectsReducerReducer'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
-// import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     projectsSummary: state.projectsReducer.projectsSummary,
-    // entitlements: state.entitlementsReducer.entitlements,
-    // currentPage: state.entitlementsReducer.currentPage,
-    // addEntitlementResponse: state.entitlementsReducer.addEntitlementResponse,
-    modalIsOpen: state.basicReducer.modalIsOpen
-    // perPage: state.entitlementsReducer.perPage
+    projects: state.projectsReducer.projects,
+    currentPage: state.projectsReducer.currentPage,
+    createProjectResponse: state.projectsReducer.createProjectResponse,
+    modalIsOpen: state.basicReducer.modalIsOpen,
+    perPage: state.projectsReducer.perPage
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchProjectsSummary: sagaActions.projectActions.fetchProjectsSummary,
-//   fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
-//   setCurrentPage: actionCreators.setCurrentPage,
-//   setPerPage: actionCreators.setPerPage,
-//   addEntitlement: sagaActions.entitlementActions.addEntitlement,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus
-//   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  fetchProjects: sagaActions.projectActions.fetchProjects,
+  setCurrentPage: actionCreators.setCurrentPage,
+  setPerPage: actionCreators.setPerPage,
+  createProject: sagaActions.projectActions.createProject,
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }
 
 // If you want to use the function mapping
@@ -51,62 +53,69 @@ toastr.options = {
   'showMethod': 'fadeIn',
   'hideMethod': 'fadeOut'
 }
-
+// eslint-disable-next-line
 export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
       console.log('my props', this.props)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
     //   // eslint-disable-next-line
     //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   let payload = {
-    //     'search': '',
-    //     'page_size': this.props.perPage,
-    //     'page': 1
-    //   }
-    //   this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
+      let payload = {
+        'search': '',
+        'page_size': this.props.perPage,
+        'page': 1
+      }
+      this.props.fetchProjects && this.props.fetchProjects(payload)
       this.props.fetchProjectsSummary && this.props.fetchProjectsSummary()
     },
     componentDidMount: function () {
       // eslint-disable-next-line
-    //   mApp && mApp.block('#entitlementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp && mApp.block('#entitlementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
-    componentWillReceiveProps: function () {
-    //   if (nextProps.entitlements && nextProps.entitlements !== this.props.entitlements) {
-    //     // eslint-disable-next-line
-    //     mApp && mApp.unblock('#entitlementList')
-    //   }
-    //   if (nextProps.entitlementsSummary && nextProps.entitlementsSummary !== this.props.entitlementsSummary) {
-    //     // eslint-disable-next-line
-    //     mApp && mApp.unblock('#entitlementSummary')
-    //   }
-    //   if (nextProps.addEntitlementResponse && nextProps.addEntitlementResponse !== '') {
-    //     if (nextProps.addEntitlementResponse.error_code === null) {
-    //       let newEntitlementId = nextProps.addEntitlementResponse.resources[0].id
-    //       // eslint-disable-next-line
-    //       toastr.success('We\'ve added the ' +  nextProps.addEntitlementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-    //       this.props.history.push('/entitlements/' + newEntitlementId)
-    //       // eslint-disable-next-line
-    //       location.reload()
-    //     } else {
-    //       // eslint-disable-next-line
-    //       toastr.error(nextProps.addEntitlementResponse.error_message, nextProps.addEntitlementResponse.error_code)
-    //     }
-    //     this.props.resetResponse()
-    //   }
-    //   if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-    //     this.props.setCurrentPage(1)
-    //     // eslint-disable-next-line
-    //     mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //     let payload = {
-    //       'search': '',
-    //       'page_size': nextProps.perPage,
-    //       'page': 1
-    //     }
-    //     this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
-    //   }
+    componentWillReceiveProps: function (nextProps) {
+      console.log('demo', nextProps)
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.projects && nextProps.projects !== this.props.projects) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#entitlementList')
+      }
+      if (nextProps.projectsSummary && nextProps.projectsSummary !== this.props.entitlementsSummary) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#entitlementSummary')
+      }
+      if (nextProps.createProjectResponse && nextProps.createProjectResponse !== '') {
+        if (nextProps.createProjectResponse.error_code === null) {
+          let newProjectId = nextProps.createProjectResponse.resources[0].id
+          // eslint-disable-next-line
+          toastr.success('We\'ve added the ' +  nextProps.createProjectResponse.resources[0].name  +  ' to your model' , 'Nice!')
+          this.props.history.push('/projects/' + newProjectId)
+          // eslint-disable-next-line
+          location.reload()
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.createProjectResponse.error_message, nextProps.createProjectResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        this.props.setCurrentPage(1)
+        // eslint-disable-next-line
+        mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchProjects && this.props.fetchProjects(payload)
+      }
     }
   })
 )(ProjectsList)

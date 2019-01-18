@@ -116,6 +116,7 @@ const api = {
   getProjectsSummary: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectsSummary',
   getProjects: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjects',
   getProject: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProject',
+  createProject: 'https://ecoconductor-dev-api-model.azurewebsites.net/components',
   getProjectProperty: function (projectId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + projectId + '/component_properties'
   },
