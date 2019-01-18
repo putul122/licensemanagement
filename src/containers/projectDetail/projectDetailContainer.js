@@ -113,10 +113,19 @@ export default compose(
       }
       if (nextProps.projectData && nextProps.projectData !== this.props.projectData) {
         // eslint-disable-next-line
-        mApp && mApp.unblockPage()
+        // mApp && mApp.unblockPage()
         if (nextProps.projectData.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.projectData.error_message, nextProps.projectData.error_code)
+          this.props.history.push('/projects')
+        }
+      }
+      if (nextProps.projectProperties && nextProps.projectProperties !== this.props.projectProperties) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.projectProperties.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.projectProperties.error_message, nextProps.projectProperties.error_code)
           this.props.history.push('/projects')
         }
       }
