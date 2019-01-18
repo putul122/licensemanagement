@@ -94,19 +94,31 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-    let payload = {
-      'entitlement_id': this.props.match.params.id,
-      'id': this.props.match.params.id
-    }
-    this.props.fetchEntitlementById && this.props.fetchEntitlementById(payload)
-    this.props.fetchEntitlementProperties && this.props.fetchEntitlementProperties(payload)
-    this.props.fetchEntitlementRelationships && this.props.fetchEntitlementRelationships(payload)
-    this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let payload = {
+        'entitlement_id': this.props.match.params.id,
+        'id': this.props.match.params.id
+      }
+      this.props.fetchEntitlementById && this.props.fetchEntitlementById(payload)
+      this.props.fetchEntitlementProperties && this.props.fetchEntitlementProperties(payload)
+      this.props.fetchEntitlementRelationships && this.props.fetchEntitlementRelationships(payload)
+      this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
     },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
+        }
+      }
+      if (nextProps.entitlement && nextProps.entitlement !== this.props.entitlement) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.entitlement.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.entitlement.error_message, nextProps.entitlement.error_code)
+          this.props.history.push('/entitlements')
         }
       }
       if (nextProps.deleteEntitlementResponse && nextProps.deleteEntitlementResponse !== '') {

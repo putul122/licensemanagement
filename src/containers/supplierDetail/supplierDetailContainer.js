@@ -84,9 +84,6 @@ export default compose(
       mApp && mApp.block('#supplier', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('Next Props', nextProps)
-      let appPackage = JSON.parse(localStorage.getItem('packages'))
-      console.log('*****', appPackage)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -95,6 +92,11 @@ export default compose(
       if (nextProps.supplier && nextProps.supplier !== this.props.supplier) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplier')
+        if (nextProps.supplier.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.supplier.error_message, nextProps.supplier.error_code)
+          this.props.history.push('/suppliers')
+        }
       }
       if (nextProps.supplierProperties && nextProps.supplierProperties !== '' && nextProps.supplierProperties !== this.props.supplierProperties) {
         if (nextProps.supplierProperties.error_code === null) {

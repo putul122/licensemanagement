@@ -166,26 +166,25 @@ let handlePage = function (page) {
 }
 let handleInputChange = debounce((e) => {
   console.log(e)
-  const value = searchTextBox.value
-  softwareList = ''
-  let payload = {
-    'search': value || '',
-    'page_size': props.perPage,
-    'page': currentPage
+  if (searchTextBox) {
+    const value = searchTextBox ? searchTextBox.value : ''
+    props.setCurrentPage(1)
+    let payload = {
+      'search': value || '',
+      'page_size': props.perPage,
+      'page': currentPage
+    }
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+      props.fetchSoftwares(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
   }
-  // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-    props.fetchSoftwares(payload)
-    // eslint-disable-next-line
-    mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // eslint-disable-next-line
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // props.setComponentTypeLoading(true)
-  // }
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage})
-    if (found.length > 0) { return group }
-  })
 }, 500)
 
 if (props.softwareSummary && props.softwareSummary !== '') {

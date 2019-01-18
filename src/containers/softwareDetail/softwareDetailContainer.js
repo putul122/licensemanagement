@@ -8,6 +8,7 @@ import { actionCreators as softwareDetailActionCreators } from '../../redux/redu
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     softwarebyId: state.softwareDetailReducer.softwarebyId,
     softwareProperties: state.softwareDetailReducer.softwareProperties,
     softwareRelationships: state.softwareDetailReducer.softwareRelationships,
@@ -16,6 +17,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchSoftwareById: sagaActions.softwareActions.fetchSoftwareById,
   fetchSoftwareProperties: sagaActions.softwareActions.fetchSoftwareProperties,
   fetchSoftwareRelationships: sagaActions.softwareActions.fetchSoftwareRelationships,
@@ -35,15 +37,34 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('component will mount', this.props)
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'software_id': this.props.match.params.id
       }
       this.props.fetchSoftwareById && this.props.fetchSoftwareById(payload)
       this.props.fetchSoftwareProperties && this.props.fetchSoftwareProperties(payload)
       this.props.fetchSoftwareRelationships && this.props.fetchSoftwareRelationships(payload)
-      }
+    },
     // componentDidMount: function () {
     // //   this.props.fetchBasic && this.props.fetchBasic()
     // }
+    componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.softwarebyId && nextProps.softwarebyId !== this.props.softwarebyId) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.softwarebyId.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.softwarebyId.error_message, nextProps.softwarebyId.error_code)
+          this.props.history.push('/softwares')
+        }
+      }
+    }
   })
 )(SoftwareView)

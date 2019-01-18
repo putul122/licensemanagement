@@ -5,7 +5,7 @@ import './componentModelComponent.scss'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
 let width = 900
 let height = 700
-let diagramLayout
+let visualLayout
 let simulation
 
 function wrap (text, width) {
@@ -46,10 +46,10 @@ function wrap (text, width) {
 }
 
 function clearVisualization () {
-    d3.select('#diagramLayout').remove()
-    diagramLayout = d3.select('#mainScreen')
+    d3.select('#visualLayout').remove()
+    visualLayout = d3.select('#modalScreen')
       .append('svg:svg')
-      .attr('id', 'diagramLayout') // set id
+      .attr('id', 'visualLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
       .attr('display', 'block')
@@ -58,10 +58,10 @@ function clearVisualization () {
 }
 
 function forceInitialize (graphData) {
-    d3.select('#diagramLayout').remove()
-    diagramLayout = d3.select('#mainScreen')
+    d3.select('#visualLayout').remove()
+    visualLayout = d3.select('#modalScreen')
       .append('svg:svg')
-      .attr('id', 'diagramLayout') // set id
+      .attr('id', 'visualLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
       .call(d3.zoom().on('zoom', zoomed))
@@ -71,7 +71,7 @@ function forceInitialize (graphData) {
 
     function zoomed () {
         console.log('zooming action')
-        diagramLayout.attr('transform', d3.event.transform)
+        visualLayout.attr('transform', d3.event.transform)
     }
 
     simulation = d3.forceSimulation()
@@ -98,13 +98,13 @@ function forceInitialize (graphData) {
 
 // Force Layout
 function force (graphData) {
-    var linkEnter = diagramLayout.selectAll('.links')
+    var linkEnter = visualLayout.selectAll('.links')
     linkEnter = linkEnter.data(graphData.links)
       .enter().append('g')
       .attr('class', 'links')
 
     linkEnter.append('title').text(function (d) { return d.label })
-    var link = diagramLayout.selectAll('.edgepath')
+    var link = visualLayout.selectAll('.edgepath')
         .data(graphData.links)
         .enter()
         .append('path')
@@ -116,7 +116,7 @@ function force (graphData) {
         .attr('id', function (d, i) { return 'edgepath' + i })
         // .style('pointer-events', 'none')
 
-        var edgelabels = diagramLayout.selectAll('.edgelabel')
+        var edgelabels = visualLayout.selectAll('.edgelabel')
             .data(graphData.links)
             .enter()
             .append('text')
@@ -136,7 +136,7 @@ function force (graphData) {
 
     graphData.links.forEach(function (d) {
       if (d.direction === 'input') {
-        diagramLayout.append('svg:defs').selectAll('marker') //
+        visualLayout.append('svg:defs').selectAll('marker') //
           .data(['start']) // Different link/path types can be defined here
           .enter().append('svg:marker') // This section adds in the arrows
           .attr('id', String)
@@ -153,7 +153,7 @@ function force (graphData) {
           .style('stroke-width', '0.1px')
           .attr('transform', 'rotate(180,5, 0)')
       } else if (d.direction === 'output') {
-        diagramLayout.append('svg:defs').selectAll('marker') //
+        visualLayout.append('svg:defs').selectAll('marker') //
           .data(['end']) // Different link/path types can be defined here
           .enter().append('svg:marker') // This section adds in the arrows
           .attr('id', String)
@@ -179,7 +179,7 @@ function force (graphData) {
       if (d.direction === 'input') { return 'url(#start)' } else { return '' }
     })
 
-    var node = diagramLayout.selectAll('.node')
+    var node = visualLayout.selectAll('.node')
     node = node.data(graphData.nodes)
 
     var nodeEnter = node.enter().append('g')
@@ -536,8 +536,8 @@ class ComponentModelComponent extends React.Component {
     }
     render () {
         return (
-          <div id='mainScreen' >
-            <svg id='diagramLayout' />
+          <div id='modalScreen' >
+            <svg id='visualLayout' />
           </div>
           )
     }

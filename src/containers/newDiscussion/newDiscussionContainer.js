@@ -59,7 +59,6 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('new dis comp will mount', this.props)
       let initialPayload = {
         'search': '',
         page_size: 100,
@@ -72,7 +71,6 @@ export default compose(
         console.log('component did mount')
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('next props new discussion', nextProps)
       if (nextProps.accountArtefactsData && nextProps.accountArtefactsData !== this.props.accountArtefactsData) {
         if (nextProps.accountArtefactsData.result_code === 0) {
           let accountsData = nextProps.accountArtefactsData.resources.map(function (account, index) {

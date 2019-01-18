@@ -96,34 +96,36 @@ export default function Applicationlists (props) {
 
   let handleInputChange = debounce((e) => {
     console.log(e)
-    const value = searchTextBox.value
-    applicationList = ''
-    if (props.businessUnitId === '') {
-      let payload = {
-        'search': value || '',
-        'page_size': props.perPage,
-        'page': currentPage
+    if (searchTextBox) {
+      const value = searchTextBox ? searchTextBox.value : ''
+      props.setCurrentPage(1)
+      if (props.businessUnitId === '') {
+        let payload = {
+          'search': value || '',
+          'page_size': props.perPage,
+          'page': currentPage
+        }
+        props.fetchApplications(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       }
-      props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    }
-    if (props.businessUnitId !== '') {
-      let payload = {
-        // 'business_unit_id': props.businessUnits.resources[0].id,
-        'business_unit_id': props.businessUnitId,
-        'search': value || '',
-        'page_size': props.perPage,
-        'page': currentPage
+      if (props.businessUnitId !== '') {
+        let payload = {
+          // 'business_unit_id': props.businessUnits.resources[0].id,
+          'business_unit_id': props.businessUnitId,
+          'search': value || '',
+          'page_size': props.perPage,
+          'page': currentPage
+        }
+        props.fetchApplications(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       }
-      props.fetchApplications(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
     }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
   }, 500)
 
     let handlePrevious = function (event) {

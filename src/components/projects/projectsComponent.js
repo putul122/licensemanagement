@@ -105,24 +105,26 @@ export default function Projects (props) {
   }
 
   let handleInputChange = debounce((e) => {
-    console.log(e)
-    const value = searchTextBox.value
-    projectsList = ''
-    let payload = {
-      'search': value || null,
-      'page_size': props.perPage,
-      'page': currentPage
+    if (searchTextBox) {
+      props.setCurrentPage(1)
+      const value = searchTextBox ? searchTextBox.value : ''
+      projectsList = ''
+      let payload = {
+        'search': value,
+        'page_size': props.perPage,
+        'page': currentPage
+      }
+      // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+        props.fetchProjects(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // props.setComponentTypeLoading(true)
+      // }
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
     }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchProjects(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
-    // }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
   }, 500)
   let handlePrevious = function (event) {
     event.preventDefault()

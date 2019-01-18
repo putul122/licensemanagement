@@ -94,6 +94,8 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'agreement_id': this.props.match.params.id,
@@ -120,6 +122,8 @@ export default compose(
         }
       }
       if (nextProps.agreement && nextProps.agreement !== this.props.agreement) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
         if (nextProps.agreement.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.agreement.error_message, nextProps.agreement.error_code)

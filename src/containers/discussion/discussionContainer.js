@@ -80,7 +80,6 @@ export default compose(
         console.log('component did mount')
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('run next props', nextProps)
       if (nextProps.artefactAccounts && nextProps.artefactAccounts !== this.props.artefactAccounts) {
         if (nextProps.artefactAccounts.result_code === 0) {
           let accountsData = nextProps.artefactAccounts.resources.map(function (account, index) {

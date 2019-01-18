@@ -165,25 +165,25 @@ export default function Agreements (props) {
 
   let handleInputChange = debounce((e) => {
     console.log(e)
-    const value = searchTextBox.value
-    agreementsList = ''
-    let payload = {
-      'search': value || '',
-      'page_size': props.perPage,
-      'page': currentPage
-    }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+    if (searchTextBox) {
+      const value = searchTextBox.value
+      agreementsList = ''
+      props.setCurrentPage(1)
+      let payload = {
+        'search': value || '',
+        'page_size': props.perPage,
+        'page': currentPage
+      }
       props.fetchAgreements(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
-    // }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
+    }
   }, 500)
 
   let handlePrevious = function (event) {

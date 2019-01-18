@@ -58,7 +58,6 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('my props', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
     //   // eslint-disable-next-line
     //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -77,7 +76,6 @@ export default compose(
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('demo', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')

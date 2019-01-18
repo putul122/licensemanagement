@@ -735,9 +735,8 @@ export default function AgreementDetail (props) {
       previousClass = 'm-datatable__pager-link--disabled'
     } else if (page === totalEntitlementPages) {
       nextClass = 'm-datatable__pager-link--disabled'
-    } else {
-      handleListAndPagination(page)
     }
+    handleListAndPagination(page)
   }
 
   let handlePrevious = function (event) {
@@ -1325,7 +1324,7 @@ export default function AgreementDetail (props) {
         <div className='' style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist'>
             <li className='nav-item'>
-              <a className='nav-link show' data-toggle='tab' href='#m_tabs_2_1'>Details</a>
+              <a className='nav-link show active' data-toggle='tab' href='#m_tabs_2_1'>Details</a>
             </li>
             <li className='nav-item'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_2'>Entitlements</a>

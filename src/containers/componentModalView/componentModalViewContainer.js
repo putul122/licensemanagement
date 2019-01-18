@@ -53,14 +53,12 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('this will components', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
     },
     componentDidMount: function () {
         console.log('component did mount')
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('this will receicve props components', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
             this.props.history.push('/')

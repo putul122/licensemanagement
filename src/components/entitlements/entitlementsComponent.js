@@ -107,23 +107,26 @@ export default function Entitlementlists (props) {
 
   let handleInputChange = debounce((e) => {
     console.log(e)
-    const value = searchTextBox.value
-    // entitlementsList = ''
-    let payload = {
-      'search': value || '',
-      'page_size': props.perPage,
-      'page': currentPage
+    if (searchTextBox) {
+      const value = searchTextBox.value
+      // entitlementsList = ''
+      let payload = {
+        'search': value || '',
+        'page_size': props.perPage,
+        'page': currentPage
+      }
+      props.setCurrentPage(1)
+      // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+        props.fetchEntitlements(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // props.setComponentTypeLoading(true)
+      // }
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
     }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchEntitlements(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
-    // }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
   }, 500)
   let handlePrevious = function (event) {
     event.preventDefault()

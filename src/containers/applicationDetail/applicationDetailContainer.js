@@ -37,6 +37,8 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'application_id': this.props.match.params.id
@@ -49,6 +51,15 @@ export default compose(
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
+        }
+      }
+      if (nextProps.applicationbyId && nextProps.applicationbyId !== this.props.applicationbyId) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.applicationbyId.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.applicationbyId.error_message, nextProps.applicationbyId.error_code)
+          this.props.history.push('/applications')
         }
       }
     }

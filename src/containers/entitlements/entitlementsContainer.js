@@ -8,6 +8,7 @@ import { actionCreators as newDiscussionActionCreators } from '../../redux/reduc
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     entitlementsSummary: state.entitlementsReducer.entitlementsSummary,
     entitlements: state.entitlementsReducer.entitlements,
     currentPage: state.entitlementsReducer.currentPage,
@@ -18,6 +19,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchEntitlementsSummary: sagaActions.entitlementActions.fetchEntitlementsSummary,
   fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
   setCurrentPage: actionCreators.setCurrentPage,
@@ -56,7 +58,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('my props', this.props)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
@@ -74,6 +76,11 @@ export default compose(
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.entitlements && nextProps.entitlements !== this.props.entitlements) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#entitlementList')
