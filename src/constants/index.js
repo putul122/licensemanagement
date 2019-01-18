@@ -122,6 +122,12 @@ const api = {
   updateProjectProperties: function (payload) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_properties'
   },
+  updateProjectEntitlements: function (projectId) {
+    return ' https://lm-eco-dev.ecoconductor.com/api/project/UpdateProjectEntitlements?project_id=' + projectId
+  },
+  deleteProject: function (componentId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
+  },
   getProjectEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectEntitlements'
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-// import _ from 'lodash'
+import _ from 'lodash'
 // import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
@@ -32,27 +32,22 @@ const formatAmount = (x) => {
   }
   return parts.join('.')
 }
-const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
 
 export default function ProjectDetail (props) {
-  console.log('Flag', props.setModalOpenStatus)
-  console.log('***', props.setDeleteProjectModalStatus)
-  console.log('*****', props.entitlementActionSettings)
-  console.log('test', props.setEntitlementActionSettings)
-  console.log('projectData', props.projectData)
-  console.log('projectEntitlements', props.projectEntitlements, props)
-  let listPage = ''
-  let currentPage = ''
-  let nextClass = ''
-  let previousClass = ''
   let ProjectName = ''
   let EntitlementCount = ''
   let projectPropertiesList = ''
+  let EntitlementList = ''
   let Cost = 0
+  let selectOptions = []
+  let listPage = []
+  let currentPage = props.currentPage
+  let perPage = props.perPage
+  let paginationLimit = 3
+  let nextClass = ''
+  let previousClass = ''
+  let pageArray = []
+  let totalPages = ''
   let toggleExpandIcon = function (index) {
     // eslint-disable-next-line
     let iconClass = $('#expandIcon' + index).attr('class')
@@ -252,114 +247,223 @@ export default function ProjectDetail (props) {
     props.editComponentProperties(editPayload)
     props.pushComponentPropertyPayload(projectPropertiesPayload)
   }
-  let handlePrevious = function (event) {
-    // event.preventDefault()
-    // if (currentPage === 1) {
-    //   previousClass = styles.disabled
-    // } else {
-    //   let payload = {
-    //     'search': searchTextBox.value ? searchTextBox.value : '',
-    //     'page_size': props.perPage,
-    //     'page': currentPage - 1
-    //   }
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#projectList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   props.setCurrentPage(currentPage - 1)
-    // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage - 1})
-    //   if (found.length > 0) { return group }
-    // })
-  }
-
-  let handleNext = function (event) {
-    event.preventDefault()
-    // if (currentPage === totalNoPages) {
-    //   nextClass = styles.disabled
-    // } else {
-    //   let payload = {
-    //     'search': searchTextBox.value ? searchTextBox.value : '',
-    //     'page_size': props.perPage,
-    //     'page': currentPage + 1
-    //   }
-    //   projectsList = ''
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#projectList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   props.setCurrentPage(currentPage + 1)
-    // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage + 1})
-    //   if (found.length > 0) { return group }
-    // })
-  }
-  let handlePage = function (page) {
-    // if (page === 1) {
-    //   previousClass = 'm-datatable__pager-link--disabled'
-    // } else if (page === totalNoPages) {
-    //   nextClass = 'm-datatable__pager-link--disabled'
-    // }
-    // // projectsList = ''
-    // let payload = {
-    //   'search': searchTextBox.value ? searchTextBox.value : '',
-    //   'page_size': props.perPage,
-    //   'page': page
-    // }
-    // props.fetchAgreements(payload)
-    // // eslint-disable-next-line
-    // mApp && mApp.block('#projectList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // // eslint-disable-next-line
-    // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // props.setCurrentPage(page)
-
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': page})
-    //   if (found.length > 0) { return group }
-    // })
+  if (props.entitlementComponents !== '' && props.entitlementComponents.error_code === null) {
+    selectOptions = props.entitlementComponents.resources.map((component, index) => {
+      let option = {...component}
+      option.value = component.name
+      option.label = component.name
+      return option
+    })
+    console.log('if selectOptions', selectOptions)
+  } else {
+    console.log('else selectOptions', selectOptions)
   }
   let openLinkEntitlementModal = function (event) {
     event.preventDefault()
-    props.setModalOpenStatus(true)
-    console.log('props', props.setModalOpenStatus)
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkModalOpen': true}
+    props.setEntitlementActionSettings(entitlementActionSettings)
    }
   let openDeleteProjectModal = function (event) {
-    event.preventDefault()
-    props.setDeleteProjectModalStatus(true)
-    console.log('props', props.setDeleteProjectModalStatus)
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isProjectDeleteModalOpen': true}
+    props.setEntitlementActionSettings(entitlementActionSettings)
    }
-  let openLinkDeleteModal = function (event) {
-    event.preventDefault()
-    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkDeleteModalOpen': true}
+  let openLinkDeleteModal = function (data) {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkDeleteModalOpen': true, 'entitlementSelected': data, 'licenseCount': data.license_count}
     props.setEntitlementActionSettings(entitlementActionSettings)
   }
-  let openLinkUpdateModal = function (event) {
-    event.preventDefault()
-    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkUpdateModalOpen': true}
+  let openLinkUpdateModal = function (data) {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkUpdateModalOpen': true, 'entitlementSelected': data, 'licenseCount': data.license_count}
     props.setEntitlementActionSettings(entitlementActionSettings)
   }
-  let closeLinkDeleteModal = function (event) {
-    event.preventDefault()
-    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkDeleteModalOpen': false}
+  let closeLinkDeleteModal = function () {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkDeleteModalOpen': false, 'entitlementSelected': null, 'licenseCount': 0}
     props.setEntitlementActionSettings(entitlementActionSettings)
   }
-  let closeLinkUpdateModal = function (event) {
-    event.preventDefault()
-    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkUpdateModalOpen': false}
+  let closeLinkUpdateModal = function () {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkUpdateModalOpen': false, 'entitlementSelected': null, 'licenseCount': 0}
     props.setEntitlementActionSettings(entitlementActionSettings)
   }
-  let closeModal = function () {
-    props.setModalOpenStatus(false)
-    props.setDeleteProjectModalStatus(false)
+  let closeProjectDeleteModal = function () {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'isProjectDeleteModalOpen': false}
+    props.setEntitlementActionSettings(entitlementActionSettings)
+  }
+  let removeProject = function () {
+    let payload = {
+      'id': props.projectData.resources[0].id
+    }
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.deleteProject(payload)
+    closeProjectDeleteModal()
+  }
+  let closeLinkEntitlementModal = function () {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': null, 'licenseCount': 0, 'isLinkModalOpen': false}
+    props.setEntitlementActionSettings(entitlementActionSettings)
+  }
+  let handleSelect = function (newValue: any, actionMeta: any) {
+    console.group('Value Changed first select')
+    console.log(newValue)
+    console.log(`action: ${actionMeta.action}`)
+    console.groupEnd()
+    if (actionMeta.action === 'select-option') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': newValue}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': null}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+  }
+  let handleLicenseCountChange = function (event) {
+    let entitlementActionSettings = {...props.entitlementActionSettings, 'licenseCount': event.target.value}
+    props.setEntitlementActionSettings(entitlementActionSettings)
+  }
+  let linkProjectEntitlement = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    event.preventDefault()
+    let dataPayload = []
+    let obj = {}
+    obj.op = 'add'
+    obj.path = '/-'
+    obj.value = {
+      id: props.entitlementActionSettings.entitlementSelected.id,
+      license_count: parseInt(props.entitlementActionSettings.licenseCount)
+    }
+    dataPayload.push(obj)
+    let projectId = props.match.params.id
+    let payload = {}
+    payload.projectId = projectId
+    payload.data = dataPayload
+    console.log('payload', payload)
+    props.addProjectEntitlements(payload)
+    closeLinkEntitlementModal()
+  }
+  let editProjectEntitlement = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    event.preventDefault()
+    let dataPayload = []
+    let obj = {}
+    obj.op = 'replace'
+    obj.path = '/' + props.entitlementActionSettings.entitlementSelected.connection_id + '/license_count'
+    obj.value = parseInt(props.entitlementActionSettings.licenseCount)
+    dataPayload.push(obj)
+    let projectId = props.match.params.id
+    let payload = {}
+    payload.projectId = projectId
+    payload.data = dataPayload
+    console.log('payload', payload)
+    props.updateProjectEntitlements(payload)
+    closeLinkUpdateModal()
+  }
+  let deleteProjectEntitlement = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    event.preventDefault()
+    let dataPayload = []
+    let obj = {}
+    obj.op = 'remove'
+    obj.path = '/' + props.entitlementActionSettings.entitlementSelected.connection_id
+    dataPayload.push(obj)
+    let projectId = props.match.params.id
+    let payload = {}
+    payload.projectId = projectId
+    payload.data = dataPayload
+    console.log('payload', payload)
+    props.deleteProjectEntitlements(payload)
+    closeLinkDeleteModal()
   }
   if (props.projectData !== '' && props.projectData.error_code === null) {
     ProjectName = props.projectData.resources[0].name
     EntitlementCount = props.projectData.resources[0].entitlement_count
     Cost = props.projectData.resources[0].total_license_cost
+  }
+  let listEntitlement = function () {
+    if (props.projectEntitlements !== '' && props.projectEntitlements.error_code === null) {
+      if (props.projectEntitlements.resources.length > 0) {
+        EntitlementList = props.projectEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td>{data.name}</td>
+              <td>{data.license_count}</td>
+              <td>
+                <a href='' className='' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }}>Edit</a>&nbsp;|&nbsp;
+                <a href='' className='' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }}>Delete</a>
+              </td>
+            </tr>
+          )
+        })
+      } else {
+        EntitlementList = []
+        EntitlementList.push((
+          <tr key={0}>
+            <td colSpan='3'>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+    }
+  }
+  let handleListAndPagination = function (page) {
+    listEntitlement()
+    props.setCurrentPage(page)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handlePage = function (page) {
+    console.log('handle page', page, totalPages)
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    handleListAndPagination(page)
+  }
+  let handlePrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage - 1)
+      handleListAndPagination(currentPage - 1)
+    }
+  }
+  let handleNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage + 1)
+      handleListAndPagination(currentPage + 1)
+    }
+  }
+  if (props.projectEntitlements && props.projectEntitlements !== '' && props.projectEntitlements.error_code === null) {
+    totalPages = Math.ceil(props.projectEntitlements.resources.length / perPage)
+    // userCount = props.users.total_count
+    console.log('totalUserPages', totalPages)
+    let i = 1
+    while (i <= totalPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+    // List initial data for project Entitlements
+    listEntitlement()
+  }
+  if (currentPage === 1) {
+    previousClass = 'm-datatable__pager-link--disabled'
+  }
+  if (currentPage === totalPages) {
+    nextClass = 'm-datatable__pager-link--disabled'
   }
   if (props.projectProperties && props.projectProperties !== '') {
     projectPropertiesList = props.projectProperties.resources.map(function (property, index) {
@@ -630,30 +734,7 @@ return (
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr role='row'>
-                                  <td className=''>HANA</td>
-                                  <td className=''>100</td>
-                                  <td className=''>
-                                    <a href='' className='' onClick={openLinkUpdateModal}>Edit</a>&nbsp;|&nbsp;
-                                    <a href='' className='' onClick={openLinkDeleteModal}>Delete</a>
-                                  </td>
-                                </tr>
-                                <tr role='row'>
-                                  <td className=''>ARIBA</td>
-                                  <td className=''>30</td>
-                                  <td className=''>
-                                    <a href='' className='' onClick={openLinkUpdateModal}>Edit</a>&nbsp;|&nbsp;
-                                    <a href='' className='' onClick={openLinkDeleteModal}>Delete</a>
-                                  </td>
-                                </tr>
-                                <tr role='row'>
-                                  <td className=''>Access & Process Control</td>
-                                  <td className=''>20</td>
-                                  <td className=''>
-                                    <a href='' className='' onClick={openLinkUpdateModal}>Edit</a>&nbsp;|&nbsp;
-                                    <a href='' className='' onClick={openLinkDeleteModal}>Delete</a>
-                                  </td>
-                                </tr>
+                                {EntitlementList}
                               </tbody>
                             </table>
                           </div>
@@ -691,16 +772,18 @@ return (
       </div>
     </div>
     <div>
-      <ReactModal isOpen={props.modalIsOpen}
-        onRequestClose={closeModal} style={customStyles}
+      <ReactModal isOpen={props.entitlementActionSettings.isLinkModalOpen}
+        onRequestClose={closeLinkEntitlementModal}
+        className='modal-dialog modal-lg'
+        style={{'content': {'top': '20%'}}}
         >
-        {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+        {/* <button onClick={closeLinkEntitlementModal} ><i className='la la-close' /></button> */}
         <div className={''}>
-          <div className='modal-dialog'>
+          <div className=''>
             <div className='modal-content'>
               <div className='modal-header'>
                 <h4 className='modal-title' id='exampleModalLabel'>Link Entitlements</h4>
-                <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                <button type='button' onClick={closeLinkEntitlementModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
               </div>
@@ -710,30 +793,29 @@ return (
                   <div className='col-8'>
                     <Select
                       className='input-sm m-input'
-                      placeholder=''
+                      placeholder='Select Enttlement'
                       isClearable
                       // isOptionDisabled={''}
                       // defaultValue={childPropertyOption[0]}
                       // isDisabled={false}
                       // isLoading={false}
                       // isClearable={true}
-                      value={''}
-                      // clearValue={() => { return true }}
-                      onChange={''}
-                      isSearchable={false}
-                      options={options}
+                      value={props.entitlementActionSettings.entitlementSelected}
+                      onChange={handleSelect}
+                      isSearchable
+                      options={selectOptions}
                     />
                   </div>
                 </div>
                 <div className='form-group row'>
                   <div className='col-4'><label htmlFor='text' className='form-control-label'>Number of Licenses</label></div>
-                  <div className='col-8'><input className='form-control' defaultValue={''} autoComplete='off' required /></div>
+                  <div className='col-8'><input type='number'className='form-control' onChange={handleLicenseCountChange} value={props.entitlementActionSettings.licenseCount} autoComplete='off' required /></div>
                 </div>
               </div>
               <div className='modal-footer'>
                 {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                <button type='button' onClick={closeModal} id='m_login_signup' className='btn btn-outline-danger btn-sm' >Close</button>
-                <button type='button' id='m_login_signup' className='btn btn-outline-info btn-sm' >Link</button>
+                <button type='button' onClick={closeLinkEntitlementModal} id='m_login_signup' className='btn btn-outline-danger btn-sm' >Close</button>
+                <button type='button' onClick={linkProjectEntitlement} className='btn btn-outline-info btn-sm' >Link</button>
               </div>
             </div>
           </div>
@@ -741,24 +823,26 @@ return (
       </ReactModal>
     </div>
     <div>
-      <ReactModal isOpen={props.modalDeleteProjectIsOpen}
-        onRequestClose={closeModal} style={customStyles}
+      <ReactModal isOpen={props.entitlementActionSettings.isProjectDeleteModalOpen}
+        onRequestClose={closeProjectDeleteModal}
+        className='modal-dialog modal-lg'
+        style={{'content': {'top': '20%'}}}
         >
         <div className={''}>
           <div className='modal-dialog'>
             <div className='modal-content'>
               <div className='modal-header'>
                 <h4 className='modal-title' id='exampleModalLabel'>Delete Project</h4>
-                <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                <button type='button' onClick={closeProjectDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
               </div>
               <div className='modal-body'>
-                <p>Confirm deletion of project Name</p>
+                <p>Confirm deletion of {ProjectName}</p>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeModal} id='m_login_signup' className='btn btn-outline-danger btn-sm'>Close</button>
-                <button type='button' id='m_login_signup' className='btn btn-sm btn-info' >Confirm</button>
+                <button type='button' onClick={closeProjectDeleteModal} id='m_login_signup' className='btn btn-outline-danger btn-sm'>Close</button>
+                <button type='button' onClick={removeProject} id='m_login_signup' className='btn btn-sm btn-info' >Confirm</button>
               </div>
             </div>
           </div>
@@ -767,11 +851,11 @@ return (
     </div>
     <div>
       <ReactModal isOpen={props.entitlementActionSettings.isLinkUpdateModalOpen}
-        onRequestClose={closeModal}
-        className='modal-dialog'
+        onRequestClose={closeLinkUpdateModal}
+        className='modal-dialog modal-lg'
         style={{'content': {'top': '20%'}}}
         >
-        {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+        {/* <button onClick={closeLinkUpdateModal} ><i className='la la-close' /></button> */}
         <div className={''}>
           <div className=''>
             <div className='modal-content'>
@@ -783,33 +867,19 @@ return (
               </div>
               <div className='modal-body'>
                 <div className='form-group row'>
-                  <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Entitlements</label></div>
+                  <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Entitlements</label></div>
                   <div className='col-8'>
-                    <Select
-                      className='input-sm m-input'
-                      placeholder=''
-                      isClearable
-                      // isOptionDisabled={''}
-                      // defaultValue={childPropertyOption[0]}
-                      // isDisabled={false}
-                      // isLoading={false}
-                      // isClearable={true}
-                      value={''}
-                      // clearValue={() => { return true }}
-                      onChange={''}
-                      isSearchable={false}
-                      options={options}
-                    />
+                    {props.entitlementActionSettings.entitlementSelected ? props.entitlementActionSettings.entitlementSelected.name : ''}
                   </div>
                 </div>
                 <div className='form-group row'>
                   <div className='col-4'><label htmlFor='text' className='form-control-label'>Number of Licenses</label></div>
-                  <div className='col-8'><input className='form-control' defaultValue={''} autoComplete='off' required /></div>
+                  <div className='col-8'><input className='form-control' onChange={handleLicenseCountChange} value={props.entitlementActionSettings.licenseCount} autoComplete='off' required /></div>
                 </div>
               </div>
               <div className='modal-footer'>
                 <button type='button' onClick={closeLinkUpdateModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button className='btn btn-outline-info btn-sm'>Update</button>
+                <button onClick={editProjectEntitlement} className='btn btn-outline-info btn-sm'>Update</button>
               </div>
             </div>
           </div>
@@ -832,11 +902,11 @@ return (
                 </button>
               </div>
               <div className='modal-body'>
-                <p>Confirm deletion of Link to Entitlement Name</p>
+                <p>Confirm deletion of Link to {props.entitlementActionSettings.entitlementSelected ? props.entitlementActionSettings.entitlementSelected.name : ''}</p>
               </div>
               <div className='modal-footer'>
                 <button type='button' onClick={closeLinkDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                <button type='button' className={'btn btn-sm btn-outline-info'}>Confirm</button>
+                <button type='button' onClick={deleteProjectEntitlement} className={'btn btn-sm btn-outline-info'}>Confirm</button>
               </div>
             </div>
           </div>
@@ -870,19 +940,15 @@ return (
       )
     }
     ProjectDetail.propTypes = {
-      modalIsOpen: PropTypes.any,
-      setModalOpenStatus: PropTypes.func,
-      modalDeleteProjectIsOpen: PropTypes.any,
-      setDeleteProjectModalStatus: PropTypes.func,
       entitlementActionSettings: PropTypes.any,
-      setEntitlementActionSettings: PropTypes.func,
       projectData: PropTypes.any,
       projectEntitlements: PropTypes.any,
       projectProperties: PropTypes.any,
       isEditComponent: PropTypes.any,
       projectPropertiesPayload: PropTypes.any,
       copiedProjectProperties: PropTypes.any,
-      copiedProjectData: PropTypes.any
-      //   setModalOpenStatus: PropTypes.func,
-      //   perPage: PropTypes.any
+      copiedProjectData: PropTypes.any,
+      entitlementComponents: PropTypes.any,
+      perPage: PropTypes.any,
+      currentPage: PropTypes.any
  }

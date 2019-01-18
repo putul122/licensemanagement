@@ -25,6 +25,21 @@ export const UPDATE_PROJECT_FAILURE = 'saga/project/UPDATE_PROJECT_FAILURE'
 export const UPDATE_PROJECT_PROPERTIES = 'saga/project/UPDATE_PROJECT_PROPERTIES'
 export const UPDATE_PROJECT_PROPERTIES_SUCCESS = 'saga/project/UPDATE_PROJECT_PROPERTIES_SUCCESS'
 export const UPDATE_PROJECT_PROPERTIES_FAILURE = 'saga/project/UPDATE_PROJECT_PROPERTIES_FAILURE'
+export const FETCH_COMPONENT_TYPE_COMPONENTS = 'saga/project/FETCH_COMPONENT_TYPE_COMPONENTS'
+export const FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS = 'saga/project/FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS'
+export const FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE = 'saga/project/FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE'
+export const ADD_PROJECT_ENTITLEMENTS = 'saga/project/ADD_PROJECT_ENTITLEMENTS'
+export const ADD_PROJECT_ENTITLEMENTS_SUCCESS = 'saga/project/ADD_PROJECT_ENTITLEMENTS_SUCCESS'
+export const ADD_PROJECT_ENTITLEMENTS_FAILURE = 'saga/project/ADD_PROJECT_ENTITLEMENTS_FAILURE'
+export const UPDATE_PROJECT_ENTITLEMENTS = 'saga/project/UPDATE_PROJECT_ENTITLEMENTS'
+export const UPDATE_PROJECT_ENTITLEMENTS_SUCCESS = 'saga/project/UPDATE_PROJECT_ENTITLEMENTS_SUCCESS'
+export const UPDATE_PROJECT_ENTITLEMENTS_FAILURE = 'saga/project/UPDATE_PROJECT_ENTITLEMENTS_FAILURE'
+export const DELETE_PROJECT_ENTITLEMENTS = 'saga/project/DELETE_PROJECT_ENTITLEMENTS'
+export const DELETE_PROJECT_ENTITLEMENTS_SUCCESS = 'saga/project/DELETE_PROJECT_ENTITLEMENTS_SUCCESS'
+export const DELETE_PROJECT_ENTITLEMENTS_FAILURE = 'saga/project/DELETE_PROJECT_ENTITLEMENTS_FAILURE'
+export const DELETE_PROJECT = 'saga/project/DELETE_PROJECT'
+export const DELETE_PROJECT_SUCCESS = 'saga/project/DELETE_PROJECT_SUCCESS'
+export const DELETE_PROJECT_FAILURE = 'saga/project/DELETE_PROJECT_FAILURE'
 
 export const actionCreators = {
   fetchProjects: createAction(FETCH_PROJECTS),
@@ -47,7 +62,22 @@ export const actionCreators = {
   updateProjectFailure: createAction(UPDATE_PROJECT_FAILURE),
   updateProjectProperties: createAction(UPDATE_PROJECT_PROPERTIES),
   updateProjectPropertiesSuccess: createAction(UPDATE_PROJECT_PROPERTIES_SUCCESS),
-  updateProjectPropertiesFailure: createAction(UPDATE_PROJECT_PROPERTIES_FAILURE)
+  updateProjectPropertiesFailure: createAction(UPDATE_PROJECT_PROPERTIES_FAILURE),
+  fetchComponentTypeComponents: createAction(FETCH_COMPONENT_TYPE_COMPONENTS),
+  fetchComponentTypeComponentsSuccess: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS),
+  fetchComponentTypeComponentsFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE),
+  addProjectEntitlements: createAction(ADD_PROJECT_ENTITLEMENTS),
+  addProjectEntitlementsSuccess: createAction(ADD_PROJECT_ENTITLEMENTS_SUCCESS),
+  addProjectEntitlementsFailure: createAction(ADD_PROJECT_ENTITLEMENTS_FAILURE),
+  updateProjectEntitlements: createAction(UPDATE_PROJECT_ENTITLEMENTS),
+  updateProjectEntitlementsSuccess: createAction(UPDATE_PROJECT_ENTITLEMENTS_SUCCESS),
+  updateProjectEntitlementsFailure: createAction(UPDATE_PROJECT_ENTITLEMENTS_FAILURE),
+  deleteProjectEntitlements: createAction(DELETE_PROJECT_ENTITLEMENTS),
+  deleteProjectEntitlementsSuccess: createAction(DELETE_PROJECT_ENTITLEMENTS_SUCCESS),
+  deleteProjectEntitlementsFailure: createAction(DELETE_PROJECT_ENTITLEMENTS_FAILURE),
+  deleteProject: createAction(DELETE_PROJECT),
+  deleteProjectSuccess: createAction(DELETE_PROJECT_SUCCESS),
+  deleteProjectFailure: createAction(DELETE_PROJECT_FAILURE)
 }
 
 export default function * watchProjects () {
@@ -58,7 +88,12 @@ export default function * watchProjects () {
       takeLatest(FETCH_PROJECT_ENTITLEMENTS, getProjectEntitlements),
       takeLatest(FETCH_PROJECT_PROPERTIES, getProjectProperties),
       takeLatest(UPDATE_PROJECT_PROPERTIES, updateProjectProperties),
-      takeLatest(UPDATE_PROJECT, updateProjectData)
+      takeLatest(UPDATE_PROJECT, updateProjectData),
+      takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
+      takeLatest(ADD_PROJECT_ENTITLEMENTS, addProjectEntitlements),
+      takeLatest(UPDATE_PROJECT_ENTITLEMENTS, updateProjectEntitlements),
+      takeLatest(DELETE_PROJECT_ENTITLEMENTS, deleteProjectEntitlements),
+      takeLatest(DELETE_PROJECT, deleteProject)
   ]
 }
 
@@ -156,5 +191,74 @@ export function * updateProjectProperties (action) {
     yield put(actionCreators.updateProjectPropertiesSuccess(projectProperty.data))
   } catch (error) {
     yield put(actionCreators.updateProjectPropertiesFailure(error))
+  }
+}
+
+export function * getComponentTypeComponents (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.get,
+      api.getComponentTypeComponents(action.payload)
+      // {params: action.payload}
+    )
+    yield put(actionCreators.fetchComponentTypeComponentsSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.fetchComponentTypeComponentsFailure(error))
+  }
+}
+
+export function * addProjectEntitlements (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const addProjectEntitlements = yield call(
+      axios.patch,
+      api.updateProjectEntitlements(action.payload.projectId),
+      action.payload.data
+    )
+    yield put(actionCreators.addProjectEntitlementsSuccess(addProjectEntitlements.data))
+  } catch (error) {
+    yield put(actionCreators.addProjectEntitlementsFailure(error))
+  }
+}
+
+export function * updateProjectEntitlements (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const updateProjectEntitlements = yield call(
+      axios.patch,
+      api.updateProjectEntitlements(action.payload.projectId),
+      action.payload.data
+    )
+    yield put(actionCreators.updateProjectEntitlementsSuccess(updateProjectEntitlements.data))
+  } catch (error) {
+    yield put(actionCreators.updateProjectEntitlementsFailure(error))
+  }
+}
+
+export function * deleteProjectEntitlements (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const deleteProjectEntitlements = yield call(
+      axios.patch,
+      api.updateProjectEntitlements(action.payload.projectId),
+      action.payload.data
+    )
+    yield put(actionCreators.deleteProjectEntitlementsSuccess(deleteProjectEntitlements.data))
+  } catch (error) {
+    yield put(actionCreators.deleteProjectEntitlementsFailure(error))
+  }
+}
+
+export function * deleteProject (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const deleteProject = yield call(
+      axios.delete,
+      api.deleteProject(action.payload.id)
+     )
+    yield put(actionCreators.deleteProjectSuccess(deleteProject.data))
+  } catch (error) {
+    yield put(actionCreators.deleteProjectFailure(error))
   }
 }

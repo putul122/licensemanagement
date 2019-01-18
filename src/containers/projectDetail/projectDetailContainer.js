@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import _ from 'lodash'
 import ProjectDetail from '../../components/projectDetail/projectDetailComponent'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actionCreators as projectsActionCreators } from '../../redux/reducers/projectDetailReducer/projectDetailReducerReducer'
@@ -18,7 +19,14 @@ export function mapStateToProps (state, props) {
     projectPropertiesPayload: state.projectDetailReducer.projectPropertiesPayload,
     copiedProjectProperties: state.projectDetailReducer.copiedProjectProperties,
     copiedProjectData: state.projectDetailReducer.copiedProjectData,
-    updateProjectResponse: state.projectDetailReducer.updateProjectResponse
+    updateProjectResponse: state.projectDetailReducer.updateProjectResponse,
+    entitlementComponents: state.projectDetailReducer.entitlementComponents,
+    currentPage: state.projectDetailReducer.currentPage,
+    perPage: state.projectDetailReducer.perPage,
+    addProjectEntitlementResponse: state.projectDetailReducer.addProjectEntitlementResponse,
+    updateProjectEntitlementResponse: state.projectDetailReducer.updateProjectEntitlementResponse,
+    deleteProjectEntitlementResponse: state.projectDetailReducer.deleteProjectEntitlementResponse,
+    deleteProjectResponse: state.projectDetailReducer.deleteProjectResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -28,17 +36,23 @@ export const propsMapping: Callbacks = {
   setDeleteProjectModalStatus: projectsActionCreators.setDeleteProjectModalStatus,
   setEntitlementActionSettings: projectsActionCreators.setEntitlementActionSettings,
   fetchProjectById: sagaActions.projectActions.fetchProjectById,
+  deleteProject: sagaActions.projectActions.deleteProject,
   fetchProjectEntitlements: sagaActions.projectActions.fetchProjectEntitlements,
   fetchProjectProperties: sagaActions.projectActions.fetchProjectProperties,
   updateProject: sagaActions.projectActions.updateProject,
   updateProjectProperties: sagaActions.projectActions.updateProjectProperties,
+  addProjectEntitlements: sagaActions.projectActions.addProjectEntitlements,
+  updateProjectEntitlements: sagaActions.projectActions.updateProjectEntitlements,
+  deleteProjectEntitlements: sagaActions.projectActions.deleteProjectEntitlements,
+  fetchComponentTypeComponents: sagaActions.projectActions.fetchComponentTypeComponents,
   setEditComponentFlag: projectsActionCreators.setEditComponentFlag,
   pushComponentPropertyPayload: projectsActionCreators.pushComponentPropertyPayload,
   editComponentProperties: projectsActionCreators.editComponentProperties,
   copyProjectProperties: projectsActionCreators.copyProjectProperties,
   copyProjectData: projectsActionCreators.copyProjectData,
   restoreProjectProperties: projectsActionCreators.restoreProjectProperties,
-  resetResponse: projectsActionCreators.resetResponse
+  resetResponse: projectsActionCreators.resetResponse,
+  setCurrentPage: projectsActionCreators.setCurrentPage
 }
 
 // If you want to use the function mapping
@@ -73,11 +87,17 @@ export default compose(
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let projectId = this.props.match.params.id
       let payload = {'project_id': projectId}
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let componentTypes = appPackage.resources[0].component_types
+      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Entitlement'
+      }), 'component_type')
       this.props.fetchProjectById && this.props.fetchProjectById(payload)
       this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
       this.props.fetchProjectProperties && this.props.fetchProjectProperties(projectId)
+      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
@@ -90,6 +110,8 @@ export default compose(
         }
       }
       if (nextProps.projectData && nextProps.projectData !== this.props.projectData) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
         if (nextProps.projectData.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.projectData.error_message, nextProps.projectData.error_code)
@@ -113,17 +135,58 @@ export default compose(
         }
         this.props.resetResponse()
       }
-    //   if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-    //     this.props.setCurrentPage(1)
-    //     // eslint-disable-next-line
-    //     mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //     let payload = {
-    //       'search': '',
-    //       'page_size': nextProps.perPage,
-    //       'page': 1
-    //     }
-    //     this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
-    //   }
+      if (nextProps.addProjectEntitlementResponse && nextProps.addProjectEntitlementResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.addProjectEntitlementResponse.error_code === null) {
+          this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
+          // eslint-disable-next-line
+          toastr.success('The project entitlement was successfully added', 'Connecting the dots!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.addProjectEntitlementResponse.error_message, nextProps.addProjectEntitlementResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.updateProjectEntitlementResponse && nextProps.updateProjectEntitlementResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.updateProjectEntitlementResponse.error_code === null) {
+          this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
+          // eslint-disable-next-line
+          toastr.success('The project entitlement was successfully updated', 'Good Stuff!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateProjectEntitlementResponse.error_message, nextProps.updateProjectEntitlementResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.deleteProjectEntitlementResponse && nextProps.deleteProjectEntitlementResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.deleteProjectEntitlementResponse.error_code === null) {
+          this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
+          // eslint-disable-next-line
+          toastr.success('The project entitlement was successfully deleted', 'Disconnected')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.deleteProjectEntitlementResponse.error_message, nextProps.deleteProjectEntitlementResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.deleteProjectResponse && nextProps.deleteProjectResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.deleteProjectResponse.error_code === null) {
+          // eslint-disable-next-line
+          toastr.success('The Project ' +  nextProps.deleteProjectResponse.resources[0].name  +  ' was successfully deleted', 'Zapped!')
+          this.props.history.push('/projects')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.deleteProjectResponse.error_message, nextProps.deleteProjectResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
     }
   })
 )(ProjectDetail)
