@@ -38,7 +38,10 @@ export default function Sheets (props) {
   let labels = []
   let disabledClass = ''
   let wrapperClass = ''
+  let importDisabledClass = ''
+  let importWrapperClass = ''
   let messageList = ''
+  let uploadFile = ''
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -154,42 +157,67 @@ export default function Sheets (props) {
     }
   }
   let handleFile = function (e) {
-    let modalSettings = {...props.modalSettings, 'isFileLoading': true}
-    props.setModalSetting(modalSettings)
     let files = e.target.files
-    let i, f
-    for (i = 0, f = files[i]; i !== files.length; ++i) {
-      let reader = new FileReader()
-      // var name = f.name
-      reader.onload = function (e) {
-        var bstr = e.target.result
-        var workbook = XLSX.read(bstr, {type: 'binary'})
-        // Get first worksheet
-        const workSheetName = workbook.SheetNames[0]
-        const workSheet = workbook.Sheets[workSheetName]
-        // Convert array of arrays
-        const data = XLSX.utils.sheet_to_json(workSheet, {header: 1})
-        // Update state
-        console.log('Data>>>', data)
-        let columnParts = props.metaModelPerspective.resources[0].parts
-        let columnLength = columnParts.length
-        let fileData = []
-        let columnRow = data.shift()
-        data.forEach(function (value, index) {
-          if (value.length > 0) {
-            let obj = {}
-            for (let i = 0; i < columnLength; i++) {
-              obj[columnParts[i].name.toLowerCase().trim().replace(/ /g, '_')] = value[i] === undefined ? '' : value[i]
-            }
-            obj['subject_id'] = value[columnLength] || ''
-            fileData.push(obj)
-          }
-        })
-        console.log('fileData', fileData)
-        modalSettings = {...props.modalSettings, 'isFileLoading': false, 'fileData': fileData, 'columnRow': columnRow}
+    if (files.length > 0) {
+      let fileType = files[0].type
+      if (fileType === 'application/vnd.ms-excel' || fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        let modalSettings = {...props.modalSettings, 'isFileLoading': true}
         props.setModalSetting(modalSettings)
+        let i, f
+        for (i = 0, f = files[i]; i !== files.length; ++i) {
+          let reader = new FileReader()
+          // var name = f.name
+          reader.onload = function (e) {
+            var bstr = e.target.result
+            var workbook = XLSX.read(bstr, {type: 'binary'})
+            // Get first worksheet
+            const workSheetName = workbook.SheetNames[0]
+            const workSheet = workbook.Sheets[workSheetName]
+            // Convert array of arrays
+            const data = XLSX.utils.sheet_to_json(workSheet, {header: 1})
+            // Update state
+            let columnParts = props.metaModelPerspective.resources[0].parts
+            let columnLength = columnParts.length
+            let fileData = []
+            let columnRow = data.shift()
+            // check imported file content validation
+            let fileContentSupported = true
+            for (let i = 0; i < columnLength; i++) {
+              if (columnParts[i].name.toLowerCase().trim().replace(/ /g, '_') !== columnRow[i]) {
+                fileContentSupported = false
+              }
+            }
+            if (fileContentSupported) {
+              data.forEach(function (value, index) {
+                if (value.length > 0) {
+                  let obj = {}
+                  for (let i = 0; i < columnLength; i++) {
+                    obj[columnParts[i].name.toLowerCase().trim().replace(/ /g, '_')] = value[i] === undefined ? '' : value[i]
+                  }
+                  obj['subject_id'] = value[columnLength] || ''
+                  fileData.push(obj)
+                }
+              })
+              modalSettings = {...props.modalSettings, 'isFileLoading': false, 'fileData': fileData, 'columnRow': columnRow, 'isImportButtonEnabled': true}
+              props.setModalSetting(modalSettings)
+            } else {
+              alert('file content not supported for selected Model Perspectives')
+              console.log('uploadFile', uploadFile)
+              // uploadFile.value = ''
+              // return false
+              modalSettings = {...props.modalSettings, 'isFileLoading': false, 'isImportButtonEnabled': false}
+              props.setModalSetting(modalSettings)
+            }
+          }
+          reader.readAsBinaryString(f)
+        }
+      } else {
+        alert('file type not supported')
+        uploadFile.value = ''
+        return false
       }
-      reader.readAsBinaryString(f)
+    } else {
+      console.log('file', e)
     }
   }
   if (props.modalSettings.selectedMetaModel) {
@@ -198,6 +226,13 @@ export default function Sheets (props) {
   } else {
     disabledClass = styles.disabled
     wrapperClass = styles.wrapper
+  }
+  if (props.modalSettings.isImportButtonEnabled) {
+    importDisabledClass = ''
+    importWrapperClass = ''
+  } else {
+    importDisabledClass = styles.disabled
+    importWrapperClass = styles.wrapper
   }
   if (props.modelPrespectives !== '') {
     if (props.modalSettings.isFileLoading) {
@@ -718,7 +753,7 @@ return (
                   {props.modalSettings.updateResponse === null && (<div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Select File</label>
                     <div className='col-8'>
-                      <input className='form-control m-input' type='file' onChange={handleFile} placeholder='Select File to import' id='example-userName-input' />
+                      <input className='form-control m-input' type='file' onChange={handleFile} ref={input => (uploadFile = input)} placeholder='Select File to import' id='example-userName-input' />
                     </div>
                   </div>)}
                   {props.modalSettings.updateResponse !== null && (<ul className=''>
@@ -726,9 +761,9 @@ return (
                   </ul>)}
                 </div>
               </div>
-              <div className='modal-footer'>
+              <div className={'modal-footer ' + importWrapperClass} >
                 <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Close</button>
-                {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className='btn btn-outline-info btn-sm' >Import</button>)}
+                {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className={'btn btn-outline-info btn-sm ' + importDisabledClass} >Import</button>)}
               </div>
             </div>
           </div>

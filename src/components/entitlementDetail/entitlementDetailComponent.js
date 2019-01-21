@@ -331,11 +331,14 @@ export default function EntitlementDetail (props) {
       let childProperties = propertyProperties.map(function (childProperty, childIndex) {
         let value
         let htmlElement
-        // console.log('childProperty', childProperty)
+        let requiredProperty = false
+        if (childProperty.optionality.key === 'Required') {
+          requiredProperty = true
+        }
         if (childProperty.property_type.key === 'Integer') {
           value = childProperty.int_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Number</div>)}
             </div>)
@@ -343,7 +346,7 @@ export default function EntitlementDetail (props) {
         } else if (childProperty.property_type.key === 'Decimal') {
           value = childProperty.float_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Number</div>)}
             </div>)
@@ -351,7 +354,7 @@ export default function EntitlementDetail (props) {
         } else if (childProperty.property_type.key === 'DateTime') {
           value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <DatePicker
                 className='input-sm form-control m-input'
                 selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
@@ -365,7 +368,7 @@ export default function EntitlementDetail (props) {
         } else if (childProperty.property_type.key === 'Text') {
           value = childProperty.text_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)
@@ -383,7 +386,7 @@ export default function EntitlementDetail (props) {
           }
           value = childProperty.value_set_value ? childProperty.value_set_value.name : null
           htmlElement = function () {
-            return (<div className='col-8 form-group has-info'><Select
+            return (<div className='form-group has-info'><Select
               className='input-sm m-input'
               placeholder='Select Options'
               isClearable
@@ -397,7 +400,7 @@ export default function EntitlementDetail (props) {
         } else {
           value = childProperty.other_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)
@@ -405,7 +408,7 @@ export default function EntitlementDetail (props) {
         }
         return (
           <tr key={'child' + childIndex}>
-            <td><span className={styles.labelbold}>{childProperty.name}</span></td>
+            <td><span className={styles.labelbold}>{childProperty.name}</span>{requiredProperty && props.isEditComponent && (<span className='text-danger' >*</span>)}</td>
             <td>
               {!props.isEditComponent && (<span>{value}</span>)}
               {props.isEditComponent && htmlElement()}
@@ -414,14 +417,14 @@ export default function EntitlementDetail (props) {
         )
       })
       return (
-        <tbody key={index} className={'col-6'}>
+        <tbody key={index} className={''}>
           <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
             <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
             <td><span className={styles.labelbold}>{property.name}</span></td>
           </tr>
           <tr className='collapse' id={'expand' + index}>
             <td colSpan='2'>
-              <table>
+              <table style={{width: '100%'}}>
                 {childProperties}
               </table>
             </td>
@@ -910,6 +913,10 @@ export default function EntitlementDetail (props) {
       let childProperties = propertyProperties.map(function (childProperty, childIndex) {
         let value
         let htmlElement
+        let requiredProperty = false
+        if (childProperty.optionality.key === 'Required') {
+          requiredProperty = true
+        }
         if (childProperty.property_type.key === 'Integer') {
           value = childProperty.int_value
           htmlElement = function () {
@@ -984,7 +991,7 @@ export default function EntitlementDetail (props) {
         }
         return (
           <tr key={'child' + childIndex}>
-            <td><p className={styles.labelbold}>{childProperty.name}</p></td>
+            <td><p className={styles.labelbold}>{childProperty.name}</p>{requiredProperty && props.relationshipActionSettings.actionType === 'edit' && (<span className='text-danger' >*</span>)}</td>
             <td>
               {props.relationshipActionSettings.actionType === 'view' && (<p>{value}</p>)}
               {props.relationshipActionSettings.actionType === 'edit' && htmlElement()}
@@ -1351,12 +1358,15 @@ export default function EntitlementDetail (props) {
                   </table>
                 </div>
                 <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
-                  <div className='pull-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  <div className='row'>
+                    <div className='col-6' />
+                    <div className='col-6 float-right'>
+                      <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                    </div>
                   </div>
                   <div className={'row'} style={{'marginTop': '20px'}}>
                     <div className='m--space-10' />
-                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' style={{width: '100%'}} role='tablist' aria-multiselectable='true'>
                       {parentApplicationRelationshipList}
                       {outgoingApplicationRelationshipList}
                       {incomingApplicationRelationshipList}

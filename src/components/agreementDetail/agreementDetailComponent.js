@@ -334,6 +334,10 @@ export default function AgreementDetail (props) {
       let childProperties = propertyProperties.map(function (childProperty, childIndex) {
         let value
         let htmlElement
+        let requiredProperty = false
+        if (childProperty.optionality.key === 'Required') {
+          requiredProperty = true
+        }
         if (childProperty.property_type.key === 'Integer') {
           value = childProperty.int_value
           htmlElement = function () {
@@ -408,7 +412,7 @@ export default function AgreementDetail (props) {
         }
         return (
           <tr key={'child' + childIndex}>
-            <td><p className={styles.labelbold}>{childProperty.name}</p></td>
+            <td><p className={styles.labelbold}>{childProperty.name}</p>{requiredProperty && props.relationshipActionSettings.actionType === 'edit' && (<span className='text-danger' >*</span>)}</td>
             <td>
               {props.relationshipActionSettings.actionType === 'view' && (<p>{value}</p>)}
               {props.relationshipActionSettings.actionType === 'edit' && htmlElement()}
@@ -580,7 +584,10 @@ export default function AgreementDetail (props) {
       let childProperties = propertyProperties.map(function (childProperty, childIndex) {
         let value
         let htmlElement
-        // console.log('childProperty', childProperty)
+        let requiredProperty = false
+        if (childProperty.optionality.key === 'Required') {
+          requiredProperty = true
+        }
         if (childProperty.property_type.key === 'Integer') {
           value = childProperty.int_value || ''
           htmlElement = function () {
@@ -654,7 +661,7 @@ export default function AgreementDetail (props) {
         }
         return (
           <tr key={'child' + childIndex}>
-            <td><span className={styles.labelbold}>{childProperty.name}</span></td>
+            <td><span className={styles.labelbold}>{childProperty.name}</span>{requiredProperty && props.isEditComponent && (<span className='text-danger' >*</span>)}</td>
             <td>
               {!props.isEditComponent && (<span>{value}</span>)}
               {props.isEditComponent && htmlElement()}
@@ -1387,12 +1394,15 @@ export default function AgreementDetail (props) {
             </div>
             <div className='tab-pane' id='m_tabs_2_3' role='tabpanel'>
               <div className='col-lg-12' >
-                <div className='pull-right'>
-                  <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                <div className='row'>
+                  <div className='col-6' />
+                  <div className='col-6 float-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  </div>
                 </div>
                 <div className='' style={{'marginTop': '20px'}}>
                   <div className='m--space-10' />
-                  <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                  <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' style={{width: '100%'}} role='tablist' aria-multiselectable='true'>
                     {parentComponentRelationshipList}
                     {outgoingComponentRelationshipList}
                     {incomingComponentRelationshipList}
