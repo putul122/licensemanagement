@@ -312,6 +312,7 @@ export default function AgreementDetail (props) {
   // Code For Update Connection
   let componentRelationshipPropertiesList = ''
   let relationshipPropertyPayload = props.relationshipPropertyPayload
+  console.log('props.relationshipProperty', props.relationshipProperty)
   let componentRelationshipProperties = props.relationshipProperty.resources ? [...props.relationshipProperty.resources[0].properties] : ''
   let closeRelationshipActionModal = function (event) {
     let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
@@ -404,7 +405,7 @@ export default function AgreementDetail (props) {
         } else {
           value = childProperty.other_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)
@@ -421,7 +422,7 @@ export default function AgreementDetail (props) {
         )
       })
       return (
-        <tbody key={index} className={'col-6'}>
+        <tbody key={index} className={''}>
           <tr>
             <td><span className={styles.labelbold}>Type</span></td>
             <td><span>{property.name}</span></td>
@@ -591,7 +592,7 @@ export default function AgreementDetail (props) {
         if (childProperty.property_type.key === 'Integer') {
           value = childProperty.int_value || ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Number</div>)}
             </div>)
@@ -599,7 +600,7 @@ export default function AgreementDetail (props) {
         } else if (childProperty.property_type.key === 'Decimal') {
           value = childProperty.float_value || ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Number</div>)}
             </div>)
@@ -607,7 +608,7 @@ export default function AgreementDetail (props) {
         } else if (childProperty.property_type.key === 'DateTime') {
           value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <DatePicker
                 className='input-sm form-control m-input'
                 selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
@@ -621,7 +622,7 @@ export default function AgreementDetail (props) {
         } else if (childProperty.property_type.key === 'Text') {
           value = childProperty.text_value || ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)
@@ -639,7 +640,7 @@ export default function AgreementDetail (props) {
           }
           value = childProperty.value_set_value ? childProperty.value_set_value.name : null
           htmlElement = function () {
-            return (<div className='col-8 form-group has-info'><Select
+            return (<div className='form-group has-info'><Select
               className='input-sm m-input'
               placeholder='Select Options'
               isClearable
@@ -653,7 +654,7 @@ export default function AgreementDetail (props) {
         } else {
           value = childProperty.other_value || ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)

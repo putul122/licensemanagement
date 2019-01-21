@@ -909,8 +909,10 @@ export default function EntitlementDetail (props) {
   }
   if (props.relationshipProperty !== '') {
     componentRelationshipPropertiesList = componentRelationshipProperties.map(function (property, index) {
+      console.log('property', property)
       let propertyProperties = property.properties
       let childProperties = propertyProperties.map(function (childProperty, childIndex) {
+        console.log('childProperty', childProperty)
         let value
         let htmlElement
         let requiredProperty = false
@@ -920,7 +922,7 @@ export default function EntitlementDetail (props) {
         if (childProperty.property_type.key === 'Integer') {
           value = childProperty.int_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Number</div>)}
             </div>)
@@ -928,7 +930,7 @@ export default function EntitlementDetail (props) {
         } else if (childProperty.property_type.key === 'Decimal') {
           value = childProperty.float_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Number</div>)}
             </div>)
@@ -937,7 +939,7 @@ export default function EntitlementDetail (props) {
           // value = childProperty.date_time_value
           value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <DatePicker
                 className='input-sm form-control m-input'
                 selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
@@ -951,7 +953,7 @@ export default function EntitlementDetail (props) {
         } else if (childProperty.property_type.key === 'Text') {
           value = childProperty.text_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)
@@ -970,7 +972,7 @@ export default function EntitlementDetail (props) {
           value = childProperty.value_set_value ? childProperty.value_set_value.name : null
           htmlElement = function () {
             return (<Select
-              className='col-7 input-sm m-input'
+              className='input-sm m-input'
               placeholder='Select Options'
               isClearable
               defaultValue={dvalue}
@@ -983,7 +985,7 @@ export default function EntitlementDetail (props) {
         } else {
           value = childProperty.other_value
           htmlElement = function () {
-            return (<div className='col-8 form-group m-form__group has-info'>
+            return (<div className='form-group m-form__group has-info'>
               <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
               {false && (<div className='form-control-feedback'>should be Text</div>)}
             </div>)
@@ -999,19 +1001,14 @@ export default function EntitlementDetail (props) {
           </tr>
         )
       })
+      console.log('childProperties', childProperties)
       return (
-        <tbody key={index} className={'col-6'}>
-          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
-            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
-            <td><span className={styles.labelbold}>{property.name}</span></td>
+        <tbody key={index} className={''}>
+          <tr>
+            <td><span className={styles.labelbold}>Type</span></td>
+            <td><span>{property.name}</span></td>
           </tr>
-          <tr className='collapse' id={'expand' + index}>
-            <td colSpan='2'>
-              <table>
-                {childProperties}
-              </table>
-            </td>
-          </tr>
+          {childProperties}
         </tbody>
       )
     })

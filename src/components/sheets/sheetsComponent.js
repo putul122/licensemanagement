@@ -143,7 +143,7 @@ export default function Sheets (props) {
     })
     // eslint-disable-next-line
     mApp && mApp.unblockPage()
-    let modalSettings = {...props.modalSettings, 'isImportModalOpen': true, 'apiData': data}
+    let modalSettings = {...props.modalSettings, 'isImportModalOpen': true, 'apiData': data, 'isImportButtonEnabled': false}
     props.setModalSetting(modalSettings)
   }
   let handleInputName = function (event) {
