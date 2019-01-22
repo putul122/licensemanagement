@@ -201,10 +201,8 @@ export default function Sheets (props) {
               modalSettings = {...props.modalSettings, 'isFileLoading': false, 'fileData': fileData, 'columnRow': columnRow, 'isImportButtonEnabled': true}
               props.setModalSetting(modalSettings)
             } else {
-              alert('file content not supported for selected Model Perspectives')
+              alert('file content not supported for selected Sheet')
               console.log('uploadFile', uploadFile)
-              // uploadFile.value = ''
-              // return false
               modalSettings = {...props.modalSettings, 'isFileLoading': false, 'isImportButtonEnabled': false}
               props.setModalSetting(modalSettings)
             }
