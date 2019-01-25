@@ -410,7 +410,13 @@ export default function Suppliers (props) {
                         <div className='col'>
                           <div className='m-widget14__legends' >
                             <div className='m-widget14__legend' >
-                              <span className='m-widget14__legend-text'><h5>Cost per Top 10 Suppliers</h5></span>
+                              <span className='m-widget14__legend-text'><h5>Cost per</h5></span>
+                            </div>
+                            <div className='m-widget14__legend' >
+                              <span className='m-widget14__legend-text'><h5>&nbsp;</h5></span>
+                            </div>
+                            <div className='m-widget14__legend' >
+                              <span className='m-widget14__legend-text'><h5>Top 10 Suppliers</h5></span>
                             </div>
                           </div>
                         </div>

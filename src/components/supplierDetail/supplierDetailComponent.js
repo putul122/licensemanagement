@@ -544,7 +544,43 @@ export default function Suppliers (props) {
             </div>
           </div>
           <div className='col-md-4'>
-            <div className='m-portlet'>
+            <div className='m-portlet m-portlet--head-overlay m-portlet--full-height  m-portlet--rounded-force'>
+              <div className='m-portlet__body'>
+                <div className='m-widget27 m-portlet-fit--sides' >
+                  <div className='m-widget27__container' >
+                    <div className='m-widget27__tab tab-content m-widget27--no-padding' >
+                      <br />
+                      <div className='row  align-items-center'>
+                        <div className='col'>
+                          <div className='m-widget14__legends' >
+                            <div className='m-widget14__legend' >
+                              <span className='m-widget14__legend-text'><h5>Cost per agreement type</h5></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col'>
+                          <div id='m_chart_personal_income_quater_1' className='m-widget27__chart' style={{'height': '150px'}}>
+                            <Doughnut
+                              data={agreementPieChartData}
+                              options={{
+                                responsive: true,
+                                tooltips: {
+                                  callbacks: {
+                                    label: function (tooltipItem) {
+                                        return agreementPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(agreementPieChartData.datasets[0].data[tooltipItem.index])
+                                    }
+                                  }
+                                }
+                              }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* <div className='m-portlet'>
               <div className='m-portlet__body' style={{'height': '217px'}}>
                 <div className='m-widget12'>
                   <div className='m-widget12__item'>
@@ -554,6 +590,7 @@ export default function Suppliers (props) {
                         <Doughnut
                           data={agreementPieChartData}
                           options={{
+                            responsive: true,
                             tooltips: {
                               callbacks: {
                                 label: function (tooltipItem) {
@@ -567,7 +604,7 @@ export default function Suppliers (props) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         {/* The table structure begins */}
@@ -758,6 +795,7 @@ export default function Suppliers (props) {
                                       <button type='button' onClick={editSupplierPropertyCancel} className='btn btn-outline-info btn-sm m--margin-left-10'>Cancel</button>
                                       <button type='button' onClick={submitUpdates} className='btn btn-outline-info btn-sm m--margin-left-10'>Save</button>
                                     </div>}
+                                    <br />
                                   </div>
                                 </div>
                               </div>
