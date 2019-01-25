@@ -3,11 +3,14 @@ import * as d3 from 'd3'
 import './dataModelComponent.scss'
 import PropTypes from 'prop-types'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
+console.log('d3', d3)
 let width = 1000
 let height = 600
 let diagramLayout
 let simulation
 function wrap (text, width) {
+    console.log('wr text', text)
+    console.log('wr width', width)
     text.each(function () {
         // eslint-disable-next-line
         var text = d3.select(this),
@@ -15,7 +18,7 @@ function wrap (text, width) {
             word,
             line = [],
             lineNumber = 0,
-            lineHeight = 1.1, // ems
+            lineHeight = 1, // ems
             x = text.attr('x'),
             y = text.attr('y'),
             dy = 0, // parseFloat(text.attr("dy")),
@@ -194,7 +197,7 @@ function force (graphData) {
         .attr('font-size', function (node, i) { return node.fontSize })
         .attr('font-family', function (node, i) { return node.fontFamily })
         .text(function (d) { return d.name })
-        .call(wrap, 20)
+        .call(wrap, 100)
     // nodeIcon.call(d3.drag()
     //   .on("start", dragstarted)
     //   .on("drag", dragged)
@@ -345,16 +348,17 @@ class DataModelComponent extends React.Component {
                 let graphData = {}
                 // Setting first node
                 node.id = 0
+                node.wrapSize = 150
                 node.name = nextProps.startNode.name
                 node.Title = nextProps.startNode.title
-                node.width = 140
+                node.width = 150
                 node.height = 70
                 node.x = 400
                 node.y = 450
                 node.Attributes = ['']
                 node.strokeWidth = 4
                 node.textAnchor = 'middle'
-                node.fontSize = 20
+                node.fontSize = 12
                 node.fontWeight = 900
                 node.fontFamily = 'sans-serif'
                 node.dy = '0.25em'
@@ -365,6 +369,7 @@ class DataModelComponent extends React.Component {
                         index++
                         node = {}
                         node.id = index
+                        node.wrapSize = 90
                         node.name = data.target_component.name
                         node.Title = data.target_component.name
                         node.Attributes = ['']
