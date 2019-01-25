@@ -400,30 +400,40 @@ export default function Suppliers (props) {
             </div>
           </div>
           <div className='col-md-4' style={{'textAlign': 'center'}}>
-            <div className='m-portlet'>
-              <div className='m-portlet__body' style={{'height': '217px'}}>
-                <div className='m-widget14__header'>
-                  <span className='m-widget14__desc'>
-                    <h3>Cost per Top 10 Suppliers</h3>
-                  </span>
-                </div>
-                <div className='row  align-items-center'>
-                  <div className='col-md-9'>
-                    <div style={{'marginLeft': '100px'}}>
-                      <Doughnut
-                        id='supplierChart'
-                        // width={50} height={50}
-                        data={supplierPieChartData}
-                        options={{
-                          tooltips: {
-                            callbacks: {
-                              label: function (tooltipItem) {
-                                  return supplierPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(supplierPieChartData.datasets[0].data[tooltipItem.index])
-                              }
-                            }
-                          }
-                        }}
-                        />
+            <div className='m-portlet m-portlet--head-overlay m-portlet--full-height  m-portlet--rounded-force'>
+              <div className='m-portlet__body'>
+                <div className='m-widget27 m-portlet-fit--sides' >
+                  <div className='m-widget27__container' >
+                    <div className='m-widget27__tab tab-content m-widget27--no-padding' >
+                      <br />
+                      <div className='row  align-items-center'>
+                        <div className='col'>
+                          <div className='m-widget14__legends' >
+                            <div className='m-widget14__legend' >
+                              <span className='m-widget14__legend-text'><h5>Cost per Top 10 Suppliers</h5></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col'>
+                          <div id='m_chart_personal_income_quater_1' className='m-widget27__chart' style={{'height': '150px'}}>
+                            <Doughnut
+                              id='supplierChart'
+                              // width={50} height={50}
+                              data={supplierPieChartData}
+                              options={{
+                                responsive: true,
+                                tooltips: {
+                                  callbacks: {
+                                    label: function (tooltipItem) {
+                                        return supplierPieChartData.labels[tooltipItem.index] + ': R ' + formatAmount(supplierPieChartData.datasets[0].data[tooltipItem.index])
+                                    }
+                                  }
+                                }
+                              }}
+                              />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
