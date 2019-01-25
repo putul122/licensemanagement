@@ -4,7 +4,6 @@ import Agreements from '../../components/agreements/agreementsComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/agreementsReducer/agreementsReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
-
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -12,8 +11,8 @@ export function mapStateToProps (state, props) {
     agreements: state.agreementsReducer.agreements,
     agreementsSummary: state.agreementsReducer.agreementsSummary,
     currentPage: state.agreementsReducer.currentPage,
-    addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
-    addAgreementResponse: state.agreementDetailReducer.addAgreementResponse,
+    addAgreementSettings: state.agreementsReducer.addAgreementSettings,
+    addAgreementResponse: state.agreementsReducer.addAgreementResponse,
     perPage: state.agreementsReducer.perPage
   }
 }

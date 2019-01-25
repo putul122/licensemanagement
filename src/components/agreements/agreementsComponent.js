@@ -64,7 +64,7 @@ export default function Agreements (props) {
   // Code for add new agreement
   let newAgreementName = ''
   let newAgreementDescription = ''
-  let addAgreement = function () {
+  let openAddAgreementModal = function () {
     let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: true}
     props.setAddAgreementSettings(addAgreementSettings)
   }
@@ -264,7 +264,7 @@ export default function Agreements (props) {
             <h2>Agreements</h2>
           </div>
           <div className='col-md-3'>
-            <button onClick={addAgreement} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
+            <button onClick={openAddAgreementModal} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
             <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
           </div>
         </div>
@@ -499,7 +499,7 @@ export default function Agreements (props) {
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''}>
-              <div className='modal-dialog'>
+              <div className='modal-dialog modal-lg'>
                 <div className='modal-content'>
                   <div className='modal-header'>
                     <h4 className='modal-title' id='exampleModalLabel'>New { 'Agreement' }</h4>

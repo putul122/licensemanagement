@@ -286,8 +286,8 @@ export default function Sheets (props) {
     let patchPayload = []
     let columnRow = props.modalSettings.columnRow
     let labelParts = props.metaModelPerspective.resources[0].parts
-    console.log('apiData', apiData)
-    console.log('fileData', fileData)
+    // console.log('apiData', apiData)
+    // console.log('fileData', fileData)
     for (let i = 0; i < arrayLength; i++) {
       let subjectId = fileData[i].subject_id
       if (subjectId !== '') {
@@ -299,9 +299,9 @@ export default function Sheets (props) {
           // let modelPrespective = props.modelPrespectives[i]
           patch = patch.map(function (data, idx) {
             let column = data.path.substring(1)
-            console.log('column', column, data)
+            // console.log('column', column, data)
             let index = columnRow.indexOf(column)
-            console.log('index', index, labelParts)
+            // console.log('index', index, labelParts)
             let metaModelPrespective = labelParts[index]
             let valueType = ''
             if (metaModelPrespective.standard_property !== null && metaModelPrespective.type_property === null) { // Standard Property
@@ -348,7 +348,7 @@ export default function Sheets (props) {
           if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
             obj.value = fileData[i][partData.standard_property] || ''
           } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
-            let connectionValue = fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
+            let connectionValue = '' + fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
             if (connectionValue.trim() !== '') {
               obj.value = connectionValue.split(',')
             } else {

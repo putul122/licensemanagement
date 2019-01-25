@@ -88,7 +88,7 @@ export const initialState = {
   agreementRelationships: '',
   agreementEntitlements: '',
   isEditComponent: false,
-  agreementPropertiesPayload: {property: [], project: []},
+  agreementPropertiesPayload: {property: [], agreement: [], relationship: []},
   addAgreementSettings: {
     isAddModalOpen: false,
     isDeleteModalOpen: false,
