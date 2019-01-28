@@ -634,10 +634,10 @@ return (
                         </div>
                         <div className='col-sm-12 col-md-5 pull-left'>
                           <span className={'pull-left ' + wrapperClass}>
-                            <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-left fa-2x' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Import</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='fa flaticon-folder-2' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='fa flaticon-folder-3' />&nbsp;&nbsp;Import</button>&nbsp;&nbsp;&nbsp;&nbsp;
                           </span>
-                          <button type='button' onClick={openExportAllModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info '}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Export All</button>
+                          <button type='button' onClick={openExportAllModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info '}><i className='fa flaticon-download' />&nbsp;&nbsp;Export All</button>
                         </div>
                       </div>
                       {props.modalSettings.selectedMetaModel !== null && (<div className='row' style={{'marginBottom': '20px'}}>
@@ -740,8 +740,16 @@ return (
                 </div>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button onClick={exportToSheet} className='btn btn-outline-info btn-sm' >Export</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
+                      <button type='button' onClick={exportToSheet} className='m-btn btn btn-secondary'>Export</button>
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                <button onClick={exportToSheet} className='btn btn-outline-info btn-sm' >Export</button> */}
               </div>
             </div>
           </div>
@@ -810,8 +818,16 @@ return (
                 </div>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button onClick={exportAllToSheet} className='btn btn-outline-info btn-sm' >Export All</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
+                      <button type='button' onClick={exportAllToSheet} className='m-btn btn btn-secondary'>Export All</button>
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                <button onClick={exportAllToSheet} className='btn btn-outline-info btn-sm' >Export All</button> */}
               </div>
             </div>
           </div>

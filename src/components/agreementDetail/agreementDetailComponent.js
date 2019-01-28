@@ -1257,15 +1257,15 @@ export default function AgreementDetail (props) {
               <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button> */}
             </div>
           )}
-          {props.isEditComponent && (<div className='row pull-right'>
-            <div className='col-md-6' />
-            <div className='col-md-6 float-right'>
-              <div className='btn-group m-btn-group m-btn-group--pill pull-right' role='group' aria-label='...'>
-                <button type='button' onClick={cancelEditAgreement} className='m-btn btn btn-secondary'>Cancel</button>
-                <button type='button' onClick={updateAgreementConfirm} className='m-btn btn btn-secondary'>Save</button>
+          {props.isEditComponent && (<div className='col-md-4 float-right' >
+            <div className='row pull-right'>
+              <div className='col-md-6'>
+                <div className='btn-group m-btn-group m-btn-group--pill' role='group' aria-label='...'>
+                  <button type='button' onClick={cancelEditAgreement} className='m-btn btn btn-secondary'>Cancel</button>
+                  <button type='button' onClick={updateAgreementConfirm} className='m-btn btn btn-secondary'>Save</button>
+                </div>
               </div>
-            </div>
-          </div>)}
+            </div></div>)}
           {/* {props.isEditComponent && (
             <div className='col-md-4' >
               <button onClick={cancelEditAgreement} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
