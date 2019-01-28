@@ -462,10 +462,13 @@ export default function Suppliers (props) {
           <div className='col-md-10'>
             <h2>{supplierName}</h2>
           </div>
-          <div className='col-md-2'>
-            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          <div className='col-md-2 float-right'>
+            <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+              <i className='fa flaticon-multimedia-3 fa-2x' />
+            </a>
           </div>
         </div>
+        <br />
         <div className='row' id='supplier'>
           <div className='col-md-4'>
             <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
@@ -710,7 +713,7 @@ export default function Suppliers (props) {
                         <div className='m-section__content'>
                           <div className='m-demo'>
                             <div className='m-demo__preview'>
-                              {!props.supplierPropertySettings.isEditFlag && (<div className='pull-right'><button type='button' onClick={editSuppliersProperty} className='btn btn-outline-info btn-sm'>Edit Suppliers Details</button></div>)}
+                              {!props.supplierPropertySettings.isEditFlag && (<a href='javascript:void(0);' onClick={editSuppliersProperty} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'><i className='fa flaticon-edit-1 fa-2x' /></a>)}
                               <div className='m-list-search'>
                                 <div className='m-list-search__results'>
                                   <div className='m-widget13'>
@@ -791,10 +794,19 @@ export default function Suppliers (props) {
                                         <input type='text' className='form-control m-input' value={props.supplierPropertySettings.cell_number} onChange={(event) => { editDetailProperty('cell_number', event.target.value) }} aria-describedby='basic-addon2' />
                                       </div>}
                                     </div>
-                                    {props.supplierPropertySettings.isEditFlag && <div className='pull-right' style={{'paddingBottom': '20px'}}>
+                                    {props.supplierPropertySettings.isEditFlag && (<div className='row pull-right'>
+                                      <div className='col-md-6t' />
+                                      <div className='col-md-6 float-right'>
+                                        <div className='btn-group m-btn-group m-btn-group--pill pull-right' role='group' aria-label='...'>
+                                          <button type='button' onClick={editSupplierPropertyCancel} className='m-btn btn btn-secondary'>Cancel</button>
+                                          <button type='button' onClick={submitUpdates} className='m-btn btn btn-secondary'>Save</button>
+                                        </div>
+                                      </div>
+                                    </div>)}
+                                    {/* {props.supplierPropertySettings.isEditFlag && <div className='pull-right' style={{'paddingBottom': '20px'}}>
                                       <button type='button' onClick={editSupplierPropertyCancel} className='btn btn-outline-info btn-sm m--margin-left-10'>Cancel</button>
                                       <button type='button' onClick={submitUpdates} className='btn btn-outline-info btn-sm m--margin-left-10'>Save</button>
-                                    </div>}
+                                    </div>} */}
                                     <br />
                                   </div>
                                 </div>

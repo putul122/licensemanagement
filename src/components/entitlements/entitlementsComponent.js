@@ -227,9 +227,17 @@ return (
       <div className='col-md-9'>
         <h2>Entitlements</h2>
       </div>
-      <div className='col-md-3'>
-        <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Entitlment</button>&nbsp;
-        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+      <div className='col-md-3 float-right'>
+        <span className='pull-right'>
+          <a href='javascript:void(0);' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-plus fa-2x' />
+          </a>&nbsp;&nbsp;
+          <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-multimedia-3 fa-2x' />
+          </a>
+        </span>
+        {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Entitlment</button>&nbsp;
+        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp; */}
       </div>
     </div>
     <div>

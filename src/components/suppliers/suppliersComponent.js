@@ -299,10 +299,13 @@ export default function Suppliers (props) {
           <div className='col-md-10'>
             <h2>Suppliers</h2>
           </div>
-          <div className='col-md-2'>
-            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          <div className='col-md-2 float-right'>
+            <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+              <i className='fa flaticon-multimedia-3 fa-2x' />
+            </a>
           </div>
         </div>
+        <br />
         <div className='row' id='supplierSummary' >
           <div className='col-md-4'>
             {/* <div className='m-portlet m-portlet--full-height'>

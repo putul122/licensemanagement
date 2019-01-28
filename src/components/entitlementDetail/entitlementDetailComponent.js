@@ -1167,18 +1167,41 @@ export default function EntitlementDetail (props) {
             </div>)}
           </div>
           {!props.isEditComponent && (
-          <div className='col-md-4 pull-right' >
-            <button onClick={updateEntitlement} className='btn btn-outline-info btn-sm'>Edit Entitlement</button>&nbsp;
+          <div className='col-md-4 float-right' >
+            <span className='pull-right'>
+              <a href='/entitlements' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-list-1 fa-2x' />
+              </a>&nbsp;&nbsp;
+              <a href='javascript:void(0);' onClick={updateEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-edit-1 fa-2x' />
+              </a>&nbsp;&nbsp;
+              <a href='javascript:void(0);' onClick={deleteEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-delete-1 fa-2x' />
+              </a>&nbsp;&nbsp;
+              <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-multimedia-3 fa-2x' />
+              </a>
+            </span>
+            {/* <button onClick={updateEntitlement} className='btn btn-outline-info btn-sm'>Edit Entitlement</button>&nbsp;
             <button onClick={deleteEntitlement} className='btn btn-outline-info btn-sm'>Delete Entitlement</button>&nbsp;
-            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button> */}
           </div>
           )}
-          {props.isEditComponent && (
+          {props.isEditComponent && (<div className='row pull-right'>
+            <div className='col-md-6t' />
+            <div className='col-md-6 float-right'>
+              <div className='btn-group m-btn-group m-btn-group--pill pull-right' role='group' aria-label='...'>
+                <button type='button' onClick={cancelEditEntitlement} className='m-btn btn btn-secondary'>Cancel</button>
+                <button type='button' onClick={saveEntitlementProperty} className='m-btn btn btn-secondary'>Save</button>
+              </div>
+            </div>
+          </div>)}
+          {/* {props.isEditComponent && (
           <div className='col-md-4' >
             <button onClick={cancelEditEntitlement} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
             <button onClick={saveEntitlementProperty} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;
           </div>
-          )}
+          )} */}
         </div>
         <div className='row'>
           <div className='col-md-4'>

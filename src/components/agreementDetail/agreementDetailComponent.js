@@ -854,13 +854,16 @@ export default function AgreementDetail (props) {
     }
     let outgoingComponentRelationshipListFn = function () {
       if (outgoing.length > 0) {
+        console.log('outgoing', outgoing)
         let outgoingElements = []
         var outgoingGroup = _.chain(outgoing)
         .groupBy('connection.name')
         .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
         .value()
         let outerKey = 0
+        console.log('outgoingGroup', outgoingGroup)
         for (let connectionKey in outgoingGroup) {
+          console.log('connectionKey', connectionKey)
           if (outgoingGroup.hasOwnProperty(connectionKey)) {
             outerKey++
             let innerKey = 0
@@ -1234,18 +1237,41 @@ export default function AgreementDetail (props) {
             </div>)}
           </div>
           {!props.isEditComponent && (
-            <div className='col-md-4' >
-              <button onClick={updateAgreementData} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
+            <div className='col-md-4 float-right' >
+              <span className='pull-right'>
+                <a href='/agreements' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                  <i className='fa flaticon-list-1 fa-2x' />
+                </a>&nbsp;&nbsp;
+                <a href='javascript:void(0);' onClick={updateAgreementData} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                  <i className='fa flaticon-edit-1 fa-2x' />
+                </a>&nbsp;&nbsp;
+                <a href='javascript:void(0);' onClick={deleteAgreement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                  <i className='fa flaticon-delete-1 fa-2x' />
+                </a>&nbsp;&nbsp;
+                <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                  <i className='fa flaticon-multimedia-3 fa-2x' />
+                </a>
+              </span>
+              {/* <button onClick={updateAgreementData} className='btn btn-outline-info btn-sm'>Edit Agreement</button>&nbsp;
               <button onClick={deleteAgreement} className='btn btn-outline-info btn-sm'>Delete Agreement</button>&nbsp;
-              <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>
+              <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button> */}
             </div>
           )}
-          {props.isEditComponent && (
+          {props.isEditComponent && (<div className='row pull-right'>
+            <div className='col-md-6t' />
+            <div className='col-md-6 float-right'>
+              <div className='btn-group m-btn-group m-btn-group--pill pull-right' role='group' aria-label='...'>
+                <button type='button' onClick={cancelEditAgreement} className='m-btn btn btn-secondary'>Cancel</button>
+                <button type='button' onClick={updateAgreementConfirm} className='m-btn btn btn-secondary'>Save</button>
+              </div>
+            </div>
+          </div>)}
+          {/* {props.isEditComponent && (
             <div className='col-md-4' >
               <button onClick={cancelEditAgreement} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
               <button onClick={updateAgreementConfirm} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;
             </div>
-          )}
+          )} */}
         </div>
         <div className='row' id='supplier'>
           <div className='col-md-6'>

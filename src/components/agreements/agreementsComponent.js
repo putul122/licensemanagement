@@ -263,11 +263,20 @@ export default function Agreements (props) {
           <div className='col-md-9'>
             <h2>Agreements</h2>
           </div>
-          <div className='col-md-3'>
-            <button onClick={openAddAgreementModal} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
-            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          <div className='col-md-3 float-right'>
+            <span className='pull-right'>
+              <a href='javascript:void(0);' onClick={openAddAgreementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-plus fa-2x' />
+              </a>&nbsp;&nbsp;
+              <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-multimedia-3 fa-2x' />
+              </a>
+            </span>
+            {/* <button onClick={openAddAgreementModal} className='btn btn-outline-info btn-sm'>Add Agreement</button>&nbsp;
+            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp; */}
           </div>
         </div>
+        <br />
         <div className='row' id='agreementSummary'>
           <div className='col-md-4'>
             <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>
