@@ -129,7 +129,10 @@ const api = {
   deleteProject: function (componentId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
   },
-  getProjectEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectEntitlements'
+  getProjectEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectEntitlements',
+  getAllModelPerspectives: function (payload) {
+    return 'https://model-eco-dev.ecoconductor.com/model_perspectives?' + payload
+  }
 }
 
 export default api

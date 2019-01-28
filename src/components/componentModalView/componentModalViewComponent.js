@@ -12,7 +12,8 @@ var divStyle = {
     // height: '700px',
     'overflowY': 'scroll',
     'overflowX': 'scroll',
-    'border': '1px solid #000000'
+    'border': '1px solid #000000',
+    'zIndex': 10000000
 }
 
 export default function ComponentModalView (props) {

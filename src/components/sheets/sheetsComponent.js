@@ -48,6 +48,23 @@ export default function Sheets (props) {
   let handledropdownChange = function (event) {
     props.setPerPage(parseInt(event.target.value))
   }
+  let exportAllToSheet = function () {
+    let fileName = props.modalSettings.enterFileName
+    if (fileName.trim() === '') {
+      let modalSettings = {...props.modalSettings, 'exportValidationClass': 'form-group m-form__group row has-danger'}
+      props.setModalSetting(modalSettings)
+    } else {
+      // eslint-disable-next-line
+      mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let modalSettings = {...props.modalSettings}
+      let exportAllPayload = modalSettings.exportAllPayload
+      props.fetchAllModelPrespectives(exportAllPayload)
+    }
+  }
+  let openExportAllModal = function () {
+    let modalSettings = {...props.modalSettings, 'isExportAllModalOpen': true, 'enterFileName': '', 'exportValidationClass': 'form-group m-form__group row'}
+    props.setModalSetting(modalSettings)
+  }
   let openExportModal = function () {
     // eslint-disable-next-line
     mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -94,7 +111,7 @@ export default function Sheets (props) {
     })
     // eslint-disable-next-line
     mApp && mApp.unblockPage()
-    let modalSettings = {...props.modalSettings, 'isExportModalOpen': true, 'enterFileName': '', 'apiData': data}
+    let modalSettings = {...props.modalSettings, 'isExportModalOpen': true, 'enterFileName': '', 'apiData': data, 'exportValidationClass': 'form-group m-form__group row'}
     props.setModalSetting(modalSettings)
   }
   let openImportModal = function () {
@@ -243,7 +260,7 @@ export default function Sheets (props) {
     }
   }
   let closeModal = function () {
-    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false, 'isImportModalOpen': false, 'updateResponse': null}
+    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false, 'isImportModalOpen': false, 'isExportAllModalOpen': false, 'updateResponse': null}
     props.setModalSetting(modalSettings)
   }
   let exportToSheet = function () {
@@ -618,8 +635,9 @@ return (
                         <div className='col-sm-12 col-md-5 pull-left'>
                           <span className={'pull-left ' + wrapperClass}>
                             <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-left fa-2x' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Import</button>
+                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info ' + disabledClass}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Import</button>&nbsp;&nbsp;&nbsp;&nbsp;
                           </span>
+                          <button type='button' onClick={openExportAllModal} className={'btn btn-secondary m-btn m-btn--custom m-btn--label-info '}><i className='fa fa-angle-double-right fa-2x' />&nbsp;&nbsp;Export All</button>
                         </div>
                       </div>
                       {props.modalSettings.selectedMetaModel !== null && (<div className='row' style={{'marginBottom': '20px'}}>
@@ -762,6 +780,38 @@ return (
               <div className={'modal-footer ' + importWrapperClass} >
                 <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Close</button>
                 {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className={'btn btn-outline-info btn-sm ' + importDisabledClass} >Import</button>)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ReactModal>
+      <ReactModal isOpen={props.modalSettings.isExportAllModalOpen}
+        onRequestClose={closeModal}
+        className='modal-dialog'
+        style={{'content': {'top': '20%'}}}
+        >
+        {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+        <div className={''}>
+          <div className=''>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h4 className='modal-title' id='exampleModalLabel'>Export All to Excel sheet</h4>
+                <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                  <span aria-hidden='true'>×</span>
+                </button>
+              </div>
+              <div className='modal-body'>
+                <div className='col-md-12 m-form m-form--state m-form--fit'>
+                  {/* {messageBlock} */}
+                  <div className={props.modalSettings.exportValidationClass}>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Enter Filename</label>
+                    <input className='col-8 form-control m-input' value={props.modalSettings.enterFileName} onChange={handleInputName} type='email' placeholder='Enter Filename' id='example-userName-input' />
+                  </div>
+                </div>
+              </div>
+              <div className='modal-footer'>
+                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                <button onClick={exportAllToSheet} className='btn btn-outline-info btn-sm' >Export All</button>
               </div>
             </div>
           </div>

@@ -16,9 +16,9 @@ function wrap (text, width) {
             word,
             line = [],
             lineNumber = 0,
-            lineHeight = 1.1, // ems
+            lineHeight = 1, // ems
             x = text.attr('x'),
-            y = words.length > 1 ? text.attr('y') - 20 : text.attr('y') - 10,
+            y = text.attr('y'), // words.length > 1 ? text.attr('y') - 20 : text.attr('y') - 10,
             dy = 0, // parseFloat(text.attr("dy")),
             tspan = text.text(null)
                         .append('tspan')
@@ -210,7 +210,7 @@ function force (graphData) {
         .attr('font-size', function (node, i) { return node.fontSize })
         .attr('font-family', function (node, i) { return node.fontFamily })
         .text(function (d) { return d.name })
-        .call(wrap, 20)
+        .call(wrap, 120)
     // nodeIcon.call(d3.drag()
     //   .on("start", dragstarted)
     //   .on("drag", dragged)
@@ -370,7 +370,7 @@ class ComponentModelComponent extends React.Component {
                 node.Attributes = ['']
                 node.strokeWidth = 4
                 node.textAnchor = 'middle'
-                node.fontSize = 15
+                node.fontSize = 12
                 node.fontWeight = 900
                 node.fontFamily = 'sans-serif'
                 node.dy = '0.25em'
