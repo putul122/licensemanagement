@@ -283,13 +283,16 @@ export default function Softwareview (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-10'>
+          <div className='col-md-9'>
             <h2>{softwareName}</h2>
           </div>
-          <div className='col-md-2'>
-            <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+          <div className='col-md-3 float-right'>
+            <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+              <i className='fa flaticon-multimedia-3 fa-2x' />
+            </a>
           </div>
         </div>
+        <br />
         <div className='row'>
           <div className='col-xl-6'>
             <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--skin-light  m-portlet--rounded-force'>

@@ -518,8 +518,17 @@ export default function Agreements (props) {
                     </form>
                   </div>
                   <div className='modal-footer'>
+                    <div className='row'>
+                      <div className='col-md-6t' />
+                      <div className='col-md-6'>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeAddModal} className='m-btn btn btn-secondary'>Back</button>
+                          <button type='button' onClick={createNewAgreement} className='m-btn btn btn-secondary'>Add</button>
+                        </div>
+                      </div>
+                    </div>
                     {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                    <button onClick={createNewAgreement} className='btn btn-sm btn-info ' >Add { '' }</button>
+                    {/* <button onClick={createNewAgreement} className='btn btn-sm btn-info ' >Add { '' }</button> */}
                   </div>
                 </div>
               </div>

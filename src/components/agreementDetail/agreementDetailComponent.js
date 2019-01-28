@@ -1258,7 +1258,7 @@ export default function AgreementDetail (props) {
             </div>
           )}
           {props.isEditComponent && (<div className='row pull-right'>
-            <div className='col-md-6t' />
+            <div className='col-md-6' />
             <div className='col-md-6 float-right'>
               <div className='btn-group m-btn-group m-btn-group--pill pull-right' role='group' aria-label='...'>
                 <button type='button' onClick={cancelEditAgreement} className='m-btn btn btn-secondary'>Cancel</button>
@@ -1424,7 +1424,10 @@ export default function AgreementDetail (props) {
                 <div className='row'>
                   <div className='col-6' />
                   <div className='col-6 float-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                    <a href='javascript:void(0);' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+                      <i className='fa flaticon-add fa-2x' />
+                    </a>
+                    {/* <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button> */}
                   </div>
                 </div>
                 <div className='' style={{'marginTop': '20px'}}>
@@ -1482,8 +1485,16 @@ export default function AgreementDetail (props) {
                     <p className={styles.confirmsg}>Are you sure you want to continue?</p>
                   </div>
                   <div className='modal-footer'>
-                    <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
-                    <button onClick={submitUpdates} className='btn btn-sm btn-outline-info'>Submit Updates</button>
+                    <div className='row'>
+                      <div className='col-md-6 '>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeConfirmationModal} className='m-btn btn btn-secondary'>Back</button>
+                          <button type='button' onClick={submitUpdates} className='m-btn btn btn-secondary'>Submit Updates</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
+                    <button onClick={submitUpdates} className='btn btn-sm btn-outline-info'>Submit Updates</button> */}
                   </div>
                 </div>
               </div>
@@ -1518,8 +1529,16 @@ export default function AgreementDetail (props) {
                     </div>
                   </div> */}
                   <div className='modal-footer'>
-                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-outline-info'}>Back</button>
-                    <button type='button' id='m_login_signup' className={'btn btn-outline-info'} onClick={removeAgreement}>Delete</button>
+                    <div className='row'>
+                      <div className='col-md-6'>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeDeleteModal} className='m-btn btn btn-secondary'>Back</button>
+                          <button type='button' onClick={removeAgreement} className='m-btn btn btn-secondary'>Delete</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-outline-info'}>Back</button>
+                    <button type='button' id='m_login_signup' className={'btn btn-outline-info'} onClick={removeAgreement}>Delete</button> */}
                   </div>
                 </div>
               </div>
@@ -1559,13 +1578,22 @@ export default function AgreementDetail (props) {
                     )}
                   </div>
                   <div className='modal-footer'>
-                    <button onClick={closeRelationshipActionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                    <div className='row'>
+                      <div className='col-md-6 '>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeRelationshipActionModal} className='m-btn btn btn-secondary'>Cancel</button>
+                          {props.relationshipActionSettings.actionType === 'edit' && (<button type='button' onClick={updateRelationshipProperty} className='m-btn btn btn-secondary'>Update</button>)}
+                          {props.relationshipActionSettings.actionType === 'delete' && (<button type='button' onClick={removeComponentRelationship} className='m-btn btn btn-secondary'>Delete</button>)}
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button onClick={closeRelationshipActionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
                     {props.relationshipActionSettings.actionType === 'edit' && (
                     <button onClick={updateRelationshipProperty} className={'btn btn-sm btn-info '}>Update</button>
                     )}
                     {props.relationshipActionSettings.actionType === 'delete' && (
                     <button onClick={removeComponentRelationship} className={'btn btn-sm btn-info '}>Delete</button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1666,8 +1694,16 @@ export default function AgreementDetail (props) {
                     </div>
                   </div>
                   <div className='modal-footer'>
-                    <button onClick={closeModal} className='btn btn-sm btn-outline-info'>Cancel</button>
-                    <button onClick={addConnections} className={'btn btn-sm btn-info ' + addConnectionClass}>Confirm</button>
+                    <div className='row'>
+                      <div className='col-md-6 '>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
+                          <button type='button' onClick={addConnections} className={'m-btn btn btn-secondary' + addConnectionClass} >Confirm</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button onClick={closeModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                    <button onClick={addConnections} className={'btn btn-sm btn-info ' + addConnectionClass}>Confirm</button> */}
                   </div>
                 </div>
               </div>

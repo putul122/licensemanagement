@@ -222,14 +222,25 @@ export default function Projects (props) {
 return (
   <div>
     <div className='row'>
-      <div className='col-md-9'>
+      <div className='col-md-8'>
         <h2>Projects</h2>
       </div>
-      <div className='col-md-3'>
+      <div className='col-md-4 float-right' >
+        <span className='pull-right'>
+          <a href='javascript:void(0);' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-plus fa-2x' />
+          </a>&nbsp;&nbsp;
+          <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-multimedia-3 fa-2x' />
+          </a>
+        </span>
+      </div>
+      {/* <div className='col-md-3'>
         <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Project</button>&nbsp;
         <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>&nbsp;
-      </div>
+      </div> */}
     </div>
+    <br />
     <div>
       <ReactModal isOpen={props.modalIsOpen}
         onRequestClose={closeModal} style={customStyles}

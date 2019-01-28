@@ -417,9 +417,10 @@ return (
       <div className='col-md-9'>
         <h2>Applications</h2>
       </div>
-      <div className='col-md-3'>
-        {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm pull-right'>Add Entitlment</button>&nbsp; */}
-        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp;
+      <div className='col-md-3 float-right'>
+        <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+          <i className='fa flaticon-multimedia-3 fa-2x' />
+        </a>
       </div>
     </div>
     <div className='row' style={{'marginBottom': '20px'}}>

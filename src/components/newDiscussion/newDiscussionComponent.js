@@ -228,7 +228,15 @@ return (
               </form>
             </div>
             <div className='modal-footer'>
-              <button type='button' onClick={createDiscussion} id='m_login_signup' className='btn btn-outline-info btn-sm m-btn m-btn--custom'>Create Discussion</button>
+              <div className='row'>
+                <div className='col-md-6 '>
+                  <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                    <button type='button' onClick={closeDiscussionModal} className='m-btn btn btn-secondary'>Close</button>
+                    <button type='button' onClick={createDiscussion} className='m-btn btn btn-secondary'>Create Discussion</button>
+                  </div>
+                </div>
+              </div>
+              {/* <button type='button' onClick={createDiscussion} id='m_login_signup' className='btn btn-outline-info btn-sm m-btn m-btn--custom'>Create Discussion</button> */}
             </div>
           </div>
         </div>

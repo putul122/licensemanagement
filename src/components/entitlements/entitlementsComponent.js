@@ -268,8 +268,17 @@ return (
                 </form>
               </div>
               <div className='modal-footer'>
+                <div className='row'>
+                  <div className='col-md-6t' />
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Back</button>
+                      <button type='button' onClick={createEntitlement} className='m-btn btn btn-secondary'>Add</button>
+                    </div>
+                  </div>
+                </div>
                 {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                <button type='button' onClick={createEntitlement} id='m_login_signup' className='btn btn-sm btn-info' >Add { '' }</button>
+                {/* <button type='button' onClick={createEntitlement} id='m_login_signup' className='btn btn-sm btn-info' >Add { '' }</button> */}
               </div>
             </div>
           </div>

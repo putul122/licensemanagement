@@ -393,8 +393,12 @@ export default function ProjectDetail (props) {
               <td>{data.name}</td>
               <td>{data.license_count}</td>
               <td>
-                <a href='' className='' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }}>Edit</a>&nbsp;|&nbsp;
-                <a href='' className='' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }}>Delete</a>
+                <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>
+                </div>
+                {/* <a href='' className='' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }}>Edit</a>&nbsp;|&nbsp;
+                <a href='' className='' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }}>Delete</a> */}
               </td>
             </tr>
           )
@@ -586,24 +590,49 @@ export default function ProjectDetail (props) {
 return (
   <div>
     <div className='row'>
-      <div className='col-md-7'>
+      <div className='col-md-8'>
         {!props.isEditComponent && (<h2>{ProjectName}</h2>)}
         {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
           <input type='text' className='form-control m-input' onChange={editProjectName} value={ProjectName} placeholder='Project Name' aria-describedby='basic-addon2' />
           </div>)}
       </div>
-      {!props.isEditComponent && (<div className='col-md-5 float-right'>
-        <button type='button' onClick={updateProjectData} className='btn btn-outline-info btn-sm'>Edit Project</button>&nbsp;
-        <button type='button' className='btn btn-outline-info btn-sm' onClick={openDeleteProjectModal}>Delete Project</button>&nbsp;
-        <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>
+      {!props.isEditComponent && (
+      <div className='col-md-4 float-right' >
+        <span className='pull-right'>
+          <a href='javascript:void(0);' onClick={updateProjectData} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-edit-1 fa-2x' />
+          </a>&nbsp;&nbsp;
+          <a href='javascript:void(0);' onClick={openDeleteProjectModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-delete-1 fa-2x' />
+          </a>&nbsp;&nbsp;
+          <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-multimedia-3 fa-2x' />
+          </a>
+        </span>
+      </div>
+      // <div className='col-md-5 float-right'>
+      //   <button type='button' onClick={updateProjectData} className='btn btn-outline-info btn-sm'>Edit Project</button>&nbsp;
+      //   <button type='button' className='btn btn-outline-info btn-sm' onClick={openDeleteProjectModal}>Delete Project</button>&nbsp;
+      //   <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>New Discussion</button>
+      // </div>
+      )}
+      {props.isEditComponent && (<div className='row pull-right'>
+        <div className='col-md-6' />
+        <div className='col-md-6 float-right'>
+          <div className='btn-group m-btn-group m-btn-group--pill pull-right' role='group' aria-label='...'>
+            <button type='button' onClick={cancelEditProject} className='m-btn btn btn-secondary'>Cancel</button>
+            <button type='button' onClick={updateProjectConfirm} className='m-btn btn btn-secondary'>Save</button>
+          </div>
+        </div>
       </div>)}
-      {props.isEditComponent && (
+      {/* {props.isEditComponent && (
         <div className='col-md-4' >
           <button onClick={cancelEditProject} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;
           <button onClick={updateProjectConfirm} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;
         </div>
-      )}
+      )} */}
     </div>
+    <br />
     <div className='row' id='entitlementSummary'>
       <div className='col-xl-6'>
         <div className='m-portlet m-portlet--bordered-semi m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
@@ -719,7 +748,10 @@ return (
                 </div>
               </div>
               <div className='m-portlet__head-tools'>
-                <button type='button' className='btn btn-outline-info btn-sm' onClick={openLinkEntitlementModal}>Link Entitlement</button>
+                <a href='javascript:void(0);' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                  <i className='fa flaticon-app fa-2x' />
+                </a>
+                {/* <button type='button' className='btn btn-outline-info btn-sm' onClick={openLinkEntitlementModal}>Link Entitlement</button> */}
               </div>
             </div>
             <div className='m-portlet__body'>
@@ -818,9 +850,17 @@ return (
                 </div>
               </div>
               <div className='modal-footer'>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeLinkEntitlementModal} className='m-btn btn btn-secondary'>Close</button>
+                      <button type='button' onClick={linkProjectEntitlement} className='m-btn btn btn-secondary'>Link</button>
+                    </div>
+                  </div>
+                </div>
                 {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                <button type='button' onClick={closeLinkEntitlementModal} id='m_login_signup' className='btn btn-outline-danger btn-sm' >Close</button>
-                <button type='button' onClick={linkProjectEntitlement} className='btn btn-outline-info btn-sm' >Link</button>
+                {/* <button type='button' onClick={closeLinkEntitlementModal} id='m_login_signup' className='btn btn-outline-danger btn-sm' >Close</button>
+                <button type='button' onClick={linkProjectEntitlement} className='btn btn-outline-info btn-sm' >Link</button> */}
               </div>
             </div>
           </div>
@@ -846,8 +886,16 @@ return (
                 <p>Confirm deletion of {ProjectName}</p>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeProjectDeleteModal} id='m_login_signup' className='btn btn-outline-danger btn-sm'>Close</button>
-                <button type='button' onClick={removeProject} id='m_login_signup' className='btn btn-sm btn-info' >Confirm</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeProjectDeleteModal} className='m-btn btn btn-secondary'>Close</button>
+                      <button type='button' onClick={removeProject} className='m-btn btn btn-secondary'>Confirm</button>
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeProjectDeleteModal} id='m_login_signup' className='btn btn-outline-danger btn-sm'>Close</button>
+                <button type='button' onClick={removeProject} id='m_login_signup' className='btn btn-sm btn-info' >Confirm</button> */}
               </div>
             </div>
           </div>
@@ -883,8 +931,16 @@ return (
                 </div>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeLinkUpdateModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button onClick={editProjectEntitlement} className='btn btn-outline-info btn-sm'>Update</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeLinkUpdateModal} className='m-btn btn btn-secondary'>Cancel</button>
+                      <button type='button' onClick={editProjectEntitlement} className='m-btn btn btn-secondary'>Update</button>
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeLinkUpdateModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                <button onClick={editProjectEntitlement} className='btn btn-outline-info btn-sm'>Update</button> */}
               </div>
             </div>
           </div>
@@ -910,8 +966,16 @@ return (
                 <p>Confirm deletion of Link to {props.entitlementActionSettings.entitlementSelected ? props.entitlementActionSettings.entitlementSelected.name : ''}</p>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeLinkDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                <button type='button' onClick={deleteProjectEntitlement} className={'btn btn-sm btn-outline-info'}>Confirm</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeLinkDeleteModal} className='m-btn btn btn-secondary'>Back</button>
+                      <button type='button' onClick={deleteProjectEntitlement} className='m-btn btn btn-secondary'>Confirm</button>
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeLinkDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                <button type='button' onClick={deleteProjectEntitlement} className={'btn btn-sm btn-outline-info'}>Confirm</button> */}
               </div>
             </div>
           </div>
@@ -931,8 +995,16 @@ return (
                 <p className={styles.confirmsg}>Are you sure you want to continue?</p>
               </div>
               <div className='modal-footer'>
-                <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
-                <button onClick={submitUpdates} className='btn btn-sm btn-outline-info'>Submit Updates</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeConfirmationModal} className='m-btn btn btn-secondary'>Back</button>
+                      <button type='button' onClick={submitUpdates} className='m-btn btn btn-secondary'>Submit Updates</button>
+                    </div>
+                  </div>
+                </div>
+                {/* <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
+                <button onClick={submitUpdates} className='btn btn-sm btn-outline-info'>Submit Updates</button> */}
               </div>
             </div>
           </div>
