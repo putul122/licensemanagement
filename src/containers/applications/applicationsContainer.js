@@ -59,10 +59,12 @@ export default compose(
       this.props.fetchBusinessUnits && this.props.fetchBusinessUnits()
     },
     componentDidMount: function () {
-     // eslint-disable-next-line
-     mApp && mApp.block('#applicationSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-     // eslint-disable-next-line
-     mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp && mApp.block('#applicationList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {

@@ -1227,7 +1227,7 @@ export default function AgreementDetail (props) {
       <div>
         <div className='row'>
           <div className='col-md-8'>
-            {!props.isEditComponent && (<h2>{agreementName}</h2>)}
+            {!props.isEditComponent && (<h2>Agreement: {agreementName}</h2>)}
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
               <input type='text' className='form-control m-input' onChange={editAgreementName} value={agreementName} placeholder='Agreement Name' aria-describedby='basic-addon2' />
               </div>)}
@@ -1239,16 +1239,16 @@ export default function AgreementDetail (props) {
           {!props.isEditComponent && (
             <div className='col-md-4 float-right' >
               <span className='pull-right'>
-                <a href='/agreements' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <a href='/agreements' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='back' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                   <i className='fa flaticon-list-1 fa-2x' />
                 </a>&nbsp;&nbsp;
-                <a href='javascript:void(0);' onClick={updateAgreementData} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <a href='javascript:void(0);' onClick={updateAgreementData} data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Agreement' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                   <i className='fa flaticon-edit-1 fa-2x' />
                 </a>&nbsp;&nbsp;
-                <a href='javascript:void(0);' onClick={deleteAgreement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Delete Agreement' onClick={deleteAgreement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                   <i className='fa flaticon-delete-1 fa-2x' />
                 </a>&nbsp;&nbsp;
-                <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                   <i className='fa flaticon-multimedia-3 fa-2x' />
                 </a>
               </span>
@@ -1424,7 +1424,7 @@ export default function AgreementDetail (props) {
                 <div className='row'>
                   <div className='col-6' />
                   <div className='col-6 float-right'>
-                    <a href='javascript:void(0);' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+                    <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Relationship' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
                       <i className='fa flaticon-add fa-2x' />
                     </a>
                     {/* <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button> */}

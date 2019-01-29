@@ -47,6 +47,10 @@ export default compose(
       this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
       this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
     },
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
@@ -55,10 +59,19 @@ export default compose(
       }
       if (nextProps.applicationbyId && nextProps.applicationbyId !== this.props.applicationbyId) {
         // eslint-disable-next-line
-        mApp && mApp.unblockPage()
+        // mApp && mApp.unblockPage()
         if (nextProps.applicationbyId.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.applicationbyId.error_message, nextProps.applicationbyId.error_code)
+          this.props.history.push('/applications')
+        }
+      }
+      if (nextProps.applicationRelationships && nextProps.applicationRelationships !== this.props.applicationRelationships) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.applicationRelationships.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.applicationRelationships.error_message, nextProps.applicationRelationships.error_code)
           this.props.history.push('/applications')
         }
       }

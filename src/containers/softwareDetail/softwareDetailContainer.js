@@ -47,9 +47,10 @@ export default compose(
       this.props.fetchSoftwareProperties && this.props.fetchSoftwareProperties(payload)
       this.props.fetchSoftwareRelationships && this.props.fetchSoftwareRelationships(payload)
     },
-    // componentDidMount: function () {
-    // //   this.props.fetchBasic && this.props.fetchBasic()
-    // }
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
@@ -58,10 +59,19 @@ export default compose(
       }
       if (nextProps.softwarebyId && nextProps.softwarebyId !== this.props.softwarebyId) {
         // eslint-disable-next-line
-        mApp && mApp.unblockPage()
+        // mApp && mApp.unblockPage()
         if (nextProps.softwarebyId.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.softwarebyId.error_message, nextProps.softwarebyId.error_code)
+          this.props.history.push('/softwares')
+        }
+      }
+      if (nextProps.softwareRelationships && nextProps.softwareRelationships !== this.props.softwareRelationships) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.softwareRelationships.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.softwareRelationships.error_message, nextProps.softwareRelationships.error_code)
           this.props.history.push('/softwares')
         }
       }

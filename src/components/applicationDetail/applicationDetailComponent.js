@@ -8,10 +8,10 @@ import Discussion from '../../containers/discussion/discussionContainer'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import _ from 'lodash'
 var divStyle = {
-  width: '900px',
-  height: '600px',
-  // 'overflowY': 'scroll',
-  // 'overflowX': 'scroll',
+  // width: '900px',
+  // height: '600px',
+  'overflowY': 'scroll',
+  'overflowX': 'scroll',
   'border': '1px solid #000000',
   'background-color': '#FFFFFF'
 }
@@ -193,6 +193,7 @@ export default function Applicationview (props) {
     let outgoingApplicationRelationshipListFn = function () {
       if (outgoing.length > 0) {
         let outgoingElements = []
+        console.log('outgoing', outgoing)
         var outgoingGroup = _.chain(outgoing)
         .groupBy('connection.name')
         .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
@@ -288,14 +289,14 @@ export default function Applicationview (props) {
       <div>
         <div className='row'>
           <div className='col-md-8'>
-            <h2>{applicationName}</h2>
+            <h2>Application: {applicationName}</h2>
           </div>
           <div className='col-md-4 float-right' >
             <span className='pull-right'>
-              <a href='/applications' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='/applications' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='back' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-list-1 fa-2x' />
               </a>&nbsp;&nbsp;
-              <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-multimedia-3 fa-2x' />
               </a>
             </span>

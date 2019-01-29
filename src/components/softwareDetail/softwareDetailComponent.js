@@ -7,10 +7,10 @@ import _ from 'lodash'
 import Discussion from '../../containers/discussion/discussionContainer'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 var divStyle = {
-  width: '900px',
-  height: '600px',
-  // 'overflowY': 'scroll',
-  // 'overflowX': 'scroll',
+  // width: '900px',
+  // height: '600px',
+  'overflowY': 'scroll',
+  'overflowX': 'scroll',
   'border': '1px solid #000000',
   'background-color': '#FFFFFF'
 }
@@ -284,10 +284,10 @@ export default function Softwareview (props) {
       <div>
         <div className='row'>
           <div className='col-md-9'>
-            <h2>{softwareName}</h2>
+            <h2>Software: {softwareName}</h2>
           </div>
           <div className='col-md-3 float-right'>
-            <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
               <i className='fa flaticon-multimedia-3 fa-2x' />
             </a>
           </div>

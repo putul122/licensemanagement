@@ -460,10 +460,10 @@ export default function Suppliers (props) {
       <div>
         <div className='row'>
           <div className='col-md-10'>
-            <h2>{supplierName}</h2>
+            <h2>Supplier: {supplierName}</h2>
           </div>
           <div className='col-md-2 float-right'>
-            <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
               <i className='fa flaticon-multimedia-3 fa-2x' />
             </a>
           </div>
@@ -713,7 +713,7 @@ export default function Suppliers (props) {
                         <div className='m-section__content'>
                           <div className='m-demo'>
                             <div className='m-demo__preview'>
-                              {!props.supplierPropertySettings.isEditFlag && (<a href='javascript:void(0);' onClick={editSuppliersProperty} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'><i className='fa flaticon-edit-1 fa-2x' /></a>)}
+                              {!props.supplierPropertySettings.isEditFlag && (<a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Property' onClick={editSuppliersProperty} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'><i className='fa flaticon-edit-1 fa-2x' /></a>)}
                               <div className='m-list-search'>
                                 <div className='m-list-search__results'>
                                   <div className='m-widget13'>

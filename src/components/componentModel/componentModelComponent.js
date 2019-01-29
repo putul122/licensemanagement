@@ -353,6 +353,8 @@ class ComponentModelComponent extends React.Component {
                 let nodeData = nextProps.relationships
                 let leftCordinates = []
                 let rightCordinates = []
+                let rightColumn = 0
+                let leftColumn = 0
                 let topCordinates = []
                 let downCordinates = []
                 var linkArray = []
@@ -441,18 +443,19 @@ class ComponentModelComponent extends React.Component {
                             let leftLength = leftCordinates.length
                             if (leftLength < 1) {
                                 let cor = {
-                                    x: 10,
+                                    x: 10 - (leftColumn * 150),
                                     y: 300
                                     }
                                 leftCordinates.push(cor)
                                 node.x = cor.x
                                 node.y = cor.y
                             } else {
+                                leftColumn = Math.floor(leftLength / 5)
                                 let prevCor = leftCordinates[leftLength - 1]
                                 if (typeof prevCor !== 'undefined') {
                                     let cor = {
-                                        x: 10,
-                                        y: prevCor.y + 100
+                                        x: 10 - (leftColumn * 150),
+                                        y: (prevCor.y + 100 < 800) ? prevCor.y + 100 : 300
                                         }
                                     leftCordinates.push(cor)
                                     node.x = cor.x
@@ -464,18 +467,19 @@ class ComponentModelComponent extends React.Component {
                             let rightLength = rightCordinates.length
                             if (rightLength < 1) {
                                 let cor = {
-                                    x: 800,
+                                    x: 800 + (rightColumn * 150),
                                     y: 300
                                     }
                                 rightCordinates.push(cor)
                                 node.x = cor.x
                                 node.y = cor.y
                             } else {
+                                rightColumn = Math.floor(rightLength / 5)
                                 let prevCor = rightCordinates[rightLength - 1]
                                 if (typeof prevCor !== 'undefined') {
                                     let cor = {
-                                        x: 800,
-                                        y: prevCor.y + 100
+                                        x: 800 + (rightColumn * 120),
+                                        y: (prevCor.y + 100 < 800) ? prevCor.y + 100 : 300
                                     }
                                     rightCordinates.push(cor)
                                     node.x = cor.x

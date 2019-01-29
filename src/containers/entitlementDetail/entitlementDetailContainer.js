@@ -106,6 +106,19 @@ export default compose(
       this.props.fetchEntitlementRelationships && this.props.fetchEntitlementRelationships(payload)
       this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
     },
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      var tooltips = $('.tooltip').not('.in')
+      if (tooltips) {
+        tooltips.remove()
+      }
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
@@ -114,7 +127,7 @@ export default compose(
       }
       if (nextProps.entitlement && nextProps.entitlement !== this.props.entitlement) {
         // eslint-disable-next-line
-        mApp && mApp.unblockPage()
+        // mApp && mApp.unblockPage()
         if (nextProps.entitlement.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.entitlement.error_message, nextProps.entitlement.error_code)
@@ -167,6 +180,11 @@ export default compose(
       if (nextProps.entitlementRelationships && nextProps.entitlementRelationships !== this.props.entitlementRelationships) {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
+        if (nextProps.entitlementRelationships.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.entitlementRelationships.error_message, nextProps.entitlementRelationships.error_code)
+          this.props.history.push('/entitlements')
+        }
       }
       if (nextProps.relationshipActionSettings && nextProps.relationshipActionSettings !== this.props.relationshipActionSettings) {
         if (nextProps.relationshipActionSettings.isModalOpen) {

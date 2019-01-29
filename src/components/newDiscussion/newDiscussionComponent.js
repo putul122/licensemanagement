@@ -190,7 +190,7 @@ return (
         <div className=''>
           <div className='modal-content'>
             <div className='modal-header'>
-              <h6>New Discussion</h6>
+              <h6>Initiate Discussion</h6>
               <button type='button' onClick={closeDiscussionModal} className='close' data-dismiss='modal' aria-label='Close'>
                 <span aria-hidden='true'>×</span>
               </button>

@@ -591,7 +591,7 @@ return (
   <div>
     <div className='row'>
       <div className='col-md-8'>
-        {!props.isEditComponent && (<h2>{ProjectName}</h2>)}
+        {!props.isEditComponent && (<h2>Project: {ProjectName}</h2>)}
         {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
           <input type='text' className='form-control m-input' onChange={editProjectName} value={ProjectName} placeholder='Project Name' aria-describedby='basic-addon2' />
           </div>)}
@@ -599,13 +599,13 @@ return (
       {!props.isEditComponent && (
       <div className='col-md-4 float-right' >
         <span className='pull-right'>
-          <a href='javascript:void(0);' onClick={updateProjectData} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Project' onClick={updateProjectData} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
             <i className='fa flaticon-edit-1 fa-2x' />
           </a>&nbsp;&nbsp;
-          <a href='javascript:void(0);' onClick={openDeleteProjectModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Delete Project' onClick={openDeleteProjectModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
             <i className='fa flaticon-delete-1 fa-2x' />
           </a>&nbsp;&nbsp;
-          <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
             <i className='fa flaticon-multimedia-3 fa-2x' />
           </a>
         </span>
@@ -748,7 +748,7 @@ return (
                 </div>
               </div>
               <div className='m-portlet__head-tools'>
-                <a href='javascript:void(0);' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                   <i className='fa flaticon-app fa-2x' />
                 </a>
                 {/* <button type='button' className='btn btn-outline-info btn-sm' onClick={openLinkEntitlementModal}>Link Entitlement</button> */}

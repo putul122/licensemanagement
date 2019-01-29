@@ -31,6 +31,7 @@ export default function ComponentModalView (props) {
     let componentTypeComponentRelationships = props.componentTypeComponentRelationships
     let modelRelationshipData = ''
     let startNode = {}
+    let componentName = ''
     let parentComponentRelationshipList = ''
     let outgoingComponentRelationshipList = ''
     let incomingComponentRelationshipList = ''
@@ -59,6 +60,7 @@ export default function ComponentModalView (props) {
       if (props.componentTypeComponentData.error_code === null) {
         startNode.name = props.componentTypeComponentData.resources[0].name
         startNode.title = props.componentTypeComponentData.resources[0].name
+        componentName = props.componentTypeComponentData.resources[0].name
       }
     }
     // Display Component Properties
@@ -335,7 +337,7 @@ export default function ComponentModalView (props) {
           <div className=''>
             <div className='modal-content'>
               <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'>{'View Component'}</h4>
+                <h4 className='modal-title' id='exampleModalLabel'>{componentName}</h4>
                 <button type='button' onClick={closeModal} className='btn btn-sm btn-outline-info' data-dismiss='modal' aria-label='Close'>Close</button>
               </div>
               <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>

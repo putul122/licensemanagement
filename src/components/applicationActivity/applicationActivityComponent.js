@@ -65,7 +65,7 @@ export default function ApplicationActivity (props) {
               }
               if (parts[1] === 'Mention') {
                 let messageParts = testMessage.split(match)
-                messageArrayBlock.push((<span>{messageParts[0]}</span>))
+                messageArrayBlock.push((<span key={'m' + i + 'ma' + index}>{messageParts[0]}</span>))
                 messageArrayBlock.push((<a href='javascript:void(0);' className='search-term-match'>{'@' + parts[0]}</a>))
                 if (messageParts[1].match(/\[(.*?)\]/g) === null) {
                   messageArrayBlock.push((<span>{messageParts[1]}</span>))

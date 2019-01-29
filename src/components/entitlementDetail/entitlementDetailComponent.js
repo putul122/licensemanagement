@@ -15,10 +15,10 @@ ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
 const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
 var divStyle = {
-  width: '900px',
-  height: '600px',
-  // 'overflowY': 'scroll',
-  // 'overflowX': 'scroll',
+  // width: '900px',
+  // height: '600px',
+  'overflowY': 'scroll',
+  'overflowX': 'scroll',
   'border': '1px solid #000000',
   'background-color': '#FFFFFF'
 }
@@ -1157,7 +1157,7 @@ export default function EntitlementDetail (props) {
       <div>
         <div className='row'>
           <div className='col-md-8'>
-            {!props.isEditComponent && (<h2>{entitlementName}</h2>)}
+            {!props.isEditComponent && (<h2>Entitlement: {entitlementName}</h2>)}
             {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
               <input type='text' className='form-control m-input' onChange={editEntitlementName} value={entitlementName} placeholder='Entitlement Name' aria-describedby='basic-addon2' />
               </div>)}
@@ -1169,16 +1169,16 @@ export default function EntitlementDetail (props) {
           {!props.isEditComponent && (
           <div className='col-md-4 float-right' >
             <span className='pull-right'>
-              <a href='/entitlements' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='/entitlements' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='back' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-list-1 fa-2x' />
               </a>&nbsp;&nbsp;
-              <a href='javascript:void(0);' onClick={updateEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Entitlement' onClick={updateEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-edit-1 fa-2x' />
               </a>&nbsp;&nbsp;
-              <a href='javascript:void(0);' onClick={deleteEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Delete Entitlement' onClick={deleteEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-delete-1 fa-2x' />
               </a>&nbsp;&nbsp;
-              <a href='javascript:void(0);' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-multimedia-3 fa-2x' />
               </a>
             </span>
@@ -1381,7 +1381,7 @@ export default function EntitlementDetail (props) {
                   <div className='row'>
                     <div className='col-6' />
                     <div className='col-6 float-right'>
-                      <a href='javascript:void(0);' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+                      <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Relationship' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
                         <i className='fa flaticon-add fa-2x' />
                       </a>
                       {/*    */}

@@ -591,7 +591,10 @@ export default function Discussion (props) {
               <div className='row'>
                 <div className='col-6' />
                 <div className='col-6 float-right'>
-                  <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm pull-right'>New Discussion</button>
+                  <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
+                    <i className='fa flaticon-multimedia-3 fa-2x' />
+                  </a>
+                  {/* <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm pull-right'>New Discussion</button> */}
                 </div>
               </div>
               <br />
@@ -603,7 +606,7 @@ export default function Discussion (props) {
         </div>
       </div>
       <ul className='m-nav-sticky' style={{'marginTop': '30px'}}>
-        <li className='m-nav-sticky__item' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Layout Builder'>
+        <li className='m-nav-sticky__item' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Slide to Open'>
           <a href='javsscript:void(0);' onClick={openSlide}><i className='la la-angle-double-left' /></a>
         </li>
       </ul>

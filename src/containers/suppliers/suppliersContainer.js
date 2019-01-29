@@ -54,6 +54,8 @@ export default compose(
     },
     componentDidMount: function () {
       // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+      // eslint-disable-next-line
       mApp && mApp.block('#supplierSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // eslint-disable-next-line
       mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})

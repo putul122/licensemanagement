@@ -71,9 +71,20 @@ export default compose(
     },
     componentDidMount: function () {
       // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+      // eslint-disable-next-line
       mApp && mApp.block('#entitlementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // eslint-disable-next-line
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      var tooltips = $('.tooltip').not('.in')
+      if (tooltips) {
+        tooltips.remove()
+      }
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {

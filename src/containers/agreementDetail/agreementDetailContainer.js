@@ -110,7 +110,16 @@ export default compose(
     },
     componentDidMount: function () {
       // eslint-disable-next-line
-      // mApp && mApp.block('#supplier', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      var tooltips = $('.tooltip').not('.in')
+      if (tooltips) {
+        tooltips.remove()
+      }
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
       let payload = {

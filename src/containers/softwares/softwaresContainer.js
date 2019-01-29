@@ -52,10 +52,16 @@ export default compose(
       this.props.fetchSoftwaresSummary && this.props.fetchSoftwaresSummary()
     },
     componentDidMount: function () {
-       // eslint-disable-next-line
-       mApp && mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-       // eslint-disable-next-line
-       mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+      // eslint-disable-next-line
+      mApp && mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
