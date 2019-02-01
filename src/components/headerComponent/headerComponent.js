@@ -89,7 +89,7 @@ export default function HeaderComponent (props) {
     }
     return (
       <div>
-        <header id='m_header' className='m-grid__item    m-header ' m-minimize-offset='200' m-minimize-mobile-offset='200' >
+        <header id='m_header' className='m-grid__item    m-header ' >
           <div className='m-container m-container--fluid m-container--full-height'>
             <div className='m-stack m-stack--ver m-stack--desktop'>
               <div className='m-stack__item m-brand '>

@@ -26,6 +26,7 @@ export const propsMapping: Callbacks = {
   fetchModelPrespectives: sagaActions.modelActions.fetchModelPrespectives,
   updateModelPrespectives: sagaActions.modelActions.updateModelPrespectives,
   fetchAllModelPrespectives: sagaActions.modelActions.fetchAllModelPrespectives,
+  updateAllModelPrespectives: sagaActions.modelActions.updateAllModelPrespectives,
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
   setModalSetting: actionCreators.setModalSetting,
@@ -75,7 +76,6 @@ export default compose(
         }
         return data
       })
-      console.log('payload', exportAllPayload)
       let modalSettings = {...this.props.modalSettings, 'exportAllPayload': exportAllPayload}
       this.props.setModalSetting(modalSettings)
       // this.props.fetchAllModelPrespectives(payload)
@@ -112,13 +112,19 @@ export default compose(
       if (nextProps.updateMetaModelPerspectiveResponse && nextProps.updateMetaModelPerspectiveResponse !== '') {
         this.props.resetResponse()
         // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // eslint-disable-next-line
         mApp && mApp.unblock('#ModelPerspectiveList')
         let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse, 'apiData': []}
         this.props.setModalSetting(modalSettings)
-        let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.perspective}
-        nextProps.fetchModelPrespectives(payload)
-        // eslint-disable-next-line
-        mApp.block('#ModelPerspectiveList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        if (modalSettings.isConfirmPressed) {
+          if (modalSettings.selectedMetaModel) {
+            let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.perspective}
+            nextProps.fetchModelPrespectives(payload)
+            // eslint-disable-next-line
+            mApp.block('#ModelPerspectiveList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          }
+        }
       }
       if (nextProps.exportAllData && nextProps.exportAllData !== '') {
         // eslint-disable-next-line

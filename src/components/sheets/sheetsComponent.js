@@ -42,6 +42,7 @@ export default function Sheets (props) {
   let importWrapperClass = ''
   let messageList = ''
   let uploadFile = ''
+  let style = {}
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -58,11 +59,16 @@ export default function Sheets (props) {
       mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let modalSettings = {...props.modalSettings}
       let exportAllPayload = modalSettings.exportAllPayload
+      console.log('exportAllPayload', exportAllPayload)
       props.fetchAllModelPrespectives(exportAllPayload)
     }
   }
   let openExportAllModal = function () {
     let modalSettings = {...props.modalSettings, 'isExportAllModalOpen': true, 'enterFileName': '', 'exportValidationClass': 'form-group m-form__group row'}
+    props.setModalSetting(modalSettings)
+  }
+  let openImportAllModal = function () {
+    let modalSettings = {...props.modalSettings, 'isImportAllModalOpen': true, 'isImportButtonEnabled': false}
     props.setModalSetting(modalSettings)
   }
   let openExportModal = function () {
@@ -235,6 +241,43 @@ export default function Sheets (props) {
       console.log('file', e)
     }
   }
+  let handleImportAllFile = function (e) {
+    let files = e.target.files
+    if (files.length > 0) {
+      let fileType = files[0].type
+      if (fileType === 'application/vnd.ms-excel' || fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        let formData = new FormData()
+        formData.append('file', files[0])
+        console.log('formData', formData)
+        console.log('files', files)
+        let modalSettings = {...props.modalSettings, 'formData': formData, 'isImportButtonEnabled': true}
+        props.setModalSetting(modalSettings)
+      } else {
+        alert('file type not supported')
+        uploadFile.value = ''
+        return false
+      }
+    } else {
+      console.log('file', e)
+    }
+  }
+  let ImportAllData = function () {
+    // let fileName = props.modalSettings.enterFileName
+    // if (fileName.trim() === '') {
+    //   let modalSettings = {...props.modalSettings, 'exportValidationClass': 'form-group m-form__group row has-danger'}
+    //   props.setModalSetting(modalSettings)
+    // } else {
+    //   // eslint-disable-next-line
+    //   mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let modalSettings = {...props.modalSettings}
+    let payload = {}
+    payload.queryPart = modalSettings.exportAllPayload
+    payload.formData = modalSettings.formData
+    props.updateAllModelPrespectives(payload)
+    // }
+  }
   if (props.modalSettings.selectedMetaModel) {
     disabledClass = ''
     wrapperClass = ''
@@ -260,7 +303,7 @@ export default function Sheets (props) {
     }
   }
   let closeModal = function () {
-    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false, 'isImportModalOpen': false, 'isExportAllModalOpen': false, 'updateResponse': null}
+    let modalSettings = {...props.modalSettings, 'isExportModalOpen': false, 'isImportModalOpen': false, 'isExportAllModalOpen': false, 'isImportAllModalOpen': false, 'updateResponse': null, 'isConfirmPressed': false}
     props.setModalSetting(modalSettings)
   }
   let exportToSheet = function () {
@@ -402,10 +445,63 @@ export default function Sheets (props) {
       }
     }
     let payload = {}
-    payload.metaModelPerspectiveId = props.modalSettings.selectedMetaModel.perspective
-    payload.data = patchPayload
+    // payload.metaModelPerspectiveId = props.modalSettings.selectedMetaModel.perspective
+    payload.queryString = {}
+    payload.queryString.meta_model_perspective_id = props.modalSettings.selectedMetaModel.perspective
+    payload.queryString.apply_changes = false
+    let newPatch = {}
+    newPatch[props.modalSettings.selectedMetaModel.perspective] = patchPayload
+    payload.data = newPatch
     console.log('payload', payload)
     props.updateModelPrespectives(payload)
+  }
+  let confirmChanges = function () {
+    let modalSettings = {...props.modalSettings, 'isConfirmPressed': true}
+    props.setModalSetting(modalSettings)
+    if (props.modalSettings.updateResponse !== null) {
+      let responselength = props.modalSettings.updateResponse.length
+      if (responselength > 0) {
+        if (props.modalSettings.updateResponse[responselength - 1].error_code === null && props.modalSettings.updateResponse[responselength - 1].message === null) {
+          // eslint-disable-next-line
+          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          let payload = {}
+          // payload.metaModelPerspectiveId = props.modalSettings.selectedMetaModel.perspective
+          payload.queryString = {}
+          payload.queryString.meta_model_perspective_id = props.modalSettings.selectedMetaModel.perspective
+          payload.queryString.apply_changes = true
+          payload.data = props.modalSettings.updateResponse[responselength - 1].patch
+          console.log('payload', payload)
+          props.updateModelPrespectives(payload)
+        }
+      }
+    }
+  }
+  let confirmImportAllChanges = function () {
+    let modalSettings = {...props.modalSettings, 'isConfirmPressed': true}
+    props.setModalSetting(modalSettings)
+    if (props.modalSettings.updateResponse !== null) {
+      let responselength = props.modalSettings.updateResponse.length
+      if (responselength > 0) {
+        if (props.modalSettings.updateResponse[responselength - 1].error_code === null && props.modalSettings.updateResponse[responselength - 1].message === null) {
+          // eslint-disable-next-line
+          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          let appPackage = JSON.parse(localStorage.getItem('packages'))
+          let perspectives = appPackage.resources[0].perspectives
+          let exportAllPayload = {}
+          perspectives.forEach(function (data, index) {
+            exportAllPayload['meta_model_perspective_id[' + index + ']'] = data.perspective
+          })
+          let payload = {}
+          payload.queryString = exportAllPayload
+          // payload.queryString.meta_model_perspective_id = props.modalSettings.selectedMetaModel.perspective
+          payload.queryString.apply_changes = true
+          // payload.queryPart = props.modalSettings.exportAllPayload + 'apply_changes=true'
+          payload.data = props.modalSettings.updateResponse[responselength - 1].patch
+          console.log('payload', payload)
+          props.updateModelPrespectives(payload)
+        }
+      }
+    }
   }
   let handleSelect = function (newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
@@ -476,8 +572,10 @@ export default function Sheets (props) {
     if (props.modelPrespectives !== '') {
       let labelParts = props.metaModelPerspective.resources[0].parts
       if (props.modelPrespectives.length > 0) {
+        // console.log('props.modelPrespectives', props.modelPrespectives)
         modelPrespectivesList = props.modelPrespectives.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           let childList = []
+          // console.log('data', data)
           if (data.parts) {
             data.parts.forEach(function (partData, ix) {
               let value
@@ -495,19 +593,19 @@ export default function Sheets (props) {
                   value = partData.value || ''
                 }
               } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
-                value = partData.value !== null ? partData.value.int_value : ''
+                value = (partData && partData.value !== null) ? partData.value.int_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-                value = partData.value !== null ? partData.value.float_value : ''
+                value = (partData && partData.value !== null) ? partData.value.float_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-                value = partData.value !== null ? partData.value.text_value : ''
+                value = (partData && partData.value !== null) ? partData.value.text_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-                value = partData.value !== null ? partData.value.date_time_value : ''
+                value = (partData && partData.value !== null) ? partData.value.date_time_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-                value = partData.value !== null ? partData.value.boolean_value : ''
+                value = (partData && partData.value !== null) ? partData.value.boolean_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'List') {
-                value = partData.value !== null ? partData.value.value_set_value : ''
+                value = (partData && partData.value !== null) ? partData.value.value_set_value : ''
               } else {
-                value = partData.value !== null ? partData.value.other_value : ''
+                value = (partData && partData.value !== null) ? partData.value.other_value : ''
               }
               childList.push(<td className='' key={'ch_' + index + '_' + ix}>{value}</td>)
             })
@@ -587,7 +685,13 @@ export default function Sheets (props) {
     if (props.modalSettings.updateResponse.length > 0) {
       messageList = props.modalSettings.updateResponse.map(function (data, index) {
         if (data.error_code === null) {
-          return (<li key={index}>{data.message}</li>)
+          if (data.message != null) {
+            return (<li key={index}>{data.message}</li>)
+          } else {
+            if (props.modalSettings.updateResponse.length === 1) {
+              return (<li key={99}>{'No changes in data to update'}</li>)
+            }
+          }
         } else {
           return (<li key={index}>{'Error Code: ' + data.error_code + 'Message: ' + data.error_message}</li>)
         }
@@ -598,6 +702,11 @@ export default function Sheets (props) {
         <li key={0}>{'No changes in data to update'}</li>
       ))
     }
+  }
+  if (props.modalSettings.updateResponse !== null) {
+    style = {'height': 'calc(60vh - 55px)', 'overflow': 'auto'}
+  } else {
+    style = {}
   }
 return (
   <div>
@@ -617,7 +726,7 @@ return (
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
                       <div className='row' style={{'marginBottom': '20px'}}>
-                        <div className='col-sm-12 col-md-7'>
+                        <div className='col-sm-12 col-md-6'>
                           <div className='' id='' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Select</h5>
                             <Select
@@ -632,12 +741,19 @@ return (
                             />
                           </div>
                         </div>
-                        <div className='col-sm-12 col-md-5 pull-left'>
-                          <span className={'pull-left ' + wrapperClass}>
-                            <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='fa flaticon-folder-2' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='fa flaticon-folder-3' />&nbsp;&nbsp;Import</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                          </span>
-                          <button type='button' onClick={openExportAllModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info '}><i className='fa flaticon-download' />&nbsp;&nbsp;Export All</button>
+                        <div className='col-sm-12 col-md-6'>
+                          <div className='row'>
+                            <div className='col-6'>
+                              <span className={wrapperClass}>
+                                <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='flaticon-folder-2' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='flaticon-folder-3' />&nbsp;&nbsp;Import</button>
+                              </span>
+                            </div>
+                            <div className='col-6'>
+                              <button type='button' onClick={openExportAllModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info '}><i className='flaticon-download' />&nbsp;&nbsp;Export All</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                              <button type='button' onClick={openImportAllModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info '}><i className='flaticon-up-arrow' />&nbsp;&nbsp;Import All</button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       {props.modalSettings.selectedMetaModel !== null && (<div className='row' style={{'marginBottom': '20px'}}>
@@ -766,7 +882,8 @@ return (
             <div className='modal-content'>
               <div className='modal-header'>
                 {props.modalSettings.updateResponse === null && (<h4 className='modal-title' id='exampleModalLabel'>Import from Excel sheet</h4>)}
-                {props.modalSettings.updateResponse !== null && (<h4 className='modal-title' id='exampleModalLabel'>Import Report</h4>)}
+                {props.modalSettings.updateResponse !== null && !props.modalSettings.isConfirmPressed && (<h4 className='modal-title' id='exampleModalLabel'>Import Report: changes to be applied</h4>)}
+                {props.modalSettings.updateResponse !== null && props.modalSettings.isConfirmPressed && (<h4 className='modal-title' id='exampleModalLabel'>Import Report: changes has been applied</h4>)}
                 <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
@@ -786,8 +903,18 @@ return (
                 </div>
               </div>
               <div className={'modal-footer ' + importWrapperClass} >
-                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Close</button>
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
+                      {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className={'m-btn btn btn-secondary ' + importDisabledClass} >Import</button>)}
+                      {(props.modalSettings.updateResponse !== null && props.modalSettings.updateResponse.length > 1 && !props.modalSettings.isConfirmPressed) && (<button onClick={confirmChanges} className={'m-btn btn btn-secondary' + 'importDisabledClass'} >Confirm</button>)}
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Close</button>
                 {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className={'btn btn-outline-info btn-sm ' + importDisabledClass} >Import</button>)}
+                {(props.modalSettings.updateResponse !== null && props.modalSettings.updateResponse.length > 1 && !props.modalSettings.isConfirmPressed) && (<button onClick={confirmChanges} className={'btn btn-outline-info btn-sm ' + 'importDisabledClass'} >Confirm</button>)} */}
               </div>
             </div>
           </div>
@@ -828,6 +955,55 @@ return (
                 </div>
                 {/* <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
                 <button onClick={exportAllToSheet} className='btn btn-outline-info btn-sm' >Export All</button> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ReactModal>
+      <ReactModal isOpen={props.modalSettings.isImportAllModalOpen}
+        onRequestClose={closeModal}
+        className='modal-dialog'
+        style={{'content': {'top': '20%'}}}
+        >
+        {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+        <div className={''}>
+          <div className=''>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                {props.modalSettings.updateResponse === null && (<h4 className='modal-title' id='exampleModalLabel'>Import All from Excel sheet</h4>)}
+                {props.modalSettings.updateResponse !== null && !props.modalSettings.isConfirmPressed && (<h4 className='modal-title' id='exampleModalLabel'>Import Report: changes to be applied</h4>)}
+                {props.modalSettings.updateResponse !== null && props.modalSettings.isConfirmPressed && (<h4 className='modal-title' id='exampleModalLabel'>Import Report: changes has been applied</h4>)}
+                <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                  <span aria-hidden='true'>×</span>
+                </button>
+              </div>
+              <div className='modal-body' style={style}>
+                <div className='col-md-12'>
+                  {/* {messageBlock} */}
+                  {props.modalSettings.updateResponse === null && (<div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Select File</label>
+                    <div className='col-8'>
+                      <input className='form-control m-input' type='file' onChange={handleImportAllFile} ref={input => (uploadFile = input)} placeholder='Select File to import' id='example-userName-input' />
+                    </div>
+                  </div>)}
+                  {props.modalSettings.updateResponse !== null && (<ul className=''>
+                    {messageList}
+                  </ul>)}
+                </div>
+              </div>
+              <div className={'modal-footer ' + importWrapperClass} >
+                <div className='row'>
+                  <div className='col-md-6'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
+                      {props.modalSettings.updateResponse === null && (<button onClick={ImportAllData} className={'m-btn btn btn-secondary ' + importDisabledClass} >Import</button>)}
+                      {(props.modalSettings.updateResponse !== null && props.modalSettings.updateResponse.length > 1 && !props.modalSettings.isConfirmPressed) && (<button onClick={confirmImportAllChanges} className={'m-btn btn btn-secondary' + 'importDisabledClass'} >Confirm</button>)}
+                    </div>
+                  </div>
+                </div>
+                {/* <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Close</button>
+                {props.modalSettings.updateResponse === null && (<button onClick={ImportAllData} className={'btn btn-outline-info btn-sm ' + importDisabledClass} >Import All</button>)}
+                {(props.modalSettings.updateResponse !== null && props.modalSettings.updateResponse.length > 1 && !props.modalSettings.isConfirmPressed) && (<button onClick={confirmImportAllChanges} className={'btn btn-outline-info btn-sm ' + importDisabledClass} >Confirm</button>)} */}
               </div>
             </div>
           </div>

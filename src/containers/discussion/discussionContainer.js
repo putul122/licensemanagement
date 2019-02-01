@@ -21,7 +21,8 @@ export function mapStateToProps (state, props) {
     newMessage: state.discussionReducer.newMessage,
     replySettings: state.discussionReducer.replySettings,
     createMessageResponse: state.discussionReducer.createMessageResponse,
-    isAccordianOpen: state.discussionReducer.isAccordianOpen
+    isAccordianOpen: state.discussionReducer.isAccordianOpen,
+    isDiscussionMessagesApiCalled: state.discussionReducer.isDiscussionMessagesApiCalled
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -38,7 +39,8 @@ export const propsMapping: Callbacks = {
   setMessageData: actionCreators.setMessageData,
   setReplySettings: actionCreators.setReplySettings,
   setAccordianOpenFlag: actionCreators.setAccordianOpenFlag,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  readNewMessages: actionCreators.readNewMessages
 }
 
 // If you want to use the function mapping
@@ -47,6 +49,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
@@ -109,6 +129,15 @@ export default compose(
             id: this.props.discussionId
           }
           this.props.fetchDiscussionMessages && this.props.fetchDiscussionMessages(payload)
+        }
+      }
+      if (nextProps.discussionMessages && nextProps.discussionMessages !== '' && nextProps.isDiscussionMessagesApiCalled) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#m_quick_sidebar_tabs_messenger')
+        this.props.readNewMessages(true)
+        if (nextProps.discussionMessages.error_code != null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.discussionMessages.error_message, nextProps.discussionMessages.error_code)
         }
       }
     }

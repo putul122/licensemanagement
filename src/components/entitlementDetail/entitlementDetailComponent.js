@@ -447,7 +447,7 @@ export default function EntitlementDetail (props) {
         let relationshipActionSettings = {...props.relationshipActionSettings}
         relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
         relationshipActionSettings.relationshipId = element.target_component.id
-        return (<span className='row' style={{'padding': '5px'}}>
+        return (<span className='row' key={'parent' + i} style={{'padding': '5px'}}>
           <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
           <div className='dropdown pull-right col-md-2'>
             <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -463,7 +463,7 @@ export default function EntitlementDetail (props) {
         </span>)
       })
       return (
-        <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+        <div className='m-accordion__item' key={'parent_accord'} style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
             <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
@@ -486,7 +486,7 @@ export default function EntitlementDetail (props) {
         let relationshipActionSettings = {...props.relationshipActionSettings}
         relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
         relationshipActionSettings.relationshipId = element.target_component.id
-        return (<span className='row' style={{'padding': '5px'}}>
+        return (<span className='row' key={'child' + i} style={{'padding': '5px'}}>
           <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
           <div className='dropdown pull-right col-md-2'>
             <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -502,7 +502,7 @@ export default function EntitlementDetail (props) {
         </span>)
       })
       return (
-        <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+        <div className='m-accordion__item' key={'child_accord'} style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
             <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
@@ -538,7 +538,7 @@ export default function EntitlementDetail (props) {
                 relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
                 relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                  return (<span className='row' style={{'padding': '5px'}}>
+                  return (<span className='row' key={'outgoing' + i} style={{'padding': '5px'}}>
                     <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
                     <div className='dropdown pull-right col-md-2'>
                       <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -555,7 +555,7 @@ export default function EntitlementDetail (props) {
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 outgoingElements.push(
-                  <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+                  <div className='m-accordion__item' key={'outgoing_accord'} style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#outgoing_accordion_body' + outerKey + '-' + innerKey} aria-expanded='false'>
                       <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                       <span className='m-accordion__item-mode' />
@@ -596,7 +596,7 @@ export default function EntitlementDetail (props) {
                 relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
                 relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                  return (<span className='row' style={{'padding': '5px'}}>
+                  return (<span className='row' key={'incoming' + i} style={{'padding': '5px'}}>
                     <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
                     <div className='dropdown pull-right col-md-2'>
                       <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -613,7 +613,7 @@ export default function EntitlementDetail (props) {
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 incomingElements.push(
-                  <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+                  <div className='m-accordion__item' key={'incoming_accord'} style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
                       <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                       <span className='m-accordion__item-mode' />

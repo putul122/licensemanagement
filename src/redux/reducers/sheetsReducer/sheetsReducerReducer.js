@@ -3,7 +3,8 @@ import {
   FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
   FETCH_MODEL_PRESPECTIVES_SUCCESS,
   UPDATE_MODEL_PRESPECTIVES_SUCCESS,
-  FETCH_ALL_MODEL_PRESPECTIVES_SUCCESS
+  FETCH_ALL_MODEL_PRESPECTIVES_SUCCESS,
+  UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS
 } from '../../sagas/model/modelSaga'
 const SET_CURRENT_PAGE = 'sheetsReducer/SET_CURRENT_PAGE'
 const RESET_RESPONSE = 'sheetsReducer/RESET_RESPONSE'
@@ -17,6 +18,7 @@ export const actions = {
   SET_CURRENT_PAGE,
   FETCH_MODEL_PRESPECTIVES_SUCCESS,
   FETCH_ALL_MODEL_PRESPECTIVES_SUCCESS,
+  UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS,
   RESET_RESPONSE,
   SET_PER_PAGE,
   SET_PERSPECTIVES_DATA,
@@ -46,6 +48,7 @@ export const initialState = {
    perspectives: [],
    modalSettings: {
     isExportAllModalOpen: false,
+    isImportAllModalOpen: false,
     isExportModalOpen: false,
     isImportModalOpen: false,
     selectedMetaModel: null,
@@ -57,7 +60,9 @@ export const initialState = {
     isFileLoading: false,
     isImportButtonEnabled: false,
     exportValidationClass: 'form-group m-form__group row',
-    exportAllPayload: ''
+    exportAllPayload: '',
+    isConfirmPressed: false,
+    formData: null
   }
 }
 
@@ -98,6 +103,10 @@ export default handleActions(
       modalSettings: action.payload
     }),
     [UPDATE_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
+      ...state,
+      updateMetaModelPerspectiveResponse: action.payload
+    }),
+    [UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
       ...state,
       updateMetaModelPerspectiveResponse: action.payload
     }),

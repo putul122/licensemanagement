@@ -13,6 +13,57 @@ export default function ApplicationActivity (props) {
   let activityMessages = props.activityMessages.resources ? props.activityMessages.resources : ''
   let activityMessagesList = ''
   let componentId = props.componentId
+  let currentPage = props.currentPage
+  let nextClass = ''
+  let previousClass = ''
+  let totalNoPages = 5
+  let loadMoreMessages = function (event) {
+    event.preventDefault()
+    let payload = {
+      'page_size': 100 * (currentPage + 1),
+      'page': 1
+    }
+    props.activityMessage(payload)
+    // eslint-disable-next-line
+    mApp.block('#ActivityFeedMessage', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(currentPage + 1)
+    // eslint-disable-next-line
+    // $("html, body").animate({ scrollTop: $("#ActivityFeedMessage").scrollTop() }, 1000)
+  }
+  let handlePrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else {
+      let payload = {
+        'page_size': 100,
+        'page': currentPage - 1
+      }
+      props.activityMessage(payload)
+      // eslint-disable-next-line
+      mApp.block('#ActivityFeedMessage', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage - 1)
+    }
+    // eslint-disable-next-line
+    $("html, body").animate({ scrollTop: $("#ActivityFeedMessage").scrollTop() }, 1000)
+  }
+  let handleNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    } else {
+      let payload = {
+        'page_size': 100,
+        'page': currentPage + 1
+      }
+      props.activityMessage(payload)
+      // eslint-disable-next-line
+      mApp.block('#ActivityFeedMessage', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage + 1)
+    }
+    // eslint-disable-next-line
+    $("html, body").animate({ scrollTop: $("#ActivityFeedMessage").scrollTop() }, 1000)
+  }
   console.log('componentId', componentId, props)
   let parseMessage = function (result) {
     let now = moment()
@@ -145,11 +196,32 @@ export default function ApplicationActivity (props) {
       }
     }
   }
+  if (currentPage === 1) {
+    previousClass = 'm-datatable__pager-link--disabled'
+  }
 
+  if (currentPage === totalNoPages) {
+    nextClass = 'm-datatable__pager-link--disabled'
+  }
   return (
-    <div className={styles.activityline}>
+    <div id='ActivityFeedMessage' className={styles.activityline}>
       <ul>
         {activityMessagesList}
+        <li key={'second_last'} style={liStyle} >
+          <div className='float-right' >
+            <a href='javascript:void(0);' onClick={loadMoreMessages} title='Next' className={'pull-right '} >...<i className='fa	fa-angle-double-down' /></a>
+          </div>
+        </li>
+        <li key={'last'} className='hidden' style={{'display': 'none'}} >
+          <div className='m_datatable m-datatable m-datatable--default'>
+            <div className='m-datatable__pager m-datatable--paging-loaded'>
+              <ul className='m-datatable__pager-nav' style={{width: '100%'}}>
+                <li className='float-left'><a href='javascript:void(0);' onClick={handlePrevious} title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev pull-left ' + previousClass} data-page='4'><i className='la la-angle-left' /></a></li>
+                <li className='float-right'><a href='javascript:void(0);' onClick={handleNext} title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next pull-right ' + nextClass} data-page='4'><i className='la la-angle-right' /></a></li>
+              </ul>
+            </div>
+          </div>
+        </li>
       </ul>
       <ComponentModalView componentId={componentId} />
     </div>
@@ -159,5 +231,6 @@ ApplicationActivity.propTypes = {
   activityMessages: PropTypes.any,
   // eslint-disable-next-line
   notificationReceived: PropTypes.any,
-  componentId: PropTypes.any
+  componentId: PropTypes.any,
+  currentPage: PropTypes.any
 }

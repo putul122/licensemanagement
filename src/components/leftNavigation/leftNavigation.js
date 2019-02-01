@@ -30,65 +30,49 @@ class LeftNavigation extends React.Component {
             <li className={styles.navicon}>
               <a href='/dashboard'>
                 <i className='fa fa-home fa-2x' />
-                <span className={styles.navtext}>
-                 Home
-                </span>
+                <span className={styles.navtext}>Home</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/suppliers'>
                 <i className='fa fa-address-book-o fa-2x' />
-                <span className={styles.navtext}>
-                Suppliers
-                </span>
+                <span className={styles.navtext}>Suppliers</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/agreements'>
                 <i className='fa fa-file-archive-o fa-2x' />
-                <span className={styles.navtext}>
-                Agreements
-                </span>
+                <span className={styles.navtext}>Agreements</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/entitlements'>
                 <i className='fa fa-object-group fa-2x' />
-                <span className={styles.navtext}>
-                Entitlements
-                </span>
+                <span className={styles.navtext}>Entitlements</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/softwares'>
                 <i className='fa fa-snowflake-o fa-2x' />
-                <span className={styles.navtext}>
-                Softwares
-                </span>
+                <span className={styles.navtext}>Softwares</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/applications'>
                 <i className='fa fa-tasks fa-2x' />
-                <span className={styles.navtext}>
-                Applications
-                </span>
+                <span className={styles.navtext}>Applications</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/projects'>
                 <i className='fa fa-file-powerpoint fa-2x' />
-                <span className={styles.navtext}>
-                Projects
-                </span>
+                <span className={styles.navtext}>Projects</span>
               </a>
             </li>
             <li className={styles.navicon}>
               <a href='/sheets'>
                 <i className='fa fa-2x flaticon-interface-11' />
-                <span className={styles.navtext}>
-                Sheets
-                </span>
+                <span className={styles.navtext}>Sheets</span>
               </a>
             </li>
           </ul>

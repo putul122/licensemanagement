@@ -29,7 +29,8 @@ const customStyles = {
     border: 'none',
     background: 'none',
     transform: 'translate(-50%, -50%)',
-    width: '100%'
+    width: '100%',
+    zIndex: 2
   }
 }
 

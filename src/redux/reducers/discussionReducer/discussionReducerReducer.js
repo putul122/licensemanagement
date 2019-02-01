@@ -15,6 +15,7 @@ const SET_FORMATTED_MODEL_DATA = 'DiscussionReducer/SET_FORMATTED_MODEL_DATA'
 const SET_MESSAGE_DATA = 'DiscussionReducer/SET_MESSAGE_DATA'
 const SET_REPLY_SETTINGS = 'DiscussionReducer/SET_REPLY_SETTINGS'
 const SET_ACCORDIAN_OPEN_FLAG = 'DiscussionReducer/SET_ACCORDIAN_OPEN_FLAG'
+const READ_NEW_MESSAGES = 'DiscussionReducer/READ_NEW_MESSAGES'
 
 export const actions = {
   SET_QUICKSLIDE_DISCUSSION,
@@ -26,7 +27,8 @@ export const actions = {
   SET_MESSAGE_DATA,
   SET_REPLY_SETTINGS,
   REPLY_DISCUSSION_MESSAGES_SUCCESS,
-  SET_ACCORDIAN_OPEN_FLAG
+  SET_ACCORDIAN_OPEN_FLAG,
+  READ_NEW_MESSAGES
 }
 
 export const actionCreators = {
@@ -36,7 +38,8 @@ export const actionCreators = {
   setFormattedModelData: createAction(SET_FORMATTED_MODEL_DATA),
   setMessageData: createAction(SET_MESSAGE_DATA),
   setReplySettings: createAction(SET_REPLY_SETTINGS),
-  setAccordianOpenFlag: createAction(SET_ACCORDIAN_OPEN_FLAG)
+  setAccordianOpenFlag: createAction(SET_ACCORDIAN_OPEN_FLAG),
+  readNewMessages: createAction(READ_NEW_MESSAGES)
 }
 
 export const initialState = {
@@ -44,6 +47,7 @@ export const initialState = {
   hideSlideAction: false,
   discussions: '',
   discussionMessages: '',
+  isDiscussionMessagesApiCalled: false,
   discussionId: '',
   isAccordianOpen: false,
   artefactAccounts: '',
@@ -66,6 +70,8 @@ export default handleActions(
     [SET_QUICKSLIDE_DISCUSSION]: (state, action) => ({
       ...state,
       discussionSlide: action.payload
+      // discussionMessages: '',
+      // discussionId: ''
     }),
     [FETCH_DISCUSSIONS_SUCCESS]: (state, action) => ({
       ...state,
@@ -73,11 +79,13 @@ export default handleActions(
     }),
     [FETCH_DISCUSSION_MESSAGES_SUCCESS]: (state, action) => ({
       ...state,
-      discussionMessages: action.payload
+      discussionMessages: action.payload,
+      isDiscussionMessagesApiCalled: true
     }),
     [SET_DISCUSSION_ID]: (state, action) => ({
       ...state,
-      discussionId: action.payload
+      discussionId: action.payload,
+      discussionMessages: ''
     }),
     [FETCH_ACCOUNT_ARTEFACTS_SUCCESS]: (state, action) => ({
       ...state,
@@ -111,6 +119,10 @@ export default handleActions(
     [SET_ACCORDIAN_OPEN_FLAG]: (state, action) => ({
       ...state,
       isAccordianOpen: action.payload
+    }),
+    [READ_NEW_MESSAGES]: (state, action) => ({
+      ...state,
+      isDiscussionMessagesApiCalled: !action.payload
     })
   },
   initialState

@@ -19,6 +19,9 @@ export const UPDATE_MODEL_PRESPECTIVES_FAILURE = 'saga/Model/UPDATE_MODEL_PRESPE
 export const FETCH_ALL_MODEL_PRESPECTIVES = 'saga/Model/FETCH_ALL_MODEL_PRESPECTIVES'
 export const FETCH_ALL_MODEL_PRESPECTIVES_SUCCESS = 'saga/Model/FETCH_ALL_MODEL_PRESPECTIVES_SUCCESS'
 export const FETCH_ALL_MODEL_PRESPECTIVES_FAILURE = 'saga/Model/FETCH_ALL_MODEL_PRESPECTIVES_FAILURE'
+export const UPDATE_ALL_MODEL_PRESPECTIVES = 'saga/Model/UPDATE_ALL_MODEL_PRESPECTIVES'
+export const UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS = 'saga/Model/UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS'
+export const UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE = 'saga/Model/UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE'
 
 export const actionCreators = {
   fetchMetaModelPrespective: createAction(FETCH_META_MODEL_PRESPECTIVE),
@@ -32,7 +35,10 @@ export const actionCreators = {
   updateModelPrespectivesFailure: createAction(UPDATE_MODEL_PRESPECTIVES_FAILURE),
   fetchAllModelPrespectives: createAction(FETCH_ALL_MODEL_PRESPECTIVES),
   fetchAllModelPrespectivesSuccess: createAction(FETCH_ALL_MODEL_PRESPECTIVES_SUCCESS),
-  fetchAllModelPrespectivesFailure: createAction(FETCH_ALL_MODEL_PRESPECTIVES_FAILURE)
+  fetchAllModelPrespectivesFailure: createAction(FETCH_ALL_MODEL_PRESPECTIVES_FAILURE),
+  updateAllModelPrespectives: createAction(UPDATE_ALL_MODEL_PRESPECTIVES),
+  updateAllModelPrespectivesSuccess: createAction(UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS),
+  updateAllModelPrespectivesFailure: createAction(UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE)
 }
 
 export default function * watchModel () {
@@ -40,7 +46,8 @@ export default function * watchModel () {
     takeLatest(FETCH_META_MODEL_PRESPECTIVE, getMetaModelPrespective),
     takeLatest(FETCH_MODEL_PRESPECTIVES, getModelPerspectives),
     takeLatest(UPDATE_MODEL_PRESPECTIVES, updateModelPrespectives),
-    takeLatest(FETCH_ALL_MODEL_PRESPECTIVES, getAllModelPerspectives)
+    takeLatest(FETCH_ALL_MODEL_PRESPECTIVES, getAllModelPerspectives),
+    takeLatest(UPDATE_ALL_MODEL_PRESPECTIVES, updateAllModelPerspectives)
   ]
 }
 
@@ -77,8 +84,10 @@ export function * updateModelPrespectives (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
     const modelPrespectives = yield call(
       axios.patch,
-      api.updateModelPerspectives(action.payload.metaModelPerspectiveId),
-      action.payload.data
+      api.getModelPerspectives,
+      // api.updateModelPerspectives(action.payload.metaModelPerspectiveId),
+      action.payload.data,
+      {params: action.payload.queryString}
     )
     yield put(actionCreators.updateModelPrespectivesSuccess(modelPrespectives.data))
   } catch (error) {
@@ -90,21 +99,34 @@ export function * getAllModelPerspectives (action) {
   try {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
     axios.defaults.headers.common['Accept'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    // axios.defaults.headers.common['accept'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    // axios.defaults.headers.common['responseType'] = 'blob'
-    // let responseType = {}
-    // let headers = {}
-    // headers.accept = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     const modelPrespectives = yield call(
       axios.get,
       api.getAllModelPerspectives(action.payload),
       // {params: action.payload},
       {'responseType': 'blob'}
-      // {headers: headers}
     )
-    console.log('modelPrespectives', modelPrespectives)
     yield put(actionCreators.fetchAllModelPrespectivesSuccess(modelPrespectives.data))
   } catch (error) {
     yield put(actionCreators.fetchAllModelPrespectivesFailure(error))
+  }
+}
+
+export function * updateAllModelPerspectives (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    axios.defaults.headers.common['Accept'] = 'application/json'
+    axios.defaults.headers.common['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    const modelPrespectives = yield call(
+      axios.post,
+      api.getAllModelPerspectives(action.payload.queryPart),
+      action.payload.formData,
+      {'headers': {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }}
+    )
+    console.log('modelPrespectives', modelPrespectives)
+    yield put(actionCreators.updateAllModelPrespectivesSuccess(modelPrespectives.data))
+  } catch (error) {
+    yield put(actionCreators.updateAllModelPrespectivesFailure(error))
   }
 }
