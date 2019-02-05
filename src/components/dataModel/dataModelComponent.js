@@ -47,17 +47,19 @@ function wrap (text, width) {
 
 function forceInitialize (graphData) {
     d3.selectAll('svg > *').remove()
+    let zoom = d3.zoom().on('zoom', zoomed)
     diagramLayout = d3.select('svg')
       .attr('id', 'diagramLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
-      .call(d3.zoom().on('zoom', zoomed))
+      .call(zoom)
       .attr('display', 'block')
       .append('g')
       .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
     function zoomed () {
-        console.log('zooming action')
+        console.log('zooming action', zoom)
+        console.log('zooming action', d3.event.transform)
         diagramLayout.attr('transform', d3.event.transform)
     }
 

@@ -11,7 +11,7 @@ import api from '../../constants'
 import styles from './discussionComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
-const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
+const customStylescrud = { overlay: {zIndex: '1000'}, content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
 
 export default function Discussion (props) {
   console.log('Discussion Components', props)

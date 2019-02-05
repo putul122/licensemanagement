@@ -1,6 +1,5 @@
 import React from 'react'
-// import OneApplication from './mockGetApplication'
-import moment from 'moment'
+// import moment from 'moment'
 import PropTypes from 'prop-types'
 import styles from './applicationDetailComponent.scss'
 import DataModelComponent from '../dataModel/dataModelComponent'
@@ -37,24 +36,20 @@ export default function Applicationview (props) {
   let modelRelationshipData = ''
   let showProperties = props.showTabs.showProperty
   let showRelationships = props.showTabs.showRelationship
-  let applicationProperties = props.applicationProperties.resources
-  console.log('%%%%', applicationProperties)
   let startNode = {}
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
   }
-  let toggleExpandIcon = function (index) {
-    // eslint-disable-next-line
-    let iconClass = $('#expandIcon' + index).attr('class')
-    if (iconClass === 'fa fa-plus') {
-      // eslint-disable-next-line
-      $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
-    } else {
-      // eslint-disable-next-line
-      $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
-    }
+  let handleCheckbox = function (value, data) {
+    let displayIndex = data.displayIndex
+    let applicationRelationshipData = JSON.parse(JSON.stringify(props.applicationRelationshipData))
+    let index = _.findIndex(applicationRelationshipData, {displayIndex: displayIndex})
+    let checkedObject = applicationRelationshipData[index]
+    checkedObject.isDisplay = value
+    applicationRelationshipData[index] = checkedObject
+    props.setApplicationRelationship(applicationRelationshipData)
   }
   let showProperty = function (event) {
     let payload = {'showProperty': ' active show', 'showRelationship': ''}
@@ -71,80 +66,34 @@ export default function Applicationview (props) {
     startNode.name = props.applicationbyId.resources[0].name
     startNode.title = props.applicationbyId.resources[0].name
   }
-  if (props.applicationProperties !== '') {
-    applicationPropertiesList = applicationProperties.map(function (property, index) {
-      let propertyProperties = property.properties
-      let childProperties = propertyProperties.map(function (childProperty, childIndex) {
-        let value
-        // console.log('childProperty', childProperty)
-        if (childProperty.property_type.key === 'Integer') {
-          value = childProperty.int_value
-        } else if (childProperty.property_type.key === 'Decimal') {
-          value = childProperty.float_value
-        } else if (childProperty.property_type.key === 'DateTime') {
-          value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
-        } else if (childProperty.property_type.key === 'Text') {
-          value = childProperty.text_value
-        } else if (childProperty.property_type.key === 'List') {
-          // let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
-          //   option.label = option.name
-          //   option.value = option.id
-          //   return option
-          // })
-          let dvalue = childProperty.value_set_value
-          if (childProperty.value_set_value !== null) {
-            dvalue.label = childProperty.value_set_value.name
-            dvalue.value = childProperty.value_set_value.id
-          }
-          value = childProperty.value_set_value ? childProperty.value_set_value.name : null
-        } else {
-          value = childProperty.other_value
-        }
-        return (
-          <tr key={'child' + childIndex}>
-            <td><span className={styles.labelbold}>{childProperty.name}</span></td>
-            <td><span>{value}</span></td>
-          </tr>
-        )
-      })
+  if (props.applicationProperties.length > 0) {
+    applicationPropertiesList = props.applicationProperties.map(function (data, index) {
       return (
-        // <tbody key={index} className={'col-6'}>
-        //   <tr>
-        //     <td><span className={styles.title}>Type</span></td>
-        //     <td><span className={styles.labelbold}>{property.name}</span></td>
-        //   </tr>
-        //   {childProperties}
-        // </tbody>
-        <tbody key={index} className={'col-6'}>
-          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
-            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
-            <td><span className={styles.labelbold}>{property.name}</span></td>
-          </tr>
-          <tr className='collapse' id={'expand' + index}>
-            <td colSpan='2'>
-              <table>
-                {childProperties}
-              </table>
-            </td>
-          </tr>
-        </tbody>
+        <tr id={'property' + index}>
+          <td><span className={styles.labelbold}>{data.name}</span></td>
+          <td><span className={''}>{data.value}</span></td>
+        </tr>
       )
     })
-    console.log('-------------', applicationPropertiesList)
   }
-  if (props.applicationRelationships && props.applicationRelationships !== '') {
-    modelRelationshipData = props.applicationRelationships.resources
-    let parent = _.filter(props.applicationRelationships.resources, {'relationship_type': 'Parent'})
-    let outgoing = _.filter(props.applicationRelationships.resources, {'relationship_type': 'ConnectFrom'})
+  if (props.applicationRelationshipData && props.applicationRelationshipData !== '') {
+    modelRelationshipData = _.filter(props.applicationRelationshipData, {'isDisplay': true})
+    let parent = _.filter(props.applicationRelationshipData, {'relationship_type': 'Parent'})
+    let outgoing = _.filter(props.applicationRelationshipData, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let incoming = _.filter(props.applicationRelationships.resources, {'relationship_type': 'ConnectTo'})
+    let incoming = _.filter(props.applicationRelationshipData, {'relationship_type': 'ConnectTo'})
     incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let child = _.filter(props.applicationRelationships.resources, {'relationship_type': 'Child'})
+    let child = _.filter(props.applicationRelationshipData, {'relationship_type': 'Child'})
     let parentApplicationRelationshipListFn = function () {
       if (parent.length > 0) {
         let childElementList = parent.map(function (element, i) {
         return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><span>{element.target_component.name}</span></div>
+          <div className='col-md-10'>
+            <span className='pull-left'>{element.target_component.name}</span>
+            <span className='pull-right'>
+              <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+            </span>
+          </div>
         </span>)
       })
       return (
@@ -169,7 +118,12 @@ export default function Applicationview (props) {
       if (child.length > 0) {
         let childElementList = child.map(function (element, i) {
         return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><span>{element.target_component.name}</span></div>
+          <div className='col-md-10'>
+            <span className='pull-left'>{element.target_component.name}</span>
+            <span className='pull-right'>
+              <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+            </span>
+          </div>
         </span>)
       })
       return (
@@ -208,7 +162,12 @@ export default function Applicationview (props) {
                 innerKey++
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><span>{element.target_component.name}</span></div>
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='pull-right'>
+                        <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+                      </span>
+                    </div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
@@ -252,7 +211,12 @@ export default function Applicationview (props) {
                 innerKey++
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><span>{element.target_component.name}</span></div>
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='pull-right'>
+                        <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+                      </span>
+                    </div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
@@ -386,35 +350,6 @@ export default function Applicationview (props) {
         {/* The table structure ends */}
         <div className='row col-sm-12'>
           <div className='col-md-5 m-portlet'>
-            {/* <div className={styles.tabsprops}>
-              <ul className='nav nav-tabs nav-fill' role='tablist'>
-                <li className='nav-item'>
-                  <a className='nav-link active show' data-toggle='tab' href='#m_tabs_3_1'>Properties</a>
-                </li>
-                <li className='nav-item'>
-                  <a className='nav-link' data-toggle='tab' href='#m_tabs_3_2'>Relationships</a>
-                </li>
-              </ul>
-              <div className={styles.tabcontentborder}>
-                <div className='tab-content'>
-                  <div className='tab-pane active' id='m_tabs_3_1' role='tabpanel'>
-                    <div className='col-md-12'>
-                      <table className={'table ' + styles.borderless}>
-                        {applicationPropertiesList}
-                      </table>
-                    </div>
-                  </div>
-                  <div className='tab-pane' id='m_tabs_3_2' role='tabpanel'>
-                    <div className='m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist'>
-                      {parentApplicationRelationshipList}
-                      {outgoingApplicationRelationshipList}
-                      {incomingApplicationRelationshipList}
-                      {childApplicationRelationshipList}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <div className={styles.tabsprops}>
               <ul className='nav nav-tabs' role='tablist'>
                 <li className='nav-item'>
@@ -427,7 +362,9 @@ export default function Applicationview (props) {
               <div className='tab-content'>
                 <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
                   <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
-                    {applicationPropertiesList}
+                    <tbody>
+                      {applicationPropertiesList}
+                    </tbody>
                   </table>
                 </div>
                 <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
@@ -466,6 +403,7 @@ export default function Applicationview (props) {
   match: PropTypes.any,
   applicationbyId: PropTypes.any,
   applicationProperties: PropTypes.any,
-  applicationRelationships: PropTypes.any,
+  // applicationRelationships: PropTypes.any,
+  applicationRelationshipData: PropTypes.any,
   showTabs: PropTypes.any
  }

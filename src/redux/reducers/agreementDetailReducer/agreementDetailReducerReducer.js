@@ -30,6 +30,7 @@ const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'AgreementDetailReducer/EDI
 const SET_ADD_CONNECTION_SETTINGS = 'AgreementDetailReducer/SET_ADD_CONNECTION_SETTINGS'
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'AgreementDetailReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
 const SET_CURRENT_PAGE = 'AgreementDetailReducer/SET_CURRENT_PAGE'
+const SET_VALIDATION_PROPERTY = 'AgreementDetailReducer/SET_VALIDATION_PROPERTY'
 
 export const actions = {
     FETCH_AGREEMENT_BY_ID_SUCCESS,
@@ -53,7 +54,8 @@ export const actions = {
     DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
     UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
     RESET_UPDATE_RELATIONSHIP_RESPONSE,
-    SET_CURRENT_PAGE
+    SET_CURRENT_PAGE,
+    SET_VALIDATION_PROPERTY
 }
 
 export const actionCreators = {
@@ -71,7 +73,8 @@ export const actionCreators = {
     editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD),
     setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
     resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
-    setCurrentPage: createAction(SET_CURRENT_PAGE)
+    setCurrentPage: createAction(SET_CURRENT_PAGE),
+    setValidationProperty: createAction(SET_VALIDATION_PROPERTY)
 }
 
 export const initialState = {
@@ -127,7 +130,8 @@ export const initialState = {
   relationshipPropertyPayload: [],
   componentTypeComponentConstraints: '',
   componentTypeComponents: '',
-  currentPage: 1
+  currentPage: 1,
+  validationProperty: []
 }
 
 export default handleActions(
@@ -251,6 +255,10 @@ export default handleActions(
     [SET_CURRENT_PAGE]: (state, action) => ({
       ...state,
       currentPage: action.payload
+    }),
+    [SET_VALIDATION_PROPERTY]: (state, action) => ({
+      ...state,
+      validationProperty: action.payload
     })
   },
   initialState

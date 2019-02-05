@@ -29,7 +29,8 @@ export function mapStateToProps (state, props) {
     updateRelationshipPropertyResponse: state.entitlementDetailReducer.updateRelationshipPropertyResponse,
     deleteRelationshipResponse: state.entitlementDetailReducer.deleteRelationshipResponse,
     relationshipActionSettings: state.entitlementDetailReducer.relationshipActionSettings,
-    showTabs: state.entitlementDetailReducer.showTabs
+    showTabs: state.entitlementDetailReducer.showTabs,
+    validationProperty: state.entitlementDetailReducer.validationProperty
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -62,7 +63,8 @@ export const propsMapping: Callbacks = {
   setAddConnectionSettings: actionCreators.setAddConnectionSettings,
   resetUpdateRelationshipResponse: actionCreators.resetUpdateRelationshipResponse,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
-  setCurrentTab: actionCreators.setCurrentTab
+  setCurrentTab: actionCreators.setCurrentTab,
+  setValidationProperty: actionCreators.setValidationProperty
 }
 
 // If you want to use the function mapping

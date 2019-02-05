@@ -185,7 +185,7 @@ return (
     <ReactModal isOpen={props.isDiscussionModalOpen}
       onRequestClose={closeDiscussionModal}
       className='modal-dialog modal-lg'
-      style={{'content': {'top': '20%'}}}>
+      style={{'overlay': {'zIndex': '1000'}, 'content': {'top': '20%'}}}>
       <div className=''>
         <div className=''>
           <div className='modal-content'>

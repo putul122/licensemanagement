@@ -31,6 +31,7 @@ const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'EntitlementDetailReducer/E
 const SET_ADD_CONNECTION_SETTINGS = 'EntitlementDetailReducer/SET_ADD_CONNECTION_SETTINGS'
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'EntitlementDetailReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
 const SET_CURRENT_TAB = 'EntitlementDetailReducer/SET_CURRENT_TAB'
+const SET_VALIDATION_PROPERTY = 'EntitlementDetailReducer/SET_VALIDATION_PROPERTY'
 
 export const actions = {
     FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
@@ -54,7 +55,8 @@ export const actions = {
     FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
     UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
     RESET_UPDATE_RELATIONSHIP_RESPONSE,
-    SET_RELATIONSHIP_ACTION_SETTINGS
+    SET_RELATIONSHIP_ACTION_SETTINGS,
+    SET_VALIDATION_PROPERTY
 }
 
 export const actionCreators = {
@@ -72,7 +74,8 @@ export const actionCreators = {
   editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD),
   setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
   resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
-  setCurrentTab: createAction(SET_CURRENT_TAB)
+  setCurrentTab: createAction(SET_CURRENT_TAB),
+  setValidationProperty: createAction(SET_VALIDATION_PROPERTY)
 }
 
 export const initialState = {
@@ -126,7 +129,8 @@ export const initialState = {
   updateRelationshipResponse: '',
   updateRelationshipPropertyResponse: '',
   deleteRelationshipResponse: '',
-  showTabs: {'showProperty': ' active show', 'showRelationship': ''}
+  showTabs: {'showProperty': ' active show', 'showRelationship': ''},
+  validationProperty: []
 }
 
 export default handleActions(
@@ -247,6 +251,10 @@ export default handleActions(
       deleteRelationshipResponse: '',
       relationshipPropertyPayload: [],
       deleteComponent: ''
+    }),
+    [SET_VALIDATION_PROPERTY]: (state, action) => ({
+      ...state,
+      validationProperty: action.payload
     })
   },
   initialState

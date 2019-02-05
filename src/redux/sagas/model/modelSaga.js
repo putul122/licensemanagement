@@ -22,6 +22,9 @@ export const FETCH_ALL_MODEL_PRESPECTIVES_FAILURE = 'saga/Model/FETCH_ALL_MODEL_
 export const UPDATE_ALL_MODEL_PRESPECTIVES = 'saga/Model/UPDATE_ALL_MODEL_PRESPECTIVES'
 export const UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS = 'saga/Model/UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS'
 export const UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE = 'saga/Model/UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE'
+export const FETCH_COMPONENT_MODEL_PRESPECTIVES = 'saga/Model/FETCH_COMPONENT_MODEL_PRESPECTIVES'
+export const FETCH_COMPONENT_MODEL_PRESPECTIVES_SUCCESS = 'saga/Model/FETCH_COMPONENT_MODEL_PRESPECTIVES_SUCCESS'
+export const FETCH_COMPONENT_MODEL_PRESPECTIVES_FAILURE = 'saga/Model/FETCH_COMPONENT_MODEL_PRESPECTIVES_FAILURE'
 
 export const actionCreators = {
   fetchMetaModelPrespective: createAction(FETCH_META_MODEL_PRESPECTIVE),
@@ -38,7 +41,10 @@ export const actionCreators = {
   fetchAllModelPrespectivesFailure: createAction(FETCH_ALL_MODEL_PRESPECTIVES_FAILURE),
   updateAllModelPrespectives: createAction(UPDATE_ALL_MODEL_PRESPECTIVES),
   updateAllModelPrespectivesSuccess: createAction(UPDATE_ALL_MODEL_PRESPECTIVES_SUCCESS),
-  updateAllModelPrespectivesFailure: createAction(UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE)
+  updateAllModelPrespectivesFailure: createAction(UPDATE_ALL_MODEL_PRESPECTIVES_FAILURE),
+  fetchComponentModelPrespectives: createAction(FETCH_COMPONENT_MODEL_PRESPECTIVES),
+  fetchComponentModelPrespectivesSuccess: createAction(FETCH_COMPONENT_MODEL_PRESPECTIVES_SUCCESS),
+  fetchComponentModelPrespectivesFailure: createAction(FETCH_COMPONENT_MODEL_PRESPECTIVES_FAILURE)
 }
 
 export default function * watchModel () {
@@ -47,7 +53,8 @@ export default function * watchModel () {
     takeLatest(FETCH_MODEL_PRESPECTIVES, getModelPerspectives),
     takeLatest(UPDATE_MODEL_PRESPECTIVES, updateModelPrespectives),
     takeLatest(FETCH_ALL_MODEL_PRESPECTIVES, getAllModelPerspectives),
-    takeLatest(UPDATE_ALL_MODEL_PRESPECTIVES, updateAllModelPerspectives)
+    takeLatest(UPDATE_ALL_MODEL_PRESPECTIVES, updateAllModelPerspectives),
+    takeLatest(FETCH_COMPONENT_MODEL_PRESPECTIVES, getComponentModelPerspectives)
   ]
 }
 
@@ -76,6 +83,20 @@ export function * getModelPerspectives (action) {
     yield put(actionCreators.fetchModelPrespectivesSuccess(modelPrespectives.data))
   } catch (error) {
     yield put(actionCreators.fetchModelPrespectivesFailure(error))
+  }
+}
+
+export function * getComponentModelPerspectives (action) {
+  console.log('action', action)
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const componentModelPrespectives = yield call(
+      axios.get,
+      api.getComponentModelPerspectives(action.payload)
+    )
+    yield put(actionCreators.fetchComponentModelPrespectivesSuccess(componentModelPrespectives.data))
+  } catch (error) {
+    yield put(actionCreators.fetchComponentModelPrespectivesFailure(error))
   }
 }
 

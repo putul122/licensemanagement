@@ -12,8 +12,9 @@ import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
-const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
+const customStylescrud = { overlay: {zIndex: '1000'}, content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
 const customStyles = {
+  overlay: {zIndex: '1000'},
   content: {
     top: '50%',
     left: '50%',
@@ -57,6 +58,7 @@ export default function AgreementDetail (props) {
   let listEntitlementPage = []
   let paginationLimit = 6
   let contextId = props.match.params.id
+  let validationPropertyList = ''
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -143,6 +145,36 @@ export default function AgreementDetail (props) {
     props.setEditComponentFlag(true)
   }
   let updateAgreementConfirm = function () {
+    console.log('props.agreementProperties', props.agreementProperties)
+    if (props.agreementProperties && props.agreementProperties !== '') {
+      let validationProperty = []
+      props.agreementProperties.resources.forEach(function (property, index) {
+        let propertyProperties = property.properties
+        propertyProperties.forEach(function (childProperty, childIndex) {
+          let value
+          if (childProperty.property_type.key === 'Integer') {
+            value = childProperty.int_value || ''
+          } else if (childProperty.property_type.key === 'Decimal') {
+            value = childProperty.float_value || ''
+          } else if (childProperty.property_type.key === 'DateTime') {
+            value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
+          } else if (childProperty.property_type.key === 'Text') {
+            value = childProperty.text_value || ''
+          } else if (childProperty.property_type.key === 'List') {
+            value = childProperty.value_set_value ? childProperty.value_set_value.name : null
+          } else {
+            value = childProperty.other_value || ''
+          }
+          if (childProperty.optionality.key === 'Required') {
+            if (value === null || value === '') {
+              validationProperty.push(childProperty.name)
+            }
+          }
+        })
+      })
+      console.log('validationProperty', validationProperty)
+      props.setValidationProperty(validationProperty)
+    }
     let addAgreementSettings = {...props.addAgreementSettings, isUpdateModalOpen: false, isConfirmationModalOpen: true}
     props.setAddAgreementSettings(addAgreementSettings)
     props.setEditComponentFlag(true)
@@ -164,7 +196,7 @@ export default function AgreementDetail (props) {
     event.preventDefault()
     let addAgreementSettings = {...props.addAgreementSettings, isConfirmationModalOpen: false}
     props.setAddAgreementSettings(addAgreementSettings)
-    cancelEditAgreement()
+    // cancelEditAgreement()
   }
   let submitUpdates = function (event) {
     console.log('run submit time detector')
@@ -662,7 +694,7 @@ export default function AgreementDetail (props) {
         }
         return (
           <tr key={'child' + childIndex}>
-            <td><span className={styles.labelbold}>{childProperty.name}</span>{requiredProperty && props.isEditComponent && (<span className='text-danger' >*</span>)}</td>
+            <td><span className={styles.labelbold}>{childProperty.name}</span>{requiredProperty && props.isEditComponent && (<span style={{'fontSize': '20px'}} className='text-danger' >*</span>)}</td>
             <td>
               {!props.isEditComponent && (<span>{value}</span>)}
               {props.isEditComponent && htmlElement()}
@@ -1223,6 +1255,11 @@ export default function AgreementDetail (props) {
     props.setAddConnectionSettings(payload)
   }
   // End code for ADD new Connections
+  if (props.validationProperty.length > 0) {
+    validationPropertyList = props.validationProperty.map(function (data, index) {
+      return (<li>{data}</li>)
+    })
+  }
     return (
       <div>
         <div className='row'>
@@ -1472,7 +1509,7 @@ export default function AgreementDetail (props) {
             </div>
           </ReactModal> */}
           <ReactModal isOpen={props.addAgreementSettings.isConfirmationModalOpen}
-            style={customStyles} >
+            style={customStylescrud} >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={styles.modalwidth}>
               <div className='modal-dialog'>
@@ -1481,8 +1518,15 @@ export default function AgreementDetail (props) {
                     <h4 className='modal-title' id='exampleModalLabel'>Confirmation</h4>
                   </div>
                   <div className='modal-body'>
-                    <p className={styles.confirmsg}>Some of the required properties do not have any values.</p>
-                    <p className={styles.confirmsg}>Are you sure you want to continue?</p>
+                    <div className='col-md-12'>
+                      {props.validationProperty.length > 0 && (<span>
+                        <p className={styles.confirmsg}>Some of the required properties do not have any values.</p>
+                        <ul style={{'marginTop': '10px', 'marginLeft': '20px'}}>
+                          {validationPropertyList}
+                        </ul>
+                      </span>)}
+                      <p className={styles.confirmsg}>Are you sure you want to continue?</p>
+                    </div>
                   </div>
                   <div className='modal-footer'>
                     <div className='row'>
@@ -1603,7 +1647,7 @@ export default function AgreementDetail (props) {
             onRequestClose={closeModal}
             shouldCloseOnOverlayClick={false}
             className='modal-dialog modal-lg'
-            style={{'content': {'top': '20%'}}}
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
             // className={''}
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
@@ -1733,5 +1777,6 @@ export default function AgreementDetail (props) {
       addNewConnectionSettings: PropTypes.any,
       componentTypeComponentConstraints: PropTypes.any,
       componentTypeComponents: PropTypes.any,
-      currentPage: PropTypes.any
+      currentPage: PropTypes.any,
+      validationProperty: PropTypes.any
   }

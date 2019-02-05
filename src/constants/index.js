@@ -106,6 +106,9 @@ const api = {
   updateModelPerspectives: function (metaModelPerspectiveId) {
     return 'https://model-eco-dev.ecoconductor.com/model_perspectives?meta_model_perspective_id=' + metaModelPerspectiveId
   },
+  getComponentModelPerspectives: function (payload) {
+    return 'https://model-eco-dev.ecoconductor.com/model_perspectives/' + payload.componentId + '?meta_model_perspective_id=' + payload.metaModelPerspectiveId
+  },
   getMetaModelPerspective: function (perspectiveId) {
     return 'https://model-eco-dev.ecoconductor.com/meta_model_perspectives/' + perspectiveId
   },

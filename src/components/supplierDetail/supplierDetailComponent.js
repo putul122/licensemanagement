@@ -718,7 +718,7 @@ export default function Suppliers (props) {
                                 <div className='m-list-search__results'>
                                   <div className='m-widget13'>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text' style={{'width': '15%', 'color': '#000000'}}>
                                         {DepartmentName}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
@@ -729,7 +729,7 @@ export default function Suppliers (props) {
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text' style={{'width': '15%', 'color': '#000000'}}>
                                         {functionName}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
@@ -740,7 +740,7 @@ export default function Suppliers (props) {
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                         {Product}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
@@ -751,7 +751,7 @@ export default function Suppliers (props) {
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                         {PersonName}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
@@ -762,7 +762,7 @@ export default function Suppliers (props) {
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                         {Surname}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
@@ -773,7 +773,7 @@ export default function Suppliers (props) {
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                         {email}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>
@@ -784,7 +784,7 @@ export default function Suppliers (props) {
                                       </div>}
                                     </div>
                                     <div className='m-widget13__item'>
-                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '10%', 'color': '#000000'}}>
+                                      <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                         {cellNumber}
                                       </span>
                                       {!props.supplierPropertySettings.isEditFlag && <div className='col-md-3'>

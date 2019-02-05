@@ -12,6 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import styles from './projectDetailComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
+  overlay: {zIndex: '1000'},
   content: {
     top: '50%',
     left: '50%',
@@ -812,7 +813,7 @@ return (
       <ReactModal isOpen={props.entitlementActionSettings.isLinkModalOpen}
         onRequestClose={closeLinkEntitlementModal}
         className='modal-dialog modal-lg'
-        style={{'content': {'top': '20%'}}}
+        style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
         >
         {/* <button onClick={closeLinkEntitlementModal} ><i className='la la-close' /></button> */}
         <div className={''}>
@@ -871,7 +872,7 @@ return (
       <ReactModal isOpen={props.entitlementActionSettings.isProjectDeleteModalOpen}
         onRequestClose={closeProjectDeleteModal}
         className='modal-dialog modal-lg'
-        style={{'content': {'top': '20%'}}}
+        style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
         >
         <div className={''}>
           <div className='modal-dialog'>
@@ -906,7 +907,7 @@ return (
       <ReactModal isOpen={props.entitlementActionSettings.isLinkUpdateModalOpen}
         onRequestClose={closeLinkUpdateModal}
         className='modal-dialog modal-lg'
-        style={{'content': {'top': '20%'}}}
+        style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
         >
         {/* <button onClick={closeLinkUpdateModal} ><i className='la la-close' /></button> */}
         <div className={''}>
@@ -951,7 +952,7 @@ return (
       <ReactModal isOpen={props.entitlementActionSettings.isLinkDeleteModalOpen}
         onRequestClose={closeLinkDeleteModal}
         className='modal-dialog'
-        style={{'content': {'top': '20%'}}}
+        style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
         >
         <div className={''}>
           <div className=''>

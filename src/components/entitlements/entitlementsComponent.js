@@ -8,6 +8,7 @@ import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer
 import styles from './entitlementsComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
+  overlay: {zIndex: '1000'},
   content: {
     top: '50%',
     left: '50%',

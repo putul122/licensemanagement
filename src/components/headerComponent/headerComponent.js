@@ -37,6 +37,7 @@ export default function HeaderComponent (props) {
       notificationStyle = {}
     }
     connection.on('ReceiveMessage', (payload) => {
+      console.log('ReceiveMessage ---------', payload)
       payload = JSON.parse(payload)
       if (payload.notify) {
         props.setNotificationFlag(true)

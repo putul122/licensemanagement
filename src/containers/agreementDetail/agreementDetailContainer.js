@@ -28,7 +28,8 @@ export function mapStateToProps (state, props) {
     updateRelationshipResponse: state.agreementDetailReducer.updateRelationshipResponse,
     updateRelationshipPropertyResponse: state.agreementDetailReducer.updateRelationshipPropertyResponse,
     deleteRelationshipResponse: state.agreementDetailReducer.deleteRelationshipResponse,
-    currentPage: state.agreementDetailReducer.currentPage
+    currentPage: state.agreementDetailReducer.currentPage,
+    validationProperty: state.agreementDetailReducer.validationProperty
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -62,6 +63,7 @@ export const propsMapping: Callbacks = {
   setAddConnectionSettings: actionCreators.setAddConnectionSettings,
   resetUpdateRelationshipResponse: actionCreators.resetUpdateRelationshipResponse,
   setCurrentPage: actionCreators.setCurrentPage,
+  setValidationProperty: actionCreators.setValidationProperty,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
