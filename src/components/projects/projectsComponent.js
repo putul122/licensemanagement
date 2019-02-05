@@ -351,7 +351,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Total License Cost</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>R {totalLicenseCost}</h5>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>R {formatAmount(totalLicenseCost)}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
