@@ -87,72 +87,81 @@ export default compose(
           this.props.history.push('/applications')
         }
       }
-      if (nextProps.applicationRelationships && nextProps.applicationRelationships !== this.props.applicationRelationships && !nextProps.responseProcessed.applicationRelationships) {
+      // if (nextProps.applicationRelationships && nextProps.applicationRelationships !== this.props.applicationRelationships && !nextProps.responseProcessed.applicationRelationships) {
+      //   // eslint-disable-next-line
+      //   mApp && mApp.unblockPage()
+      //   let responseProcessed = {...nextProps.responseProcessed}
+      //   if (nextProps.applicationRelationships.error_code) {
+      //     // eslint-disable-next-line
+      //     toastr.error(nextProps.applicationRelationships.error_message, nextProps.applicationRelationships.error_code)
+      //     this.props.history.push('/applications')
+      //   } else {
+      //     let counter = 0
+      //     let applicationRelationshipData = nextProps.applicationRelationships.resources.map(function (data, index) {
+      //       data.isDisplay = true
+      //       data.displayIndex = counter++
+      //       return data
+      //     })
+      //     nextProps.setApplicationRelationship(applicationRelationshipData)
+      //   }
+      //   responseProcessed.applicationRelationships = true
+      //   nextProps.setResponseProcessed(responseProcessed)
+      // }
+      if (nextProps.metaModelPrespective && nextProps.modelPrespective && nextProps.modelPrespective !== '' && nextProps.metaModelPrespective !== '' && !nextProps.responseProcessed.metaModelPrespective && !nextProps.responseProcessed.modelPrespective) {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
         let responseProcessed = {...nextProps.responseProcessed}
-        if (nextProps.applicationRelationships.error_code) {
-          // eslint-disable-next-line
-          toastr.error(nextProps.applicationRelationships.error_message, nextProps.applicationRelationships.error_code)
-          this.props.history.push('/applications')
-        } else {
+        if (nextProps.metaModelPrespective.error_code === null && nextProps.modelPrespective.error_code === null) {
+          let labelParts = nextProps.metaModelPrespective.resources[0].parts
+          let applicationProperties = []
+          let applicationRelationships = []
+          if (nextProps.modelPrespective.resources[0].parts) {
+            nextProps.modelPrespective.resources[0].parts.forEach(function (partData, ix) {
+              if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
+                let value = partData.value
+                let obj = {}
+                obj.name = labelParts[ix].name
+                obj.value = value
+                applicationProperties.push(obj)
+              } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property !== null) { // below are Customer Property
+                let value = ''
+                if (labelParts[ix].type_property.property_type.key === 'Integer') {
+                  value = partData.value !== null ? partData.value.int_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+                  value = partData.value !== null ? partData.value.float_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+                  value = partData.value !== null ? partData.value.text_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+                  value = partData.value !== null ? partData.value.date_time_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+                  value = partData.value !== null ? partData.value.boolean_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'List') {
+                  value = partData.value !== null ? partData.value.value_set_value : ''
+                } else {
+                  value = partData.value !== null ? partData.value.other_value : ''
+                }
+                let obj = {}
+                obj.name = labelParts[ix].name
+                obj.value = value
+                applicationProperties.push(obj)
+              } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
+                if (partData.value) {
+                  partData.value.forEach(function (data, index) {
+                    applicationRelationships.push(data)
+                  })
+                }
+              }
+            })
+          }
+          nextProps.setApplicationProperty(applicationProperties)
           let counter = 0
-          let applicationRelationshipData = nextProps.applicationRelationships.resources.map(function (data, index) {
+          let applicationRelationshipData = applicationRelationships.map(function (data, index) {
             data.isDisplay = true
             data.displayIndex = counter++
             return data
           })
           nextProps.setApplicationRelationship(applicationRelationshipData)
-        }
-        responseProcessed.applicationRelationships = true
-        nextProps.setResponseProcessed(responseProcessed)
-      }
-      if (nextProps.metaModelPrespective && nextProps.modelPrespective && nextProps.modelPrespective !== '' && nextProps.metaModelPrespective !== '' && !nextProps.responseProcessed.metaModelPrespective && !nextProps.responseProcessed.modelPrespective) {
-        // eslint-disable-next-line
-        // mApp && mApp.unblockPage()
-        let responseProcessed = {...nextProps.responseProcessed}
-        if (nextProps.metaModelPrespective.error_code === null && nextProps.modelPrespective.error_code === null) {
-          let labelParts = nextProps.metaModelPrespective.resources[0].parts
-          let applicationProperties = []
-          if (nextProps.modelPrespective.resources[0].parts) {
-            nextProps.modelPrespective.resources[0].parts.forEach(function (partData, ix) {
-              let value = ''
-              if (labelParts[ix].standard_property !== null && labelParts[ix].type_property === null) { // Standard Property
-                value = partData.value
-              } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
-                if (partData.value) {
-                  let targetComponents = []
-                  partData.value.forEach(function (data, index) {
-                    targetComponents.push(data.target_component.name)
-                  })
-                  value = targetComponents.toString()
-                } else {
-                  value = partData.value || ''
-                }
-              } else if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
-                value = partData.value !== null ? partData.value.int_value : ''
-              } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
-                value = partData.value !== null ? partData.value.float_value : ''
-              } else if (labelParts[ix].type_property.property_type.key === 'Text') {
-                value = partData.value !== null ? partData.value.text_value : ''
-              } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-                value = partData.value !== null ? partData.value.date_time_value : ''
-              } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
-                value = partData.value !== null ? partData.value.boolean_value : ''
-              } else if (labelParts[ix].type_property.property_type.key === 'List') {
-                value = partData.value !== null ? partData.value.value_set_value : ''
-              } else {
-                value = partData.value !== null ? partData.value.other_value : ''
-              }
-              let obj = {}
-              obj.name = labelParts[ix].name
-              obj.value = value
-              console.log('obj', obj)
-              applicationProperties.push(obj)
-            })
-          }
-          nextProps.setApplicationProperty(applicationProperties)
-          console.log('applicationProperties', applicationProperties)
+          console.log('applicationRelationshipData', applicationRelationshipData)
         } else {
           if (nextProps.metaModelPrespective.error_code) {
             // eslint-disable-next-line

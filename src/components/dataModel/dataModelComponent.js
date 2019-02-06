@@ -2,6 +2,7 @@ import React from 'react'
 import * as d3 from 'd3'
 import './dataModelComponent.scss'
 import PropTypes from 'prop-types'
+import api from '../../constants'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
 console.log('d3', d3)
 let width = 1000
@@ -177,7 +178,7 @@ function force (graphData) {
     nodeEnter.append('rect')
       .attr('x', -20)
       .attr('y', -20)
-      .attr('rx', 10)
+      .attr('rx', 5)
       .attr('width', function (node, i) { return node.width })
       .attr('height', function (node, i) { return node.height })
       .attr('stroke-width', function (node, i) { return node.strokeWidth })
@@ -186,6 +187,12 @@ function force (graphData) {
       .attr('fill', '#FFFFFF')
       // .attr('word-wrap', 'break-word')
       // .style('fill', function (d, i) { return colors(i) })
+    nodeEnter.append('image')
+      .attr('xlink:href', function (d) { return d.icon })
+      .attr('x', '-18')
+      .attr('y', '-18')
+    //   .attr('width', '24px')
+    //   .attr('height', '24px')
 
     nodeEnter.append('title')
       // .attr('word-wrap', 'break-word')
@@ -355,6 +362,7 @@ class DataModelComponent extends React.Component {
                 node.wrapSize = 150
                 node.name = nextProps.startNode.name.trim() || ''
                 node.Title = nextProps.startNode.title.trim() || ''
+                node.icon = nextProps.startNode.icon ? api.iconURL + nextProps.startNode.icon_id : ''
                 node.width = 150
                 node.height = 70
                 node.x = 400
@@ -370,6 +378,7 @@ class DataModelComponent extends React.Component {
                 // end
                 if (nodeData.length > 0) {
                     nodeData.forEach(function (data, index) {
+                        console.log('node data', data)
                         index++
                         node = {}
                         node.id = index
@@ -385,6 +394,11 @@ class DataModelComponent extends React.Component {
                         node.fontWeight = 500
                         node.fontFamily = 'sans-serif'
                         node.dy = '0.25em'
+                        if (data.target_component.icon === null) {
+                            node.icon = api.iconURL + data.target_component.component_type.icon
+                        } else {
+                            node.icon = api.iconURL + data.target_component.icon
+                        }
                         if (data.relationship_type === 'Parent') {
                             let topLength = topCordinates.length
                             if (topLength < 1) {

@@ -51,6 +51,70 @@ export default function Applicationview (props) {
     applicationRelationshipData[index] = checkedObject
     props.setApplicationRelationship(applicationRelationshipData)
   }
+  let handleGroupCheckbox = function (value, checkData) {
+    console.log('handle group checkbox', value, checkData)
+    let applicationRelationshipData = JSON.parse(JSON.stringify(props.applicationRelationshipData))
+    if (checkData.relationshipType === 'Parent') {
+      let parent = _.filter(props.applicationRelationshipData, {'relationship_type': 'Parent'})
+      if (parent.length > 0) {
+        parent.forEach(function (data, id) {
+          let index = _.findIndex(applicationRelationshipData, {displayIndex: data.displayIndex})
+          let checkedObject = applicationRelationshipData[index]
+          checkedObject.isDisplay = value
+          applicationRelationshipData[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'Child') {
+      let child = _.filter(props.applicationRelationshipData, {'relationship_type': 'Child'})
+      if (child.length > 0) {
+        child.forEach(function (data, isCheckboxChecked) {
+          let index = _.findIndex(applicationRelationshipData, {displayIndex: data.displayIndex})
+          let checkedObject = applicationRelationshipData[index]
+          checkedObject.isDisplay = value
+          applicationRelationshipData[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectFrom') {
+      let outgoing = _.filter(props.applicationRelationshipData, {'relationship_type': 'ConnectFrom'})
+      outgoing = _.filter(outgoing, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      outgoing = _.filter(outgoing, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (outgoing.length > 0) {
+        outgoing.forEach(function (data, id) {
+          let index = _.findIndex(applicationRelationshipData, {displayIndex: data.displayIndex})
+          let checkedObject = applicationRelationshipData[index]
+          checkedObject.isDisplay = value
+          applicationRelationshipData[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectTo') {
+      let incoming = _.filter(props.applicationRelationshipData, {'relationship_type': 'ConnectTo'})
+      incoming = _.filter(incoming, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      incoming = _.filter(incoming, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (incoming.length > 0) {
+        incoming.forEach(function (data, id) {
+          let index = _.findIndex(applicationRelationshipData, {displayIndex: data.displayIndex})
+          let checkedObject = applicationRelationshipData[index]
+          checkedObject.isDisplay = value
+          applicationRelationshipData[index] = checkedObject
+        })
+      }
+    }
+    console.log('applicationRelationshipData', applicationRelationshipData)
+    // let displayIndex = data.displayIndex
+    // let index = _.findIndex(applicationRelationshipData, {displayIndex: displayIndex})
+    // let checkedObject = applicationRelationshipData[index]
+    // checkedObject.isDisplay = value
+    // applicationRelationshipData[index] = checkedObject
+    props.setApplicationRelationship(applicationRelationshipData)
+  }
   let showProperty = function (event) {
     let payload = {'showProperty': ' active show', 'showRelationship': ''}
     props.setCurrentTab(payload)
@@ -65,6 +129,7 @@ export default function Applicationview (props) {
     applicationCost = props.applicationbyId.resources[0].cost
     startNode.name = props.applicationbyId.resources[0].name
     startNode.title = props.applicationbyId.resources[0].name
+    startNode.icon = props.applicationbyId.resources[0].icon
   }
   if (props.applicationProperties.length > 0) {
     applicationPropertiesList = props.applicationProperties.map(function (data, index) {
@@ -84,14 +149,26 @@ export default function Applicationview (props) {
     let incoming = _.filter(props.applicationRelationshipData, {'relationship_type': 'ConnectTo'})
     incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
     let child = _.filter(props.applicationRelationshipData, {'relationship_type': 'Child'})
+    console.log('props.applicationRelationshipData', props.applicationRelationshipData)
+    console.log('incoming.incoming', incoming)
     let parentApplicationRelationshipListFn = function () {
       if (parent.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = parent[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = parent[0].target_component.component_type.name
         let childElementList = parent.map(function (element, i) {
+          if (element.isDisplay) {
+            isCheckboxChecked = true
+          }
         return (<span className='row' style={{'padding': '5px'}}>
           <div className='col-md-10'>
             <span className='pull-left'>{element.target_component.name}</span>
-            <span className='pull-right'>
-              <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+            <span className='float-right'>
+              <span className='pull-right'>
+                <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+              </span>
             </span>
           </div>
         </span>)
@@ -99,6 +176,7 @@ export default function Applicationview (props) {
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
+            <input onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} className='pull-left' type='checkbox' />
             <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -116,12 +194,22 @@ export default function Applicationview (props) {
     }
     let childApplicationRelationshipListFn = function () {
       if (child.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = child[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = child[0].target_component.component_type.name
         let childElementList = child.map(function (element, i) {
+          if (element.isDisplay) {
+            isCheckboxChecked = true
+          }
         return (<span className='row' style={{'padding': '5px'}}>
           <div className='col-md-10'>
             <span className='pull-left'>{element.target_component.name}</span>
-            <span className='pull-right'>
-              <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+            <span className='float-right'>
+              <span className='pull-right'>
+                <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+              </span>
             </span>
           </div>
         </span>)
@@ -129,6 +217,7 @@ export default function Applicationview (props) {
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
+            <input checked={isCheckboxChecked} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
             <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -152,6 +241,7 @@ export default function Applicationview (props) {
         .groupBy('connection.name')
         .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
         .value()
+        console.log('outgoingGroup', outgoingGroup)
         let outerKey = 0
         for (let connectionKey in outgoingGroup) {
           if (outgoingGroup.hasOwnProperty(connectionKey)) {
@@ -160,12 +250,22 @@ export default function Applicationview (props) {
             for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
               if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectFrom'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
                   return (<span className='row' style={{'padding': '5px'}}>
                     <div className='col-md-10'>
                       <span className='pull-left'>{element.target_component.name}</span>
-                      <span className='pull-right'>
-                        <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
                       </span>
                     </div>
                   </span>)
@@ -174,6 +274,7 @@ export default function Applicationview (props) {
                 outgoingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#outgoing_accordion_body' + outerKey + '-' + innerKey} aria-expanded='false'>
+                      <input checked={isCheckboxChecked} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
                       <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -200,6 +301,7 @@ export default function Applicationview (props) {
         .groupBy('connection.name')
         .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
         .value()
+        console.log('incomingGroup', incomingGroup)
         let incomingElements = []
         let outerKey = 0
         for (let connectionKey in incomingGroup) {
@@ -209,12 +311,22 @@ export default function Applicationview (props) {
             for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
               if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectTo'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
                   return (<span className='row' style={{'padding': '5px'}}>
                     <div className='col-md-10'>
                       <span className='pull-left'>{element.target_component.name}</span>
-                      <span className='pull-right'>
-                        <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} className='' />{' display'}
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
                       </span>
                     </div>
                   </span>)
@@ -223,6 +335,7 @@ export default function Applicationview (props) {
                 incomingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
+                      <input className='pull-left' onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
                       <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -373,7 +486,7 @@ export default function Applicationview (props) {
                   </div> */}
                   <div className={'row'} style={{'marginTop': '20px'}}>
                     <div className='m--space-10' />
-                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                    <div className='accordion m-accordion m-accordion--bordered' style={{width: '100%'}} id='m_accordion_2' role='tablist' aria-multiselectable='true'>
                       {parentApplicationRelationshipList}
                       {outgoingApplicationRelationshipList}
                       {incomingApplicationRelationshipList}

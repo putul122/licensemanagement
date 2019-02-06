@@ -8,7 +8,7 @@ import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function NewDiscussion (props) {
-  console.log('props new discussion', props, props.isDiscussionModalOpen)
+  // console.log('props new discussion', props, props.isDiscussionModalOpen)
   let NameInputBox
   let tempMessageStorage = ''
   let tempTagStorage = []
