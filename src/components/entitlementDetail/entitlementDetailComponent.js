@@ -352,8 +352,14 @@ export default function EntitlementDetail (props) {
     entitlementPurchased = props.entitlement.resources[0].purchased
     entitlementConsumed = props.entitlement.resources[0].consumption_ratio_percent || ''
     entitlementCost = props.entitlement.resources[0].cost
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let componentTypes = appPackage.resources[0].component_types
+    let componentTypeIcon = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Entitlement'
+    }), 'icon')
     startNode.name = props.entitlement.resources[0].name
     startNode.title = props.entitlement.resources[0].name
+    startNode.icon = componentTypeIcon
   }
   if (props.entitlementProperties && props.entitlementProperties !== '') {
     console.log('test', props)

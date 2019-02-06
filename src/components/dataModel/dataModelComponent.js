@@ -362,7 +362,7 @@ class DataModelComponent extends React.Component {
                 node.wrapSize = 150
                 node.name = nextProps.startNode.name.trim() || ''
                 node.Title = nextProps.startNode.title.trim() || ''
-                node.icon = nextProps.startNode.icon ? api.iconURL + nextProps.startNode.icon_id : ''
+                node.icon = nextProps.startNode.icon ? api.iconURL + nextProps.startNode.icon : ''
                 node.width = 150
                 node.height = 70
                 node.x = 400

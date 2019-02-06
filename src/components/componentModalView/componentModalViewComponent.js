@@ -60,6 +60,7 @@ export default function ComponentModalView (props) {
       if (props.componentTypeComponentData.error_code === null) {
         startNode.name = props.componentTypeComponentData.resources[0].name
         startNode.title = props.componentTypeComponentData.resources[0].name
+        startNode.icon = props.componentTypeComponentData.resources[0].component_type.icon
         componentName = props.componentTypeComponentData.resources[0].name
       }
     }

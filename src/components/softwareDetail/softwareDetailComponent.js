@@ -64,8 +64,14 @@ export default function Softwareview (props) {
     softwareName = props.softwarebyId.resources[0].name
     softwareInstances = props.softwarebyId.resources[0].instances
     softwareCost = props.softwarebyId.resources[0].cost
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let componentTypes = appPackage.resources[0].component_types
+    let componentTypeIcon = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Software'
+    }), 'icon')
     startNode.name = props.softwarebyId.resources[0].name
     startNode.title = props.softwarebyId.resources[0].name
+    startNode.icon = componentTypeIcon
   }
   if (props.softwareProperties && props.softwareProperties !== '') {
     softwarePropertiesList = props.softwareProperties.resources.map(function (property, index) {

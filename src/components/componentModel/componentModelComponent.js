@@ -2,6 +2,7 @@ import React from 'react'
 import * as d3 from 'd3'
 import PropTypes from 'prop-types'
 import './componentModelComponent.scss'
+import api from '../../constants'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
 let width = 900
 let height = 700
@@ -59,18 +60,18 @@ function clearVisualization () {
 
 function forceInitialize (graphData) {
     d3.select('#visualLayout').remove()
+    let zoom = d3.zoom().on('zoom', zoomed)
     visualLayout = d3.select('#modalScreen')
       .append('svg:svg')
       .attr('id', 'visualLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
-      .call(d3.zoom().on('zoom', zoomed))
+      .call(zoom)
       .attr('display', 'block')
       .append('g')
       .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
     function zoomed () {
-        console.log('zooming action')
         visualLayout.attr('transform', d3.event.transform)
     }
 
@@ -197,7 +198,12 @@ function force (graphData) {
       .attr('fill', '#FFFFFF')
       // .attr('word-wrap', 'break-word')
       // .style('fill', function (d, i) { return colors(i) })
-
+    nodeEnter.append('image')
+      .attr('xlink:href', function (d) { return d.icon })
+      .attr('x', '-18')
+      .attr('y', '-18')
+    //   .attr('width', '24px')
+    //   .attr('height', '24px')
     nodeEnter.append('title')
       // .attr('word-wrap', 'break-word')
       .text(function (d) { return d.title })
@@ -363,8 +369,9 @@ class ComponentModelComponent extends React.Component {
                 let graphData = {}
                 // Setting first node
                 node.id = 0
-                node.name = nextProps.startNode.name
-                node.Title = nextProps.startNode.title
+                node.name = nextProps.startNode.name.trim() || ''
+                node.Title = nextProps.startNode.title.trim() || ''
+                node.icon = nextProps.startNode.icon ? api.iconURL + nextProps.startNode.icon : ''
                 node.width = 140
                 node.height = 70
                 node.x = 400
@@ -394,6 +401,11 @@ class ComponentModelComponent extends React.Component {
                         node.fontWeight = 500
                         node.fontFamily = 'sans-serif'
                         node.dy = '0.25em'
+                        if (data.target_component.icon === null) {
+                            node.icon = api.iconURL + data.target_component.component_type.icon
+                        } else {
+                            node.icon = api.iconURL + data.target_component.icon
+                        }
                         if (data.relationship_type === 'Parent') {
                             let topLength = topCordinates.length
                             if (topLength < 1) {
