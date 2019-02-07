@@ -66,7 +66,7 @@ export default compose(
       this.props.fetchComponentModelPrespectives && this.props.fetchComponentModelPrespectives(modelPayload)
       this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
       // this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
-      this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
+      // this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -136,7 +136,7 @@ export default compose(
                 } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
                   value = partData.value !== null ? partData.value.boolean_value : ''
                 } else if (labelParts[ix].type_property.property_type.key === 'List') {
-                  value = partData.value !== null ? partData.value.value_set_value : ''
+                  value = partData.value !== null ? partData.value.value_set_value.name : ''
                 } else {
                   value = partData.value !== null ? partData.value.other_value : ''
                 }

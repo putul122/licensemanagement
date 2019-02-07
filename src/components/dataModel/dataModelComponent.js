@@ -1,17 +1,91 @@
 import React from 'react'
-import * as d3 from 'd3'
-import './dataModelComponent.scss'
 import PropTypes from 'prop-types'
+import * as d3 from 'd3'
 import api from '../../constants'
+import './dataModelComponent.scss'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
-console.log('d3', d3)
-let width = 1000
+/**
+ * Finds the intersection point between
+ *     * the rectangle
+ *       with parallel sides to the x and y axes
+ *     * the half-line pointing towards (x,y)
+ *       originating from the middle of the rectangle
+ *
+ * Note: the function works given min[XY] <= max[XY],
+ *       even though minY may not be the "top" of the rectangle
+ *       because the coordinate system is flipped.
+ *
+ * @param (x,y):Number point to build the line segment from
+ * @param minX:Number the "left" side of the rectangle
+ * @param minY:Number the "top" side of the rectangle
+ * @param maxX:Number the "right" side of the rectangle
+ * @param maxY:Number the "bottom" side of the rectangle
+ * @param check:boolean (optional) whether to treat point inside the rect as error
+ * @return an object with x and y members for the intersection
+ * @throws if check == true and (x,y) is inside the rectangle
+ * @author TWiStErRob
+ * @see <a href="https://stackoverflow.com/a/31254199/253468">source</a>
+ * @see <a href="https://stackoverflow.com/a/18292964/253468">based on</a>
+ */
+let pointOnRect = function (x, y, minX, minY, maxX, maxY, check) {
+    // assert minX <= maxX;
+    // assert minY <= maxY;
+    if (check && (minX <= x && x <= maxX) && (minY <= y && y <= maxY)) { throw new Error('Point ' + [x, y] + 'cannot be inside ' + 'the rectangle: ' + [minX, minY] + ' - ' + [maxX, maxY] + '.') }
+    var midX = (minX + maxX) / 2
+    var midY = (minY + maxY) / 2
+    // if (midX - x == 0) -> m == ±Inf -> minYx/maxYx == x (because value / ±Inf = ±0)
+    var m = (midY - y) / (midX - x)
+
+    if (x <= midX) { // check "left" side
+        var minXy = m * (minX - x) + y
+        if (minY <= minXy && minXy <= maxY) {
+        return {
+                    x: minX,
+                    y: minXy
+                }
+        }
+    }
+
+    if (x >= midX) { // check "right" side
+        var maxXy = m * (maxX - x) + y
+        if (minY <= maxXy && maxXy <= maxY) {
+        return {
+                    x: maxX,
+                    y: maxXy
+                }
+        }
+    }
+
+    if (y <= midY) { // check "top" side
+        var minYx = (minY - y) / m + x
+        if (minX <= minYx && minYx <= maxX) {
+        return {
+                    x: minYx,
+                    y: minY
+                }
+        }
+    }
+
+    if (y >= midY) { // check "bottom" side
+        var maxYx = (maxY - y) / m + x
+        if (minX <= maxYx && maxYx <= maxX) {
+        return {
+                    x: maxYx,
+                    y: maxY
+                }
+        }
+    }
+
+    // Should never happen :) If it does, please tell me!
+    throw new Error('Cannot find intersection for ' + [x, y] + ' inside rectangle ' + [minX, minY] + ' - ' + [maxX, maxY] + '.')
+}
+let width = 900
 let height = 600
 let diagramLayout
 let simulation
-function wrap (text, width) {
-    console.log('wr text', text)
-    console.log('wr width', width)
+let zoomStatus
+let setZoomStatus
+let wrap = function (text, width) {
     text.each(function () {
         // eslint-disable-next-line
         var text = d3.select(this),
@@ -21,15 +95,17 @@ function wrap (text, width) {
             lineNumber = 0,
             lineHeight = 1, // ems
             x = text.attr('x'),
-            y = text.attr('y'),
+            y = text.attr('y'), // words.length > 1 ? text.attr('y') - 20 : text.attr('y') - 10,
             dy = 0, // parseFloat(text.attr("dy")),
             tspan = text.text(null)
                         .append('tspan')
                         .attr('x', x)
                         .attr('y', y)
                         .attr('dy', dy + 'em')
+        // let limit = 0
         // eslint-disable-next-line
         while (word = words.pop()) {
+            // limit++
             line.push(word)
             tspan.text(line.join(' '))
             if (tspan.node().getComputedTextLength() > width) {
@@ -46,10 +122,48 @@ function wrap (text, width) {
     })
 }
 
-function forceInitialize (graphData) {
-    d3.selectAll('svg > *').remove()
-    let zoom = d3.zoom().on('zoom', zoomed)
-    diagramLayout = d3.select('svg')
+let clearVisualization = function () {
+    d3.select('#diagramLayout').remove()
+    diagramLayout = d3.select('#mainScreen')
+      .append('svg:svg')
+      .attr('id', 'diagramLayout') // set id
+      .attr('width', width) // set width
+      .attr('height', height) // set height
+      .attr('display', 'block')
+      .append('g')
+      .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
+}
+
+let forceInitialize = function (graphData) {
+    let zoomed = function () {
+        console.log('zooming action', d3.event.transform, zoomStatus)
+        let transform = d3.event.transform
+        if (zoomStatus) {
+            if (transform.k === 1) {
+                transform.k = zoomStatus.k
+            }
+        }
+        diagramLayout.attr('transform', transform)
+        // setZoomStatus(d3.event.transform)
+        console.log(setZoomStatus)
+    }
+    let zoomEnd = function () {
+        console.log('zooming action end', d3.event.transform)
+        let transform = d3.event.transform
+        if (zoomStatus) {
+          if (transform.k === 1 && transform.x === 0 && transform.y === 0) {
+            setZoomStatus(zoomStatus)
+          } else {
+            setZoomStatus(transform)
+          }
+        } else {
+          setZoomStatus(transform)
+        }
+    }
+    let zoom = d3.zoom().on('zoom', zoomed).on('end', zoomEnd)
+    d3.select('#diagramLayout').remove()
+    diagramLayout = d3.select('#mainScreen')
+      .append('svg:svg')
       .attr('id', 'diagramLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
@@ -58,10 +172,8 @@ function forceInitialize (graphData) {
       .append('g')
       .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
-    function zoomed () {
-        console.log('zooming action', zoom)
-        console.log('zooming action', d3.event.transform)
-        diagramLayout.attr('transform', d3.event.transform)
+    if (zoomStatus) {
+      diagramLayout.attr('transform', zoomStatus)
     }
 
     simulation = d3.forceSimulation()
@@ -189,11 +301,10 @@ function force (graphData) {
       // .style('fill', function (d, i) { return colors(i) })
     nodeEnter.append('image')
       .attr('xlink:href', function (d) { return d.icon })
-      .attr('x', '-18')
-      .attr('y', '-18')
+      .attr('x', '-15')
+      .attr('y', '-15')
     //   .attr('width', '24px')
     //   .attr('height', '24px')
-
     nodeEnter.append('title')
       // .attr('word-wrap', 'break-word')
       .text(function (d) { return d.title })
@@ -206,7 +317,7 @@ function force (graphData) {
         .attr('font-size', function (node, i) { return node.fontSize })
         .attr('font-family', function (node, i) { return node.fontFamily })
         .text(function (d) { return d.name })
-        .call(wrap, 100)
+        .call(wrap, 95)
     // nodeIcon.call(d3.drag()
     //   .on("start", dragstarted)
     //   .on("drag", dragged)
@@ -255,98 +366,15 @@ function force (graphData) {
     //   d3.select(this).classed('fixed', d.fixed = false)
     //   d3.selectAll('.node').fixed = true
     // }
-
-    /**
-     * Finds the intersection point between
-     *     * the rectangle
-     *       with parallel sides to the x and y axes
-     *     * the half-line pointing towards (x,y)
-     *       originating from the middle of the rectangle
-     *
-     * Note: the function works given min[XY] <= max[XY],
-     *       even though minY may not be the "top" of the rectangle
-     *       because the coordinate system is flipped.
-     *
-     * @param (x,y):Number point to build the line segment from
-     * @param minX:Number the "left" side of the rectangle
-     * @param minY:Number the "top" side of the rectangle
-     * @param maxX:Number the "right" side of the rectangle
-     * @param maxY:Number the "bottom" side of the rectangle
-     * @param check:boolean (optional) whether to treat point inside the rect as error
-     * @return an object with x and y members for the intersection
-     * @throws if check == true and (x,y) is inside the rectangle
-     * @author TWiStErRob
-     * @see <a href="https://stackoverflow.com/a/31254199/253468">source</a>
-     * @see <a href="https://stackoverflow.com/a/18292964/253468">based on</a>
-     */
-    function pointOnRect (x, y, minX, minY, maxX, maxY, check) {
-      // assert minX <= maxX;
-      // assert minY <= maxY;
-      if (check && (minX <= x && x <= maxX) && (minY <= y && y <= maxY)) { throw new Error('Point ' + [x, y] + 'cannot be inside ' + 'the rectangle: ' + [minX, minY] + ' - ' + [maxX, maxY] + '.') }
-      var midX = (minX + maxX) / 2
-      var midY = (minY + maxY) / 2
-      // if (midX - x == 0) -> m == ±Inf -> minYx/maxYx == x (because value / ±Inf = ±0)
-      var m = (midY - y) / (midX - x)
-
-      if (x <= midX) { // check "left" side
-        var minXy = m * (minX - x) + y
-        if (minY <= minXy && minXy <= maxY) {
-        return {
-                    x: minX,
-                    y: minXy
-                }
-        }
-      }
-
-      if (x >= midX) { // check "right" side
-        var maxXy = m * (maxX - x) + y
-        if (minY <= maxXy && maxXy <= maxY) {
-        return {
-                    x: maxX,
-                    y: maxXy
-                }
-        }
-      }
-
-      if (y <= midY) { // check "top" side
-        var minYx = (minY - y) / m + x
-        if (minX <= minYx && minYx <= maxX) {
-        return {
-                    x: minYx,
-                    y: minY
-                }
-        }
-      }
-
-      if (y >= midY) { // check "bottom" side
-        var maxYx = (maxY - y) / m + x
-        if (minX <= maxYx && maxYx <= maxX) {
-        return {
-                    x: maxYx,
-                    y: maxY
-                }
-        }
-      }
-
-      // Should never happen :) If it does, please tell me!
-      throw new Error('Cannot find intersection for ' + [x, y] + ' inside rectangle ' + [minX, minY] + ' - ' + [maxX, maxY] + '.')
-    }
 }
-
-class DataModelComponent extends React.Component {
-    construct (props) {}
-    componentWillMount () {
-        console.log('component will mount Component 666 model', this.props)
-    }
-    componentDidMount () {
-        console.log('component did mount Component 666 model', this.props)
-    }
-    componentWillReceiveProps (nextProps) {
-      console.log('Component Model ---------->>', nextProps)
-        if (Object.keys(nextProps.startNode).length > 0 && nextProps.startNode.constructor === Object) {
-            if (nextProps.relationships && nextProps.relationships !== this.props.relationships) {
+export default function DataModel (props) {
+    zoomStatus = props.zoomStatus
+    setZoomStatus = props.setZoomStatus
+    console.log('Data Model ---------->>', props)
+        if (Object.keys(props.startNode).length > 0 && props.startNode.constructor === Object) {
+            if (props.relationships && props.relationships) {
                 console.log('inside if component model')
-                let nodeData = nextProps.relationships
+                let nodeData = props.relationships
                 let leftCordinates = []
                 let rightCordinates = []
                 let rightColumn = 0
@@ -360,9 +388,9 @@ class DataModelComponent extends React.Component {
                 // Setting first node
                 node.id = 0
                 node.wrapSize = 150
-                node.name = nextProps.startNode.name.trim() || ''
-                node.Title = nextProps.startNode.title.trim() || ''
-                node.icon = nextProps.startNode.icon ? api.iconURL + nextProps.startNode.icon : ''
+                node.name = props.startNode.name.trim() || ''
+                node.Title = props.startNode.title.trim() || ''
+                node.icon = props.startNode.icon ? api.iconURL + props.startNode.icon : ''
                 node.width = 150
                 node.height = 70
                 node.x = 400
@@ -378,7 +406,6 @@ class DataModelComponent extends React.Component {
                 // end
                 if (nodeData.length > 0) {
                     nodeData.forEach(function (data, index) {
-                        console.log('node data', data)
                         index++
                         node = {}
                         node.id = index
@@ -386,8 +413,8 @@ class DataModelComponent extends React.Component {
                         node.name = data.target_component.name
                         node.Title = data.target_component.name
                         node.Attributes = ['']
-                        node.width = 90
-                        node.height = 45
+                        node.width = 100
+                        node.height = 50
                         node.strokeWidth = 3
                         node.textAnchor = 'middle'
                         node.fontSize = 10
@@ -523,7 +550,6 @@ class DataModelComponent extends React.Component {
                             console.log('nodeArray', nodeArray)
                             graphData.nodes = nodeArray
                             graphData.links = linkArray
-                            console.log('------------------', JSON.stringify(graphData))
                             forceInitialize(graphData)
                         }
                     })
@@ -532,26 +558,25 @@ class DataModelComponent extends React.Component {
                     graphData.links = []
                     console.log('------------------else', JSON.stringify(graphData))
                     forceInitialize(graphData)
-                    this.forceUpdate()
+                    // this.forceUpdate()
                 }
+            } else {
+                console.log('inner else')
+                clearVisualization()
             }
+        } else {
+            console.log('outer else')
+            clearVisualization()
         }
-    }
-    render () {
-        return (
-          <div id='mainScreen1' >
-            <svg id='diagramLayout1' />
-          </div>
-          )
-    }
-
-    // props: {
-    //     relationships: any,
-    //     startNode: any
-    // }
+  return (
+    <div id='mainScreen' >
+      <svg id='diagramLayout' />
+    </div>
+    )
 }
-export default DataModelComponent
-DataModelComponent.propTypes = {
+DataModel.propTypes = {
+    startNode: PropTypes.any,
     relationships: PropTypes.any,
-    startNode: PropTypes.any
-}
+    zoomStatus: PropTypes.any,
+    setZoomStatus: PropTypes.func
+  }

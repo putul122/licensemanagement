@@ -94,6 +94,7 @@ export function * getComponentModelPerspectives (action) {
       axios.get,
       api.getComponentModelPerspectives(action.payload)
     )
+    console.log('componentModelPrespectives', componentModelPrespectives)
     yield put(actionCreators.fetchComponentModelPrespectivesSuccess(componentModelPrespectives.data))
   } catch (error) {
     yield put(actionCreators.fetchComponentModelPrespectivesFailure(error))

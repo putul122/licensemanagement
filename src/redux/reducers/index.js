@@ -20,6 +20,7 @@ import signUpReducer from './signUpReducer/signUpReducerReducer'
 import projectsReducer from './projectsReducer/projectsReducerReducer'
 import projectDetailReducer from './projectDetailReducer/projectDetailReducerReducer'
 import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
+import dataModelReducer from './dataModelReducer/dataModelReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -42,5 +43,6 @@ export default combineReducers({
     sheetsReducer,
     projectsReducer,
     projectDetailReducer,
-    componentModalViewReducer
+    componentModalViewReducer,
+    dataModelReducer
 })
