@@ -414,7 +414,7 @@ export default function DataModel (props) {
                         node.Title = data.target_component.name
                         node.Attributes = ['']
                         node.width = 100
-                        node.height = 50
+                        node.height = 40
                         node.strokeWidth = 3
                         node.textAnchor = 'middle'
                         node.fontSize = 10
