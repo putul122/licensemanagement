@@ -611,7 +611,7 @@ export default function Suppliers (props) {
           </div>
         </div>
         {/* The table structure begins */}
-        <div className='' style={{'marginTop': '20px'}}>
+        <div className={styles.borderline} style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist'>
             <li className='nav-item'>
               <a className='nav-link active' onClick={() => { props.setCurrentPage(1); props.setActiveTab('suppliersdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Suppliers Details</a>
@@ -648,7 +648,7 @@ export default function Suppliers (props) {
                   </div>
                 </div>
                 {supplierAgreementList.length > 0 && (
-                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'textAlign': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
                       <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
                       {listAgreementPage[0] && listAgreementPage[0].map(function (page, index) {
@@ -685,7 +685,7 @@ export default function Suppliers (props) {
                   </div>
                 </div>
                 {supplierSoftwareList.length > 0 && (
-                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'textAlign': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
                       <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
                       {listSoftwarePage[0] && listSoftwarePage[0].map(function (page, index) {
@@ -840,7 +840,7 @@ export default function Suppliers (props) {
                   </div>
                 </div>
                 {supplierApplicationList.length > 0 && (
-                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'textAlign': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
                       <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
                       {listApplicationPage[0] && listApplicationPage[0].map(function (page, index) {

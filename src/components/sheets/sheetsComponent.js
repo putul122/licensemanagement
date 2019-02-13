@@ -888,7 +888,7 @@ return (
                   <span aria-hidden='true'>×</span>
                 </button>
               </div>
-              <div className='modal-body'>
+              <div className='modal-body' style={style}>
                 <div className='col-md-12'>
                   {/* {messageBlock} */}
                   {props.modalSettings.updateResponse === null && (<div className='form-group m-form__group row'>

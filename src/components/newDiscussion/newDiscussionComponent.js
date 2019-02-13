@@ -203,7 +203,7 @@ return (
                   <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' autoComplete='off' required />
                 </div>
                 <div className='form-group'>
-                  <MentionsInput onKeyUp={handleChange1} allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                  <MentionsInput onKeyUp={handleChange1} allowSpaceInQuery ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                     <Mention
                       type='Mention'
                       trigger='@'

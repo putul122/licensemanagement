@@ -722,6 +722,8 @@ export default function AgreementDetail (props) {
           return (
             <tr key={index}>
               <td><a href={'/entitlements/' + data.id}>{data.name}</a></td>
+              <td>{data.reserved}</td>
+              <td>{data.license_type}</td>
               <td>{data.purchased}</td>
               <td>{data.consumed}</td>
               <td>{'R ' + formatAmount(data.unit_cost)}</td>
@@ -733,7 +735,7 @@ export default function AgreementDetail (props) {
         agreementEntitlementList = []
         agreementEntitlementList.push((
           <tr key={0}>
-            <td colSpan='5'>{'No data to display'}</td>
+            <td colSpan='7'>{'No data to display'}</td>
           </tr>
         ))
       }
@@ -1392,7 +1394,7 @@ export default function AgreementDetail (props) {
           <div className='col-md-5' />
         </div>
         {/* The table structure begins */}
-        <div className='' style={{'marginTop': '20px'}}>
+        <div className={styles.borderline} style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist'>
             <li className='nav-item'>
               <a className='nav-link show active' data-toggle='tab' href='#m_tabs_2_1'>Details</a>
@@ -1424,6 +1426,8 @@ export default function AgreementDetail (props) {
                       <thead>
                         <tr role='row'>
                           <th className=''><h5>Name</h5></th>
+                          <th className=''><h5>Reserved</h5></th>
+                          <th className=''><h5>License Type</h5></th>
                           <th className=''><h5>Purchased</h5></th>
                           <th className=''><h5>Consumed</h5></th>
                           <th className=''><h5>Cost per Unit</h5></th>
