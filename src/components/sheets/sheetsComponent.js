@@ -908,7 +908,7 @@ return (
                     <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
                       <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
                       {props.modalSettings.updateResponse === null && (<button onClick={ImportData} className={'m-btn btn btn-secondary ' + importDisabledClass} >Import</button>)}
-                      {(props.modalSettings.updateResponse !== null && props.modalSettings.updateResponse.length > 1 && !props.modalSettings.isConfirmPressed) && (<button onClick={confirmChanges} className={'m-btn btn btn-secondary' + 'importDisabledClass'} >Confirm</button>)}
+                      {(props.modalSettings.updateResponse !== null && props.modalSettings.updateResponse.length > 1 && !props.modalSettings.isConfirmPressed) && (<button onClick={confirmChanges} className={'m-btn btn btn-secondary'} >Confirm</button>)}
                     </div>
                   </div>
                 </div>
