@@ -722,10 +722,10 @@ export default function AgreementDetail (props) {
           return (
             <tr key={index}>
               <td><a href={'/entitlements/' + data.id}>{data.name}</a></td>
-              <td>{data.reserved}</td>
               <td>{data.license_type}</td>
               <td>{data.purchased}</td>
               <td>{data.consumed}</td>
+              <td>{data.reserved}</td>
               <td>{'R ' + formatAmount(data.unit_cost)}</td>
               <td>{'R ' + formatAmount(data.total_cost)}</td>
             </tr>
@@ -1426,10 +1426,10 @@ export default function AgreementDetail (props) {
                       <thead>
                         <tr role='row'>
                           <th className=''><h5>Name</h5></th>
-                          <th className=''><h5>Reserved</h5></th>
                           <th className=''><h5>License Type</h5></th>
                           <th className=''><h5>Purchased</h5></th>
                           <th className=''><h5>Consumed</h5></th>
+                          <th className=''><h5>Reserved</h5></th>
                           <th className=''><h5>Cost per Unit</h5></th>
                           <th className=''><h5>Total Cost</h5></th>
                         </tr>
