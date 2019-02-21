@@ -1,4 +1,8 @@
 'use strict';
+require('react-app-polyfill/ie11');
+require('core-js/fn/array/find');
+require('core-js/fn/array/includes');
+require('core-js/fn/number/is-nan');
 
 if (typeof Promise === 'undefined') {
   // Rejection tracking prevents a common issue where React gets into an
