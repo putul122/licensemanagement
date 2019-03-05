@@ -178,6 +178,24 @@ export default class Root extends Component {
             }
             resolve(require('../sheetsPage/sheetsPageRoute').default)
             break
+          case 'businessUnits':
+            if (module.hot) {
+              module.hot.accept('../businessUnitsPage/businessUnitsPageRoute', () => {
+                        require('../businessUnitsPage/businessUnitsPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../businessUnitsPage/businessUnitsPageRoute').default)
+            break
+          case 'viewBusinessUnits':
+            if (module.hot) {
+              module.hot.accept('../viewBusinessUnitsPage/viewBusinessUnitsPageRoute', () => {
+                        require('../viewBusinessUnitsPage/viewBusinessUnitsPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../viewBusinessUnitsPage/viewBusinessUnitsPageRoute').default)
+            break
           case 'landing':
             if (module.hot) {
               module.hot.accept('../landingPage/landingPageRoute', () => {
@@ -224,6 +242,8 @@ export default class Root extends Component {
             <Route exact path='/handleAzure' component={(props) => this.loadView('handleAzure', props)} />
             <Route exact path='/sheets' component={(props) => this.loadView('sheets', props)} />
             <Route exact path='/projects' component={(props) => this.loadView('projects', props)} />
+            <Route exact path='/business-units' component={(props) => this.loadView('businessUnits', props)} />
+            <Route exact path='/business-units/:id' component={(props) => this.loadView('viewBusinessUnits', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

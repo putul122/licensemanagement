@@ -135,6 +135,15 @@ const api = {
   getProjectEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/project/GetProjectEntitlements',
   getAllModelPerspectives: function (payload) {
     return 'https://model-eco-dev.ecoconductor.com/model_perspectives?' + payload
+  },
+  getBusinessUnitsSummary: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnitsSummary',
+  getBusinessUnit: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnit',
+  getBusinessUnitAgreements: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnitAgreements',
+  getBusinessUnitEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnitEntitlements',
+  getBusinessUnitOwnsApplications: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnitOwnsApplications',
+  getBusinessUnitUsesApplications: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnitUsesApplications',
+  updateBusinessUnitEntitlements: function (businessUnitId) {
+    return ' https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/UpdateBusinessUnitEntitlements?business_unit_id=' + businessUnitId
   }
 }
 

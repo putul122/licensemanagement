@@ -11,6 +11,7 @@ import watchModelActivity, {actionCreators as modelActions} from './model/modelS
 import watchCreateUser, {actionCreators as signUpActions} from './signUp/signUpSaga'
 import watchComponentModalView, {actionCreators as componentModalViewActions} from './componentModalView/componentModalViewSaga'
 import watchProjects, {actionCreators as projectActions} from './project/projectSaga'
+import watchBusinessUnits, {actionCreators as businessUnitsActions} from './businessUnits/businessUnitsSaga'
 
 export const actions = {
   basicActions,
@@ -25,7 +26,8 @@ export const actions = {
   applicationActivityActions,
   modelActions,
   componentModalViewActions,
-  projectActions
+  projectActions,
+  businessUnitsActions
 }
 export default function * rootSaga () {
   yield [
@@ -41,6 +43,7 @@ export default function * rootSaga () {
     watchApplicationActivity(),
     watchModelActivity(),
     watchComponentModalView(),
-    watchProjects()
+    watchProjects(),
+    watchBusinessUnits()
   ]
 }

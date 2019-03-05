@@ -21,6 +21,8 @@ import projectsReducer from './projectsReducer/projectsReducerReducer'
 import projectDetailReducer from './projectDetailReducer/projectDetailReducerReducer'
 import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
 import dataModelReducer from './dataModelReducer/dataModelReducerReducer'
+import businessUnitsReducer from './businessUnitsReducer/businessUnitsReducerReducer'
+import viewBusinessUnitsReducer from './viewBusinessUnitsReducer/viewBusinessUnitsReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -44,5 +46,7 @@ export default combineReducers({
     projectsReducer,
     projectDetailReducer,
     componentModalViewReducer,
-    dataModelReducer
+    dataModelReducer,
+    businessUnitsReducer,
+    viewBusinessUnitsReducer
 })
