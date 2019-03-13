@@ -18,7 +18,7 @@ export function mapStateToProps (state, props) {
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
     activityMessage: sagaActions.applicationActivityActions.activityMessage,
-    setComponentId: actionCreators.setComponentId,
+    // setComponentId: componentModalViewActionCreators.setComponentId,
     setCurrentPage: actionCreators.setCurrentPage,
     setModalSettings: componentModalViewActionCreators.setModalSettings,
     setQuickslideFlag: basicActionCreators.setQuickslideFlag

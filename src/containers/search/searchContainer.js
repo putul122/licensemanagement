@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import Search from '../../components/search/searchComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/searchReducer/searchReducerReducer'
+import { actionCreators as componentModalViewActionCreators } from '../../redux/reducers/componentModalViewReducer/componentModalViewReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -23,7 +24,8 @@ export const propsMapping: Callbacks = {
   setPerPage: actionCreators.setPerPage,
   setSearchText: actionCreators.setSearchText,
   resetResponse: actionCreators.resetResponse,
-  setSearchData: actionCreators.setSearchData
+  setSearchData: actionCreators.setSearchData,
+  setModalSettings: componentModalViewActionCreators.setModalSettings
 }
 
 // If you want to use the function mapping

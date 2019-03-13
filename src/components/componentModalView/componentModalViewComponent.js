@@ -341,7 +341,7 @@ export default function ComponentModalView (props) {
                 <h4 className='modal-title' id='exampleModalLabel'>{componentName}</h4>
                 <button type='button' onClick={closeModal} className='btn btn-sm btn-outline-info' data-dismiss='modal' aria-label='Close'>Close</button>
               </div>
-              <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>
+              <div className='modal-body' style={{'height': 'calc(70vh - 50px)', 'overflow': 'auto'}}>
                 <div className={styles.borderline}>
                   <div className='row'>
                     <div className='col-sm-12 col-md-5' >

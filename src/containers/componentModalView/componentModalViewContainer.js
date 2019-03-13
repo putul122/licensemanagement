@@ -97,13 +97,13 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
       }
-      if (nextProps.componentId && nextProps.modalSettings.callAPI) {
+      if (nextProps.modalSettings.componentId && nextProps.modalSettings.callAPI) {
         console.log('call api')
         // eslint-disable-next-line
         mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(nextProps.componentId)
-        this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(nextProps.componentId)
-        this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(nextProps.componentId)
+        this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(nextProps.modalSettings.componentId)
+        this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(nextProps.modalSettings.componentId)
+        this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(nextProps.modalSettings.componentId)
         let modalSettings = JSON.parse(JSON.stringify(nextProps.modalSettings))
         modalSettings.callAPI = false
         console.log('modla se4tting', modalSettings)

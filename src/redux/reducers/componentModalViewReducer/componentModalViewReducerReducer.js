@@ -9,6 +9,7 @@ const SET_DATA_LOADING = 'ComponentModalViewReducer/SET_DATA_LOADING'
 const SET_CURRENT_TAB = 'ComponentModalViewReducer/SET_CURRENT_TAB'
 const SET_MODAL_SETTINGS = 'ComponentModalViewReducer/SET_MODAL_SETTINGS'
 const RESET_RESPONSE = 'ComponentModalViewReducer/RESET_RESPONSE'
+const SET_COMPONENT_ID = 'ComponentModalViewReducer/SET_COMPONENT_ID'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
@@ -16,14 +17,16 @@ export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_CURRENT_TAB,
   SET_MODAL_SETTINGS,
-  RESET_RESPONSE
+  RESET_RESPONSE,
+  SET_COMPONENT_ID
 }
 
 export const actionCreators = {
   setDataLoading: createAction(SET_DATA_LOADING),
   setCurrentTab: createAction(SET_CURRENT_TAB),
   setModalSettings: createAction(SET_MODAL_SETTINGS),
-  resetResponse: createAction(RESET_RESPONSE)
+  resetResponse: createAction(RESET_RESPONSE),
+  setComponentId: createAction(SET_COMPONENT_ID)
 }
 
 export const initialState = {
@@ -34,6 +37,7 @@ export const initialState = {
   showTabs: {'showProperty': ' active show', 'showRelationship': ''},
   modalSettings: {
     isModalOpen: false,
+    componentId: null,
     callAPI: false
   }
 }
@@ -66,6 +70,10 @@ export default handleActions(
       componentTypeComponentData: '',
       componentTypeComponentProperties: '',
       componentTypeComponentRelationships: ''
+    }),
+    [SET_COMPONENT_ID]: (state, action) => ({
+      ...state,
+      componentId: action.payload
     })
   },
   initialState

@@ -99,19 +99,27 @@ export default function ApplicationActivity (props) {
                 if (artefactType) {
                   if (artefactType.key === 'Component') {
                     // componentId = referenceId
-                    props.setComponentId(referenceId)
                     let payload = {}
                     payload.isModalOpen = true
+                    payload.componentId = referenceId
                     payload.callAPI = true
                     props.setModalSettings(payload)
                     props.setQuickslideFlag(false)
                   } else {
                     // componentId = null
-                    props.setComponentId(null)
+                    let payload = {}
+                    payload.isModalOpen = false
+                    payload.componentId = null
+                    payload.callAPI = false
+                    props.setModalSettings(payload)
                   }
                 } else {
                   // componentId = null
-                  props.setComponentId(null)
+                  let payload = {}
+                  payload.isModalOpen = false
+                  payload.componentId = null
+                  payload.callAPI = false
+                  props.setModalSettings(payload)
                 }
               }
               if (parts[1] === 'Mention') {
