@@ -196,6 +196,15 @@ export default class Root extends Component {
             }
             resolve(require('../viewBusinessUnitsPage/viewBusinessUnitsPageRoute').default)
             break
+          case 'search':
+            if (module.hot) {
+              module.hot.accept('../searchPage/searchPageRoute', () => {
+                        require('../searchPage/searchPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../searchPage/searchPageRoute').default)
+            break
           case 'landing':
             if (module.hot) {
               module.hot.accept('../landingPage/landingPageRoute', () => {
@@ -244,6 +253,7 @@ export default class Root extends Component {
             <Route exact path='/projects' component={(props) => this.loadView('projects', props)} />
             <Route exact path='/business-units' component={(props) => this.loadView('businessUnits', props)} />
             <Route exact path='/business-units/:id' component={(props) => this.loadView('viewBusinessUnits', props)} />
+            <Route exact path='/searchAll' component={(props) => this.loadView('search', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

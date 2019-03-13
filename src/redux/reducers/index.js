@@ -23,6 +23,7 @@ import componentModalViewReducer from './componentModalViewReducer/componentModa
 import dataModelReducer from './dataModelReducer/dataModelReducerReducer'
 import businessUnitsReducer from './businessUnitsReducer/businessUnitsReducerReducer'
 import viewBusinessUnitsReducer from './viewBusinessUnitsReducer/viewBusinessUnitsReducerReducer'
+import searchReducer from './searchReducer/searchReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -48,5 +49,6 @@ export default combineReducers({
     componentModalViewReducer,
     dataModelReducer,
     businessUnitsReducer,
-    viewBusinessUnitsReducer
+    viewBusinessUnitsReducer,
+    searchReducer
 })

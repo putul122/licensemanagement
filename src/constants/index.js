@@ -144,7 +144,8 @@ const api = {
   getBusinessUnitUsesApplications: 'https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/GetBusinessUnitUsesApplications',
   updateBusinessUnitEntitlements: function (businessUnitId) {
     return ' https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/UpdateBusinessUnitEntitlements?business_unit_id=' + businessUnitId
-  }
+  },
+  searchAll: 'https://lm-eco-dev.ecoconductor.com/api/global/SearchAll'
 }
 
 export default api

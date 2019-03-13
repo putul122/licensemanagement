@@ -1,5 +1,10 @@
 import { createAction, handleActions } from 'redux-actions'
-import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS, UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS, FETCH_PACKAGE_SUCCESS } from '../../sagas/basic/basicSaga'
+import {
+  FETCH_CLIENT_ACCESS_TOKEN_SUCCESS,
+  FETCH_USER_AUTHENTICATION_SUCCESS,
+  UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS,
+  FETCH_PACKAGE_SUCCESS
+} from '../../sagas/basic/basicSaga'
 // Name Spaced Action Types
 const INCREMENT = 'BasicReducer/INCREMENT'
 const DECREMENT = 'BasicReducer/DECREMENT'
