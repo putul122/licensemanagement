@@ -22,6 +22,9 @@ export const FETCH_PACKAGE_FAILURE = 'saga/Basic/FETCH_PACKAGE_FAILURE'
 export const SEARCH_ALL = 'saga/Basic/SEARCH_ALL'
 export const SEARCH_ALL_SUCCESS = 'saga/Basic/SEARCH_ALL_SUCCESS'
 export const SEARCH_ALL_FAILURE = 'saga/Basic/SEARCH_ALL_FAILURE'
+export const FETCH_DROPDOWN_DATA = 'saga/Basic/FETCH_DROPDOWN_DATA'
+export const FETCH_DROPDOWN_DATA_SUCCESS = 'saga/Basic/FETCH_DROPDOWN_DATA_SUCCESS'
+export const FETCH_DROPDOWN_DATA_FAILURE = 'saga/Basic/FETCH_DROPDOWN_DATA_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -41,7 +44,10 @@ export const actionCreators = {
   fetchPackageFailure: createAction(FETCH_PACKAGE_FAILURE),
   searchAll: createAction(SEARCH_ALL),
   searchAllSuccess: createAction(SEARCH_ALL_SUCCESS),
-  searchAllFailure: createAction(SEARCH_ALL_FAILURE)
+  searchAllFailure: createAction(SEARCH_ALL_FAILURE),
+  fetchDropdownData: createAction(FETCH_DROPDOWN_DATA),
+  fetchDropdownDataSuccess: createAction(FETCH_DROPDOWN_DATA_SUCCESS),
+  fetchDropdownDataFailure: createAction(FETCH_DROPDOWN_DATA_FAILURE)
 }
 
 export default function * watchBasic () {
@@ -51,8 +57,22 @@ export default function * watchBasic () {
     takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits),
     takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus),
     takeLatest(FETCH_PACKAGE, getPackage),
-    takeLatest(SEARCH_ALL, getAllSearch)
+    takeLatest(SEARCH_ALL, getAllSearch),
+    takeLatest(FETCH_DROPDOWN_DATA, getDropdownData)
   ]
+}
+
+export function * getDropdownData (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const dropdownData = yield call(
+      axios.get,
+      api.getComponentTypeComponents(action.payload)
+    )
+    yield put(actionCreators.fetchDropdownDataSuccess(dropdownData.data))
+  } catch (error) {
+    yield put(actionCreators.fetchDropdownDataFailure(error))
+  }
 }
 
 export function * getAllSearch (action) {

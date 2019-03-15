@@ -53,7 +53,11 @@ export const initialState = {
   },
   applicationRelationships: '',
   applicationRelationshipData: '',
-  showTabs: {'showProperty': ' active show', 'showRelationship': ''}
+  showTabs: {
+    'parentTab': 'Application',
+    'showProperty': ' active show',
+    'showRelationship': ''
+  }
  }
 
 export default handleActions(

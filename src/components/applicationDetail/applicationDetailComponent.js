@@ -36,6 +36,9 @@ export default function Applicationview (props) {
   let modelRelationshipData = ''
   let showProperties = props.showTabs.showProperty
   let showRelationships = props.showTabs.showRelationship
+  let showApplication = props.showTabs.parentTab === 'Application' ? ' active show' : ''
+  let showSoftware = props.showTabs.parentTab === 'Software' ? ' active show' : ''
+  let showEntitlements = props.showTabs.parentTab === 'Entitlements' ? ' active show' : ''
   let startNode = {}
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
@@ -115,14 +118,35 @@ export default function Applicationview (props) {
     // applicationRelationshipData[index] = checkedObject
     props.setApplicationRelationship(applicationRelationshipData)
   }
-  let showProperty = function (event) {
-    let payload = {'showProperty': ' active show', 'showRelationship': ''}
-    props.setCurrentTab(payload)
+  let setCurrentTab = function (parentTab, childTab) {
+    let showTabs = {...props.showTabs}
+    if (parentTab) {
+      if (parentTab === 'Application') {
+        showTabs.parentTab = 'Application'
+        showTabs.showProperty = ' active show'
+        showTabs.showRelationship = ''
+      } else if (parentTab === 'Software') {
+        showTabs.parentTab = 'Software'
+        showTabs.showProperty = ' active show'
+        showTabs.showRelationship = ''
+      } else if (parentTab === 'Entitlements') {
+        showTabs.parentTab = 'Entitlements'
+        showTabs.showProperty = ' active show'
+        showTabs.showRelationship = ''
+      }
+    }
+    if (childTab) {
+      if (childTab === 'Property') {
+        showTabs.showProperty = ' active show'
+        showTabs.showRelationship = ''
+      } else if (childTab === 'Relationship') {
+        showTabs.showProperty = ''
+        showTabs.showRelationship = ' active show'
+      }
+    }
+    props.setCurrentTab(showTabs)
   }
-  let showRelationship = function (event) {
-    let payload = {'showProperty': '', 'showRelationship': ' active show'}
-    props.setCurrentTab(payload)
-  }
+
   if (props.applicationbyId && props.applicationbyId !== '') {
     applicationName = props.applicationbyId.resources[0].name
     applicationCount = props.applicationbyId.resources[0].used_by_business_unit_count
@@ -467,49 +491,80 @@ export default function Applicationview (props) {
         </div>
         {/* The table structure ends */}
         <div className='row col-sm-12'>
-          <div className='col-md-5 m-portlet'>
+          <div className='m-portlet'>
             <div className={styles.tabsprops}>
               <ul className='nav nav-tabs' role='tablist'>
                 <li className='nav-item'>
-                  <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
+                  <a className={'nav-link ' + showApplication} data-toggle='tab' onClick={(event) => { event.preventDefault(); setCurrentTab('Application', null) }} href='javascript:void(0);'>Application</a>
                 </li>
                 <li className='nav-item'>
-                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
+                  <a className={'nav-link ' + showSoftware} data-toggle='tab' onClick={(event) => { event.preventDefault(); setCurrentTab('Software', null) }} href='javascript:void(0);'>Software</a>
+                </li>
+                <li className='nav-item'>
+                  <a className={'nav-link ' + showEntitlements} data-toggle='tab' onClick={(event) => { event.preventDefault(); setCurrentTab('Entitlements', null) }} href='javascript:void(0);'>Entitlements</a>
                 </li>
               </ul>
               <div className='tab-content'>
-                <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
-                  <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
-                    <tbody>
-                      {applicationPropertiesList}
-                    </tbody>
-                  </table>
-                </div>
-                <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
-                  {/* <div className='pull-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
-                  </div> */}
-                  <div className={'row'} style={{'marginTop': '20px'}}>
-                    <div className='m--space-10' />
-                    <div className='accordion m-accordion m-accordion--bordered' style={{width: '100%'}} id='m_accordion_2' role='tablist' aria-multiselectable='true'>
-                      {parentApplicationRelationshipList}
-                      {outgoingApplicationRelationshipList}
-                      {incomingApplicationRelationshipList}
-                      {childApplicationRelationshipList}
+                <div className={'tab-pane' + showApplication} id='m_tabs_3_1' role='tabpanel'>
+                  <div className='row'>
+                    <div className='col-md-5'>
+                      <div className={styles.tabsprops}>
+                        <ul className='nav nav-tabs' role='tablist'>
+                          <li className='nav-item'>
+                            <a className={'nav-link' + showProperties} data-toggle='tab' onClick={(event) => { event.preventDefault(); setCurrentTab(null, 'Property') }} href='javascript:void(0);'>Properties</a>
+                          </li>
+                          <li className='nav-item'>
+                            <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={(event) => { event.preventDefault(); setCurrentTab(null, 'Relationship') }} href='javascript:void(0);'>Relationships</a>
+                          </li>
+                        </ul>
+                        <div className='tab-content'>
+                          <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
+                            <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
+                              <tbody>
+                                {applicationPropertiesList}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
+                            {/* <div className='pull-right'>
+                              <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                            </div> */}
+                            <div className={'row'} style={{'marginTop': '20px'}}>
+                              <div className='m--space-10' />
+                              <div className='accordion m-accordion m-accordion--bordered' style={{width: '100%'}} id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                                {parentApplicationRelationshipList}
+                                {outgoingApplicationRelationshipList}
+                                {incomingApplicationRelationshipList}
+                                {childApplicationRelationshipList}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='col-md-7'>
+                      <div className='row'>
+                        <div id='divPaperWrapper' style={divStyle}>
+                          <DataModelComponent startNode={startNode} relationships={modelRelationshipData} />
+                          {/* <DataModelComponent /> */}
+                        </div>
+                      </div>
+                      {/* <img alt='model' src='https://via.placeholder.com/900x545?text=Model%20Visualization' /> */}
                     </div>
                   </div>
                 </div>
+                <div className={'tab-pane' + showSoftware} id='m_tabs_3_2' role='tabpanel'>
+                  {/* <div className='pull-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  </div> */}
+                </div>
+                <div className={'tab-pane' + showEntitlements} id='m_tabs_3_2' role='tabpanel'>
+                  {/* <div className='pull-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                  </div> */}
+                </div>
               </div>
             </div>
-          </div>
-          <div className='col-md-7'>
-            <div className='row'>
-              <div id='divPaperWrapper' style={divStyle}>
-                <DataModelComponent startNode={startNode} relationships={modelRelationshipData} />
-                {/* <DataModelComponent /> */}
-              </div>
-            </div>
-            {/* <img alt='model' src='https://via.placeholder.com/900x545?text=Model%20Visualization' /> */}
           </div>
         </div>
         <Discussion name={applicationName} type='Component' {...props} />

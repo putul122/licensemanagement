@@ -2,7 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './agreementsComponent.scss'
+import Select from 'react-select'
 import moment from 'moment'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
@@ -38,7 +41,9 @@ const customStyles = {
 }
 
 export default function Agreements (props) {
-  console.log(props.agreementsSummary, props.agreements, props.currentPage)
+  console.log('test agreement', props)
+  let connectionSelectBoxList = ''
+  let businessPropertyList = ''
   let agreementsList = ''
   let agreementCount = ''
   let agreementCost = ''
@@ -47,6 +52,7 @@ export default function Agreements (props) {
   let totalNoPages
   let perPage = props.perPage
   let currentPage = props.currentPage
+  let messageList = ''
   let nextClass = ''
   let previousClass = ''
   let pageArray = []
@@ -61,6 +67,61 @@ export default function Agreements (props) {
       return obj.key === 'Agreement'
   }), 'component_type')
   contextId = componentId
+  let editProperty = function (index, value) {
+    let connectionData = {...props.connectionData}
+    let customerProperty = connectionData.customerProperty
+    let propertyType = customerProperty[index].type_property.property_type
+    if (propertyType.key === 'Boolean') {
+      customerProperty[index].type_property.boolean_value = value
+    } else if (propertyType.key === 'Integer') {
+      customerProperty[index].type_property.int_value = value
+    } else if (propertyType.key === 'Decimal') {
+      customerProperty[index].type_property.float_value = value
+    } else if (propertyType.key === 'DateTime') {
+      customerProperty[index].type_property.date_time_value = value.format('DD MMM YYYY')
+    } else if (propertyType.key === 'Text') {
+      customerProperty[index].type_property.text_value = value
+    } else {
+      customerProperty[index].type_property.other_value = value
+    }
+    connectionData.customerProperty = customerProperty
+    props.setConnectionData(connectionData)
+  }
+  let handlePropertySelect = function (index) {
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      let connectionData = JSON.parse(JSON.stringify(props.connectionData))
+      let customerProperty = connectionData.customerProperty
+      if (actionMeta.action === 'select-option') {
+        customerProperty[index].type_property.value_set_value = newValue
+      }
+      if (actionMeta.action === 'clear') {
+        customerProperty[index].type_property.value_set_value = newValue
+      }
+      connectionData.customerProperty = customerProperty
+      props.setConnectionData(connectionData)
+    }
+  }
+  let handleSelectChange = function (index) {
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      console.log('index', index)
+      let connectionData = {...props.connectionData}
+      let selectedValues = connectionData.selectedValues
+      if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
+        selectedValues[index] = newValue
+        connectionData.selectedValues = selectedValues
+        props.setConnectionData(connectionData)
+      }
+      if (actionMeta.action === 'clear') {
+        selectedValues[index] = null
+        connectionData.selectedValues = selectedValues
+        props.setConnectionData(connectionData)
+      }
+    }
+  }
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -71,27 +132,109 @@ export default function Agreements (props) {
   let openAddAgreementModal = function () {
     let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: true}
     props.setAddAgreementSettings(addAgreementSettings)
+    let connectionData = {...props.connectionData}
+    let selectedValues = []
+    connectionData.selectedValues.forEach(function (data) {
+      selectedValues.push(null)
+    })
+    let resetCustomerProperty = connectionData.customerProperty.map(function (data, index) {
+      if (data.type_property.property_type.key === 'Boolean') {
+        data.type_property.boolean_value = null
+      } else if (data.type_property.property_type.key === 'Integer') {
+        data.type_property.int_value = null
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        data.type_property.float_value = null
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        data.type_property.date_time_value = null
+      } else if (data.type_property.property_type.key === 'Text') {
+        data.type_property.text_value = null
+      } else if (data.type_property.property_type.key === 'List') {
+        data.type_property.value_set_value = null
+      } else {
+        data.type_property.other_value = null
+      }
+      return data
+    })
+    connectionData.selectedValues = selectedValues
+    connectionData.customerProperty = resetCustomerProperty
+    props.setConnectionData(connectionData)
   }
   let createNewAgreement = function () {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let appPackage = JSON.parse(localStorage.getItem('packages'))
-    let componentTypes = appPackage.resources[0].component_types
-    let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-      return obj.key === 'Agreement'
-    }), 'component_type')
-    let payload = {
-      'component_type': {
-        'id': componentTypeId
-      },
-      'name': newAgreementName.value,
-      'description': newAgreementDescription.value
-    }
-    props.addAgreement(payload)
-    closeAddModal()
+    let perspectives = appPackage.resources[0].perspectives
+    let perspectiveId = _.result(_.find(perspectives, function (obj) {
+      return obj.key === 'Agreements'
+    }), 'perspective')
+    // let payload = {
+    //   'component_type': {
+    //     'id': componentTypeId
+    //   },
+    //   'name': newAgreementName.value,
+    //   'description': newAgreementDescription.value
+    // }
+    let patchPayload = []
+    let obj = {}
+    obj.op = 'add'
+    obj.path = '/-'
+    obj.value = {}
+    obj.value.parts = []
+    obj.value.parts[0] = {'value': newAgreementName.value}
+    obj.value.parts[1] = {'value': newAgreementDescription.value}
+    let connectionData = {...props.connectionData}
+    connectionData.selectedValues.forEach(function (data, index) {
+      if (Array.isArray(data)) {
+        if (data.length > 0) {
+          let connections = []
+          data.forEach(function (selectedValue, ix) {
+            connections.push(selectedValue.id)
+          })
+          obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
+        } else {
+          obj.value.parts[connectionData.data[index].partIndex] = {}
+        }
+      } else {
+        if (data) {
+          let connections = []
+          connections.push(data.id)
+          obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
+        } else {
+          obj.value.parts[connectionData.data[index].partIndex] = {}
+        }
+      }
+    })
+    connectionData.customerProperty.forEach(function (data, index) {
+      if (data.type_property.property_type.key === 'Boolean') {
+        obj.value.parts[data.partIndex] = {value: {'boolean_value': data.type_property.boolean_value}}
+      } else if (data.type_property.property_type.key === 'Integer') {
+        obj.value.parts[data.partIndex] = {value: {'int_value': data.type_property.int_value}}
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        obj.value.parts[data.partIndex] = {value: {'float_value': data.type_property.float_value}}
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        obj.value.parts[data.partIndex] = {value: {'date_time_value': data.type_property.date_time_value}}
+      } else if (data.type_property.property_type.key === 'Text') {
+        obj.value.parts[data.partIndex] = {value: {'text_value': data.type_property.text_value}}
+      } else if (data.type_property.property_type.key === 'List') {
+        obj.value.parts[data.partIndex] = {value: {'value_set_value_id': data.type_property.value_set_value ? data.type_property.value_set_value.id : null}}
+      } else {
+        obj.value.parts[data.partIndex] = {value: {'other_value': data.type_property.other_value}}
+      }
+    })
+    patchPayload.push(obj)
+    let payload = {}
+    payload.queryString = {}
+    payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
+    payload.queryString.apply_changes = true
+    payload.data = {}
+    payload.data[perspectiveId] = patchPayload
+    console.log('payload', payload)
+    props.updateModelPrespectives(payload)
+    // props.addAgreement(payload)
+    // closeAddModal()
   }
   let closeAddModal = function () {
-    let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: false}
+    let addAgreementSettings = {...props.addAgreementSettings, isAddModalOpen: false, createResponse: null}
     props.setAddAgreementSettings(addAgreementSettings)
   }
   // End code for add new agreement
@@ -260,7 +403,134 @@ export default function Agreements (props) {
       if (found.length > 0) { return group }
     })
   }
-
+  if (props.connectionData !== '' && props.connectionData.operation.isComplete) {
+    // eslint-disable-next-line
+    mApp && mApp.unblockPage()
+    let connectionData = {...props.connectionData}
+    connectionSelectBoxList = connectionData.data.map(function (data, index) {
+      let selectOptions = connectionData.selectOption[index].map(function (component, id) {
+        component.value = component.id
+        component.label = component.name
+        return component
+      })
+      return (<div className='form-group row'>
+        <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+        <div className='col-8'>
+          <Select
+            className='input-sm m-input'
+            placeholder={'Select ' + data.name}
+            isMulti={data.max !== 1}
+            isClearable
+            value={connectionData.selectedValues[index]}
+            onChange={handleSelectChange(index)}
+            options={selectOptions}
+            />
+        </div>
+      </div>)
+    })
+    businessPropertyList = connectionData.customerProperty.map(function (data, index) {
+      let value = null
+      if (data.type_property.property_type.key === 'Integer') {
+        value = data.type_property.int_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Number</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        value = data.type_property.float_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Number</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        value = data.type_property.date_time_value ? moment(data.type_property.date_time_value).format('DD MMM YYYY') : ''
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <DatePicker
+              className='input-sm form-control m-input'
+              selected={data.type_property.date_time_value ? moment(data.type_property.date_time_value) : ''}
+              dateFormat='DD MMM YYYY'
+              onSelect={(date) => { editProperty(index, date) }}
+              />
+            {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+            {false && (<div className='form-control-feedback'>should be Date</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'Text') {
+        value = data.type_property.text_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Text</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'List') {
+        let propertyOption = data.type_property.value_set.values.map((option, opIndex) => {
+          option.label = option.name
+          option.value = option.id
+          return option
+        })
+        let dvalue = data.type_property.value_set_value
+        if (data.type_property.value_set_value !== null) {
+          dvalue.label = data.type_property.value_set_value.name
+          dvalue.value = data.type_property.value_set_value.id
+        }
+        value = data.type_property.value_set_value ? data.type_property.value_set_value.name : null
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <Select
+            className='col-8 input-sm m-input'
+            placeholder='Select Options'
+            isClearable
+            defaultValue={dvalue}
+            onChange={handlePropertySelect(index)}
+            isSearchable={false}
+            name={'selectProperty'}
+            options={propertyOption}
+          />
+        </div>)
+      } else {
+        value = data.type_property.other_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {true && (<div className='form-control-feedback'>should be Text</div>)}
+          </div>
+        </div>)
+      }
+    })
+  }
+  if (props.addAgreementSettings.createResponse !== null) {
+    if (props.addAgreementSettings.createResponse.length > 0) {
+      messageList = props.addAgreementSettings.createResponse.map(function (data, index) {
+        if (data.error_code === null) {
+          if (data.message != null) {
+            return (<li className='m-list-search__result-item' key={index}>{data.message}</li>)
+          } else {
+            if (props.addAgreementSettings.createResponse.length === 1) {
+              return (<li className='m-list-search__result-item' key={99}>{'No data has been added.'}</li>)
+            }
+          }
+        } else {
+          return (<li className='m-list-search__result-item' key={index}>{'Error Code: ' + data.error_code + 'Message: ' + data.error_message}</li>)
+        }
+      })
+    } else {
+      messageList = []
+      messageList.push((
+        <li key={0}>{'No data has been added.'}</li>
+      ))
+    }
+  }
     return (
       <div>
         <div className='row'>
@@ -500,35 +770,51 @@ export default function Agreements (props) {
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''}>
-              <div className='modal-dialog modal-lg'>
+              <div className=''>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>New { 'Agreement' }</h4>
+                    {props.addAgreementSettings.createResponse === null && (<h4 className='modal-title' id='exampleModalLabel'>New Agreement</h4>)}
+                    {props.addAgreementSettings.createResponse !== null && (<h4 className='modal-title' id='exampleModalLabel'>Create Report</h4>)}
                     <button type='button' onClick={closeAddModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
-                  <div className='modal-body'>
-                    <form>
+                  <div className='modal-body' style={{'height': 'calc(70vh - 30px)', 'overflow': 'auto'}}>
+                    {props.addAgreementSettings.createResponse === null && (<div className='col-md-12'>
                       {/* {messageBlock} */}
-                      <div className='form-group'>
-                        <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                        <input type='text' className='form-control' ref={input => (newAgreementName = input)} id='agreement-name' autoComplete='off' required />
+                      <div className='form-group m-form__group row'>
+                        <div className='col-8'>
+                          {/* <input className='form-control m-input' type='email' placeholder='Enter User Name' ref={input => (userName = input)} id='example-userName-input' /> */}
+                        </div>
                       </div>
-                      <div className='form-group'>
-                        <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                        <textarea className='form-control'ref={textarea => (newAgreementDescription = textarea)} defaultValue={''} autoComplete='off' required />
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-input' className='col-2 col-form-label'>Name</label>
+                        <div className='col-8'>
+                          <input className='form-control m-input' ref={input => (newAgreementName = input)} placeholder='Enter Name' id='example-email-input' autoComplete='off' required />
+                        </div>
                       </div>
-                    </form>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-input' className='col-2 col-form-label'>Description</label>
+                        <div className='col-8'>
+                          <textarea className='form-control m-input' ref={textarea => (newAgreementDescription = textarea)} defaultValue={''} placeholder='Enter Description' autoComplete='off' required />
+                        </div>
+                      </div>
+                      {businessPropertyList}
+                      {connectionSelectBoxList}
+                    </div>)}
+                    {props.addAgreementSettings.createResponse !== null && (<div className='m-list-search__results'>
+                      {messageList}
+                    </div>)}
                   </div>
                   <div className='modal-footer'>
                     <div className='row'>
                       <div className='col-md-6t' />
                       <div className='col-md-6'>
-                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                        {props.addAgreementSettings.createResponse === null && (<div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
                           <button type='button' onClick={closeAddModal} className='m-btn btn btn-secondary'>Back</button>
                           <button type='button' onClick={createNewAgreement} className='m-btn btn btn-secondary'>Add</button>
-                        </div>
+                        </div>)}
+                        {props.addAgreementSettings.createResponse !== null && (<button type='button' onClick={closeAddModal} className='m-btn btn btn-secondary'>Close</button>)}
                       </div>
                     </div>
                     {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
@@ -549,5 +835,6 @@ export default function Agreements (props) {
     agreementsSummary: PropTypes.any,
     currentPage: PropTypes.any,
     addAgreementSettings: PropTypes.any,
-    perPage: PropTypes.any
+    perPage: PropTypes.any,
+    connectionData: PropTypes.any
  }

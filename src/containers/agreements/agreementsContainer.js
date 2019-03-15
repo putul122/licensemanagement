@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import _ from 'lodash'
 import Agreements from '../../components/agreements/agreementsComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/agreementsReducer/agreementsReducerReducer'
@@ -13,7 +14,11 @@ export function mapStateToProps (state, props) {
     currentPage: state.agreementsReducer.currentPage,
     addAgreementSettings: state.agreementsReducer.addAgreementSettings,
     addAgreementResponse: state.agreementsReducer.addAgreementResponse,
-    perPage: state.agreementsReducer.perPage
+    perPage: state.agreementsReducer.perPage,
+    connectionData: state.agreementsReducer.connectionData,
+    availableAction: state.agreementsReducer.availableAction,
+    metaModelPerspective: state.agreementsReducer.metaModelPerspective,
+    dropdownData: state.agreementsReducer.dropdownData
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -21,11 +26,18 @@ export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchAgreements: sagaActions.agreementActions.fetchAgreements,
   fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
+  fetchMetaModelPrespective: sagaActions.modelActions.fetchMetaModelPrespective,
+  // fetchModelPrespectives: sagaActions.modelActions.fetchModelPrespectives,
+  fetchDropdownData: sagaActions.basicActions.fetchDropdownData,
   addAgreement: sagaActions.agreementActions.addAgreement,
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
   setAddAgreementSettings: actionCreators.setAddAgreementSettings,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  setConnectionData: actionCreators.setConnectionData,
+  setAvailableAction: actionCreators.setAvailableAction,
+  resetResponse: actionCreators.resetResponse,
+  updateModelPrespectives: sagaActions.modelActions.updateModelPrespectives
 }
 
 // If you want to use the function mapping
@@ -59,7 +71,7 @@ export default compose(
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         'search': '',
         'page_size': this.props.perPage,
@@ -67,6 +79,12 @@ export default compose(
       }
       this.props.fetchAgreements && this.props.fetchAgreements(payload)
       this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let perspectives = appPackage.resources[0].perspectives
+      let perspectiveId = _.result(_.find(perspectives, function (obj) {
+        return obj.key === 'Agreements'
+      }), 'perspective')
+      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(perspectiveId)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -83,19 +101,29 @@ export default compose(
         }
       }
       if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
-        if (nextProps.addAgreementResponse.error_code === null) {
-          let newAgreementId = nextProps.addAgreementResponse.resources[0].id
-          // eslint-disable-next-line
-          mApp && mApp.unblockPage()
-          // eslint-disable-next-line
-          toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-          this.props.history.push('/agreements/' + newAgreementId)
-          // location.reload()
-        } else {
-          // eslint-disable-next-line
-          toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
+        let addAgreementSettings = {...nextProps.addAgreementSettings}
+        addAgreementSettings.createResponse = nextProps.addAgreementResponse
+        nextProps.setAddAgreementSettings(addAgreementSettings)
+        let payload = {
+          'search': '',
+          'page_size': this.props.perPage,
+          'page': 1
         }
-        this.props.resetResponse()
+        this.props.fetchAgreements && this.props.fetchAgreements(payload)
+        nextProps.resetResponse()
+        // if (nextProps.addAgreementResponse.error_code === null) {
+        //   let newAgreementId = nextProps.addAgreementResponse.resources[0].id
+        //   // eslint-disable-next-line
+        //   mApp && mApp.unblockPage()
+        //   // eslint-disable-next-line
+        //   toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
+        //   this.props.history.push('/agreements/' + newAgreementId)
+        //   // location.reload()
+        // } else {
+        //   // eslint-disable-next-line
+        //   toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
+        // }
+        // this.props.resetResponse()
       }
       if (nextProps.agreementsSummary && nextProps.agreementsSummary !== this.props.agreementsSummary) {
         // eslint-disable-next-line
@@ -117,6 +145,87 @@ export default compose(
           'page': 1
         }
         this.props.fetchAgreements && this.props.fetchAgreements(payload)
+      }
+      if (nextProps.metaModelPerspective && nextProps.metaModelPerspective !== '' && nextProps.availableAction.toProcess) {
+        if (nextProps.metaModelPerspective.resources[0].crude) {
+          let availableAction = {...nextProps.availableAction}
+          let crude = nextProps.crude
+          let mask = nextProps.metaModelPerspective.resources[0].crude
+          let labelParts = nextProps.metaModelPerspective.resources[0].parts
+          let connectionData = {}
+          connectionData.operation = {
+            toCallApi: true,
+            isComplete: false,
+            processIndex: 0
+          }
+          connectionData.selectedValues = []
+          let cData = []
+          let customerProperty = []
+          for (let option in crude) {
+            if (crude.hasOwnProperty(option)) {
+              if (mask & crude[option]) {
+                availableAction[option] = true
+              }
+            }
+          }
+          labelParts.forEach(function (data, index) {
+            if (data.standard_property === null && data.type_property === null) {
+              let obj = {}
+              obj.name = data.name
+              if (data.constraint_inverted) {
+                obj.componentId = data.constraint.component_type.id
+              } else {
+                obj.componentId = data.constraint.target_component_type.id
+              }
+              obj.data = null
+              obj.processed = false
+              obj.partIndex = index
+              obj.max = data.constraint.max
+              obj.min = data.constraint.min
+              cData.push(obj)
+              connectionData.selectedValues.push(null)
+            }
+            if (data.standard_property === null && data.type_property !== null) {
+              data.partIndex = index
+              customerProperty.push(data)
+            }
+          })
+          connectionData.data = cData
+          connectionData.customerProperty = customerProperty
+          connectionData.selectOption = []
+          nextProps.setConnectionData(connectionData)
+          availableAction['toProcess'] = false
+          nextProps.setAvailableAction(availableAction)
+        }
+      }
+      if (nextProps.connectionData !== '' && nextProps.connectionData.operation.toCallApi && !nextProps.connectionData.operation.isComplete) {
+        console.log('nextProps.connectionData', nextProps.connectionData)
+        let connectionData = {...nextProps.connectionData}
+        let processIndex = nextProps.connectionData.operation.processIndex
+        let totalLength = nextProps.connectionData.data.length
+        if (processIndex < totalLength) {
+          let processData = nextProps.connectionData.data[processIndex]
+          nextProps.fetchDropdownData && nextProps.fetchDropdownData(processData.componentId)
+          connectionData.operation.processIndex = processIndex + 1
+          connectionData.operation.toCallApi = false
+        }
+        if (processIndex === totalLength) {
+          connectionData.operation.isComplete = true
+        }
+        nextProps.setConnectionData(connectionData)
+      }
+      if (nextProps.dropdownData !== '') {
+        console.log('nextProps.dropdownData', nextProps.dropdownData)
+        if (nextProps.dropdownData.error_code === null) {
+          let connectionData = {...nextProps.connectionData}
+          connectionData.selectOption.push(nextProps.dropdownData.resources)
+          connectionData.operation.toCallApi = true
+          nextProps.setConnectionData(connectionData)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.dropdownData.error_message, nextProps.dropdownData.error_code)
+        }
+        this.props.resetResponse()
       }
     }
   })

@@ -6,9 +6,15 @@ import PropTypes from 'prop-types'
 import Discussion from '../../containers/discussion/discussionContainer'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import styles from './entitlementsComponent.scss'
+import Select from 'react-select'
+import moment from 'moment'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 ReactModal.setAppElement('#root')
 const customStyles = {
-  overlay: {zIndex: '1000'},
+  overlay: {
+    zIndex: 1000
+  },
   content: {
     top: '50%',
     left: '50%',
@@ -18,7 +24,8 @@ const customStyles = {
     border: 'none',
     background: 'none',
     transform: 'translate(-50%, -50%)',
-    width: '100%'
+    width: '100%',
+    zIndex: 2
   }
 }
 const formatAmount = (x) => {
@@ -31,7 +38,10 @@ const formatAmount = (x) => {
 }
 
 export default function Entitlementlists (props) {
-  console.log(props.currentPage, props.entitlements)
+  console.log('props entitlements', props)
+  let connectionSelectBoxList = ''
+  let businessPropertyList = ''
+  let messageList = ''
   let entitlementCount = ''
   let consumed = ''
   let searchTextBox
@@ -66,7 +76,61 @@ export default function Entitlementlists (props) {
     console.log('handle change', event.target.value, typeof event.target.value)
     props.setPerPage(parseInt(event.target.value))
   }
-
+  let editProperty = function (index, value) {
+    let connectionData = {...props.connectionData}
+    let customerProperty = connectionData.customerProperty
+    let propertyType = customerProperty[index].type_property.property_type
+    if (propertyType.key === 'Boolean') {
+      customerProperty[index].type_property.boolean_value = value
+    } else if (propertyType.key === 'Integer') {
+      customerProperty[index].type_property.int_value = value
+    } else if (propertyType.key === 'Decimal') {
+      customerProperty[index].type_property.float_value = value
+    } else if (propertyType.key === 'DateTime') {
+      customerProperty[index].type_property.date_time_value = value.format('DD MMM YYYY')
+    } else if (propertyType.key === 'Text') {
+      customerProperty[index].type_property.text_value = value
+    } else {
+      customerProperty[index].type_property.other_value = value
+    }
+    connectionData.customerProperty = customerProperty
+    props.setConnectionData(connectionData)
+  }
+  let handlePropertySelect = function (index) {
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      let connectionData = JSON.parse(JSON.stringify(props.connectionData))
+      let customerProperty = connectionData.customerProperty
+      if (actionMeta.action === 'select-option') {
+        customerProperty[index].type_property.value_set_value = newValue
+      }
+      if (actionMeta.action === 'clear') {
+        customerProperty[index].type_property.value_set_value = newValue
+      }
+      connectionData.customerProperty = customerProperty
+      props.setConnectionData(connectionData)
+    }
+  }
+  let handleSelectChange = function (index) {
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      console.log('index', index)
+      let connectionData = {...props.connectionData}
+      let selectedValues = connectionData.selectedValues
+      if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
+        selectedValues[index] = newValue
+        connectionData.selectedValues = selectedValues
+        props.setConnectionData(connectionData)
+      }
+      if (actionMeta.action === 'clear') {
+        selectedValues[index] = null
+        connectionData.selectedValues = selectedValues
+        props.setConnectionData(connectionData)
+      }
+    }
+  }
   if (props.entitlements && props.entitlements !== '') {
     entitlementsList = props.entitlements.resources.map(function (data, index) {
       return (
@@ -198,11 +262,38 @@ export default function Entitlementlists (props) {
   }
   let openModal = function (event) {
     event.preventDefault()
-    props.setModalOpenStatus(true)
-    console.log('props', props.setModalOpenStatus)
+    let addEntitlementSettings = {...props.addEntitlementSettings, isAddModalOpen: true}
+    props.setAddEntitlementSettings(addEntitlementSettings)
+    let connectionData = {...props.connectionData}
+    let selectedValues = []
+    connectionData.selectedValues.forEach(function (data) {
+      selectedValues.push(null)
+    })
+    let resetCustomerProperty = connectionData.customerProperty.map(function (data, index) {
+      if (data.type_property.property_type.key === 'Boolean') {
+        data.type_property.boolean_value = null
+      } else if (data.type_property.property_type.key === 'Integer') {
+        data.type_property.int_value = null
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        data.type_property.float_value = null
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        data.type_property.date_time_value = null
+      } else if (data.type_property.property_type.key === 'Text') {
+        data.type_property.text_value = null
+      } else if (data.type_property.property_type.key === 'List') {
+        data.type_property.value_set_value = null
+      } else {
+        data.type_property.other_value = null
+      }
+      return data
+    })
+    connectionData.selectedValues = selectedValues
+    connectionData.customerProperty = resetCustomerProperty
+    props.setConnectionData(connectionData)
    }
   let closeModal = function () {
-    props.setModalOpenStatus(false)
+    let addEntitlementSettings = {...props.addEntitlementSettings, isAddModalOpen: false, createResponse: null}
+    props.setAddEntitlementSettings(addEntitlementSettings)
   }
   let createEntitlement = function (event) {
     event.preventDefault()
@@ -220,7 +311,135 @@ export default function Entitlementlists (props) {
     }
     props.addEntitlement(payload)
     props.setModalOpenStatus(false)
-   }
+  }
+  if (props.connectionData !== '' && props.connectionData.operation.isComplete) {
+    // eslint-disable-next-line
+    mApp && mApp.unblockPage()
+    let connectionData = {...props.connectionData}
+    connectionSelectBoxList = connectionData.data.map(function (data, index) {
+      let selectOptions = connectionData.selectOption[index].map(function (component, id) {
+        component.value = component.id
+        component.label = component.name
+        return component
+      })
+      return (<div className='form-group row'>
+        <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+        <div className='col-8'>
+          <Select
+            className='input-sm m-input'
+            placeholder={'Select ' + data.name}
+            isMulti={data.max !== 1}
+            isClearable
+            value={connectionData.selectedValues[index]}
+            onChange={handleSelectChange(index)}
+            options={selectOptions}
+            />
+        </div>
+      </div>)
+    })
+    businessPropertyList = connectionData.customerProperty.map(function (data, index) {
+      let value = null
+      if (data.type_property.property_type.key === 'Integer') {
+        value = data.type_property.int_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Number</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        value = data.type_property.float_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Number</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        value = data.type_property.date_time_value ? moment(data.type_property.date_time_value).format('DD MMM YYYY') : ''
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <DatePicker
+              className='input-sm form-control m-input'
+              selected={data.type_property.date_time_value ? moment(data.type_property.date_time_value) : ''}
+              dateFormat='DD MMM YYYY'
+              onSelect={(date) => { editProperty(index, date) }}
+              />
+            {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+            {false && (<div className='form-control-feedback'>should be Date</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'Text') {
+        value = data.type_property.text_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Text</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'List') {
+        let propertyOption = data.type_property.value_set.values.map((option, opIndex) => {
+          option.label = option.name
+          option.value = option.id
+          return option
+        })
+        let dvalue = data.type_property.value_set_value
+        if (data.type_property.value_set_value !== null) {
+          dvalue.label = data.type_property.value_set_value.name
+          dvalue.value = data.type_property.value_set_value.id
+        }
+        value = data.type_property.value_set_value ? data.type_property.value_set_value.name : null
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <Select
+            className='col-8 input-sm m-input'
+            placeholder='Select Options'
+            isClearable
+            defaultValue={dvalue}
+            onChange={handlePropertySelect(index)}
+            isSearchable={false}
+            name={'selectProperty'}
+            options={propertyOption}
+          />
+        </div>)
+      } else {
+        value = data.type_property.other_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {true && (<div className='form-control-feedback'>should be Text</div>)}
+          </div>
+        </div>)
+      }
+    })
+  }
+  if (props.addEntitlementSettings.createResponse !== null) {
+    if (props.addEntitlementSettings.createResponse.length > 0) {
+      messageList = props.addEntitlementSettings.createResponse.map(function (data, index) {
+        if (data.error_code === null) {
+          if (data.message != null) {
+            return (<li className='m-list-search__result-item' key={index}>{data.message}</li>)
+          } else {
+            if (props.addEntitlementSettings.createResponse.length === 1) {
+              return (<li className='m-list-search__result-item' key={99}>{'No data has been added.'}</li>)
+            }
+          }
+        } else {
+          return (<li className='m-list-search__result-item' key={index}>{'Error Code: ' + data.error_code + 'Message: ' + data.error_message}</li>)
+        }
+      })
+    } else {
+      messageList = []
+      messageList.push((
+        <li key={0}>{'No data has been added.'}</li>
+      ))
+    }
+  }
 
 return (
   <div>
@@ -242,12 +461,13 @@ return (
       </div>
     </div>
     <div>
-      <ReactModal isOpen={props.modalIsOpen}
-        onRequestClose={closeModal} style={customStyles}
+      <ReactModal isOpen={props.addEntitlementSettings.isAddModalOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
         >
         {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
         <div className={''}>
-          <div className='modal-dialog'>
+          <div className=''>
             <div className='modal-content'>
               <div className='modal-header'>
                 <h4 className='modal-title' id='exampleModalLabel'>New { 'Entitlement' }</h4>
@@ -255,7 +475,7 @@ return (
                   <span aria-hidden='true'>×</span>
                 </button>
               </div>
-              <div className='modal-body'>
+              <div className='modal-body' style={{'height': 'calc(70vh - 30px)', 'overflow': 'auto'}}>
                 <form>
                   {/* {messageBlock} */}
                   <div className='form-group'>
@@ -266,6 +486,8 @@ return (
                     <label htmlFor='description-text' className='form-control-label'>Description:</label>
                     <textarea className='form-control'ref={textarea => (newEntitlementDescription = textarea)} defaultValue={''} autoComplete='off' required />
                   </div>
+                  {businessPropertyList}
+                  {connectionSelectBoxList}
                 </form>
               </div>
               <div className='modal-footer'>
@@ -484,7 +706,8 @@ return (
   entitlementsSummary: PropTypes.any,
   entitlements: PropTypes.any,
   currentPage: PropTypes.any,
-  modalIsOpen: PropTypes.any,
+  addEntitlementSettings: PropTypes.any,
   setModalOpenStatus: PropTypes.func,
-  perPage: PropTypes.any
+  perPage: PropTypes.any,
+  connectionData: PropTypes.any
  }
