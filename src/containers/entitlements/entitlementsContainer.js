@@ -73,7 +73,7 @@ export default compose(
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         'search': '',
         'page_size': this.props.perPage,
@@ -111,18 +111,28 @@ export default compose(
         mApp && mApp.unblock('#entitlementSummary')
       }
       if (nextProps.addEntitlementResponse && nextProps.addEntitlementResponse !== '') {
-        if (nextProps.addEntitlementResponse.error_code === null) {
-          let newEntitlementId = nextProps.addEntitlementResponse.resources[0].id
-          // eslint-disable-next-line
-          toastr.success('We\'ve added the ' +  nextProps.addEntitlementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-          this.props.history.push('/entitlements/' + newEntitlementId)
-          // eslint-disable-next-line
-          location.reload()
-        } else {
-          // eslint-disable-next-line
-          toastr.error(nextProps.addEntitlementResponse.error_message, nextProps.addEntitlementResponse.error_code)
+        let addEntitlementSettings = {...nextProps.addEntitlementSettings}
+        addEntitlementSettings.createResponse = nextProps.addEntitlementResponse
+        nextProps.setAddEntitlementSettings(addEntitlementSettings)
+        let payload = {
+          'search': '',
+          'page_size': this.props.perPage,
+          'page': 1
         }
-        this.props.resetResponse()
+        this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
+        nextProps.resetResponse()
+        // if (nextProps.addEntitlementResponse.error_code === null) {
+        //   let newEntitlementId = nextProps.addEntitlementResponse.resources[0].id
+        //   // eslint-disable-next-line
+        //   toastr.success('We\'ve added the ' +  nextProps.addEntitlementResponse.resources[0].name  +  ' to your model' , 'Nice!')
+        //   this.props.history.push('/entitlements/' + newEntitlementId)
+        //   // eslint-disable-next-line
+        //   location.reload()
+        // } else {
+        //   // eslint-disable-next-line
+        //   toastr.error(nextProps.addEntitlementResponse.error_message, nextProps.addEntitlementResponse.error_code)
+        // }
+        // this.props.resetResponse()
       }
       if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
         this.props.setCurrentPage(1)

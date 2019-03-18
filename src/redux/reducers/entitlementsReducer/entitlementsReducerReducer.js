@@ -1,5 +1,5 @@
 import {createAction, handleActions} from 'redux-actions'
-import {FETCH_ENTITLEMENTS_SUMMARY_SUCCESS, FETCH_ENTITLEMENTS_SUCCESS, ADD_ENTITLEMENT_SUCCESS} from '../../sagas/entitlement/entitlementSaga'
+import {FETCH_ENTITLEMENTS_SUMMARY_SUCCESS, FETCH_ENTITLEMENTS_SUCCESS} from '../../sagas/entitlement/entitlementSaga'
 // import {FETCH_APPLICATIONS_SUCCESS} from '../../sagas/application/applicationSaga'
 import {
   FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
@@ -18,7 +18,6 @@ export const actions = {
   FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
   FETCH_ENTITLEMENTS_SUCCESS,
   SET_CURRENT_PAGE,
-  ADD_ENTITLEMENT_SUCCESS,
   RESET_RESPONSE,
   SET_PER_PAGE,
   FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
@@ -70,7 +69,7 @@ export default handleActions(
       ...state,
       currentPage: action.payload
     }),
-    [ADD_ENTITLEMENT_SUCCESS]: (state, action) => ({
+    [UPDATE_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
       ...state,
       addEntitlementResponse: action.payload
     }),
@@ -103,10 +102,6 @@ export default handleActions(
     [FETCH_DROPDOWN_DATA_SUCCESS]: (state, action) => ({
       ...state,
       dropdownData: action.payload
-    }),
-    [UPDATE_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
-      ...state,
-      addAgreementResponse: action.payload
     })
   },
   initialState

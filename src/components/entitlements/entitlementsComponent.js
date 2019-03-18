@@ -297,20 +297,83 @@ export default function Entitlementlists (props) {
   }
   let createEntitlement = function (event) {
     event.preventDefault()
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let appPackage = JSON.parse(localStorage.getItem('packages'))
-    let componentTypes = appPackage.resources[0].component_types
-    let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-      return obj.key === 'Entitlement'
-    }), 'component_type')
-    let payload = {
-      'component_type': {
-        'id': componentTypeId
-      },
-      'name': newEntitlementName.value,
-      'description': newEntitlementDescription.value
-    }
-    props.addEntitlement(payload)
-    props.setModalOpenStatus(false)
+    let perspectives = appPackage.resources[0].perspectives
+    let perspectiveId = _.result(_.find(perspectives, function (obj) {
+      return obj.key === 'Entitlements'
+    }), 'perspective')
+    // let appPackage = JSON.parse(localStorage.getItem('packages'))
+    // let componentTypes = appPackage.resources[0].component_types
+    // let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+    //   return obj.key === 'Entitlement'
+    // }), 'component_type')
+    // let payload = {
+    //   'component_type': {
+    //     'id': componentTypeId
+    //   },
+    //   'name': newEntitlementName.value,
+    //   'description': newEntitlementDescription.value
+    // }
+    let patchPayload = []
+    let obj = {}
+    obj.op = 'add'
+    obj.path = '/-'
+    obj.value = {}
+    obj.value.parts = []
+    obj.value.parts[0] = {'value': newEntitlementName.value}
+    obj.value.parts[1] = {'value': newEntitlementDescription.value}
+    let connectionData = {...props.connectionData}
+    connectionData.selectedValues.forEach(function (data, index) {
+      if (Array.isArray(data)) {
+        if (data.length > 0) {
+          let connections = []
+          data.forEach(function (selectedValue, ix) {
+            connections.push(selectedValue.id)
+          })
+          obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
+        } else {
+          obj.value.parts[connectionData.data[index].partIndex] = {}
+        }
+      } else {
+        if (data) {
+          let connections = []
+          connections.push(data.id)
+          obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
+        } else {
+          obj.value.parts[connectionData.data[index].partIndex] = {}
+        }
+      }
+    })
+    connectionData.customerProperty.forEach(function (data, index) {
+      if (data.type_property.property_type.key === 'Boolean') {
+        obj.value.parts[data.partIndex] = {value: {'boolean_value': data.type_property.boolean_value}}
+      } else if (data.type_property.property_type.key === 'Integer') {
+        obj.value.parts[data.partIndex] = {value: {'int_value': data.type_property.int_value}}
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        obj.value.parts[data.partIndex] = {value: {'float_value': data.type_property.float_value}}
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        obj.value.parts[data.partIndex] = {value: {'date_time_value': data.type_property.date_time_value}}
+      } else if (data.type_property.property_type.key === 'Text') {
+        obj.value.parts[data.partIndex] = {value: {'text_value': data.type_property.text_value}}
+      } else if (data.type_property.property_type.key === 'List') {
+        obj.value.parts[data.partIndex] = {value: {'value_set_value_id': data.type_property.value_set_value ? data.type_property.value_set_value.id : null}}
+      } else {
+        obj.value.parts[data.partIndex] = {value: {'other_value': data.type_property.other_value}}
+      }
+    })
+    patchPayload.push(obj)
+    let payload = {}
+    payload.queryString = {}
+    payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
+    payload.queryString.apply_changes = true
+    payload.data = {}
+    payload.data[perspectiveId] = patchPayload
+    console.log('payload', payload)
+    props.updateModelPrespectives(payload)
+    // props.addEntitlement(payload)
+    // props.setModalOpenStatus(false)
   }
   if (props.connectionData !== '' && props.connectionData.operation.isComplete) {
     // eslint-disable-next-line
@@ -470,34 +533,48 @@ return (
           <div className=''>
             <div className='modal-content'>
               <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'>New { 'Entitlement' }</h4>
+                {props.addEntitlementSettings.createResponse === null && (<h4 className='modal-title' id='exampleModalLabel'>New Entitlement</h4>)}
+                {props.addEntitlementSettings.createResponse !== null && (<h4 className='modal-title' id='exampleModalLabel'>Create Report</h4>)}
                 <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
               </div>
               <div className='modal-body' style={{'height': 'calc(70vh - 30px)', 'overflow': 'auto'}}>
-                <form>
+                {props.addEntitlementSettings.createResponse === null && (<div className='col-md-12'>
                   {/* {messageBlock} */}
-                  <div className='form-group'>
-                    <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                    <input type='text' className='form-control' ref={input => (newEntitlementName = input)} id='agreement-name' autoComplete='off' required />
+                  <div className='form-group m-form__group row'>
+                    <div className='col-8'>
+                      {/* <input className='form-control m-input' type='email' placeholder='Enter User Name' ref={input => (userName = input)} id='example-userName-input' /> */}
+                    </div>
                   </div>
-                  <div className='form-group'>
-                    <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                    <textarea className='form-control'ref={textarea => (newEntitlementDescription = textarea)} defaultValue={''} autoComplete='off' required />
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-input' className='col-2 col-form-label'>Name</label>
+                    <div className='col-8'>
+                      <input className='form-control m-input' ref={input => (newEntitlementName = input)} placeholder='Enter Name' id='example-email-input' autoComplete='off' required />
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-input' className='col-2 col-form-label'>Description</label>
+                    <div className='col-8'>
+                      <textarea className='form-control m-input' ref={textarea => (newEntitlementDescription = textarea)} defaultValue={''} placeholder='Enter Description' autoComplete='off' required />
+                    </div>
                   </div>
                   {businessPropertyList}
                   {connectionSelectBoxList}
-                </form>
+                </div>)}
+                {props.addEntitlementSettings.createResponse !== null && (<div className='m-list-search__results'>
+                  {messageList}
+                </div>)}
               </div>
               <div className='modal-footer'>
                 <div className='row'>
                   <div className='col-md-6t' />
                   <div className='col-md-6'>
-                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                    {props.addEntitlementSettings.createResponse === null && (<div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
                       <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Back</button>
                       <button type='button' onClick={createEntitlement} className='m-btn btn btn-secondary'>Add</button>
-                    </div>
+                    </div>)}
+                    {props.addEntitlementSettings.createResponse !== null && (<button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Close</button>)}
                   </div>
                 </div>
                 {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
