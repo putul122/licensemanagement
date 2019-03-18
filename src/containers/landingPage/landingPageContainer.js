@@ -39,6 +39,8 @@ export default compose(
     },
     componentDidMount: function () {
       console.log('component did mount landing', this.props)
+      // eslint-disable-next-line
+      mApp && mApp.unblockPage()
     },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.clientAccessToken && nextProps.clientAccessToken !== this.props.clientAccessToken) {
