@@ -22,6 +22,18 @@ export const FETCH_APPLICATION_RELATIONSHIPS_FAILURE = 'saga/application/FETCH_A
 export const FETCH_APPLICATION_SOFTWARES = 'saga/application/FETCH_APPLICATION_SOFTWARES'
 export const FETCH_APPLICATION_SOFTWARES_SUCCESS = 'saga/application/FETCH_APPLICATION_SOFTWARES_SUCCESS'
 export const FETCH_APPLICATION_SOFTWARES_FAILURE = 'saga/application/FETCH_APPLICATION_SOFTWARES_FAILURE'
+export const FETCH_APPLICATION_ENTITLEMENTS = 'saga/application/FETCH_APPLICATION_ENTITLEMENTS'
+export const FETCH_APPLICATION_ENTITLEMENTS_SUCCESS = 'saga/application/FETCH_APPLICATION_ENTITLEMENTS_SUCCESS'
+export const FETCH_APPLICATION_ENTITLEMENTS_FAILURE = 'saga/application/FETCH_APPLICATION_ENTITLEMENTS_FAILURE'
+export const ADD_LINK = 'saga/application/ADD_LINK'
+export const ADD_LINK_SUCCESS = 'saga/application/ADD_LINK_SUCCESS'
+export const ADD_LINK_FAILURE = 'saga/application/ADD_LINK_FAILURE'
+export const UPDATE_LINK = 'saga/application/UPDATE_LINK'
+export const UPDATE_LINK_SUCCESS = 'saga/application/UPDATE_LINK_SUCCESS'
+export const UPDATE_LINK_FAILURE = 'saga/application/UPDATE_LINK_FAILURE'
+export const DELETE_LINK = 'saga/application/DELETE_LINK'
+export const DELETE_LINK_SUCCESS = 'saga/application/DELETE_LINK_SUCCESS'
+export const DELETE_LINK_FAILURE = 'saga/application/DELETE_LINK_FAILURE'
 
 export const actionCreators = {
   fetchApplications: createAction(FETCH_APPLICATIONS),
@@ -41,17 +53,33 @@ export const actionCreators = {
   fetchApplicationRelationshipsFailure: createAction(FETCH_APPLICATION_RELATIONSHIPS_FAILURE),
   fetchApplicationSoftwares: createAction(FETCH_APPLICATION_SOFTWARES),
   fetchApplicationSoftwaresSuccess: createAction(FETCH_APPLICATION_SOFTWARES_SUCCESS),
-  fetchApplicationSoftwaresFailure: createAction(FETCH_APPLICATION_SOFTWARES_FAILURE)
+  fetchApplicationSoftwaresFailure: createAction(FETCH_APPLICATION_SOFTWARES_FAILURE),
+  fetchApplicationEntitlements: createAction(FETCH_APPLICATION_ENTITLEMENTS),
+  fetchApplicationEntitlementsSuccess: createAction(FETCH_APPLICATION_ENTITLEMENTS_SUCCESS),
+  fetchApplicationEntitlementsFailure: createAction(FETCH_APPLICATION_ENTITLEMENTS_FAILURE),
+  addLink: createAction(ADD_LINK),
+  addLinkSuccess: createAction(ADD_LINK_SUCCESS),
+  addLinkFailure: createAction(ADD_LINK_FAILURE),
+  updateLink: createAction(UPDATE_LINK),
+  updateLinkSuccess: createAction(UPDATE_LINK_SUCCESS),
+  updateLinkFailure: createAction(UPDATE_LINK_FAILURE),
+  deleteLink: createAction(DELETE_LINK),
+  deleteLinkSuccess: createAction(DELETE_LINK_SUCCESS),
+  deleteLinkFailure: createAction(DELETE_LINK_FAILURE)
 }
 
 export default function * watchApplications () {
   yield [
-      takeLatest(FETCH_APPLICATIONS, getApplications),
-      takeLatest(FETCH_APPLICATIONS_SUMMARY, getApplicationsSummary),
-      takeLatest(FETCH_APPLICATION_BY_ID, getApplicationById),
-      takeLatest(FETCH_APPLICATION_PROPERTIES, getApplicationProperties),
-      takeLatest(FETCH_APPLICATION_RELATIONSHIPS, getApplicationRelationships),
-      takeLatest(FETCH_APPLICATION_SOFTWARES, getApplicationSoftwares)
+    takeLatest(FETCH_APPLICATIONS, getApplications),
+    takeLatest(FETCH_APPLICATIONS_SUMMARY, getApplicationsSummary),
+    takeLatest(FETCH_APPLICATION_BY_ID, getApplicationById),
+    takeLatest(FETCH_APPLICATION_PROPERTIES, getApplicationProperties),
+    takeLatest(FETCH_APPLICATION_RELATIONSHIPS, getApplicationRelationships),
+    takeLatest(FETCH_APPLICATION_SOFTWARES, getApplicationSoftwares),
+    takeLatest(FETCH_APPLICATION_ENTITLEMENTS, getApplicationEntitlements),
+    takeLatest(ADD_LINK, addLink),
+    takeLatest(UPDATE_LINK, updateLink),
+    takeLatest(DELETE_LINK, deleteLink)
   ]
 }
 
@@ -133,5 +161,73 @@ export function * getApplicationById (action) {
       yield put(actionCreators.fetchApplicationSoftwaresSuccess(applicationSoftwares.data))
     } catch (error) {
       yield put(actionCreators.fetchApplicationSoftwaresFailure(error))
+    }
+  }
+
+  export function * getApplicationEntitlements (action) {
+    try {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+      const applicationEntitlements = yield call(
+        axios.get,
+        api.getApplicationEntitlements,
+        {params: action.payload}
+      )
+      yield put(actionCreators.fetchApplicationEntitlementsSuccess(applicationEntitlements.data))
+    } catch (error) {
+      yield put(actionCreators.fetchApplicationEntitlementsFailure(error))
+    }
+  }
+
+  export function * addLink (action) {
+    try {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+      let url = api.updateApplicationEntitlements
+      if (action.payload.tab === 'Software') {
+        url = api.updateApplicationSoftwares
+      }
+      const addLink = yield call(
+        axios.patch,
+        url(action.payload.applicationId),
+        action.payload.data
+      )
+      yield put(actionCreators.addLinkSuccess(addLink.data))
+    } catch (error) {
+      yield put(actionCreators.addLinkFailure(error))
+    }
+  }
+
+  export function * updateLink (action) {
+    try {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+      let url = api.updateApplicationEntitlements
+      if (action.payload.tab === 'Software') {
+        url = api.updateApplicationSoftwares
+      }
+      const updateLink = yield call(
+        axios.patch,
+        url(action.payload.applicationId),
+        action.payload.data
+      )
+      yield put(actionCreators.updateLinkSuccess(updateLink.data))
+    } catch (error) {
+      yield put(actionCreators.updateLinkFailure(error))
+    }
+  }
+
+  export function * deleteLink (action) {
+    try {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+      let url = api.updateApplicationEntitlements
+      if (action.payload.tab === 'Software') {
+        url = api.updateApplicationSoftwares
+      }
+      const deleteLink = yield call(
+        axios.patch,
+        url(action.payload.applicationId),
+        action.payload.data
+      )
+      yield put(actionCreators.deleteLinkSuccess(deleteLink.data))
+    } catch (error) {
+      yield put(actionCreators.deleteLinkFailure(error))
     }
   }

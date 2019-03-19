@@ -83,6 +83,7 @@ const api = {
   getEntitlement: 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlement',
   getEntitlementsSummary: 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlementsSummary',
   getApplicationSoftwares: 'https://lm-eco-dev.ecoconductor.com/api/application/GetApplicationSoftwares',
+  getApplicationEntitlements: 'https://lm-eco-dev.ecoconductor.com/api/application/GetApplicationEntitlements',
   getSoftwareAgreements: 'https://lm-eco-dev.ecoconductor.com/api/software/GetSoftwareAgreements',
   getEntitlementById: function (id) {
     return 'https://lm-eco-dev.ecoconductor.com/api/entitlement/GetEntitlement/' + id
@@ -145,7 +146,13 @@ const api = {
   updateBusinessUnitEntitlements: function (businessUnitId) {
     return ' https://lm-eco-dev.ecoconductor.com/api/BusinessUnit/UpdateBusinessUnitEntitlements?business_unit_id=' + businessUnitId
   },
-  searchAll: 'https://lm-eco-dev.ecoconductor.com/api/global/SearchAll'
+  searchAll: 'https://lm-eco-dev.ecoconductor.com/api/global/SearchAll',
+  updateApplicationEntitlements: function (applicationId) {
+    return 'https://lm-eco-dev.ecoconductor.com/api/application/UpdateApplicationEntitlements?application_id=' + applicationId
+  },
+  updateApplicationSoftwares: function (applicationId) {
+    return 'https://lm-eco-dev.ecoconductor.com/api/application/UpdateApplicationSoftwares?application_id=' + applicationId
+  }
 }
 
 export default api

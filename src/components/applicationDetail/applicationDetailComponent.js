@@ -2,10 +2,14 @@ import React from 'react'
 // import moment from 'moment'
 import PropTypes from 'prop-types'
 import styles from './applicationDetailComponent.scss'
+import debounce from 'lodash/debounce'
 import DataModelComponent from '../../containers/dataModel/dataModelContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import _ from 'lodash'
+import Select from 'react-select'
+import ReactModal from 'react-modal'
+ReactModal.setAppElement('#root')
 var divStyle = {
   // width: '900px',
   // height: '600px',
@@ -45,6 +49,381 @@ export default function Applicationview (props) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
   }
+  // code for Link Management
+  let handleLicenseCountChange = function (event) {
+    let linkActionSettings = {...props.linkActionSettings, 'licenseCount': event.target.value}
+    props.setLinkActionSettings(linkActionSettings)
+  }
+  let handleEntitlementSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let linkActionSettings = {...props.linkActionSettings, 'entitlement': newValue}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let linkActionSettings = {...props.linkActionSettings, 'entitlement': null}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+  }
+  let handleAgreementSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let linkActionSettings = {...props.linkActionSettings, 'agreement': newValue}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let linkActionSettings = {...props.linkActionSettings, 'agreement': null}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+  }
+  let handleSupplierSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let linkActionSettings = {...props.linkActionSettings, 'supplier': newValue}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let linkActionSettings = {...props.linkActionSettings, 'supplier': null}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+  }
+  let openLinkEntitlementModal = function (event) {
+    event.preventDefault()
+    let linkActionSettings = {...props.linkActionSettings, 'isLinkModalOpen': true}
+    props.setLinkActionSettings(linkActionSettings)
+   }
+  let openLinkDeleteModal = function (data) {
+    console.log('*&&&*&&', data)
+    let linkActionSettings = {...props.linkActionSettings, 'isLinkDeleteModalOpen': true, 'entitlementSelected': data, 'licenseCount': data.license_count}
+    props.setLinkActionSettings(linkActionSettings)
+  }
+  let openLinkUpdateModal = function (data) {
+    console.log('*&&&*&&', data)
+    let linkActionSettings = {...props.linkActionSettings, 'isLinkUpdateModalOpen': true, 'entitlementSelected': data, 'licenseCount': data.license_count}
+    props.setLinkActionSettings(linkActionSettings)
+  }
+  let closeLinkModal = function () {
+    let linkActionSettings = {...props.linkActionSettings,
+      'isLinkDeleteModalOpen': false,
+      'isLinkUpdateModalOpen': false,
+      'isLinkModalOpen': false,
+      'entitlementSelected': null,
+      'licenseCount': 0}
+    props.setLinkActionSettings(linkActionSettings)
+  }
+  let addLinkOperation = function (event) {
+    event.preventDefault()
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let dataPayload = []
+    if (props.linkActionSettings.entitlement) {
+      let obj = {}
+      obj.op = 'add'
+      obj.path = '/-'
+      obj.value = {
+        id: props.linkActionSettings.entitlement.id,
+        license_count: parseInt(props.linkActionSettings.licenseCount)
+      }
+      dataPayload.push(obj)
+    }
+    if (props.linkActionSettings.agreement) {
+      let obj = {}
+      obj.op = 'add'
+      obj.path = '/-'
+      obj.value = {
+        id: props.linkActionSettings.agreement.id,
+        license_count: parseInt(props.linkActionSettings.licenseCount)
+      }
+      dataPayload.push(obj)
+    }
+    if (props.linkActionSettings.supplier) {
+      let obj = {}
+      obj.op = 'add'
+      obj.path = '/-'
+      obj.value = {
+        id: props.linkActionSettings.supplier.id,
+        license_count: parseInt(props.linkActionSettings.licenseCount)
+      }
+      dataPayload.push(obj)
+    }
+    let applicationId = props.match.params.id
+    let payload = {}
+    if (showTabs.parentTab === 'Entitlements') {
+      payload.tab = 'Entitlements'
+    } else if (showTabs.parentTab === 'Software') {
+      payload.tab = 'Software'
+    }
+    payload.applicationId = applicationId
+    payload.data = dataPayload
+    console.log('payload', payload)
+    props.addLink(payload)
+    // closeLinkEntitlementModal()
+  }
+  let editLinkOperation = function (event) {
+    event.preventDefault()
+    // eslint-disable-next-line
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let dataPayload = []
+    let obj = {}
+    obj.op = 'replace'
+    obj.path = '/' + props.linkActionSettings.entitlementSelected.connection_id + '/license_count'
+    obj.value = parseInt(props.linkActionSettings.licenseCount)
+    dataPayload.push(obj)
+    let applicationId = props.match.params.id
+    let payload = {}
+    payload.applicationId = applicationId
+    payload.data = dataPayload
+    if (showTabs.parentTab === 'Entitlements') {
+      payload.tab = 'Entitlements'
+    } else if (showTabs.parentTab === 'Software') {
+      payload.tab = 'Software'
+    }
+    console.log('payload', payload)
+    props.updateLink(payload)
+  }
+  let deleteLinkOperation = function () {
+    console.log('test')
+  }
+  // end code for link management
+  // Entitlement tab
+  let searchTextBox
+  let applicationEntitlementList = ''
+  let applicationSoftwareList = ''
+  let listEntitlementPage = []
+  let listSoftwarePage = []
+  let entitlementPageArray = []
+  let softwarePageArray = []
+  let totalEntitlementPages
+  let totalSoftwarePages
+  let paginationLimit = 6
+  let nextClass = ''
+  let previousClass = ''
+  let perPage = 10
+  let currentPage = props.currentPage
+  let showTabs = {...props.showTabs}
+  let selectEntitlementOptions = []
+  let selectSupplierOptions = []
+  let selectAgreementOptions = []
+  if (props.entitlements !== '' && props.entitlements.error_code === null) {
+    selectEntitlementOptions = props.entitlements.resources.map((component, index) => {
+      let option = {...component}
+      option.value = component.name
+      option.label = component.name
+      return option
+    })
+  }
+  if (props.agreements !== '' && props.agreements.error_code === null) {
+    selectAgreementOptions = props.agreements.resources.map((component, index) => {
+      let option = {...component}
+      option.value = component.name
+      option.label = component.name
+      return option
+    })
+  }
+  if (props.suppliers !== '' && props.suppliers.error_code === null) {
+    selectSupplierOptions = props.suppliers.resources.map((component, index) => {
+      let option = {...component}
+      option.value = component.name
+      option.label = component.name
+      return option
+    })
+  }
+  let listApplicationEntitlements = function () {
+    if (props.applicationEntitlements !== '') {
+      if (props.applicationEntitlements.resources.length > 0) {
+        applicationEntitlementList = props.applicationEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td>{data.name}</td>
+              <td>{data.license_count}</td>
+              <td>
+                <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>
+                </div>
+              </td>
+            </tr>
+          )
+        })
+      } else {
+        applicationEntitlementList = []
+        applicationEntitlementList.push((
+          <tr key={0}>
+            <td colSpan='4'>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+    }
+  }
+  let listApplicationSoftwares = function () {
+    if (props.applicationSoftwares !== '') {
+      if (props.applicationSoftwares.resources.length > 0) {
+        applicationSoftwareList = props.applicationSoftwares.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td>{data.name}</td>
+              <td>{''}</td>
+              <td>{data.supplier}</td>
+              <td>{data.instances}</td>
+              <td>{'R ' + formatAmount(data.cost)}</td>
+              <td>
+                <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>
+                </div>
+              </td>
+            </tr>
+          )
+        })
+      } else {
+        applicationSoftwareList = []
+        applicationSoftwareList.push((
+          <tr key={0}>
+            <td colSpan='4'>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+    }
+  }
+  if (showTabs.parentTab === 'Entitlements') {
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalEntitlementPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+  } else if (showTabs.parentTab === 'Software') {
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalSoftwarePages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+  }
+  if (props.applicationEntitlements && props.applicationEntitlements !== '') {
+    totalEntitlementPages = Math.ceil(props.applicationEntitlements.resources.length / perPage)
+    let i = 1
+    while (i <= totalEntitlementPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      entitlementPageArray.push(pageParameter)
+      i++
+    }
+    entitlementPageArray = _.chunk(entitlementPageArray, paginationLimit)
+    listEntitlementPage = _.filter(entitlementPageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+    // List initial data for Application Entitlements
+    listApplicationEntitlements()
+  }
+  if (props.applicationSoftwares && props.applicationSoftwares !== '') {
+    totalSoftwarePages = Math.ceil(props.applicationSoftwares.resources.length / perPage)
+    let i = 1
+    while (i <= totalSoftwarePages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      softwarePageArray.push(pageParameter)
+      i++
+    }
+    softwarePageArray = _.chunk(softwarePageArray, paginationLimit)
+    listSoftwarePage = _.filter(softwarePageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+    // List initial data for Application Software
+    listApplicationSoftwares()
+  }
+  let handleListAndPagination = function (page) {
+    if (showTabs.parentTab === 'Entitlements') {
+      listApplicationEntitlements()
+      // eslint-disable-next-line
+      mApp && mApp.block('#bussinessUnitsAllList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(page)
+      listEntitlementPage = _.filter(entitlementPageArray, function (group) {
+        let found = _.filter(group, {'number': page})
+        if (found.length > 0) { return group }
+      })
+    } else if (showTabs.parentTab === 'Software') {
+      // eslint-disable-next-line
+      mApp && mApp.block('#bussinessUnitsAllList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      listApplicationSoftwares()
+      props.setCurrentPage(page)
+      listSoftwarePage = _.filter(softwarePageArray, function (group) {
+        let found = _.filter(group, {'number': page})
+        if (found.length > 0) { return group }
+      })
+    }
+  }
+  let handlePage = function (page) {
+    if (showTabs.parentTab === 'Entitlements') {
+      if (page === 1) {
+        previousClass = 'm-datatable__pager-link--disabled'
+      } else if (page === totalEntitlementPages) {
+        nextClass = 'm-datatable__pager-link--disabled'
+      }
+      handleListAndPagination(page)
+    } else if (showTabs.parentTab === 'Software') {
+      if (page === 1) {
+        previousClass = 'm-datatable__pager-link--disabled'
+      } else if (page === totalSoftwarePages) {
+        nextClass = 'm-datatable__pager-link--disabled'
+      }
+      handleListAndPagination(page)
+    }
+  }
+
+  let handlePrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = styles.disabled
+    } else {
+      props.setCurrentPage(currentPage - 1)
+      handleListAndPagination(currentPage - 1)
+    }
+  }
+
+  let handleNext = function (event) {
+    event.preventDefault()
+    if (showTabs.parentTab === 'Entitlements') {
+      if (currentPage === totalEntitlementPages) {
+        nextClass = styles.disabled
+      } else {
+        props.setCurrentPage(currentPage + 1)
+        handleListAndPagination(currentPage + 1)
+      }
+    } else if (showTabs.parentTab === 'Software') {
+      if (currentPage === totalSoftwarePages) {
+        nextClass = styles.disabled
+      } else {
+        props.setCurrentPage(currentPage + 1)
+        handleListAndPagination(currentPage + 1)
+      }
+    }
+  }
+let handleInputEntitlementChange = debounce((e) => {
+  console.log(e)
+  if (searchTextBox) {
+    const value = searchTextBox.value
+    // entitlementsList = ''
+    let payload = {
+      'business_unit_id': props.match.params.id,
+      'search': value || '',
+      'page_size': 10,
+      'page': 1
+    }
+    props.setCurrentPage(1)
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+      props.fetchBusinessUnitEntitlements(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // props.setComponentTypeLoading(true)
+    // }
+    listEntitlementPage = _.filter(entitlementPageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+  }
+}, 500)
+  // End entitlement tab code
   let handleCheckbox = function (value, data) {
     let displayIndex = data.displayIndex
     let applicationRelationshipData = JSON.parse(JSON.stringify(props.applicationRelationshipData))
@@ -491,7 +870,7 @@ export default function Applicationview (props) {
         </div>
         {/* The table structure ends */}
         <div className='row col-sm-12'>
-          <div className='m-portlet'>
+          <div className='m-portlet' style={{width: '100%'}}>
             <div className={styles.tabsprops}>
               <ul className='nav nav-tabs' role='tablist'>
                 <li className='nav-item'>
@@ -554,18 +933,293 @@ export default function Applicationview (props) {
                   </div>
                 </div>
                 <div className={'tab-pane' + showSoftware} id='m_tabs_3_2' role='tabpanel'>
-                  {/* <div className='pull-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
-                  </div> */}
+                  <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
+                    <div className='m-portlet'>
+                      <div className='m-portlet__body'>
+                        <div className='col-sm-12'>
+                          <div className='col-md-6 pull-left'>
+                            <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
+                              <div style={{'display': 'flex', 'marginBottom': '15px'}}>
+                                <h5 style={{'margin': '10px'}}>Search</h5>
+                                <div className='m-input-icon m-input-icon--left'>
+                                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputEntitlementChange} />
+                                  <span className='m-input-icon__icon m-input-icon__icon--left'>
+                                    <span>
+                                      <i className='la la-search' />
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className='col-md-6 pull-right'>
+                            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
+                              <i className='fa flaticon-app fa-2x' />
+                            </a>
+                          </div>
+                        </div>
+                        <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                          <thead>
+                            <tr role='row'>
+                              <th className='' ><h5>Name</h5></th>
+                              <th className='' ><h5>Agreement type</h5></th>
+                              <th className='' ><h5>Suppliers</h5></th>
+                              <th className='' ><h5>#Instances</h5></th>
+                              <th className='' ><h5>Total cost</h5></th>
+                              <th className='' ><h5>Action</h5></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {applicationSoftwareList}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    {applicationSoftwareList.length > 0 && (
+                    <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'textAlign': 'center' }}>
+                      <ul className='m-datatable__pager-nav'>
+                        <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                        {listSoftwarePage[0] && listSoftwarePage[0].map(function (page, index) {
+                            if (page.number === currentPage) {
+                            page.class = 'm-datatable__pager-link--active'
+                            } else {
+                            page.class = ''
+                            }
+                            return (<li key={index} >
+                              <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                            </li>)
+                        })}
+                        <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                      </ul>
+                    </div>
+                    )}
+                  </div>
                 </div>
                 <div className={'tab-pane' + showEntitlements} id='m_tabs_3_2' role='tabpanel'>
-                  {/* <div className='pull-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
-                  </div> */}
+                  <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
+                    <div className='m-portlet'>
+                      <div className='m-portlet__body'>
+                        <div className='col-sm-12'>
+                          <div className='col-md-6 pull-left'>
+                            <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
+                              <div style={{'display': 'flex', 'marginBottom': '15px'}}>
+                                <h5 style={{'margin': '10px'}}>Search</h5>
+                                <div className='m-input-icon m-input-icon--left'>
+                                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputEntitlementChange} />
+                                  <span className='m-input-icon__icon m-input-icon__icon--left'>
+                                    <span>
+                                      <i className='la la-search' />
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className='col-md-6 pull-right'>
+                            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
+                              <i className='fa flaticon-app fa-2x' />
+                            </a>
+                          </div>
+                        </div>
+                        <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                          <thead>
+                            <tr role='row'>
+                              <th className='' ><h5>Name</h5></th>
+                              <th className='' ><h5>#Allocated</h5></th>
+                              <th className='' ><h5>Action</h5></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {applicationEntitlementList}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    {applicationEntitlementList.length > 0 && (
+                    <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'textAlign': 'center' }}>
+                      <ul className='m-datatable__pager-nav'>
+                        <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                        {listEntitlementPage[0] && listEntitlementPage[0].map(function (page, index) {
+                            if (page.number === currentPage) {
+                            page.class = 'm-datatable__pager-link--active'
+                            } else {
+                            page.class = ''
+                            }
+                            return (<li key={index} >
+                              <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
+                            </li>)
+                        })}
+                        <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                      </ul>
+                    </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div>
+          <ReactModal isOpen={props.linkActionSettings.isLinkModalOpen}
+            onRequestClose={closeLinkModal}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            {/* <button onClick={closeLinkEntitlementModal} ><i className='la la-close' /></button> */}
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Link Entitlements</h4>
+                    <button type='button' onClick={closeLinkModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='form-group row'>
+                      <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Supplier</label></div>
+                      <div className='col-8'>
+                        <Select
+                          className='input-sm m-input'
+                          placeholder='Select'
+                          isClearable
+                          value={props.linkActionSettings.supplier}
+                          onChange={handleSupplierSelect}
+                          isSearchable
+                          options={selectSupplierOptions}
+                        />
+                      </div>
+                    </div>
+                    <div className='form-group row'>
+                      <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Agreement</label></div>
+                      <div className='col-8'>
+                        <Select
+                          className='input-sm m-input'
+                          placeholder='Select'
+                          isClearable
+                          value={props.linkActionSettings.agreement}
+                          onChange={handleAgreementSelect}
+                          isSearchable
+                          options={selectAgreementOptions}
+                        />
+                      </div>
+                    </div>
+                    <div className='form-group row'>
+                      <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Entitlements</label></div>
+                      <div className='col-8'>
+                        <Select
+                          className='input-sm m-input'
+                          placeholder='Select'
+                          isClearable
+                          value={props.linkActionSettings.entitlement}
+                          onChange={handleEntitlementSelect}
+                          isSearchable
+                          options={selectEntitlementOptions}
+                        />
+                      </div>
+                    </div>
+                    <div className='form-group row'>
+                      <div className='col-4'><label htmlFor='text' className='form-control-label'>Number of Licenses</label></div>
+                      <div className='col-8'><input type='number'className='form-control' onChange={handleLicenseCountChange} value={props.linkActionSettings.licenseCount} autoComplete='off' required /></div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='row'>
+                      <div className='col-md-6'>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeLinkModal} className='m-btn btn btn-secondary'>Close</button>
+                          <button type='button' onClick={addLinkOperation} className='m-btn btn btn-secondary'>Link</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
+                    {/* <button type='button' onClick={closeLinkEntitlementModal} id='m_login_signup' className='btn btn-outline-danger btn-sm' >Close</button>
+                    <button type='button' onClick={linkProjectEntitlement} className='btn btn-outline-info btn-sm' >Link</button> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+        </div>
+        <div>
+          <ReactModal isOpen={props.linkActionSettings.isLinkUpdateModalOpen}
+            onRequestClose={closeLinkModal}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            {/* <button onClick={closeLinkUpdateModal} ><i className='la la-close' /></button> */}
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Edit Link Entitlement</h4>
+                    <button type='button' onClick={closeLinkModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='form-group row'>
+                      <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Entitlements</label></div>
+                      <div className='col-8'>
+                        {props.linkActionSettings.entitlementSelected ? props.linkActionSettings.entitlementSelected.name : ''}
+                      </div>
+                    </div>
+                    <div className='form-group row'>
+                      <div className='col-4'><label htmlFor='text' className='form-control-label'>Number of Licenses</label></div>
+                      <div className='col-8'><input className='form-control' onChange={handleLicenseCountChange} value={props.linkActionSettings.licenseCount} autoComplete='off' required /></div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='row'>
+                      <div className='col-md-6'>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeLinkModal} className='m-btn btn btn-secondary'>Cancel</button>
+                          <button type='button' onClick={editLinkOperation} className='m-btn btn btn-secondary'>Update</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button type='button' onClick={closeLinkUpdateModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                    <button onClick={editProjectEntitlement} className='btn btn-outline-info btn-sm'>Update</button> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+        </div>
+        <div>
+          <ReactModal isOpen={props.linkActionSettings.isLinkDeleteModalOpen}
+            onRequestClose={closeLinkModal}
+            className='modal-dialog'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h6 className='modal-title' id='exampleModalLabel'>Delete Link to Entitlement</h6>
+                    <button type='button' onClick={closeLinkModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <p>Confirm deletion of Link to {props.linkActionSettings.entitlementSelected ? props.linkActionSettings.entitlementSelected.name : ''}</p>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='row'>
+                      <div className='col-md-6'>
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeLinkModal} className='m-btn btn btn-secondary'>Back</button>
+                          <button type='button' onClick={deleteLinkOperation} className='m-btn btn btn-secondary'>Confirm</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <button type='button' onClick={closeLinkDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                    <button type='button' onClick={deleteProjectEntitlement} className={'btn btn-sm btn-outline-info'}>Confirm</button> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
         </div>
         <Discussion name={applicationName} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={applicationName} type='Component' {...props} />
@@ -578,5 +1232,12 @@ export default function Applicationview (props) {
   applicationProperties: PropTypes.any,
   // applicationRelationships: PropTypes.any,
   applicationRelationshipData: PropTypes.any,
-  showTabs: PropTypes.any
+  showTabs: PropTypes.any,
+  applicationEntitlements: PropTypes.any,
+  applicationSoftwares: PropTypes.any,
+  currentPage: PropTypes.any,
+  linkActionSettings: PropTypes.any,
+  entitlements: PropTypes.any,
+  agreements: PropTypes.any,
+  suppliers: PropTypes.any
  }

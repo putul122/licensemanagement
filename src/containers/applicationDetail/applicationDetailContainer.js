@@ -17,8 +17,20 @@ export function mapStateToProps (state, props) {
     metaModelPrespective: state.applicationDetailReducer.metaModelPrespective,
     modelPrespective: state.applicationDetailReducer.modelPrespective,
     applicationRelationshipData: state.applicationDetailReducer.applicationRelationshipData,
-    responseProcessed: state.applicationDetailReducer.responseProcessed
-   }
+    responseProcessed: state.applicationDetailReducer.responseProcessed,
+    entitlements: state.applicationDetailReducer.entitlements,
+    suppliers: state.applicationDetailReducer.suppliers,
+    agreements: state.applicationDetailReducer.agreements,
+    softwares: state.applicationDetailReducer.softwares,
+    perPage: state.applicationDetailReducer.perPage,
+    currentPage: state.applicationDetailReducer.currentPage,
+    applicationEntitlements: state.applicationDetailReducer.applicationEntitlements,
+    applicationSoftwares: state.applicationDetailReducer.applicationSoftwares,
+    linkActionSettings: state.applicationDetailReducer.linkActionSettings,
+    addLinkResponse: state.applicationDetailReducer.addLinkResponse,
+    updateLinkResponse: state.applicationDetailReducer.updateLinkResponse,
+    removeLinkResponse: state.applicationDetailReducer.removeLinkResponse
+  }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
@@ -33,7 +45,18 @@ export const propsMapping: Callbacks = {
   setApplicationProperty: applicationDetailActionCreators.setApplicationProperty,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setApplicationRelationship: applicationDetailActionCreators.setApplicationRelationship,
-  setResponseProcessed: applicationDetailActionCreators.setResponseProcessed
+  setResponseProcessed: applicationDetailActionCreators.setResponseProcessed,
+  fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
+  fetchSoftwares: sagaActions.softwareActions.fetchSoftwares,
+  fetchAgreements: sagaActions.agreementActions.fetchAgreements,
+  fetchSuppliers: sagaActions.supplierActions.fetchSuppliers,
+  fetchApplicationEntitlements: sagaActions.applicationActions.fetchApplicationEntitlements,
+  fetchApplicationSoftwares: sagaActions.applicationActions.fetchApplicationSoftwares,
+  addLink: sagaActions.applicationActions.addLink,
+  updateLink: sagaActions.applicationActions.updateLink,
+  deleteLink: sagaActions.applicationActions.deleteLink,
+  setCurrentPage: applicationDetailActionCreators.setCurrentPage,
+  setLinkActionSettings: applicationDetailActionCreators.setLinkActionSettings
  }
 
 // If you want to use the function mapping
@@ -67,6 +90,18 @@ export default compose(
       this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
       // this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
       // this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
+      this.props.fetchSoftwares && this.props.fetchSoftwares({})
+      this.props.fetchEntitlements && this.props.fetchEntitlements({})
+      this.props.fetchAgreements && this.props.fetchAgreements({})
+      this.props.fetchSuppliers && this.props.fetchSuppliers({})
+      let listPayload = {
+        'application_id': this.props.match.params.id,
+        'search': '',
+        'page_size': this.props.perPage,
+        'page': 1
+      }
+      this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
+      this.props.fetchApplicationSoftwares && this.props.fetchApplicationSoftwares(listPayload)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -177,6 +212,131 @@ export default compose(
         responseProcessed.metaModelPrespective = true
         responseProcessed.modelPrespective = true
         nextProps.setResponseProcessed(responseProcessed)
+      }
+      if (nextProps.entitlements && nextProps.entitlements !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.entitlements.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.entitlements.error_message, nextProps.entitlements.error_code)
+        }
+      }
+      if (nextProps.suppliers && nextProps.suppliers !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.suppliers.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.suppliers.error_message, nextProps.suppliers.error_code)
+        }
+      }
+      if (nextProps.agreements && nextProps.agreements !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.agreements.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.agreements.error_message, nextProps.agreements.error_code)
+        }
+      }
+      if (nextProps.softwares && nextProps.softwares !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.softwares.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.softwares.error_message, nextProps.softwares.error_code)
+        }
+      }
+      if (nextProps.addLinkResponse && nextProps.addLinkResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // let linkActionSettings = {...nextProps.linkActionSettings}
+        if (nextProps.addLinkResponse.error_code === null) {
+          let listPayload = {
+            'application_id': this.props.match.params.id,
+            'search': '',
+            'page_size': this.props.perPage,
+            'page': 1
+          }
+          if (nextProps.showTabs.parentTab === 'Entitlements') {
+            this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
+          } else if (nextProps.showTabs.parentTab === 'Software') {
+            this.props.fetchApplicationSoftwares && this.props.fetchApplicationSoftwares(listPayload)
+          }
+          // eslint-disable-next-line
+          toastr.success('The Link successfully added in Application ' + nextProps.showTabs.parentTab, 'Good Stuff!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.addLinkResponse.error_message, nextProps.addLinkResponse.error_code)
+        }
+        this.props.resetResponse()
+        let linkActionSettings = {...nextProps.linkActionSettings,
+          'isLinkDeleteModalOpen': false,
+          'isLinkUpdateModalOpen': false,
+          'isLinkModalOpen': false,
+          'entitlementSelected': null,
+          'licenseCount': 0}
+        nextProps.setLinkActionSettings(linkActionSettings)
+      }
+      if (nextProps.updateLinkResponse && nextProps.updateLinkResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // let linkActionSettings = {...props.linkActionSettings}
+        if (nextProps.updateLinkResponse.error_code === null) {
+          let listPayload = {
+            'application_id': this.props.match.params.id,
+            'search': '',
+            'page_size': this.props.perPage,
+            'page': 1
+          }
+          if (nextProps.showTabs.parentTab === 'Entitlements') {
+            this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
+          } else if (nextProps.showTabs.parentTab === 'Software') {
+            this.props.fetchApplicationSoftwares && this.props.fetchApplicationSoftwares(listPayload)
+          }
+          // eslint-disable-next-line
+          toastr.success('The Link successfully updated in Application ' + nextProps.showTabs.parentTab, 'Good Stuff!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateLinkResponse.error_message, nextProps.updateLinkResponse.error_code)
+        }
+        this.props.resetResponse()
+        let linkActionSettings = {...nextProps.linkActionSettings,
+          'isLinkDeleteModalOpen': false,
+          'isLinkUpdateModalOpen': false,
+          'isLinkModalOpen': false,
+          'entitlementSelected': null,
+          'licenseCount': 0}
+        nextProps.setLinkActionSettings(linkActionSettings)
+      }
+      if (nextProps.removeLinkResponse && nextProps.removeLinkResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // let linkActionSettings = {...nextProps.linkActionSettings}
+        if (nextProps.removeLinkResponse.error_code === null) {
+          let listPayload = {
+            'application_id': this.props.match.params.id,
+            'search': '',
+            'page_size': this.props.perPage,
+            'page': 1
+          }
+          if (nextProps.showTabs.parentTab === 'Entitlements') {
+            this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
+          } else if (nextProps.showTabs.parentTab === 'Software') {
+            this.props.fetchApplicationSoftwares && this.props.fetchApplicationSoftwares(listPayload)
+          }
+          // eslint-disable-next-line
+          toastr.success('The Link successfully removed in Application ' + nextProps.showTabs.parentTab, 'Good Stuff!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.removeLinkResponse.error_message, nextProps.removeLinkResponse.error_code)
+        }
+        this.props.resetResponse()
+        let linkActionSettings = {...nextProps.linkActionSettings,
+          'isLinkDeleteModalOpen': false,
+          'isLinkUpdateModalOpen': false,
+          'isLinkModalOpen': false,
+          'entitlementSelected': null,
+          'licenseCount': 0}
+        nextProps.setLinkActionSettings(linkActionSettings)
       }
     }
   })
