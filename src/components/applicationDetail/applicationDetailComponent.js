@@ -84,19 +84,27 @@ export default function Applicationview (props) {
       props.setLinkActionSettings(linkActionSettings)
     }
   }
-  let openLinkEntitlementModal = function (event) {
+  let openLinkAddModal = function (event) {
     event.preventDefault()
-    let linkActionSettings = {...props.linkActionSettings, 'isLinkModalOpen': true}
+    let linkActionSettings = {...props.linkActionSettings,
+      'isLinkDeleteModalOpen': false,
+      'isLinkUpdateModalOpen': false,
+      'isLinkModalOpen': true,
+      'selectedObject': null,
+      'entitlement': null,
+      'agreement': null,
+      'supplier': null,
+      'licenseCount': 0}
     props.setLinkActionSettings(linkActionSettings)
    }
   let openLinkDeleteModal = function (data) {
     console.log('*&&&*&&', data)
-    let linkActionSettings = {...props.linkActionSettings, 'isLinkDeleteModalOpen': true, 'entitlementSelected': data, 'licenseCount': data.license_count}
+    let linkActionSettings = {...props.linkActionSettings, 'isLinkDeleteModalOpen': true, 'selectedObject': data, 'licenseCount': data.license_count}
     props.setLinkActionSettings(linkActionSettings)
   }
   let openLinkUpdateModal = function (data) {
     console.log('*&&&*&&', data)
-    let linkActionSettings = {...props.linkActionSettings, 'isLinkUpdateModalOpen': true, 'entitlementSelected': data, 'licenseCount': data.license_count}
+    let linkActionSettings = {...props.linkActionSettings, 'isLinkUpdateModalOpen': true, 'selectedObject': data, 'licenseCount': data.license_count}
     props.setLinkActionSettings(linkActionSettings)
   }
   let closeLinkModal = function () {
@@ -104,7 +112,7 @@ export default function Applicationview (props) {
       'isLinkDeleteModalOpen': false,
       'isLinkUpdateModalOpen': false,
       'isLinkModalOpen': false,
-      'entitlementSelected': null,
+      'selectedObject': null,
       'licenseCount': 0}
     props.setLinkActionSettings(linkActionSettings)
   }
@@ -163,7 +171,7 @@ export default function Applicationview (props) {
     let dataPayload = []
     let obj = {}
     obj.op = 'replace'
-    obj.path = '/' + props.linkActionSettings.entitlementSelected.connection_id + '/license_count'
+    obj.path = '/' + props.linkActionSettings.selectedObject.connection_id + '/license_count'
     obj.value = parseInt(props.linkActionSettings.licenseCount)
     dataPayload.push(obj)
     let applicationId = props.match.params.id
@@ -178,8 +186,21 @@ export default function Applicationview (props) {
     console.log('payload', payload)
     props.updateLink(payload)
   }
-  let deleteLinkOperation = function () {
-    console.log('test')
+  let deleteLinkOperation = function (event) {
+    event.preventDefault()
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let dataPayload = []
+    let obj = {}
+    obj.op = 'remove'
+    obj.path = '/' + props.linkActionSettings.selectedObject.connection_id
+    dataPayload.push(obj)
+    let applicationId = props.match.params.id
+    let payload = {}
+    payload.applicationId = applicationId
+    payload.data = dataPayload
+    console.log('payload', payload)
+    props.deleteLink(payload)
   }
   // end code for link management
   // Entitlement tab
@@ -953,7 +974,7 @@ let handleInputEntitlementChange = debounce((e) => {
                             </div>
                           </div>
                           <div className='col-md-6 pull-right'>
-                            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
+                            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkAddModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
                               <i className='fa flaticon-app fa-2x' />
                             </a>
                           </div>
@@ -1016,7 +1037,7 @@ let handleInputEntitlementChange = debounce((e) => {
                             </div>
                           </div>
                           <div className='col-md-6 pull-right'>
-                            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkEntitlementModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
+                            <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Link Entitlement' onClick={openLinkAddModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
                               <i className='fa flaticon-app fa-2x' />
                             </a>
                           </div>
@@ -1161,7 +1182,7 @@ let handleInputEntitlementChange = debounce((e) => {
                     <div className='form-group row'>
                       <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Entitlements</label></div>
                       <div className='col-8'>
-                        {props.linkActionSettings.entitlementSelected ? props.linkActionSettings.entitlementSelected.name : ''}
+                        {props.linkActionSettings.selectedObject ? props.linkActionSettings.selectedObject.name : ''}
                       </div>
                     </div>
                     <div className='form-group row'>
@@ -1202,7 +1223,7 @@ let handleInputEntitlementChange = debounce((e) => {
                     </button>
                   </div>
                   <div className='modal-body'>
-                    <p>Confirm deletion of Link to {props.linkActionSettings.entitlementSelected ? props.linkActionSettings.entitlementSelected.name : ''}</p>
+                    <p>Confirm deletion of Link to {props.linkActionSettings.selectedObject ? props.linkActionSettings.selectedObject.name : ''}</p>
                   </div>
                   <div className='modal-footer'>
                     <div className='row'>

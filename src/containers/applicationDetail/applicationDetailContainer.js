@@ -324,7 +324,7 @@ export default compose(
             this.props.fetchApplicationSoftwares && this.props.fetchApplicationSoftwares(listPayload)
           }
           // eslint-disable-next-line
-          toastr.success('The Link successfully removed in Application ' + nextProps.showTabs.parentTab, 'Good Stuff!')
+          toastr.success('The Link was successfully removed in Application ' + nextProps.showTabs.parentTab, 'Good Stuff!')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.removeLinkResponse.error_message, nextProps.removeLinkResponse.error_code)
@@ -334,7 +334,7 @@ export default compose(
           'isLinkDeleteModalOpen': false,
           'isLinkUpdateModalOpen': false,
           'isLinkModalOpen': false,
-          'entitlementSelected': null,
+          'selectedObject': null,
           'licenseCount': 0}
         nextProps.setLinkActionSettings(linkActionSettings)
       }
