@@ -245,6 +245,22 @@ export default compose(
           toastr.error(nextProps.softwares.error_message, nextProps.softwares.error_code)
         }
       }
+      if (nextProps.applicationEntitlements && nextProps.applicationEntitlements !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.applicationEntitlements.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.applicationEntitlements.error_message, nextProps.applicationEntitlements.error_code)
+        }
+      }
+      if (nextProps.applicationSoftwares && nextProps.applicationSoftwares !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.applicationSoftwares.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.applicationSoftwares.error_message, nextProps.applicationSoftwares.error_code)
+        }
+      }
       if (nextProps.addLinkResponse && nextProps.addLinkResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()

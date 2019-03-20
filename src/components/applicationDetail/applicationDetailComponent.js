@@ -167,7 +167,7 @@ export default function Applicationview (props) {
   let editLinkOperation = function (event) {
     event.preventDefault()
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let dataPayload = []
     let obj = {}
     obj.op = 'replace'
@@ -203,7 +203,7 @@ export default function Applicationview (props) {
     props.deleteLink(payload)
   }
   // end code for link management
-  // Entitlement tab
+  // Entitlement and Software tab
   let searchTextBox
   let applicationEntitlementList = ''
   let applicationSoftwareList = ''
@@ -216,12 +216,51 @@ export default function Applicationview (props) {
   let paginationLimit = 6
   let nextClass = ''
   let previousClass = ''
-  let perPage = 10
+  let perPage = props.perPage
   let currentPage = props.currentPage
   let showTabs = {...props.showTabs}
   let selectEntitlementOptions = []
   let selectSupplierOptions = []
   let selectAgreementOptions = []
+  let handleSearchChange = debounce((e) => {
+    console.log(e)
+    if (searchTextBox) {
+      const value = searchTextBox ? searchTextBox.value : ''
+      props.setCurrentPage(1)
+      let payload = {
+        'application_id': props.match.params.id,
+        'search': value || '',
+        'page_size': props.perPage,
+        'page': 1
+      }
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      if (showTabs.parentTab === 'Entitlements') {
+        props.fetchApplicationEntitlements && props.fetchApplicationEntitlements(payload)
+      } else if (showTabs.parentTab === 'Software') {
+        props.fetchApplicationSoftwares && props.fetchApplicationSoftwares(payload)
+      }
+      // listPage = _.filter(pageArray, function (group) {
+      //   let found = _.filter(group, {'number': currentPage})
+      //   if (found.length > 0) { return group }
+      // })
+    } else {
+      props.setCurrentPage(1)
+      let payload = {
+        'application_id': props.match.params.id,
+        'search': '',
+        'page_size': props.perPage,
+        'page': 1
+      }
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      if (showTabs.parentTab === 'Entitlements') {
+        props.fetchApplicationEntitlements && props.fetchApplicationEntitlements(payload)
+      } else if (showTabs.parentTab === 'Software') {
+        props.fetchApplicationSoftwares && props.fetchApplicationSoftwares(payload)
+      }
+    }
+  }, 500)
   if (props.entitlements !== '' && props.entitlements.error_code === null) {
     selectEntitlementOptions = props.entitlements.resources.map((component, index) => {
       let option = {...component}
@@ -420,30 +459,6 @@ export default function Applicationview (props) {
       }
     }
   }
-let handleInputEntitlementChange = debounce((e) => {
-  console.log(e)
-  if (searchTextBox) {
-    const value = searchTextBox.value
-    // entitlementsList = ''
-    let payload = {
-      'business_unit_id': props.match.params.id,
-      'search': value || '',
-      'page_size': 10,
-      'page': 1
-    }
-    props.setCurrentPage(1)
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchBusinessUnitEntitlements(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
-    // }
-    listEntitlementPage = _.filter(entitlementPageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
-  }
-}, 500)
   // End entitlement tab code
   let handleCheckbox = function (value, data) {
     let displayIndex = data.displayIndex
@@ -963,7 +978,7 @@ let handleInputEntitlementChange = debounce((e) => {
                               <div style={{'display': 'flex', 'marginBottom': '15px'}}>
                                 <h5 style={{'margin': '10px'}}>Search</h5>
                                 <div className='m-input-icon m-input-icon--left'>
-                                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputEntitlementChange} />
+                                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleSearchChange} />
                                   <span className='m-input-icon__icon m-input-icon__icon--left'>
                                     <span>
                                       <i className='la la-search' />
@@ -1026,7 +1041,7 @@ let handleInputEntitlementChange = debounce((e) => {
                               <div style={{'display': 'flex', 'marginBottom': '15px'}}>
                                 <h5 style={{'margin': '10px'}}>Search</h5>
                                 <div className='m-input-icon m-input-icon--left'>
-                                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputEntitlementChange} />
+                                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleSearchChange} />
                                   <span className='m-input-icon__icon m-input-icon__icon--left'>
                                     <span>
                                       <i className='la la-search' />
@@ -1257,6 +1272,7 @@ let handleInputEntitlementChange = debounce((e) => {
   applicationEntitlements: PropTypes.any,
   applicationSoftwares: PropTypes.any,
   currentPage: PropTypes.any,
+  perPage: PropTypes.any,
   linkActionSettings: PropTypes.any,
   entitlements: PropTypes.any,
   agreements: PropTypes.any,
