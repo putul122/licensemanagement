@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import AgreementDetail from '../../components/agreementDetail/agreementDetailComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
+import _ from 'lodash'
 import { actionCreators } from '../../redux/reducers/agreementDetailReducer/agreementDetailReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
@@ -29,7 +30,21 @@ export function mapStateToProps (state, props) {
     updateRelationshipPropertyResponse: state.agreementDetailReducer.updateRelationshipPropertyResponse,
     deleteRelationshipResponse: state.agreementDetailReducer.deleteRelationshipResponse,
     currentPage: state.agreementDetailReducer.currentPage,
-    validationProperty: state.agreementDetailReducer.validationProperty
+    validationProperty: state.agreementDetailReducer.validationProperty,
+    addConditionActionSettings: state.agreementDetailReducer.addConditionActionSettings,
+    agreementConditions: state.agreementDetailReducer.agreementConditions,
+    agreementCondition: state.agreementDetailReducer.agreementCondition,
+    addAgreementConditionResponse: state.agreementDetailReducer.addAgreementConditionResponse,
+    deleteAgreementConditionResponse: state.agreementDetailReducer.deleteAgreementConditionResponse,
+    updateAgreementConditionResponse: state.agreementDetailReducer.updateAgreementConditionResponse,
+    notificationPeriodData: state.agreementDetailReducer.notificationPeriodData,
+    agreementConditionNotificationPeriod: state.agreementDetailReducer.agreementConditionNotificationPeriod,
+    selectedDate: state.agreementDetailReducer.selectedDate,
+    selectedNotificationPeriod: state.agreementDetailReducer.selectedNotificationPeriod,
+    updateAgreementConditionSettings: state.agreementDetailReducer.updateAgreementConditionSettings,
+    agreementPurchaseOrders: state.agreementDetailReducer.agreementPurchaseOrders,
+    agreementPurchaseOrderById: state.agreementDetailReducer.agreementPurchaseOrderById,
+    agreementPurchaseOrderSettings: state.agreementDetailReducer.agreementPurchaseOrderSettings
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -64,7 +79,21 @@ export const propsMapping: Callbacks = {
   resetUpdateRelationshipResponse: actionCreators.resetUpdateRelationshipResponse,
   setCurrentPage: actionCreators.setCurrentPage,
   setValidationProperty: actionCreators.setValidationProperty,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  setAddConditionSettings: actionCreators.setAddConditionSettings,
+  setNotificationPeriodData: actionCreators.setNotificationPeriodData,
+  fetchAgreementConditions: sagaActions.agreementActions.fetchAgreementConditions,
+  fetchAgreementConditionById: sagaActions.agreementActions.fetchAgreementConditionById,
+  addAgreementCondition: sagaActions.agreementActions.addAgreementCondition,
+  deleteAgreementCondition: sagaActions.agreementActions.deleteAgreementCondition,
+  updateAgreementCondition: sagaActions.agreementActions.updateAgreementCondition,
+  fetchAgreementConditionNotificationPeriod: sagaActions.agreementActions.fetchAgreementConditionNotificationPeriod,
+  setSelectedDate: actionCreators.setSelectedDate,
+  setSelectedNotificationPeriod: actionCreators.setSelectedNotificationPeriod,
+  setUpdateAgreementConditionSettings: actionCreators.setUpdateAgreementConditionSettings,
+  fetchAgreementPurchaseOrder: sagaActions.agreementActions.fetchAgreementPurchaseOrder,
+  fetchAgreementPurchaseOrderById: sagaActions.agreementActions.fetchAgreementPurchaseOrderById,
+  setPurchaseOrderSettings: actionCreators.setPurchaseOrderSettings
 }
 
 // If you want to use the function mapping
@@ -100,15 +129,28 @@ export default compose(
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
-        'agreement_id': this.props.match.params.id,
-        'id': this.props.match.params.id
+        'agreement_id': this.props.match.params.id
+        // 'id': this.props.match.params.id
       }
+      // let payload = {
+      //   'agreement_id': props.match.params.id,
+      //   'condition_id': data.id
+      // }
+      // props.fetchAgreementConditionById(payload)
       this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
       this.props.fetchAgreementEntitlements && this.props.fetchAgreementEntitlements(payload)
       this.props.fetchAgreementProperties && this.props.fetchAgreementProperties(payload)
       this.props.fetchAgreementRelationships && this.props.fetchAgreementRelationships(payload)
       this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
-      // this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(payload)
+      this.props.fetchAgreementConditions && this.props.fetchAgreementConditions(payload)
+      this.props.fetchAgreementPurchaseOrder && this.props.fetchAgreementPurchaseOrder(payload)
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let componentTypeId = appPackage.resources[0].component_types
+      let notificationPeriodProperty = _.result(_.find(componentTypeId, function (obj) {
+        return obj.key === 'Agreement Condition'
+      }), 'component_type')
+      console.log('data for notification', notificationPeriodProperty)
+      this.props.fetchAgreementConditionNotificationPeriod && this.props.fetchAgreementConditionNotificationPeriod(notificationPeriodProperty)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -237,6 +279,71 @@ export default compose(
         this.props.resetUpdateRelationshipResponse()
         let settingPayload = {...this.props.relationshipActionSettings, 'isModalOpen': false}
         this.props.setRelationshipActionSettings(settingPayload)
+      }
+      if (nextProps.agreementConditionNotificationPeriod && nextProps.agreementConditionNotificationPeriod !== '') {
+        if (nextProps.agreementConditionNotificationPeriod.error_code === null) {
+          let appPackage = JSON.parse(localStorage.getItem('packages'))
+          let notificationProperty = appPackage.resources[0].component_type_properties
+          let propertyId = _.result(_.find(notificationProperty, function (obj) {
+            return obj.key === 'Agreement Condition~Notification Period'
+          }), 'component_type_property')
+          console.log('****', propertyId)
+          if (nextProps.agreementConditionNotificationPeriod.resources.length > 0) {
+            nextProps.agreementConditionNotificationPeriod.resources.forEach(function (data, index) {
+              console.log(data)
+              let valueSet = _.result(_.find(data.properties, function (obj) {
+                return obj.id === propertyId
+              }), 'value_set')
+              console.log('value set', valueSet)
+              if (valueSet) {
+                console.log(valueSet.values, 'inside if')
+                nextProps.setNotificationPeriodData(valueSet.values)
+              }
+            })
+          }
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.agreementProperties.error_message, nextProps.agreementProperties.error_code)
+        }
+      }
+      if (nextProps.addAgreementConditionResponse && nextProps.addAgreementConditionResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.addAgreementConditionResponse.error_code === null) {
+          this.props.fetchAgreementConditions && this.props.fetchAgreementConditions(payload)
+          // eslint-disable-next-line
+          toastr.success('The agreement condition was successfully added', 'Connecting the dots!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.addAgreementConditionResponse.error_message, nextProps.addAgreementConditionResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.deleteAgreementConditionResponse && nextProps.deleteAgreementConditionResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.deleteAgreementConditionResponse.error_code === null) {
+          this.props.fetchAgreementConditions && this.props.fetchAgreementConditions(payload)
+          // eslint-disable-next-line
+          toastr.success('The agreement ' + this.props.agreementCondition.resources[0].name + ' condition was successfully deleted', 'Disconnected')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.deleteAgreementConditionResponse.error_message, nextProps.deleteAgreementConditionResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.updateAgreementConditionResponse && nextProps.updateAgreementConditionResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.updateAgreementConditionResponse.error_code === null) {
+          this.props.fetchAgreementConditions && this.props.fetchAgreementConditions(payload)
+          // eslint-disable-next-line
+          toastr.success('The agreement ' + this.props.agreementCondition.resources[0].name + ' was successfully updated', 'Good Stuff!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateAgreementConditionResponse.error_message, nextProps.updateAgreementConditionResponse.error_code)
+        }
+        this.props.resetResponse()
       }
     }
   })

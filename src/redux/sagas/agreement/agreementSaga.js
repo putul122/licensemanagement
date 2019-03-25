@@ -52,6 +52,30 @@ export const FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE = 'saga/agreement/FETCH_COM
 export const UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS = 'saga/agreement/UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS'
 export const UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS = 'saga/agreement/UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS'
 export const UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_FAILURE = 'saga/agreement/UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_FAILURE'
+export const FETCH_AGREEMENT_CONDITIONS = 'saga/agreement/FETCH_AGREEMENT_CONDITIONS'
+export const FETCH_AGREEMENT_CONDITIONS_SUCCESS = 'saga/agreement/FETCH_AGREEMENT_CONDITIONS_SUCCESS'
+export const FETCH_AGREEMENT_CONDITIONS_FAILURE = 'saga/agreement/FETCH_AGREEMENT_CONDITIONS_FAILURE'
+export const FETCH_AGREEMENT_CONDITION_BY_ID = 'saga/agreement/FETCH_AGREEMENT_CONDITION_BY_ID'
+export const FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS = 'saga/agreement/FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS'
+export const FETCH_AGREEMENT_CONDITION_BY_ID_FAILURE = 'saga/agreement/FETCH_AGREEMENT_CONDITION_BY_ID_FAILURE'
+export const ADD_AGREEMENT_CONDITION = 'saga/agreement/ADD_AGREEMENT_CONDITION'
+export const ADD_AGREEMENT_CONDITION_SUCCESS = 'saga/agreement/ADD_AGREEMENT_CONDITION_SUCCESS'
+export const ADD_AGREEMENT_CONDITION_FAILURE = 'saga/agreement/ADD_AGREEMENT_CONDITION_FAILURE'
+export const DELETE_AGREEMENT_CONDITION = 'saga/agreement/DELETE_AGREEMENT_CONDITION'
+export const DELETE_AGREEMENT_CONDITION_SUCCESS = 'saga/agreement/DELETE_AGREEMENT_CONDITION_SUCCESS'
+export const DELETE_AGREEMENT_CONDITION_FAILURE = 'saga/agreement/DELETE_AGREEMENT_CONDITION_FAILURE'
+export const UPDATE_AGREEMENT_CONDITION = 'saga/agreement/UPDATE_AGREEMENT_CONDITION'
+export const UPDATE_AGREEMENT_CONDITION_SUCCESS = 'saga/agreement/UPDATE_AGREEMENT_CONDITION_SUCCESS'
+export const UPDATE_AGREEMENT_CONDITION_FAILURE = 'saga/agreement/UPDATE_AGREEMENT_CONDITION_FAILURE'
+export const FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD = 'saga/agreement/FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD'
+export const FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS = 'saga/agreement/FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS'
+export const FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_FAILURE = 'saga/agreement/FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_FAILURE'
+export const FETCH_AGREEMENT_PURCHASE_ORDER = 'saga/agreement/FETCH_AGREEMENT_CONDITION_PURCHASE_ORDER'
+export const FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS = 'saga/agreement/FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS'
+export const FETCH_AGREEMENT_PURCHASE_ORDER_FAILURE = 'saga/agreement/FETCH_AGREEMENT_PURCHASE_ORDER_FAILURE'
+export const FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID = 'saga/agreement/FETCH_AGREEMENT_CONDITION_PURCHASE_ORDER_BY_ID'
+export const FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS = 'saga/agreement/FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS'
+export const FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_FAILURE = 'saga/agreement/FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_FAILURE'
 
 export const actionCreators = {
   fetchAgreements: createAction(FETCH_AGREEMENTS),
@@ -101,7 +125,31 @@ export const actionCreators = {
   fetchComponentTypeComponentsFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE),
   updateComponentTypeComponentRelationships: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS),
   updateComponentTypeComponentRelationshipsSuccess: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS),
-  updateComponentTypeComponentRelationshipsFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_FAILURE)
+  updateComponentTypeComponentRelationshipsFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_FAILURE),
+  fetchAgreementConditions: createAction(FETCH_AGREEMENT_CONDITIONS),
+  fetchAgreementConditionsSuccess: createAction(FETCH_AGREEMENT_CONDITIONS_SUCCESS),
+  fetchAgreementConditionsFailure: createAction(FETCH_AGREEMENT_CONDITIONS_FAILURE),
+  fetchAgreementConditionById: createAction(FETCH_AGREEMENT_CONDITION_BY_ID),
+  fetchAgreementConditionByIdSuccess: createAction(FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS),
+  fetchAgreementConditionByIdFailure: createAction(FETCH_AGREEMENT_CONDITION_BY_ID_FAILURE),
+  updateAgreementCondition: createAction(UPDATE_AGREEMENT_CONDITION),
+  updateAgreementConditionSuccess: createAction(UPDATE_AGREEMENT_CONDITION_SUCCESS),
+  updateAgreementConditionFailure: createAction(UPDATE_AGREEMENT_CONDITION_FAILURE),
+  addAgreementCondition: createAction(ADD_AGREEMENT_CONDITION),
+  addAgreementConditionSuccess: createAction(ADD_AGREEMENT_CONDITION_SUCCESS),
+  addAgreementConditionFailure: createAction(ADD_AGREEMENT_CONDITION_FAILURE),
+  deleteAgreementCondition: createAction(DELETE_AGREEMENT_CONDITION),
+  deleteAgreementConditionSuccess: createAction(DELETE_AGREEMENT_CONDITION_SUCCESS),
+  deleteAgreementConditionFailure: createAction(DELETE_AGREEMENT_CONDITION_FAILURE),
+  fetchAgreementConditionNotificationPeriod: createAction(FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD),
+  fetchAgreementConditionNotificationPeriodSuccess: createAction(FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS),
+  fetchAgreementConditionNotificationPeriodFailure: createAction(FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_FAILURE),
+  fetchAgreementPurchaseOrder: createAction(FETCH_AGREEMENT_PURCHASE_ORDER),
+  fetchAgreementPurchaseOrderSuccess: createAction(FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS),
+  fetchAgreementPurchaseOrderFailure: createAction(FETCH_AGREEMENT_PURCHASE_ORDER_FAILURE),
+  fetchAgreementPurchaseOrderById: createAction(FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID),
+  fetchAgreementPurchaseOrderByIdSuccess: createAction(FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS),
+  fetchAgreementPurchaseOrderByIdFailure: createAction(FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_FAILURE)
 }
 
 export default function * watchAgreements () {
@@ -121,7 +169,15 @@ export default function * watchAgreements () {
     takeLatest(DELETE_COMPONENT_RELATIONSHIP, deleteComponentRelationship),
     takeLatest(FETCH_COMPONENT_CONSTRAINTS, getComponentConstraints),
     takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
-    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS, updateComponentTypeComponentRelationships)
+    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS, updateComponentTypeComponentRelationships),
+    takeLatest(FETCH_AGREEMENT_CONDITIONS, getAgreementConditions),
+    takeLatest(FETCH_AGREEMENT_CONDITION_BY_ID, getAgreementCondition),
+    takeLatest(ADD_AGREEMENT_CONDITION, addAgreementCondition),
+    takeLatest(DELETE_AGREEMENT_CONDITION, deleteAgreementCondition),
+    takeLatest(FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD, getAgreementConditionNotificationPeriod),
+    takeLatest(FETCH_AGREEMENT_PURCHASE_ORDER, getAgreementPurchaseOrders),
+    takeLatest(UPDATE_AGREEMENT_CONDITION, updateAgreementCondition),
+    takeLatest(FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID, getAgreementPurchaseOrderById)
   ]
 }
 
@@ -346,5 +402,118 @@ export function * updateComponentTypeComponentRelationships (action) {
     yield put(actionCreators.updateComponentTypeComponentRelationshipsSuccess(componentTypes.data))
   } catch (error) {
     yield put(actionCreators.updateComponentTypeComponentRelationshipsFailure(error))
+  }
+}
+export function * getAgreementConditions (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreementConditions = yield call(
+      axios.get,
+      api.getAgreementConditions,
+      {params: action.payload}
+    )
+    yield put(actionCreators.fetchAgreementConditionsSuccess(agreementConditions.data))
+  } catch (error) {
+    yield put(actionCreators.fetchAgreementConditionsFailure(error))
+  }
+}
+
+export function * getAgreementCondition (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreementCondition = yield call(
+      axios.get,
+      api.getAgreementCondition,
+      {params: action.payload}
+    )
+    yield put(actionCreators.fetchAgreementConditionByIdSuccess(agreementCondition.data))
+  } catch (error) {
+    yield put(actionCreators.fetchAgreementConditionByIdFailure(error))
+  }
+}
+
+export function * getAgreementPurchaseOrders (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreementPurchaseOrder = yield call(
+      axios.get,
+      api.getAgreementPurchaseOrders,
+      {params: action.payload}
+    )
+    yield put(actionCreators.fetchAgreementPurchaseOrderSuccess(agreementPurchaseOrder.data))
+  } catch (error) {
+    yield put(actionCreators.fetchAgreementPurchaseOrderFailure(error))
+  }
+}
+
+export function * getAgreementPurchaseOrderById (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreementPurchaseOrder = yield call(
+      axios.get,
+      api.getAgreementPurchaseOrder,
+      {params: action.payload}
+    )
+    yield put(actionCreators.fetchAgreementPurchaseOrderByIdSuccess(agreementPurchaseOrder.data))
+  } catch (error) {
+    yield put(actionCreators.fetchAgreementPurchaseOrderByIdFailure(error))
+  }
+}
+
+export function * addAgreementCondition (action) {
+  console.log('track agreement data api call', action)
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreement = yield call(
+      axios.patch,
+      api.updateAgreementConditions(action.payload.agreementId),
+      action.payload.data
+    )
+    yield put(actionCreators.addAgreementConditionSuccess(agreement.data))
+  } catch (error) {
+    yield put(actionCreators.addAgreementConditionFailure(error))
+  }
+}
+
+export function * deleteAgreementCondition (action) {
+  console.log('track agreement data api call', action)
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreement = yield call(
+      axios.patch,
+      api.updateAgreementConditions(action.payload.agreementId),
+      action.payload.data
+    )
+    yield put(actionCreators.deleteAgreementConditionSuccess(agreement.data))
+  } catch (error) {
+    yield put(actionCreators.deleteAgreementConditionFailure(error))
+  }
+}
+
+export function * updateAgreementCondition (action) {
+  console.log('Track agreement data api call', action)
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreement = yield call(
+      axios.patch,
+      api.updateAgreementConditions(action.payload.agreementId),
+      action.payload.data
+    )
+    yield put(actionCreators.updateAgreementConditionSuccess(agreement.data))
+  } catch (error) {
+    yield put(actionCreators.updateAgreementConditionFailure(error))
+  }
+}
+
+export function * getAgreementConditionNotificationPeriod (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const agreementProperties = yield call(
+      axios.get,
+      api.getAgreementPropertiesCondition(action.payload)
+    )
+    yield put(actionCreators.fetchAgreementConditionNotificationPeriodSuccess(agreementProperties.data))
+  } catch (error) {
+    yield put(actionCreators.fetchAgreementConditionNotificationPeriodFailure(error))
   }
 }

@@ -4,6 +4,7 @@ import styles from './agreementDetailComponent.scss'
 import moment from 'moment'
 import _ from 'lodash'
 import Select from 'react-select'
+// import debounce from 'lodash/debounce'
 import CreatableSelect from 'react-select/lib/Creatable'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -34,12 +35,28 @@ const formatAmount = (x) => {
   }
   return parts.join('.')
 }
+
+// const GetFormattedDate = () =>{
+//   var todayTime = new Date();
+//   var month = format(todayTime .getMonth() + 1);
+//   var day = format(todayTime .getDate());
+//   var year = format(todayTime .getFullYear());
+//   return month + "/" + day + "/" + year;
+// }
+
+// const options = [
+//   { value: 'chocolate', label: 'Chocolate' },
+//   { value: 'strawberry', label: 'Strawberry' },
+//   { value: 'vanilla', label: 'Vanilla' }
+// ]
 // Agreement 961 to be used as component type id
 export default function AgreementDetail (props) {
   console.log(props)
-  console.log(props.isEditComponent)
+  console.log(props.selectedNotificationPeriod, props.setUpdateAgreementConditionSettings, props.agreementPurchaseOrders)
+  console.log(props.isEditComponent, props.setAddConditionSettings, props.fetchAgreementPurchaseOrderById, props.setPurchaseOrderSettings, props.addConditionActionSettings, props.fetchAgreementConditionById, props.agreementCondition, props.notificationPeriodData, props.selectedDate)
   let agreementEntitlementList = ''
   let agreementPropertiesList = ''
+  let agreementConditionsList = ''
   let agreementName = ''
   let agreementDescription = ''
   let expireInDays = ''
@@ -50,15 +67,36 @@ export default function AgreementDetail (props) {
   let incomingComponentRelationshipList
   let childComponentRelationshipList
   let totalEntitlementPages
+  let totalConditionPages
+  let totalPurchaseOrderPages
   let perPage = 10
   let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
   let pageArray = []
+  let conditionpageArray = []
+  let purchaseorderpageArray = []
   let listEntitlementPage = []
+  let listConditionPage = []
+  let listPurchaseOrderPage = []
   let paginationLimit = 6
   let contextId = props.match.params.id
   let validationPropertyList = ''
+  let conditionName = ''
+  let conditionDescription = ''
+  let conditionNotificationId = ''
+  let conditionDueDate = ''
+  // let conditionSelectedDueDate = ''
+  let conditionNotification = ''
+  let periodOptions = ''
+  let DateInputBox
+  let ConditionNameInputBox
+  let ConditionDescriptionInputBox
+  let agreementPurchaseOrderList = ''
+  let purchaseOrderName
+  let purchaseOrderByIdList
+  let purchaseOrderItemList
+
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -186,12 +224,6 @@ export default function AgreementDetail (props) {
     props.restoreAgreementProperties(payload)
     props.setEditComponentFlag(false)
   }
-  // let closeUpdateModal = function () {
-  //   let addAgreementSettings = {...props.addAgreementSettings, isUpdateModalOpen: false}
-  //   props.setAddAgreementSettings(addAgreementSettings)
-  //   props.setEditComponentFlag(false)
-  //   cancelEditAgreement()
-  // }
   let closeConfirmationModal = function (event) {
     event.preventDefault()
     let addAgreementSettings = {...props.addAgreementSettings, isConfirmationModalOpen: false}
@@ -1262,6 +1294,406 @@ export default function AgreementDetail (props) {
       return (<li>{data}</li>)
     })
   }
+  // Code for Conditions tab begins here
+  let openAddConditionModal = function (event) {
+   event.preventDefault()
+   let addConditionActionSettings = {...props.addConditionActionSettings, 'isAddConditionModalOpen': true}
+   props.setAddConditionSettings(addConditionActionSettings)
+  }
+  let openUpdateConditionModal = function (data) {
+    console.log(data)
+    let payload = {
+      'agreement_id': props.match.params.id,
+      'condition_id': data.id
+    }
+    props.fetchAgreementConditionById(payload)
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isUpdateConditionModalOpen': true, 'conditionData': data, 'isEditFlag': true}
+    props.setAddConditionSettings(addConditionActionSettings)
+    console.log('*******', props.addConditionActionSettings)
+    let updateAgreementConditionSettings = {...props.updateAgreementConditionSettings, 'notificationPeriod': data}
+    props.setUpdateAgreementConditionSettings(updateAgreementConditionSettings)
+  }
+  let openDeleteConditionModal = function (data) {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isDeleteConditionModalOpen': true, 'conditionData': data}
+    props.setAddConditionSettings(addConditionActionSettings)
+  }
+  let openViewConditionModal = function (data) {
+    console.log('Data fr condition', data)
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isViewConditionModalOpen': true, 'conditionData': data}
+    props.setAddConditionSettings(addConditionActionSettings)
+    let payload = {
+      'agreement_id': props.match.params.id,
+      'condition_id': data.id
+    }
+    props.fetchAgreementConditionById(payload)
+  }
+  let openPurchaseOrderModal = function (data) {
+    console.log('Data fr condition', data)
+    let agreementPurchaseOrderActionSettings = {...props.agreementPurchaseOrderActionSettings, 'isPoModalOpen': true, 'purchaseOrderData': data}
+    props.setPurchaseOrderSettings(agreementPurchaseOrderActionSettings)
+    let payload = {
+      'agreement_id': props.match.params.id,
+      'purchase_order_id': data.id
+    }
+    props.fetchAgreementPurchaseOrderById(payload)
+  }
+  let closeAddConditionModal = function () {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isAddConditionModalOpen': false}
+    props.setAddConditionSettings(addConditionActionSettings)
+   }
+  let closeUpdateConditionModal = function () {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isUpdateConditionModalOpen': false}
+    props.setAddConditionSettings(addConditionActionSettings)
+   }
+  let closeDeleteConditionModal = function () {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isDeleteConditionModalOpen': false, 'conditionData': null}
+    props.setAddConditionSettings(addConditionActionSettings)
+   }
+  let closeViewConditionModal = function () {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'isViewConditionModalOpen': false}
+    props.setAddConditionSettings(addConditionActionSettings)
+   }
+  let closePurchaseOrderModal = function () {
+    let agreementPurchaseOrderActionSettings = {...props.agreementPurchaseOrderActionSettings, 'isPoModalOpen': false}
+    props.setPurchaseOrderSettings(agreementPurchaseOrderActionSettings)
+   }
+  // Code for Conditions tab ends here
+
+  // Code for Condition Listing begins
+  let listCondition = function () {
+    if (props.agreementConditions !== '') {
+      if (props.agreementConditions.resources.length > 0) {
+        agreementConditionsList = props.agreementConditions.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td><a href={'javascript:void(0)' + data.id} onClick={(event) => { event.preventDefault(); openViewConditionModal(data) }}>{data.name}</a></td>
+              <td>{moment(data.due_date).format('DD MMM YYYY')}</td>
+              <td>
+                <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openUpdateConditionModal(data) }} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
+                  <button type='button' onClick={(event) => { event.preventDefault(); openDeleteConditionModal(data) }} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>
+                </div>
+              </td>
+            </tr>
+          )
+        })
+      } else {
+        agreementConditionsList = []
+        agreementConditionsList.push((
+          <tr key={0}>
+            <td colSpan='7'>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+    }
+  }
+  if (props.agreementConditions && props.agreementConditions !== '') {
+    totalConditionPages = Math.ceil(props.agreementConditions.count / perPage)
+    let i = 1
+    while (i <= totalConditionPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      conditionpageArray.push(pageParameter)
+      i++
+    }
+    conditionpageArray = _.chunk(conditionpageArray, paginationLimit)
+    console.log('***', conditionpageArray)
+    listConditionPage = _.filter(conditionpageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalConditionPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    listCondition()
+  }
+  let handleListAndPaginationForCondition = function (page) {
+    listCondition()
+    props.setCurrentPage(page)
+    listConditionPage = _.filter(conditionpageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handleConditionPage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalEntitlementPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    handleListAndPaginationForCondition(page)
+  }
+
+  let handleConditionPrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage - 1)
+      handleListAndPaginationForCondition(currentPage - 1)
+    }
+  }
+
+  let handleConditionNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalConditionPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage + 1)
+      handleListAndPaginationForCondition(currentPage + 1)
+    }
+  }
+if (props.notificationPeriodData && props.notificationPeriodData !== '') {
+  periodOptions = props.notificationPeriodData.map(function (data, index) {
+    data.label = data.name
+    return data
+  })
+}
+if (props.agreementCondition && props.agreementCondition !== '' && props.agreementCondition.error_code === null) {
+  // let updateAgreementConditionSettings = {...props.updateAgreementConditionSettings}
+  conditionName = props.agreementCondition.resources[0].name
+  conditionDescription = props.agreementCondition.resources[0].description
+  conditionDueDate = props.agreementCondition.resources[0].due_date
+  conditionNotification = props.agreementCondition.resources[0].notification_period
+  conditionNotificationId = props.agreementCondition.resources[0].notification_period_id || ''
+  let typeObject
+  if (conditionNotificationId !== '') {
+   let typeObject = _.find(periodOptions, function (obj) {
+      return obj.id === conditionNotificationId
+    })
+    console.log('typeObject', typeObject)
+  }
+  props.updateAgreementConditionSettings.notificationPeriod = typeObject
+  props.setUpdateAgreementConditionSettings(props.updateAgreementConditionSettings)
+}
+
+let handleNotificationPeriodSelect = function (newValue: any, actionMeta: any) {
+  console.group('Value Changed first select')
+  console.log(newValue)
+  console.log(`action: ${actionMeta.action}`)
+  console.groupEnd()
+  if (actionMeta.action === 'select-option') {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'notificationPeriodSelected': newValue}
+    props.setAddConditionSettings(addConditionActionSettings)
+  }
+  if (actionMeta.action === 'clear') {
+    let addConditionActionSettings = {...props.addConditionActionSettings, 'notificationPeriodSelected': null}
+    props.setAddConditionSettings(addConditionActionSettings)
+  }
+}
+let addAgreementCondition = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    event.preventDefault()
+    let dataPayload = []
+    let obj = {}
+    obj.op = 'add'
+    obj.path = '/-'
+    obj.value = {
+      due_date: DateInputBox.value,
+      notification_period_id: props.addConditionActionSettings.notificationPeriodSelected.id,
+      name: ConditionNameInputBox.value,
+      description: ConditionDescriptionInputBox.value
+    }
+    dataPayload.push(obj)
+    let agreementId = props.match.params.id
+    let payload = {}
+    payload.agreementId = agreementId
+    payload.data = dataPayload
+    console.log('payload', payload)
+    props.addAgreementCondition(payload)
+    closeAddConditionModal()
+}
+let deleteAgreementCondition = function (event) {
+  // eslint-disable-next-line
+  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  event.preventDefault()
+  let dataPayload = []
+  let obj = {}
+  obj.op = 'remove'
+  obj.path = '/' + props.addConditionActionSettings.conditionData.id
+  dataPayload.push(obj)
+  let agreementId = props.match.params.id
+  let payload = {}
+  payload.agreementId = agreementId
+  payload.data = dataPayload
+  console.log('payload', payload)
+  props.deleteAgreementCondition(payload)
+  closeDeleteConditionModal()
+}
+let handleConditionNameChange = function (event) {
+  let addConditionActionSettings = JSON.parse(JSON.stringify(props.addConditionActionSettings))
+  addConditionActionSettings.conditionData.name = event.target.value
+  props.setAddConditionSettings(addConditionActionSettings)
+  console.log('Condition Name Change', addConditionActionSettings)
+}
+let handleConditionDescriptionChange = function (event) {
+  let addConditionActionSettings = JSON.parse(JSON.stringify(props.addConditionActionSettings))
+  addConditionActionSettings.conditionData.description = event.target.value
+  props.setAddConditionSettings(addConditionActionSettings)
+  console.log('Condition Description Change', addConditionActionSettings)
+}
+let handleConditionDueDateChange = function (event) {
+  let addConditionActionSettings = JSON.parse(JSON.stringify(props.addConditionActionSettings))
+  addConditionActionSettings.conditionData.due_date = event.target.value
+  props.setAddConditionSettings(addConditionActionSettings)
+  console.log('Condition date change Change', addConditionActionSettings)
+}
+
+let editAgreeementCondition = function (event) {
+  let payload = []
+  let obj = {}
+  // edit name payload
+  obj.op = 'replace'
+  obj.path = props.addConditionActionSettings.conditionData.id + '/' + 'name'
+  obj.value = props.addConditionActionSettings.conditionData.name
+  payload.push(obj)
+  // edit description payload
+  obj = {}
+  obj.op = 'replace'
+  obj.path = props.addConditionActionSettings.conditionData.id + '/' + 'description'
+  obj.value = props.addConditionActionSettings.conditionData.description
+  payload.push(obj)
+  // edit duedate payload
+  obj = {}
+  obj.op = 'replace'
+  obj.path = props.addConditionActionSettings.conditionData.id + '/' + 'due_date'
+  obj.value = props.addConditionActionSettings.conditionData.due_date
+  payload.push(obj)
+  if (props.updateAgreementConditionSettings.notificationPeriod !== '') {
+    console.log(props.updateAgreementConditionSettings.notificationPeriod)
+    obj = {}
+    obj.op = 'replace'
+    obj.path = props.addConditionActionSettings.conditionData.id + '/' + 'notification_period_id'
+    obj.value = props.addConditionActionSettings.notificationPeriodSelected.id
+    payload.push(obj)
+  }
+  let agreementId = props.match.params.id
+  let newPayload = {}
+  newPayload.agreementId = agreementId
+  newPayload.data = payload
+  // eslint-disable-next-line
+  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  props.updateAgreementCondition(newPayload)
+  console.log('payload', newPayload, props)
+  closeUpdateConditionModal()
+}
+  // Code for Condition Listing ends
+  // Code for PO begins here
+  // if (props.agreementPurchaseOrders && props.agreementPurchaseOrders !== '') {
+  //   agreementPurchaseOrderList = props.agreementPurchaseOrders.resources.map(function (data, index) {
+  //     return (
+  //       <tr key={index}>
+  //         <td><a href='javascript:void(0)' onClick={(event) => { event.preventDefault(); openPurchaseOrderModal(data) }}>{data.name}</a></td>
+  //         <td>{'R ' + formatAmount(data.total_spend)}</td>
+  //       </tr>
+  //     )
+  //   })
+  // }
+  let listPurchaseOrder = function () {
+    if (props.agreementPurchaseOrders !== '') {
+      if (props.agreementPurchaseOrders.resources.length > 0) {
+        agreementPurchaseOrderList = props.agreementPurchaseOrders.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td><a href='javascript:void(0)' onClick={(event) => { event.preventDefault(); openPurchaseOrderModal(data) }}>{data.name}</a></td>
+              <td>{'R ' + formatAmount(data.total_spend)}</td>
+            </tr>
+          )
+        })
+      } else {
+        agreementPurchaseOrderList = []
+        agreementPurchaseOrderList.push((
+          <tr key={0}>
+            <td colSpan='7'>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+    }
+  }
+  if (props.agreementPurchaseOrders && props.agreementPurchaseOrders !== '') {
+    totalPurchaseOrderPages = Math.ceil(props.agreementPurchaseOrders.count / perPage)
+    let i = 1
+    while (i <= totalPurchaseOrderPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      purchaseorderpageArray.push(pageParameter)
+      i++
+    }
+    purchaseorderpageArray = _.chunk(purchaseorderpageArray, paginationLimit)
+    console.log('***', purchaseorderpageArray)
+    listPurchaseOrderPage = _.filter(purchaseorderpageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalPurchaseOrderPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    listPurchaseOrder()
+  }
+  let handleListAndPaginationForPurchaseOrder = function (page) {
+    listPurchaseOrder()
+    props.setCurrentPage(page)
+    listPurchaseOrderPage = _.filter(purchaseorderpageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
+  }
+  let handlePurchaseOrderPage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalPurchaseOrderPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    handleListAndPaginationForPurchaseOrder(page)
+  }
+
+  let handlePurchaseOrderPrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage - 1)
+      handleListAndPaginationForPurchaseOrder(currentPage - 1)
+    }
+  }
+
+  let handlePurchaseOrderNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalPurchaseOrderPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    } else {
+      props.setCurrentPage(currentPage + 1)
+      handleListAndPaginationForPurchaseOrder(currentPage + 1)
+    }
+  }
+
+  if (props.agreementPurchaseOrderById && props.agreementPurchaseOrderById !== '' && props.agreementPurchaseOrderById.error_code === null) {
+    console.log('****', props.agreementPurchaseOrderById)
+    purchaseOrderName = props.agreementPurchaseOrderById.resources[0].name
+    purchaseOrderByIdList = props.agreementPurchaseOrderById.resources[0].items
+    console.log(purchaseOrderByIdList)
+    purchaseOrderItemList = purchaseOrderByIdList.map(function (data, index) {
+      return (
+        <tr key={index}>
+          <td>{data.name}</td>
+          <td>{data.activity}</td>
+          <td>{data.quantity}</td>
+          <td>{data.gross_price ? 'R' + formatAmount(data.gross_price) : ''}</td>
+        </tr>
+      )
+    })
+  }
+
+  // Code for PO ends here
     return (
       <div>
         <div className='row'>
@@ -1405,6 +1837,12 @@ export default function AgreementDetail (props) {
             <li className='nav-item'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_3'>Relationships</a>
             </li>
+            <li className='nav-item'>
+              <a className='nav-link' data-toggle='tab' href='#m_tabs_2_4'>Conditions</a>
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link' data-toggle='tab' href='#m_tabs_2_5'>PO</a>
+            </li>
           </ul>
           <div className='tab-content'>
             <div className='tab-pane active' id='m_tabs_2_1' role='tabpanel'>
@@ -1460,6 +1898,93 @@ export default function AgreementDetail (props) {
                 )}
               </div>
             </div>
+            <div className='tab-pane' id='m_tabs_2_4' role='tabpanel'>
+              <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <div className='col-sm-12'>
+                      <div className='col-md-6 pull-left' />
+                      <div className='col-md-6 pull-right' style={{'marginBottom': '10px'}}>
+                        <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Condition' onClick={openAddConditionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air' style={{'float': 'right'}}>
+                          <i className='fa flaticon-app fa-2x' />
+                        </a>
+                      </div>
+                    </div>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className=''><h5>Name</h5></th>
+                          <th><h5>Expire Date</h5></th>
+                          <th><h5>Action</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {agreementConditionsList}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                {agreementConditionsList.length > 0 && (
+                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                    <ul className='m-datatable__pager-nav'>
+                      <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handleConditionPrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                      {listConditionPage[0] && listConditionPage[0].map(function (page, index) {
+                          if (page.number === currentPage) {
+                            page.class = 'm-datatable__pager-link--active'
+                          } else {
+                            page.class = ''
+                          }
+                          return (<li key={index} >
+                            <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handleConditionPage(page.number) }} >{page.number}</a>
+                          </li>)
+                        })}
+                      <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleConditionNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className='tab-pane' id='m_tabs_2_5' role='tabpanel'>
+              <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
+                <div className='m-portlet'>
+                  <div className='m-portlet__body'>
+                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                      <thead>
+                        <tr role='row'>
+                          <th className=''><h5>PO Number</h5></th>
+                          <th><h5>Price</h5></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {agreementPurchaseOrderList}
+                        {/* <tr>
+                          <td><a href='javascript:void(0);'>Abcedfjfff dfdbffb</a></td>
+                          <td>31 Mar 2018</td>
+                        </tr> */}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                {agreementPurchaseOrderList.length > 0 && (
+                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                    <ul className='m-datatable__pager-nav'>
+                      <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePurchaseOrderPrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                      {listPurchaseOrderPage[0] && listPurchaseOrderPage[0].map(function (page, index) {
+                          if (page.number === currentPage) {
+                            page.class = 'm-datatable__pager-link--active'
+                          } else {
+                            page.class = ''
+                          }
+                          return (<li key={index} >
+                            <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePurchaseOrderPage(page.number) }} >{page.number}</a>
+                          </li>)
+                        })}
+                      <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handlePurchaseOrderNext} data-page='4'><i className='la la-angle-right' /></a></li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
             <div className='tab-pane' id='m_tabs_2_3' role='tabpanel'>
               <div className='col-lg-12' >
                 <div className='row'>
@@ -1485,33 +2010,6 @@ export default function AgreementDetail (props) {
           </div>
         </div>
         <div>
-          {/* <ReactModal isOpen={props.addAgreementSettings.isUpdateModalOpen}
-            onRequestClose={closeUpdateModal}
-            >
-            <div className={''}>
-              <div className='modal-dialog modal-lg'>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>Update { 'Agreement' }</h4>
-                    <button type='button' onClick={closeUpdateModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
-                  </div>
-                  <div className='modal-body'>
-                    <div className='col-md-12'>
-                      <table className={'table ' + styles.borderless}>
-                        {agreementPropertiesList}
-                      </table>
-                    </div>
-                  </div>
-                  <div className='modal-footer'>
-                    <button type='button' onClick={closeUpdateModal} className='btn btn-sm btn-outline-info'>Cancel</button>
-                    <button type='button' onClick={updateAgreementConfirm} className='btn btn-sm btn-outline-info'>Update { '' }</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ReactModal> */}
           <ReactModal isOpen={props.addAgreementSettings.isConfirmationModalOpen}
             style={customStylescrud} >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
@@ -1757,6 +2255,251 @@ export default function AgreementDetail (props) {
               </div>
             </div>
           </ReactModal>
+          <ReactModal isOpen={props.addConditionActionSettings.isAddConditionModalOpen}
+            onRequestClose={closeAddConditionModal} shouldCloseOnOverlayClick={false}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Add Condition</h4>
+                    <button type='button' onClick={closeAddConditionModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-md-12'>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Name</label></div>
+                        <div className='col-8'><input className='form-control' ref={input => (ConditionNameInputBox = input)} autoComplete='off' required /></div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Description</label></div>
+                        <div className='col-8'><textarea className='form-control' ref={input => (ConditionDescriptionInputBox = input)} autoComplete='off' required /></div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Due Date</label></div>
+                        {/* <div className='col-8'><input type='date' className='form-control' ref={input => (DateInputBox = input)} autoComplete='off' required onChange={(event) => { addDate(event.target.value) }} /></div> */}
+                        <div className='col-8'><input type='date' className='form-control' ref={input => (DateInputBox = input)} autoComplete='off' required /></div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='SelectNotificationPeriod' className='col-form-label'>Notification Period</label></div>
+                        <div className='col-8'>
+                          <Select
+                            className='input-sm m-input'
+                            placeholder='Select Notification Period'
+                            isClearable
+                            value={props.addConditionActionSettings.notificationPeriodSelected}
+                            onChange={handleNotificationPeriodSelect}
+                            isSearchable
+                            options={periodOptions}
+                          />
+                        </div>
+                        {/* <div className='form-group row'>
+                          <input type='text' name='city' list='cityname'>
+                            <datalist id='cityname'>
+                              <option value={periodOptions} />
+                            </datalist>
+                          </input>
+                        </div> */}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeAddConditionModal} className='m-btn btn btn-secondary'>Close</button>
+                      <button type='button' onClick={addAgreementCondition} className='m-btn btn btn-secondary'>Add</button>
+                    </div>
+                    {/* <button type='button' onClick={closeAddConditionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                    <button type='button' onClick={addAgreementCondition} className='btn btn-sm btn-outline-info'>Add</button> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+          <ReactModal isOpen={props.addConditionActionSettings.isUpdateConditionModalOpen}
+            onRequestClose={closeUpdateConditionModal} shouldCloseOnOverlayClick={false}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Edit Condition</h4>
+                    <button type='button' onClick={closeUpdateConditionModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-md-12'>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Name</label></div>
+                        <div className='col-8'><input className='form-control' onChange={handleConditionNameChange} value={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.name : ''} autoComplete='off' required /></div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Description</label></div>
+                        <div className='col-8'><textarea className='form-control' onChange={handleConditionDescriptionChange} value={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.description : ''} autoComplete='off' required /></div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='date' className='form-control-label'>Due Date</label></div>
+                        <div className='col-3'><input type='text' className='form-control' value={props.addConditionActionSettings.conditionData ? moment(props.addConditionActionSettings.conditionData.due_date).format('DD MMM YYYY') : ''} autoComplete='off' required /></div>
+                        <div className='col-5'><input type='date' className='form-control' autoComplete='off' onChange={handleConditionDueDateChange} required /></div>
+                      </div>
+                      {/* <div className='form-group row'>
+                        <DatePicker
+                          className='input-sm form-control m-input'
+                          selected={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.due_date : ''}
+                          dateFormat='DD MMM YYYY'
+                        />
+                      </div> */}
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='SelectNotificationPeriod' className='col-form-label'>Notification Period</label></div>
+                        <div className='col-3'><input type='text' className='form-control' value={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.notification_period : ''} autoComplete='off' required /></div>
+                        <div className='col-5'>
+                          <Select
+                            // className='col-7 input-sm m-input'
+                            placeholder='Select Notification'
+                            isClearable
+                            value={props.updateAgreementConditionSettings.notificationPeriod}
+                            onChange={handleNotificationPeriodSelect}
+                            isSearchable={false}
+                            name={'notificationSelected'}
+                            options={periodOptions}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeUpdateConditionModal} className='m-btn btn btn-secondary'>Close</button>
+                      <button type='button' onClick={editAgreeementCondition} className='m-btn btn btn-secondary'>Edit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+          <ReactModal isOpen={props.addConditionActionSettings.isDeleteConditionModalOpen}
+            onRequestClose={closeDeleteConditionModal} shouldCloseOnOverlayClick={false}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Delete Condition</h4>
+                    <button type='button' onClick={closeDeleteConditionModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-md-12'>
+                      <div className='form-group row'>
+                        <div className='col-2'><label htmlFor='text' className='form-control-label'>Name:</label></div>
+                        <div className='col-10'>{props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.name : ''}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeDeleteConditionModal} className='m-btn btn btn-secondary'>Close</button>
+                      <button type='button' onClick={deleteAgreementCondition} className='m-btn btn btn-secondary'>Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+          <ReactModal isOpen={props.addConditionActionSettings.isViewConditionModalOpen && props.addConditionActionSettings.conditionData}
+            onRequestClose={closeViewConditionModal} shouldCloseOnOverlayClick={false}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>View Condition</h4>
+                    <button type='button' onClick={closeViewConditionModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-md-12'>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Name:</label></div>
+                        <div className='col-8'>{conditionName}</div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Description:</label></div>
+                        <div className='col-8'>{conditionDescription}</div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Due Date:</label></div>
+                        <div className='col-8'>{moment(conditionDueDate).format('DD MMM YYYY')}</div>
+                      </div>
+                      <div className='form-group row'>
+                        <div className='col-4'><label htmlFor='text' className='form-control-label'>Notification Period:</label></div>
+                        <div className='col-8'>{conditionNotification}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeViewConditionModal} className='m-btn btn btn-secondary'>Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+          <ReactModal isOpen={props.agreementPurchaseOrderSettings.isPoModalOpen && props.agreementPurchaseOrderSettings.purchaseOrderData}
+            onRequestClose={closePurchaseOrderModal} shouldCloseOnOverlayClick={false}
+            className='modal-dialog modal-lg'
+            style={{'overlay': {zIndex: '1000'}, 'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>View PO Detail: {purchaseOrderName}</h4>
+                    <button type='button' onClick={closePurchaseOrderModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-md-12'>
+                      <div className='form-group row'>
+                        <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                          <thead>
+                            <tr role='row'>
+                              <th className=''><h5>Name</h5></th>
+                              <th className=''><h5>Activity Code</h5></th>
+                              <th className=''><h5>Quantity</h5></th>
+                              <th className=''><h5>Price</h5></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {purchaseOrderItemList}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closePurchaseOrderModal} className='m-btn btn btn-secondary'>Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
         </div>
         {/* The table structure ends */}
         <Discussion name={agreementName} type='Component' {...props} />
@@ -1782,5 +2525,23 @@ export default function AgreementDetail (props) {
       componentTypeComponentConstraints: PropTypes.any,
       componentTypeComponents: PropTypes.any,
       currentPage: PropTypes.any,
-      validationProperty: PropTypes.any
+      validationProperty: PropTypes.any,
+      setAddConditionSettings: PropTypes.any,
+      setPurchaseOrderSettings: PropTypes.any,
+      agreementPurchaseOrderSettings: PropTypes.any,
+      // setSelectedDate: PropTypes.func,
+      // setSelectedNotificationPeriod: PropTypes.func,
+      setUpdateAgreementConditionSettings: PropTypes.func,
+      addConditionActionSettings: PropTypes.any,
+      updateAgreementConditionSettings: PropTypes.any,
+      agreementConditions: PropTypes.any,
+      selectedDate: PropTypes.any,
+      selectedNotificationPeriod: PropTypes.any,
+      fetchAgreementConditionById: PropTypes.func,
+      fetchAgreementPurchaseOrderById: PropTypes.func,
+      agreementPurchaseOrderById: PropTypes.any,
+      // addAgreementCondition: PropTypes.func,
+      agreementCondition: PropTypes.any,
+      agreementPurchaseOrders: PropTypes.any,
+      notificationPeriodData: PropTypes.any
   }

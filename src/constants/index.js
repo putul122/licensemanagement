@@ -152,7 +152,17 @@ const api = {
   },
   updateApplicationSoftwares: function (applicationId) {
     return 'https://lm-eco-dev.ecoconductor.com/api/application/UpdateApplicationSoftwares?application_id=' + applicationId
-  }
+  },
+  getAgreementConditions: 'https://lm-eco-dev.ecoconductor.com/api/agreement/GetAgreementConditions',
+  getAgreementCondition: 'https://lm-eco-dev.ecoconductor.com/api/agreement/GetAgreementCondition',
+  updateAgreementConditions: function (agreementId) {
+   return 'https://lm-eco-dev.ecoconductor.com/api/agreement/UpdateAgreementConditions?agreement_id=' + agreementId
+  },
+  getAgreementPropertiesCondition: function (id) {
+    return 'https://model-eco-dev.ecoconductor.com/component_types/' + id + '/component_type_properties'
+  },
+  getAgreementPurchaseOrders: 'https://lm-eco-dev.ecoconductor.com/api/Agreement/GetAgreementPurchaseOrders',
+  getAgreementPurchaseOrder: 'https://lm-eco-dev.ecoconductor.com/api/Agreement/GetAgreementPurchaseOrder'
 }
 
 export default api

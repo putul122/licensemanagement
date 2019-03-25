@@ -4,6 +4,11 @@ import {
   FETCH_AGREEMENT_ENTITLEMENTS_SUCCESS,
   FETCH_AGREEMENT_PROPERTIES_SUCCESS,
   FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS,
+  FETCH_AGREEMENT_CONDITIONS_SUCCESS,
+  FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS,
+  FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS,
+  FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS,
+  FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS,
   ADD_AGREEMENT_SUCCESS,
   DELETE_AGREEMENT_SUCCESS,
   UPDATE_AGREEMENT_PROPERTIES_SUCCESS,
@@ -12,7 +17,10 @@ import {
   DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
   FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
-  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS
+  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
+  ADD_AGREEMENT_CONDITION_SUCCESS,
+  DELETE_AGREEMENT_CONDITION_SUCCESS,
+  UPDATE_AGREEMENT_CONDITION_SUCCESS
 } from '../../sagas/agreement/agreementSaga'
 // Name Spaced Action Types
 const SET_ADD_AGREEMENT_SETTINGS = 'AgreementDetailReducer/SET_ADD_AGREEMENT_SETTINGS'
@@ -31,6 +39,12 @@ const SET_ADD_CONNECTION_SETTINGS = 'AgreementDetailReducer/SET_ADD_CONNECTION_S
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'AgreementDetailReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
 const SET_CURRENT_PAGE = 'AgreementDetailReducer/SET_CURRENT_PAGE'
 const SET_VALIDATION_PROPERTY = 'AgreementDetailReducer/SET_VALIDATION_PROPERTY'
+const SET_ADD_CONDITION_SETTINGS = 'AgreementDetailReducer/SET_ADD_CONDITION_SETTINGS'
+const SET_NOTIFICATION_PERIOD_DATA = 'AgreementDetailReducer/SET_NOTIFICATION_PERIOD_DATA'
+const SET_SELECTED_DATE = 'AgreementDetailReducer/SET_SELECTED_DATE'
+const SET_SELECTED_NOTIFICATION_PERIOD = 'AgreementDetailReducer/SET_SELECTED_NOTIFICATION_PERIOD'
+const SET_UPDATE_AGREEMENT_CONDITION_SETTINGS = 'AgreementDetailReducer/SET_UPDATE_AGREEMENT_CONDITION_SETTINGS'
+const SET_PURCHASE_ORDER_SETTING = 'AgreementDetailReducer/SET_PURCHASE_ORDER_SETTING'
 
 export const actions = {
     FETCH_AGREEMENT_BY_ID_SUCCESS,
@@ -55,8 +69,22 @@ export const actions = {
     UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
     RESET_UPDATE_RELATIONSHIP_RESPONSE,
     SET_CURRENT_PAGE,
-    SET_VALIDATION_PROPERTY
-}
+    SET_VALIDATION_PROPERTY,
+    SET_ADD_CONDITION_SETTINGS,
+    FETCH_AGREEMENT_CONDITIONS_SUCCESS,
+    FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS,
+    ADD_AGREEMENT_CONDITION_SUCCESS,
+    DELETE_AGREEMENT_CONDITION_SUCCESS,
+    FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS,
+    SET_NOTIFICATION_PERIOD_DATA,
+    UPDATE_AGREEMENT_CONDITION_SUCCESS,
+    SET_SELECTED_DATE,
+    SET_UPDATE_AGREEMENT_CONDITION_SETTINGS,
+    SET_SELECTED_NOTIFICATION_PERIOD,
+    FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS,
+    FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS,
+    SET_PURCHASE_ORDER_SETTING
+  }
 
 export const actionCreators = {
     setAddAgreementSettings: createAction(SET_ADD_AGREEMENT_SETTINGS),
@@ -74,13 +102,21 @@ export const actionCreators = {
     setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
     resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
     setCurrentPage: createAction(SET_CURRENT_PAGE),
-    setValidationProperty: createAction(SET_VALIDATION_PROPERTY)
-}
+    setValidationProperty: createAction(SET_VALIDATION_PROPERTY),
+    setAddConditionSettings: createAction(SET_ADD_CONDITION_SETTINGS),
+    setNotificationPeriodData: createAction(SET_NOTIFICATION_PERIOD_DATA),
+    setSelectedDate: createAction(SET_SELECTED_DATE),
+    setUpdateAgreementConditionSettings: createAction(SET_UPDATE_AGREEMENT_CONDITION_SETTINGS),
+    setSelectedNotificationPeriod: createAction(SET_SELECTED_NOTIFICATION_PERIOD),
+    setPurchaseOrderSettings: createAction(SET_PURCHASE_ORDER_SETTING)
+  }
 
 export const initialState = {
   agreement: '',
   addAgreementResponse: '',
   deleteAgreementResponse: '',
+  selectedDate: null,
+  selectedNotificationPeriod: null,
   updateAgreementResponse: '',
   updateRelationshipResponse: '',
   updateRelationshipPropertyResponse: '',
@@ -97,6 +133,10 @@ export const initialState = {
     isDeleteModalOpen: false,
     isUpdateModalOpen: false,
     isConfirmationModalOpen: false
+  },
+  agreementPurchaseOrderSettings: {
+    isPoModalOpen: false,
+    purchaseOrderData: null
   },
   addNewConnectionSettings: {
     isModalOpen: false,
@@ -131,7 +171,32 @@ export const initialState = {
   componentTypeComponentConstraints: '',
   componentTypeComponents: '',
   currentPage: 1,
-  validationProperty: []
+  validationProperty: [],
+  addConditionActionSettings: {
+    isAddConditionModalOpen: false,
+    isUpdateConditionModalOpen: false,
+    isDeleteConditionModalOpen: false,
+    isViewConditionModalOpen: false,
+    conditionData: null,
+    notificationPeriodSelected: '',
+    isEditFlag: true
+  },
+  agreementConditions: '',
+  agreementCondition: '',
+  addAgreementConditionResponse: '',
+  deleteAgreementConditionResponse: '',
+  updateAgreementConditionResponse: '',
+  agreementConditionNotificationPeriod: '',
+  agreementPurchaseOrders: '',
+  agreementPurchaseOrderById: '',
+  notificationPeriodData: '',
+  updateAgreementConditionSettings: {
+    isEditFlag: false,
+    name: '',
+    description: '',
+    duedate: '',
+    'notificationPeriod': ''
+  }
 }
 
 export default handleActions(
@@ -176,7 +241,10 @@ export default handleActions(
       ...state,
       addAgreementResponse: '',
       deleteAgreementResponse: '',
-      updateAgreementResponse: ''
+      updateAgreementResponse: '',
+      addAgreementConditionResponse: '',
+      deleteAgreementConditionResponse: '',
+      updateAgreementConditionResponse: ''
     }),
     [COPY_AGREEMENT_PROPERTIES]: (state, action) => ({
       ...state,
@@ -259,6 +327,62 @@ export default handleActions(
     [SET_VALIDATION_PROPERTY]: (state, action) => ({
       ...state,
       validationProperty: action.payload
+    }),
+    [SET_ADD_CONDITION_SETTINGS]: (state, action) => ({
+      ...state,
+      addConditionActionSettings: action.payload
+    }),
+    [FETCH_AGREEMENT_CONDITIONS_SUCCESS]: (state, action) => ({
+      ...state,
+      agreementConditions: action.payload
+    }),
+    [FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS]: (state, action) => ({
+      ...state,
+      agreementCondition: action.payload
+    }),
+    [ADD_AGREEMENT_CONDITION_SUCCESS]: (state, action) => ({
+      ...state,
+      addAgreementConditionResponse: action.payload
+    }),
+    [DELETE_AGREEMENT_CONDITION_SUCCESS]: (state, action) => ({
+      ...state,
+      deleteAgreementConditionResponse: action.payload
+    }),
+    [UPDATE_AGREEMENT_CONDITION_SUCCESS]: (state, action) => ({
+      ...state,
+      updateAgreementConditionResponse: action.payload
+    }),
+    [FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS]: (state, action) => ({
+      ...state,
+      agreementConditionNotificationPeriod: action.payload
+    }),
+    [SET_NOTIFICATION_PERIOD_DATA]: (state, action) => ({
+      ...state,
+      notificationPeriodData: action.payload
+    }),
+    [SET_SELECTED_DATE]: (state, action) => ({
+      ...state,
+      selectedDate: action.payload
+    }),
+    [SET_UPDATE_AGREEMENT_CONDITION_SETTINGS]: (state, action) => ({
+      ...state,
+      setUpdateAgreementConditionSettings: action.payload
+    }),
+    [SET_SELECTED_NOTIFICATION_PERIOD]: (state, action) => ({
+      ...state,
+      selectedNotificationPeriod: action.payload
+    }),
+    [FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS]: (state, action) => ({
+      ...state,
+      agreementPurchaseOrders: action.payload
+    }),
+    [FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS]: (state, action) => ({
+      ...state,
+      agreementPurchaseOrderById: action.payload
+    }),
+    [SET_PURCHASE_ORDER_SETTING]: (state, action) => ({
+      ...state,
+      agreementPurchaseOrderSettings: action.payload
     })
   },
   initialState
