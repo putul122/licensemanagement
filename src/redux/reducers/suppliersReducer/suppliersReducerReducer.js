@@ -1,5 +1,10 @@
 import { createAction, handleActions } from 'redux-actions'
-import {FETCH_SUPPLIERS_SUCCESS, FETCH_SUPPLIERS_SUMMARY_SUCCESS, FETCH_SUPPLIER_SOFTWARES_SUCCESS} from '../../sagas/supplier/supplierSaga'
+import {
+  FETCH_SUPPLIERS_SUCCESS,
+  FETCH_SUPPLIERS_SUMMARY_SUCCESS,
+  FETCH_SUPPLIER_AGREEMENTS_SUCCESS
+} from '../../sagas/supplier/supplierSaga'
+import {FETCH_AGREEMENT_ENTITLEMENTS_SUCCESS} from '../../sagas/agreement/agreementSaga'
 // Name Spaced Action Types
 const SET_CURRENT_PAGE = 'SuppliersReducer/SET_CURRENT_PAGE'
 const SET_EXPAND_SETTINGS = 'SuppliersReducer/SET_EXPAND_SETTINGS'
@@ -10,10 +15,11 @@ export const actions = {
   FETCH_SUPPLIERS_SUCCESS,
   FETCH_SUPPLIERS_SUMMARY_SUCCESS,
   SET_CURRENT_PAGE,
-  FETCH_SUPPLIER_SOFTWARES_SUCCESS,
+  FETCH_SUPPLIER_AGREEMENTS_SUCCESS,
   SET_EXPAND_SETTINGS,
   RESET_RESPONSE,
-  SET_PER_PAGE
+  SET_PER_PAGE,
+  FETCH_AGREEMENT_ENTITLEMENTS_SUCCESS
 }
 
 export const actionCreators = {
@@ -26,12 +32,15 @@ export const actionCreators = {
 export const initialState = {
   suppliers: '',
   suppliersSummary: '',
-  supplierSoftwares: '',
+  supplierAgreements: '',
+  agreementEntitlements: '',
   currentPage: 1,
   perPage: 10,
   expandSettings: {
     selectedId: '',
-    expandFlag: false
+    expandFlag: false,
+    nestedSelectedId: '',
+    nestedExpandFlag: false
   }
 }
 
@@ -53,9 +62,13 @@ export default handleActions(
       ...state,
       perPage: action.payload
     }),
-    [FETCH_SUPPLIER_SOFTWARES_SUCCESS]: (state, action) => ({
+    [FETCH_SUPPLIER_AGREEMENTS_SUCCESS]: (state, action) => ({
       ...state,
-      supplierSoftwares: action.payload
+      supplierAgreements: action.payload
+    }),
+    [FETCH_AGREEMENT_ENTITLEMENTS_SUCCESS]: (state, action) => ({
+      ...state,
+      agreementEntitlements: action.payload
     }),
     [SET_EXPAND_SETTINGS]: (state, action) => ({
       ...state,
@@ -63,7 +76,8 @@ export default handleActions(
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
-      supplierSoftwares: {resources: []}
+      supplierAgreements: action.payload.supplierAgreements,
+      agreementEntitlements: action.payload.agreementEntitlements
     })
   },
   initialState

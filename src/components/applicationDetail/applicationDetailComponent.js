@@ -1,5 +1,5 @@
 import React from 'react'
-// import moment from 'moment'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import styles from './applicationDetailComponent.scss'
 import debounce from 'lodash/debounce'
@@ -84,6 +84,16 @@ export default function Applicationview (props) {
       props.setLinkActionSettings(linkActionSettings)
     }
   }
+  let handleSoftwareSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let linkActionSettings = {...props.linkActionSettings, 'software': newValue}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let linkActionSettings = {...props.linkActionSettings, 'software': null}
+      props.setLinkActionSettings(linkActionSettings)
+    }
+  }
   let openLinkAddModal = function (event) {
     event.preventDefault()
     let linkActionSettings = {...props.linkActionSettings,
@@ -94,6 +104,7 @@ export default function Applicationview (props) {
       'entitlement': null,
       'agreement': null,
       'supplier': null,
+      'software': null,
       'licenseCount': 0}
     props.setLinkActionSettings(linkActionSettings)
    }
@@ -148,6 +159,15 @@ export default function Applicationview (props) {
       obj.value = {
         id: props.linkActionSettings.supplier.id,
         license_count: parseInt(props.linkActionSettings.licenseCount)
+      }
+      dataPayload.push(obj)
+    }
+    if (props.linkActionSettings.software) {
+      let obj = {}
+      obj.op = 'add'
+      obj.path = '/-'
+      obj.value = {
+        id: props.linkActionSettings.software.id
       }
       dataPayload.push(obj)
     }
@@ -222,6 +242,7 @@ export default function Applicationview (props) {
   let selectEntitlementOptions = []
   let selectSupplierOptions = []
   let selectAgreementOptions = []
+  let selectSoftwareOptions = []
   let handleSearchChange = debounce((e) => {
     console.log(e)
     if (searchTextBox) {
@@ -285,13 +306,28 @@ export default function Applicationview (props) {
       return option
     })
   }
+  if (props.softwares !== '' && props.softwares.error_code === null) {
+    selectSoftwareOptions = props.softwares.resources.map((component, index) => {
+      let option = {...component}
+      option.value = component.name
+      option.label = component.name
+      return option
+    })
+    console.log('selectSoftwareOptions', selectSoftwareOptions)
+  }
   let listApplicationEntitlements = function () {
     if (props.applicationEntitlements !== '') {
       if (props.applicationEntitlements.resources.length > 0) {
         applicationEntitlementList = props.applicationEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td>{data.name}</td>
+              <td>{data.entitlement.supplier}</td>
+              <td>{data.entitlement.name}</td>
+              <td>{data.entitlement.part_number}</td>
+              <td>{data.entitlement.purchased}</td>
+              <td>{data.entitlement.consumed}</td>
+              <td>{data.entitlement.reserved}</td>
+              <td>{data.entitlement.bu_allocated}</td>
               <td>{data.license_count}</td>
               <td>
                 <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
@@ -318,11 +354,9 @@ export default function Applicationview (props) {
         applicationSoftwareList = props.applicationSoftwares.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td>{data.name}</td>
-              <td>{''}</td>
               <td>{data.supplier}</td>
-              <td>{data.instances}</td>
-              <td>{'R ' + formatAmount(data.cost)}</td>
+              <td>{data.name}</td>
+              <td>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>
               <td>
                 <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
                   <button type='button' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>
@@ -997,11 +1031,9 @@ export default function Applicationview (props) {
                         <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                           <thead>
                             <tr role='row'>
+                              <th className='' ><h5>Supplier</h5></th>
                               <th className='' ><h5>Name</h5></th>
-                              <th className='' ><h5>Agreement type</h5></th>
-                              <th className='' ><h5>Suppliers</h5></th>
-                              <th className='' ><h5>#Instances</h5></th>
-                              <th className='' ><h5>Total cost</h5></th>
+                              <th className='' ><h5>EOSL</h5></th>
                               <th className='' ><h5>Action</h5></th>
                             </tr>
                           </thead>
@@ -1060,8 +1092,14 @@ export default function Applicationview (props) {
                         <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                           <thead>
                             <tr role='row'>
-                              <th className='' ><h5>Name</h5></th>
-                              <th className='' ><h5>#Allocated</h5></th>
+                              <th className='' ><h5>Supplier</h5></th>
+                              <th className='' ><h5>Supplier Product Name</h5></th>
+                              <th className='' ><h5>Supplier Part Number</h5></th>
+                              <th className='' ><h5>Purchased</h5></th>
+                              <th className='' ><h5>Consumed</h5></th>
+                              <th className='' ><h5>Project Reserved</h5></th>
+                              <th className='' ><h5>#BU Allocated</h5></th>
+                              <th className='' ><h5>Application Entitlements</h5></th>
                               <th className='' ><h5>Action</h5></th>
                             </tr>
                           </thead>
@@ -1106,13 +1144,13 @@ export default function Applicationview (props) {
               <div className=''>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>Link Entitlements</h4>
+                    <h4 className='modal-title' id='exampleModalLabel'>Link {props.showTabs.parentTab}</h4>
                     <button type='button' onClick={closeLinkModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
                   <div className='modal-body'>
-                    <div className='form-group row'>
+                    {props.showTabs.parentTab === 'Entitlements' && (<div className='form-group row'>
                       <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Supplier</label></div>
                       <div className='col-8'>
                         <Select
@@ -1125,8 +1163,8 @@ export default function Applicationview (props) {
                           options={selectSupplierOptions}
                         />
                       </div>
-                    </div>
-                    <div className='form-group row'>
+                    </div>)}
+                    {props.showTabs.parentTab === 'Entitlements' && (<div className='form-group row'>
                       <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Agreement</label></div>
                       <div className='col-8'>
                         <Select
@@ -1139,8 +1177,8 @@ export default function Applicationview (props) {
                           options={selectAgreementOptions}
                         />
                       </div>
-                    </div>
-                    <div className='form-group row'>
+                    </div>)}
+                    {props.showTabs.parentTab === 'Entitlements' && (<div className='form-group row'>
                       <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Entitlements</label></div>
                       <div className='col-8'>
                         <Select
@@ -1153,11 +1191,25 @@ export default function Applicationview (props) {
                           options={selectEntitlementOptions}
                         />
                       </div>
-                    </div>
-                    <div className='form-group row'>
+                    </div>)}
+                    {props.showTabs.parentTab === 'Entitlements' && (<div className='form-group row'>
                       <div className='col-4'><label htmlFor='text' className='form-control-label'>Number of Licenses</label></div>
                       <div className='col-8'><input type='number'className='form-control' onChange={handleLicenseCountChange} value={props.linkActionSettings.licenseCount} autoComplete='off' required /></div>
-                    </div>
+                    </div>)}
+                    {props.showTabs.parentTab === 'Software' && (<div className='form-group row'>
+                      <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Software</label></div>
+                      <div className='col-8'>
+                        <Select
+                          className='input-sm m-input'
+                          placeholder='Select'
+                          isClearable
+                          value={props.linkActionSettings.software}
+                          onChange={handleSoftwareSelect}
+                          isSearchable
+                          options={selectSoftwareOptions}
+                        />
+                      </div>
+                    </div>)}
                   </div>
                   <div className='modal-footer'>
                     <div className='row'>
@@ -1188,7 +1240,7 @@ export default function Applicationview (props) {
               <div className=''>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>Edit Link Entitlement</h4>
+                    <h4 className='modal-title' id='exampleModalLabel'>Edit Link {props.showTabs.parentTab}</h4>
                     <button type='button' onClick={closeLinkModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
@@ -1232,7 +1284,7 @@ export default function Applicationview (props) {
               <div className=''>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Delete Link to Entitlement</h6>
+                    <h6 className='modal-title' id='exampleModalLabel'>Delete Link to {props.showTabs.parentTab}</h6>
                     <button type='button' onClick={closeLinkModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
@@ -1276,5 +1328,6 @@ export default function Applicationview (props) {
   linkActionSettings: PropTypes.any,
   entitlements: PropTypes.any,
   agreements: PropTypes.any,
-  suppliers: PropTypes.any
+  suppliers: PropTypes.any,
+  softwares: PropTypes.any
  }

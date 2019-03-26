@@ -90,6 +90,7 @@ export const initialState = {
     entitlement: null,
     agreement: null,
     supplier: null,
+    software: null,
     licenseCount: 0
   },
   addLinkResponse: '',

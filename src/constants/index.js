@@ -162,7 +162,11 @@ const api = {
     return 'https://model-eco-dev.ecoconductor.com/component_types/' + id + '/component_type_properties'
   },
   getAgreementPurchaseOrders: 'https://lm-eco-dev.ecoconductor.com/api/Agreement/GetAgreementPurchaseOrders',
-  getAgreementPurchaseOrder: 'https://lm-eco-dev.ecoconductor.com/api/Agreement/GetAgreementPurchaseOrder'
+  getAgreementPurchaseOrder: 'https://lm-eco-dev.ecoconductor.com/api/Agreement/GetAgreementPurchaseOrder',
+  addSoftware: 'https://ecoconductor-dev-api-model.azurewebsites.net/components',
+  deleteSoftware: function (componentId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
+  }
 }
 
 export default api

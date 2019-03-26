@@ -11,7 +11,8 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     suppliers: state.suppliersReducer.suppliers,
     suppliersSummary: state.suppliersReducer.suppliersSummary,
-    supplierSoftwares: state.suppliersReducer.supplierSoftwares,
+    supplierAgreements: state.suppliersReducer.supplierAgreements,
+    agreementEntitlements: state.suppliersReducer.agreementEntitlements,
     currentPage: state.suppliersReducer.currentPage,
     expandSettings: state.suppliersReducer.expandSettings,
     perPage: state.suppliersReducer.perPage
@@ -22,7 +23,8 @@ export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchSuppliers: sagaActions.supplierActions.fetchSuppliers,
   fetchSuppliersSummary: sagaActions.supplierActions.fetchSuppliersSummary,
-  fetchSupplierSoftwares: sagaActions.supplierActions.fetchSupplierSoftwares,
+  fetchSupplierAgreements: sagaActions.supplierActions.fetchSupplierAgreements,
+  fetchAgreementEntitlements: sagaActions.agreementActions.fetchAgreementEntitlements,
   setCurrentPage: actionCreators.setCurrentPage,
   setExpandSettings: actionCreators.setExpandSettings,
   resetResponse: actionCreators.resetResponse,
@@ -74,7 +76,7 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierSummary')
       }
-      if (nextProps.supplierSoftwares && nextProps.supplierSoftwares !== this.props.suppliersSummary) {
+      if (nextProps.supplierAgreements && nextProps.supplierAgreements !== this.props.suppliersSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#supplierList')
       }

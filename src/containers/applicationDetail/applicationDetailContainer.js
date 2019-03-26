@@ -272,6 +272,8 @@ export default compose(
             'page_size': this.props.perPage,
             'page': 1
           }
+          // eslint-disable-next-line
+          mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           if (nextProps.showTabs.parentTab === 'Entitlements') {
             this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
           } else if (nextProps.showTabs.parentTab === 'Software') {
@@ -303,6 +305,8 @@ export default compose(
             'page_size': this.props.perPage,
             'page': 1
           }
+          // eslint-disable-next-line
+          mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           if (nextProps.showTabs.parentTab === 'Entitlements') {
             this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
           } else if (nextProps.showTabs.parentTab === 'Software') {
@@ -334,6 +338,8 @@ export default compose(
             'page_size': this.props.perPage,
             'page': 1
           }
+          // eslint-disable-next-line
+          mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           if (nextProps.showTabs.parentTab === 'Entitlements') {
             this.props.fetchApplicationEntitlements && this.props.fetchApplicationEntitlements(listPayload)
           } else if (nextProps.showTabs.parentTab === 'Software') {
