@@ -433,7 +433,7 @@ export default function Softwareview (props) {
   }
   let updateSoftware = function () {
     // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let appPackage = JSON.parse(localStorage.getItem('packages'))
     let perspectives = appPackage.resources[0].perspectives
     let perspectiveId = _.result(_.find(perspectives, function (obj) {
