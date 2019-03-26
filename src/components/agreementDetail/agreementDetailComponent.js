@@ -753,13 +753,12 @@ export default function AgreementDetail (props) {
         agreementEntitlementList = props.agreementEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td><a href={'/entitlements/' + data.id}>{data.name}</a></td>
-              <td>{data.license_type}</td>
+              <td>{data.name}</td>
+              <td>{data.part_number}</td>
               <td>{data.purchased}</td>
               <td>{data.consumed}</td>
               <td>{data.reserved}</td>
-              <td>{'R ' + formatAmount(data.unit_cost)}</td>
-              <td>{'R ' + formatAmount(data.total_cost)}</td>
+              <td>{data.bu_allocated}</td>
             </tr>
           )
         })
@@ -1832,7 +1831,7 @@ let editAgreeementCondition = function (event) {
               <a className='nav-link show active' data-toggle='tab' href='#m_tabs_2_1'>Details</a>
             </li>
             <li className='nav-item'>
-              <a className='nav-link' data-toggle='tab' href='#m_tabs_2_2'>Entitlements</a>
+              <a className='nav-link' data-toggle='tab' href='#m_tabs_2_2'>Bill of Material</a>
             </li>
             <li className='nav-item'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_3'>Relationships</a>
@@ -1863,13 +1862,13 @@ let editAgreeementCondition = function (event) {
                     <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                       <thead>
                         <tr role='row'>
-                          <th className=''><h5>Name</h5></th>
-                          <th className=''><h5>License Type</h5></th>
+                          <th className=''><h5>Supplier Product Name</h5></th>
+                          <th className=''><h5>Part Number</h5></th>
                           <th className=''><h5>Purchased</h5></th>
                           <th className=''><h5>Consumed</h5></th>
-                          <th className=''><h5>Reserved</h5></th>
-                          <th className=''><h5>Cost per Unit</h5></th>
-                          <th className=''><h5>Total Cost</h5></th>
+                          <th className=''><h5>Project Reserved</h5></th>
+                          <th className=''><h5>BU Allocated</h5></th>
+                          {/* <th className=''><h5>Total Cost</h5></th> */}
                         </tr>
                       </thead>
                       <tbody>

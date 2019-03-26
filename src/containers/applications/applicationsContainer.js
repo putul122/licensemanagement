@@ -17,7 +17,8 @@ export function mapStateToProps (state, props) {
     businessUnits: state.applicationsReducer.businessUnits,
     businessUnitId: state.applicationsReducer.businessUnitId,
     defaultSelect: state.applicationsReducer.defaultSelect,
-    perPage: state.applicationsReducer.perPage
+    perPage: state.applicationsReducer.perPage,
+    applicationEntitlements: state.applicationsReducer.applicationEntitlements
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -32,6 +33,7 @@ export const propsMapping: Callbacks = {
   setExpandSettings: actionCreators.setExpandSettings,
   resetResponse: actionCreators.resetResponse,
   fetchBusinessUnits: sagaActions.basicActions.fetchBusinessUnits,
+  fetchApplicationEntitlements: sagaActions.applicationActions.fetchApplicationEntitlements,
   setDefaultSelect: actionCreators.setDefaultSelect,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
  }

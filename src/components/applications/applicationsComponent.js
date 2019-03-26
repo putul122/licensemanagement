@@ -60,11 +60,9 @@ export default function Applicationlists (props) {
           <tr className='odd' key={index} onClick={() => handleClick(data)}>
             <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/applications/' + data.id} >{data.name}</a></td>
             <td>{''}</td>
-            <td>{data.supplied_by}</td>
-            <td>{data.managed_by}</td>
-            <td>{data.stage}</td>
-            <td>{data.owner}</td>
+            <td>{''}</td>
             <td>{'R ' + formatAmount(data.cost)}</td>
+            <td>{''}</td>
           </tr>
         </tbody>
       )
@@ -279,11 +277,9 @@ export default function Applicationlists (props) {
           <tr role='row' key={index} onClick={() => handleClick(data)}>
             <td><i className='fa fa-plus' aria-hidden='true' />&nbsp;<a href={'/applications/' + data.id} >{data.name}</a></td>
             <td>{''}</td>
-            <td>{data.supplied_by}</td>
-            <td>{data.managed_by}</td>
-            <td>{data.stage}</td>
-            <td>{data.owner}</td>
+            <td>{''}</td>
             <td>{'R ' + formatAmount(data.cost)}</td>
+            <td>{''}</td>
           </tr>
         </tbody>
       )
@@ -309,12 +305,13 @@ export default function Applicationlists (props) {
 
     let expandSettings = {...props.expandSettings, 'selectedId': data.id, 'expandFlag': expandFalg}
     props.setExpandSettings(expandSettings)
-    props.fetchApplicationSoftwares && props.fetchApplicationSoftwares(payload)
+    // props.fetchApplicationSoftwares && props.fetchApplicationSoftwares(payload)
+    props.fetchApplicationEntitlements && props.fetchApplicationEntitlements(payload)
     // eslint-disable-next-line
     mApp && mApp.block('#supplierList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
   }
 
-  if (props.applicationSoftwares && props.applicationSoftwares !== '') {
+  if (props.applicationEntitlements && props.applicationEntitlements !== '') {
     let sortedArray = _.orderBy(props.application.resources, ['name'], ['asc'])
     applicationList = sortedArray.map(function (data, index) {
       let faClass = 'fa fa-plus'
@@ -322,17 +319,15 @@ export default function Applicationlists (props) {
       if (data.id === props.expandSettings.selectedId) {
         if (props.expandSettings.expandFlag) {
           faClass = 'fa fa-minus'
-          if (props.applicationSoftwares.resources.length > 0) {
-            childList = props.applicationSoftwares.resources.map(function (childData, idx) {
+          if (props.applicationEntitlements.resources.length > 0) {
+            childList = props.applicationEntitlements.resources.map(function (childData, idx) {
               return (
                 <tr key={'child' + idx}>
                   <td>{''}</td>
-                  <td>{childData.name}</td>
+                  <td>{childData.entitlement.name}</td>
                   <td>{''}</td>
                   <td>{''}</td>
-                  <td>{''}</td>
-                  <td>{''}</td>
-                  <td>{'R ' + formatAmount(childData.cost)}</td>
+                  <td>{childData.entitlement.cost ? 'R ' + formatAmount(childData.entitlement.cost) : ''}</td>
                 </tr>
               )
             })
@@ -351,11 +346,9 @@ export default function Applicationlists (props) {
           <tr key={index} onClick={() => handleClick(data)}>
             <td><i className={faClass} aria-hidden='true' />&nbsp;<a href={'/applications/' + data.id} >{data.name}</a></td>
             <td>{''}</td>
-            <td>{data.supplied_by}</td>
-            <td>{data.managed_by}</td>
-            <td>{data.stage}</td>
-            <td>{data.owner}</td>
+            <td>{''}</td>
             <td>{'R ' + formatAmount(data.cost)}</td>
+            <td>{''}</td>
           </tr>
           {childList}
         </tbody>
@@ -573,13 +566,13 @@ return (
                       <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                         <thead>
                           <tr role='row'>
-                            <th className='sorting' style={{width: '61.25px'}}><h5>Name</h5></th>
-                            <th className='' style={{width: '38.25px'}}><h5>Software</h5></th>
-                            <th className='' style={{width: '58.25px'}}><h5>Supplied By</h5></th>
-                            <th className='' style={{width: '137.25px'}}><h5>Managed By</h5></th>
-                            <th className='' style={{width: '171.25px'}}><h5>Stage</h5></th>
-                            <th className='' style={{width: '132.25px'}}><h5>Owner</h5></th>
-                            <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th>
+                            <th className='sorting' style={{width: '61.25px'}}><h5>Application Name</h5></th>
+                            {/* <th className='' style={{width: '38.25px'}}><h5>Software</h5></th> */}
+                            <th className='' style={{width: '58.25px'}}><h5>Supplier Product Name</h5></th>
+                            <th className='' style={{width: '137.25px'}}><h5>Supplier</h5></th>
+                            <th className='' style={{width: '171.25px'}}><h5>Cost</h5></th>
+                            <th className='' style={{width: '132.25px'}}><h5>Supplier Product Cost</h5></th>
+                            {/* <th className='' style={{width: '206.25px'}}><h5>Cost</h5></th> */}
                           </tr>
                         </thead>
                         {/* <tbody> */}
@@ -628,6 +621,7 @@ return (
   application: PropTypes.any,
   currentPage: PropTypes.any,
   applicationSoftwares: PropTypes.any,
+  applicationEntitlements: PropTypes.any,
   expandSettings: PropTypes.any,
   businessUnits: PropTypes.any,
   perPage: PropTypes.any,

@@ -1,5 +1,5 @@
 import {createAction, handleActions} from 'redux-actions'
-import {FETCH_APPLICATIONS_SUMMARY_SUCCESS, FETCH_APPLICATIONS_SUCCESS, FETCH_APPLICATION_SOFTWARES_SUCCESS} from '../../sagas/application/applicationSaga'
+import {FETCH_APPLICATIONS_SUMMARY_SUCCESS, FETCH_APPLICATIONS_SUCCESS, FETCH_APPLICATION_ENTITLEMENTS_SUCCESS, FETCH_APPLICATION_SOFTWARES_SUCCESS} from '../../sagas/application/applicationSaga'
 // import {FETCH_APPLICATIONS_SUCCESS} from '../../sagas/application/applicationSaga'
 import {FETCH_BUSINESS_UNITS_SUCCESS} from '../../sagas/basic/basicSaga'
 const SET_CURRENT_PAGE = 'applicationsReducer/SET_CURRENT_PAGE'
@@ -14,6 +14,7 @@ FETCH_APPLICATIONS_SUMMARY_SUCCESS,
 FETCH_APPLICATIONS_SUCCESS,
 SET_CURRENT_PAGE,
 FETCH_APPLICATION_SOFTWARES_SUCCESS,
+FETCH_APPLICATION_ENTITLEMENTS_SUCCESS,
 FETCH_BUSINESS_UNITS_SUCCESS,
 SET_EXPAND_SETTINGS,
 RESET_RESPONSE,
@@ -42,7 +43,8 @@ export const initialState = {
    expandSettings: {
     selectedId: '',
     expandFlag: false
-  }
+  },
+  applicationEntitlements: ''
 }
 
 export default handleActions(
@@ -86,6 +88,10 @@ export default handleActions(
     [SET_BUSINESS_UNIT_ID]: (state, action) => ({
       ...state,
       businessUnitId: action.payload
+    }),
+    [FETCH_APPLICATION_ENTITLEMENTS_SUCCESS]: (state, action) => ({
+      ...state,
+      applicationEntitlements: action.payload
     })
   },
   initialState

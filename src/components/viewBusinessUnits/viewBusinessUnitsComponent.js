@@ -126,8 +126,13 @@ export default function viewBusinessUnits (props) {
       businessUnitEntitlementList = props.businessUnitEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
         return (
           <tr key={index}>
-            <td>{data.name}</td>
-            <td>{data.license_count}</td>
+            <td>{data.entitlement.supplier}</td>
+            <td>{data.entitlement.name}</td>
+            <td>{data.entitlement.part_number}</td>
+            <td>{data.entitlement.purchased}</td>
+            <td>{data.entitlement.consumed}</td>
+            <td>{data.entitlement.reserved}</td>
+            <td>{data.entitlement.bu_allocated}</td>
             <td>
               <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
                 <button type='button' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
@@ -768,23 +773,18 @@ return (
                 <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                   <thead>
                     <tr role='row'>
-                      <th className='' ><h5>Name</h5></th>
-                      <th className='' ><h5>#Allocated</h5></th>
+                      <th className='' ><h5>Supplier</h5></th>
+                      <th className='' ><h5>Supplier Product Name</h5></th>
+                      <th className='' ><h5>Supplier Part Number</h5></th>
+                      <th className='' ><h5>Purchased</h5></th>
+                      <th className='' ><h5>Consumed</h5></th>
+                      <th className='' ><h5>Project Reserved</h5></th>
+                      <th className='' ><h5>#BU Allocated</h5></th>
                       <th className='' ><h5>Action</h5></th>
                     </tr>
                   </thead>
                   <tbody>
                     {businessUnitEntitlementList}
-                    {/* <tr>
-                      <td>XYZ</td>
-                      <td>xyz</td>
-                      <td>
-                        <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
-                          <button type='button' onClick={openLinkUpdateModal} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
-                          <button type='button' onClick={openLinkDeleteModal} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>
-                        </div>
-                      </td>
-                    </tr> */}
                   </tbody>
                 </table>
               </div>
