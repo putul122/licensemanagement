@@ -133,6 +133,7 @@ export default function viewBusinessUnits (props) {
             <td>{data.entitlement.consumed}</td>
             <td>{data.entitlement.reserved}</td>
             <td>{data.entitlement.bu_allocated}</td>
+            <td>{data.license_count}</td>
             <td>
               <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
                 <button type='button' onClick={(event) => { event.preventDefault(); openLinkUpdateModal(data) }} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
@@ -780,6 +781,7 @@ return (
                       <th className='' ><h5>Consumed</h5></th>
                       <th className='' ><h5>Project Reserved</h5></th>
                       <th className='' ><h5>#BU Allocated</h5></th>
+                      <th className='' ><h5>BU Entitlements</h5></th>
                       <th className='' ><h5>Action</h5></th>
                     </tr>
                   </thead>

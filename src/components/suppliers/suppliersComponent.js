@@ -81,86 +81,120 @@ export default function Suppliers (props) {
   // Code for populating data in table
   if (props.suppliers && props.suppliers !== '') {
     let sortedArray = _.orderBy(props.suppliers.resources, ['name'], ['asc'])
-    suppliersList = sortedArray.map(function (data, index) {
-      let faClass = 'fa fa-plus'
-      let childList = ''
-      if (data.id === props.expandSettings.selectedId) {
-        if (props.expandSettings.expandFlag) {
-          faClass = 'fa fa-minus'
-          if (props.supplierAgreements && props.supplierAgreements !== '' && props.supplierAgreements.resources.length > 0) {
-            childList = props.supplierAgreements.resources.map(function (childData, idx) {
-              let nestedChildList = ''
-              let nestedFaClass = 'fa fa-plus'
-              if (childData.id === props.expandSettings.nestedSelectedId) {
-                if (props.expandSettings.nestedExpandFlag) {
-                  nestedFaClass = 'fa fa-minus'
-                  if (props.agreementEntitlements && props.agreementEntitlements !== '' && props.agreementEntitlements.resources.length > 0) {
-                    nestedChildList = props.agreementEntitlements.resources.map(function (nestedChildData, ndx) {
-                      return (
-                        <tr key={'child' + idx + '_' + ndx}>
-                          <td>{''}</td>
-                          <td>{''}</td>
-                          <td>{nestedChildData.name}</td>
-                          <td>{''}</td>
-                          <td>{''}</td>
-                          <td>{'R ' + formatAmount(nestedChildData.cost)}</td>
+    if (sortedArray.length > 0) {
+      suppliersList = sortedArray.map(function (data, index) {
+        let faClass = 'fa fa-plus'
+        let childList = ''
+        if (data.id === props.expandSettings.selectedId) {
+          if (props.expandSettings.expandFlag) {
+            faClass = 'fa fa-minus'
+            if (props.supplierAgreements && props.supplierAgreements !== '' && props.supplierAgreements.resources.length > 0) {
+              childList = props.supplierAgreements.resources.map(function (childData, idx) {
+                let nestedChildList = ''
+                let nestedFaClass = 'fa fa-plus'
+                if (childData.id === props.expandSettings.nestedSelectedId) {
+                  if (props.expandSettings.nestedExpandFlag) {
+                    nestedFaClass = 'fa fa-minus'
+                    if (props.agreementEntitlements && props.agreementEntitlements !== '' && props.agreementEntitlements.resources.length > 0) {
+                      nestedChildList = props.agreementEntitlements.resources.map(function (nestedChildData, ndx) {
+                        return (
+                          <tr key={'child' + idx + '_' + ndx}>
+                            <td>{''}</td>
+                            <td>{''}</td>
+                            <td>{nestedChildData.name}</td>
+                            <td>{''}</td>
+                            <td>{''}</td>
+                            <td>{'R ' + formatAmount(nestedChildData.cost)}</td>
+                          </tr>
+                        )
+                      })
+                    } else {
+                      nestedChildList = []
+                      nestedChildList.push((
+                        <tr key={0}>
+                          <td colSpan='6'>{'No data to display'}</td>
                         </tr>
-                      )
-                    })
-                  } else {
-                    nestedChildList = []
-                    nestedChildList.push((
-                      <tr key={0}>
-                        <td colSpan='6'>{'No data to display'}</td>
-                      </tr>
-                    ))
+                      ))
+                    }
                   }
                 }
-              }
-              console.log('nestedChildList', nestedChildList)
-              return (
+                console.log('nestedChildList', nestedChildList)
+                return (
+                  <tbody>
+                    <tr key={'child' + idx}>
+                      <td>{''}</td>
+                      <td><i className={nestedFaClass} style={{'cursor': 'pointer'}} onClick={() => handleNestedClick(childData)} aria-hidden='true' />&nbsp;<a href={'/agreements/' + childData.id} >{childData.name}</a></td>
+                      <td>{''}</td>
+                      <td>{''}</td>
+                      <td>{'R ' + formatAmount(childData.cost)}</td>
+                      <td>{''}</td>
+                    </tr>
+                    {nestedChildList}
+                  </tbody>
+                )
+              })
+            } else {
+              childList = []
+              childList.push((
                 <tbody>
-                  <tr key={'child' + idx}>
-                    <td>{''}</td>
-                    <td><i className={nestedFaClass} style={{'cursor': 'pointer'}} onClick={() => handleNestedClick(childData)} aria-hidden='true' />&nbsp;<a href={'/agreements/' + childData.id} >{childData.name}</a></td>
-                    <td>{''}</td>
-                    <td>{''}</td>
-                    <td>{'R ' + formatAmount(childData.cost)}</td>
-                    <td>{''}</td>
+                  <tr key={0}>
+                    <td colSpan='6'>{'No data to display'}</td>
                   </tr>
-                  {nestedChildList}
                 </tbody>
-              )
-            })
-          } else {
-            childList = []
-            childList.push((
-              <tbody>
-                <tr key={0}>
-                  <td colSpan='6'>{'No data to display'}</td>
-                </tr>
-              </tbody>
-            ))
+              ))
+            }
           }
         }
-      }
-      return (
+        return (
+          <table style={{'tableLayout': 'fixed', 'width': '100%'}} className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+            {index === 0 && (
+              <thead>
+                <tr role='row'>
+                  <th className='' ><h5>Supplier</h5></th>
+                  <th className='' ><h5>Agreements</h5></th>
+                  <th className='' ><h5>Supplier Product Name</h5></th>
+                  <th className='' ><h5>Total Cost</h5></th>
+                  <th className='' ><h5>Agreement Cost</h5></th>
+                  <th className='' ><h5>Supplier Product Cost</h5></th>
+                </tr>
+              </thead>
+            )}
+            <tbody>
+              <tr key={index} onClick={() => handleClick(data)}>
+                <td><i className={faClass} style={{'cursor': 'pointer'}} aria-hidden='true' />&nbsp;<a href={'/suppliers/' + data.id} >{data.name}</a></td>
+                <td>{''}</td>
+                <td>{''}</td>
+                <td>{'R ' + formatAmount(data.cost)}</td>
+                <td>{''}</td>
+                <td>{''}</td>
+              </tr>
+            </tbody>
+            {childList}
+          </table>
+        )
+      })
+    } else {
+      suppliersList = []
+      suppliersList.push((
         <table style={{'tableLayout': 'fixed', 'width': '100%'}} className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+          <thead>
+            <tr role='row'>
+              <th className='' ><h5>Supplier</h5></th>
+              <th className='' ><h5>Agreements</h5></th>
+              <th className='' ><h5>Supplier Product Name</h5></th>
+              <th className='' ><h5>Total Cost</h5></th>
+              <th className='' ><h5>Agreement Cost</h5></th>
+              <th className='' ><h5>Supplier Product Cost</h5></th>
+            </tr>
+          </thead>
           <tbody>
-            <tr key={index} onClick={() => handleClick(data)}>
-              <td><i className={faClass} style={{'cursor': 'pointer'}} aria-hidden='true' />&nbsp;<a href={'/suppliers/' + data.id} >{data.name}</a></td>
-              <td>{''}</td>
-              <td>{''}</td>
-              <td>{'R ' + formatAmount(data.cost)}</td>
-              <td>{''}</td>
-              <td>{''}</td>
+            <tr key={0}>
+              <td colSpan='6'>{'No data to display'}</td>
             </tr>
           </tbody>
-          {childList}
         </table>
-      )
-    })
-
+      ))
+    }
     totalSupplier = props.suppliers.total_count
     totalNoPages = Math.ceil(totalSupplier / perPage)
 
@@ -517,7 +551,7 @@ export default function Suppliers (props) {
                             </div>
                           </div>
                           <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}} >
-                            <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                            {/* <table className='table table-striped- table-bordered table-hover table-checkable responsive no-wrap dataTable dtr-inline collapsed' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                               <thead>
                                 <tr role='row'>
                                   <th className='' style={{width: '61.25px'}}><h5>Supplier</h5></th>
@@ -528,7 +562,7 @@ export default function Suppliers (props) {
                                   <th className='' style={{width: '132.25px'}}><h5>Supplier Product Cost</h5></th>
                                 </tr>
                               </thead>
-                            </table>
+                            </table> */}
                             {/* <tbody> */}
                             {suppliersList}
                             {/* </tbody> */}
