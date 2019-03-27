@@ -327,6 +327,7 @@ export default function Applicationview (props) {
               <td>{data.entitlement.purchased}</td>
               <td>{data.entitlement.consumed}</td>
               <td>{data.entitlement.reserved}</td>
+              <td>{'R ' + formatAmount(data.entitlement.cost)}</td>
               <td>{data.entitlement.bu_allocated}</td>
               <td>{data.license_count}</td>
               <td>
@@ -1098,6 +1099,7 @@ export default function Applicationview (props) {
                               <th className='' ><h5>Purchased</h5></th>
                               <th className='' ><h5>Consumed</h5></th>
                               <th className='' ><h5>Project Reserved</h5></th>
+                              <th className='' ><h5>Cost</h5></th>
                               <th className='' ><h5>#BU Allocated</h5></th>
                               <th className='' ><h5>Application Entitlements</h5></th>
                               <th className='' ><h5>Action</h5></th>

@@ -758,6 +758,7 @@ export default function AgreementDetail (props) {
               <td>{data.purchased}</td>
               <td>{data.consumed}</td>
               <td>{data.reserved}</td>
+              <td>{'R ' + formatAmount(data.cost)}</td>
               <td>{data.bu_allocated}</td>
             </tr>
           )
@@ -1867,6 +1868,7 @@ let editAgreeementCondition = function (event) {
                           <th className=''><h5>Purchased</h5></th>
                           <th className=''><h5>Consumed</h5></th>
                           <th className=''><h5>Project Reserved</h5></th>
+                          <th className=''><h5>Cost</h5></th>
                           <th className=''><h5>BU Allocated</h5></th>
                           {/* <th className=''><h5>Total Cost</h5></th> */}
                         </tr>
