@@ -104,6 +104,12 @@ const api = {
   getPackage: 'https://model-eco-dev.ecoconductor.com/model_packages/LM',
   createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions',
   getModelPerspectives: 'https://model-eco-dev.ecoconductor.com/model_perspectives',
+  getModelPerspective: function (subjectId) {
+    return (
+      'https://model-eco-dev.ecoconductor.com/model_perspectives/' +
+      subjectId
+    )
+  },
   updateModelPerspectives: function (metaModelPerspectiveId) {
     return 'https://model-eco-dev.ecoconductor.com/model_perspectives?meta_model_perspective_id=' + metaModelPerspectiveId
   },

@@ -7,7 +7,8 @@ import {
 } from '../../sagas/software/softwareSaga'
 import {
   FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
-  UPDATE_MODEL_PRESPECTIVES_SUCCESS
+  UPDATE_MODEL_PRESPECTIVES_SUCCESS,
+  FETCH_MODEL_PERSPECTIVE_SUCCESS
 } from '../../sagas/model/modelSaga'
 import {FETCH_DROPDOWN_DATA_SUCCESS} from '../../sagas/basic/basicSaga'
 // Name Spaced Action Types
@@ -38,6 +39,7 @@ export const actionCreators = {
 export const initialState = {
   softwarebyId: '',
   softwareProperties: '',
+  modelPerspective: '',
   softwareRelationships: '',
   showTabs: {'showProperty': ' active show', 'showRelationship': ''},
   updateSoftwareResponse: '',
@@ -53,7 +55,12 @@ export const initialState = {
   },
   metaModelPerspective: '',
   availableAction: {
-    toProcess: false
+    Create: false,
+    Read: false,
+    Update: false,
+    Delete: false,
+    toProcessMetaModel: false,
+    toProcessModelPerspectives: false
   },
   connectionData: '',
   dropdownData: ''
@@ -95,7 +102,7 @@ export default handleActions(
     [FETCH_META_MODEL_PRESPECTIVE_SUCCESS]: (state, action) => ({
       ...state,
       metaModelPerspective: action.payload,
-      availableAction: {...state.availableAction, 'toProcess': true}
+      availableAction: {...state.availableAction, 'toProcessMetaModel': true}
     }),
     [FETCH_DROPDOWN_DATA_SUCCESS]: (state, action) => ({
       ...state,
@@ -112,6 +119,11 @@ export default handleActions(
     [DELETE_SOFTWARE_SUCCESS]: (state, action) => ({
       ...state,
       deleteSoftwareResponse: action.payload
+    }),
+    [FETCH_MODEL_PERSPECTIVE_SUCCESS]: (state, action) => ({
+      ...state,
+      modelPerspective: action.payload,
+      availableAction: {...state.availableAction, 'toProcessModelPerspectives': true}
     })
   },
   initialState
