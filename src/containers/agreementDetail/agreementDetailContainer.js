@@ -44,7 +44,14 @@ export function mapStateToProps (state, props) {
     updateAgreementConditionSettings: state.agreementDetailReducer.updateAgreementConditionSettings,
     agreementPurchaseOrders: state.agreementDetailReducer.agreementPurchaseOrders,
     agreementPurchaseOrderById: state.agreementDetailReducer.agreementPurchaseOrderById,
-    agreementPurchaseOrderSettings: state.agreementDetailReducer.agreementPurchaseOrderSettings
+    agreementPurchaseOrderSettings: state.agreementDetailReducer.agreementPurchaseOrderSettings,
+    addSettings: state.agreementDetailReducer.addSettings,
+    metaModelPerspective: state.agreementDetailReducer.metaModelPerspective,
+    availableAction: state.agreementDetailReducer.availableAction,
+    connectionData: state.agreementDetailReducer.connectionData,
+    dropdownData: state.agreementDetailReducer.dropdownData,
+    modelPerspective: state.agreementDetailReducer.modelPerspective,
+    updateModelPerspectiveResponse: state.agreementDetailReducer.updateModelPerspectiveResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -93,7 +100,14 @@ export const propsMapping: Callbacks = {
   setUpdateAgreementConditionSettings: actionCreators.setUpdateAgreementConditionSettings,
   fetchAgreementPurchaseOrder: sagaActions.agreementActions.fetchAgreementPurchaseOrder,
   fetchAgreementPurchaseOrderById: sagaActions.agreementActions.fetchAgreementPurchaseOrderById,
-  setPurchaseOrderSettings: actionCreators.setPurchaseOrderSettings
+  setPurchaseOrderSettings: actionCreators.setPurchaseOrderSettings,
+  setConnectionData: actionCreators.setConnectionData,
+  setAvailableAction: actionCreators.setAvailableAction,
+  updateModelPrespectives: sagaActions.modelActions.updateModelPrespectives,
+  setAddSettings: actionCreators.setAddSettings,
+  fetchMetaModelPrespective: sagaActions.modelActions.fetchMetaModelPrespective,
+  fetchModelPerspective: sagaActions.modelActions.fetchModelPerspective,
+  fetchDropdownData: sagaActions.basicActions.fetchDropdownData
 }
 
 // If you want to use the function mapping
@@ -130,13 +144,7 @@ export default compose(
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
         'agreement_id': this.props.match.params.id
-        // 'id': this.props.match.params.id
       }
-      // let payload = {
-      //   'agreement_id': props.match.params.id,
-      //   'condition_id': data.id
-      // }
-      // props.fetchAgreementConditionById(payload)
       this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
       this.props.fetchAgreementEntitlements && this.props.fetchAgreementEntitlements(payload)
       this.props.fetchAgreementProperties && this.props.fetchAgreementProperties(payload)
@@ -149,8 +157,23 @@ export default compose(
       let notificationPeriodProperty = _.result(_.find(componentTypeId, function (obj) {
         return obj.key === 'Agreement Condition'
       }), 'component_type')
-      console.log('data for notification', notificationPeriodProperty)
       this.props.fetchAgreementConditionNotificationPeriod && this.props.fetchAgreementConditionNotificationPeriod(notificationPeriodProperty)
+      let perspectives = appPackage.resources[0].perspectives
+      let perspectiveObj = _.find(perspectives, function (obj) {
+        return (obj.key === 'Agreement_Update' && obj.role_key === 'Update')
+      })
+      let perspectiveId = perspectiveObj.perspective
+      let metaPayload = {}
+      metaPayload.id = perspectiveId
+      metaPayload.data = {'view_key': perspectiveObj.view_key}
+      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(metaPayload)
+      let paydata = {}
+      paydata['meta_model_perspective_id'] = perspectiveId
+      paydata['view_key'] = perspectiveObj.view_key
+      let modelPerspectivePayload = {}
+      modelPerspectivePayload.id = this.props.match.params.id
+      modelPerspectivePayload.data = paydata
+      this.props.fetchModelPerspective(modelPerspectivePayload)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -344,6 +367,197 @@ export default compose(
           toastr.error(nextProps.updateAgreementConditionResponse.error_message, nextProps.updateAgreementConditionResponse.error_code)
         }
         this.props.resetResponse()
+      }
+      if (nextProps.modelPerspective && nextProps.modelPerspective !== '' && !nextProps.availableAction.toProcessMetaModel && nextProps.connectionData !== '' && nextProps.availableAction.toProcessModelPerspectives) {
+        if (nextProps.modelPerspective.error_code === null) {
+          console.log('crudModelPerspectives', nextProps.modelPerspective)
+          let addSettings = JSON.parse(JSON.stringify(nextProps.addSettings))
+          let labelParts = nextProps.metaModelPerspective.resources[0].parts
+          let data = nextProps.modelPerspective.resources[0]
+          let selectedValues = []
+          let setCustomerProperty = []
+          if (data.parts) {
+            labelParts.forEach(function (partData, ix) {
+              console.log(partData, data.parts[ix])
+              if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
+                if (partData.standard_property === 'name') {
+                  addSettings.name = data.parts[ix].value
+                }
+                if (partData.standard_property === 'description') {
+                  addSettings.description = data.parts[ix].value
+                }
+              } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
+                if (data.parts[ix].value.length > 0) {
+                  // todo write code for multiple component
+                  let eachSelectedValues = []
+                  data.parts[ix].value.forEach(function (value, ix) {
+                    let targetComponent = value.target_component
+                    targetComponent.label = targetComponent.name
+                    targetComponent.value = targetComponent.id
+                    eachSelectedValues.push(targetComponent)
+                  })
+                  selectedValues.push(eachSelectedValues)
+                } else {
+                  selectedValues.push(null)
+                }
+              } else if (partData.standard_property === null && partData.type_property !== null) { // Customer Property
+                let value = null
+                if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.int_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.float_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.text_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.date_time_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'List') {
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
+                } else {
+                  value = data.parts[ix].value !== null ? data.parts[ix].value.other_value : ''
+                }
+                setCustomerProperty.push(value)
+              }
+            })
+          }
+          addSettings.updateObject = data
+          nextProps.setAddSettings(addSettings)
+          let connectionData = {...nextProps.connectionData}
+          let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
+            if (data.type_property.property_type.key === 'Boolean') {
+              data.type_property.boolean_value = setCustomerProperty[index]
+            } else if (data.type_property.property_type.key === 'Integer') {
+              data.type_property.int_value = setCustomerProperty[index]
+            } else if (data.type_property.property_type.key === 'Decimal') {
+              data.type_property.float_value = setCustomerProperty[index]
+            } else if (data.type_property.property_type.key === 'DateTime') {
+              data.type_property.date_time_value = setCustomerProperty[index]
+            } else if (data.type_property.property_type.key === 'Text') {
+              data.type_property.text_value = setCustomerProperty[index]
+            } else {
+              data.type_property.other_value = setCustomerProperty[index]
+            }
+            return data
+          })
+          connectionData.customerProperty = existingCustomerProperty
+          connectionData.selectedValues = selectedValues
+          connectionData.initialSelectedValues = JSON.parse(JSON.stringify(selectedValues))
+          nextProps.setConnectionData(connectionData)
+          let availableAction = nextProps.availableAction
+          availableAction['toProcessModelPerspectives'] = false
+          nextProps.setAvailableAction(availableAction)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.modelPerspective.error_message, nextProps.modelPerspective.error_code)
+        }
+      }
+      if (nextProps.metaModelPerspective && nextProps.metaModelPerspective !== '' && nextProps.availableAction.toProcessMetaModel) {
+        if (nextProps.metaModelPerspective.resources[0].crude) {
+          let availableAction = {...nextProps.availableAction}
+          let crude = nextProps.crude
+          let mask = nextProps.metaModelPerspective.resources[0].crude
+          let labelParts = nextProps.metaModelPerspective.resources[0].parts
+          let connectionData = {}
+          connectionData.operation = {
+            toCallApi: true,
+            isComplete: false,
+            processIndex: 0
+          }
+          connectionData.selectedValues = []
+          let cData = []
+          let customerProperty = []
+          for (let option in crude) {
+            if (crude.hasOwnProperty(option)) {
+              if (mask & crude[option]) {
+                availableAction[option] = true
+              }
+            }
+          }
+          labelParts.forEach(function (data, index) {
+            if (data.standard_property === null && data.type_property === null) {
+              let obj = {}
+              obj.name = data.name
+              if (data.constraint_inverted) {
+                obj.componentId = data.constraint.component_type.id
+              } else {
+                obj.componentId = data.constraint.target_component_type.id
+              }
+              obj.data = null
+              obj.processed = false
+              obj.partIndex = index
+              obj.max = data.constraint.max
+              obj.min = data.constraint.min
+              cData.push(obj)
+              connectionData.selectedValues.push(null)
+            }
+            if (data.standard_property === null && data.type_property !== null) {
+              data.partIndex = index
+              customerProperty.push(data)
+            }
+          })
+          connectionData.data = cData
+          connectionData.customerProperty = customerProperty
+          connectionData.selectOption = []
+          nextProps.setConnectionData(connectionData)
+          availableAction['toProcessMetaModel'] = false
+          nextProps.setAvailableAction(availableAction)
+        }
+      }
+      if (nextProps.connectionData !== '' && nextProps.connectionData.operation.toCallApi && !nextProps.connectionData.operation.isComplete) {
+        console.log('nextProps.connectionData', nextProps.connectionData)
+        let connectionData = {...nextProps.connectionData}
+        let processIndex = nextProps.connectionData.operation.processIndex
+        let totalLength = nextProps.connectionData.data.length
+        if (processIndex < totalLength) {
+          let processData = nextProps.connectionData.data[processIndex]
+          nextProps.fetchDropdownData && nextProps.fetchDropdownData(processData.componentId)
+          connectionData.operation.processIndex = processIndex + 1
+          connectionData.operation.toCallApi = false
+        }
+        if (processIndex === totalLength) {
+          connectionData.operation.isComplete = true
+        }
+        nextProps.setConnectionData(connectionData)
+      }
+      if (nextProps.dropdownData !== '') {
+        console.log('nextProps.dropdownData', nextProps.dropdownData)
+        if (nextProps.dropdownData.error_code === null) {
+          let connectionData = {...nextProps.connectionData}
+          connectionData.selectOption.push(nextProps.dropdownData.resources)
+          connectionData.operation.toCallApi = true
+          nextProps.setConnectionData(connectionData)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.dropdownData.error_message, nextProps.dropdownData.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.updateModelPerspectiveResponse && nextProps.updateModelPerspectiveResponse !== '') {
+        let addSettings = {...nextProps.addSettings}
+        addSettings.name = ''
+        addSettings.description = ''
+        addSettings.updateResponse = nextProps.updateModelPerspectiveResponse
+        nextProps.setAddSettings(addSettings)
+        let payload = {
+          'agreement_id': this.props.match.params.id
+        }
+        this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
+        this.props.fetchAgreementProperties && this.props.fetchAgreementProperties(payload)
+        this.props.fetchAgreementRelationships && this.props.fetchAgreementRelationships(payload)
+        let appPackage = JSON.parse(localStorage.getItem('packages'))
+        let perspectives = appPackage.resources[0].perspectives
+        let perspectiveObj = _.find(perspectives, function (obj) {
+          return (obj.key === 'Agreement_Update' && obj.role_key === 'Update')
+        })
+        let paydata = {}
+        paydata['meta_model_perspective_id'] = perspectiveObj.perspective
+        paydata['view_key'] = perspectiveObj.view_key
+        let modelPerspectivePayload = {}
+        modelPerspectivePayload.id = this.props.match.params.id
+        modelPerspectivePayload.data = paydata
+        this.props.fetchModelPerspective(modelPerspectivePayload)
+        nextProps.resetResponse()
       }
     }
   })

@@ -22,6 +22,12 @@ import {
   DELETE_AGREEMENT_CONDITION_SUCCESS,
   UPDATE_AGREEMENT_CONDITION_SUCCESS
 } from '../../sagas/agreement/agreementSaga'
+import {
+  FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
+  UPDATE_MODEL_PRESPECTIVES_SUCCESS,
+  FETCH_MODEL_PERSPECTIVE_SUCCESS
+} from '../../sagas/model/modelSaga'
+import {FETCH_DROPDOWN_DATA_SUCCESS} from '../../sagas/basic/basicSaga'
 // Name Spaced Action Types
 const SET_ADD_AGREEMENT_SETTINGS = 'AgreementDetailReducer/SET_ADD_AGREEMENT_SETTINGS'
 const SET_RELATIONSHIP_ACTION_SETTINGS = 'AgreementDetailReducer/SET_RELATIONSHIPS_ACTION_SETTINGS'
@@ -45,6 +51,9 @@ const SET_SELECTED_DATE = 'AgreementDetailReducer/SET_SELECTED_DATE'
 const SET_SELECTED_NOTIFICATION_PERIOD = 'AgreementDetailReducer/SET_SELECTED_NOTIFICATION_PERIOD'
 const SET_UPDATE_AGREEMENT_CONDITION_SETTINGS = 'AgreementDetailReducer/SET_UPDATE_AGREEMENT_CONDITION_SETTINGS'
 const SET_PURCHASE_ORDER_SETTING = 'AgreementDetailReducer/SET_PURCHASE_ORDER_SETTING'
+const SET_ADD_SETTINGS = 'AgreementDetailReducer/SET_ADD_SETTINGS'
+const SET_AVAILABLE_ACTION = 'AgreementDetailReducer/SET_AVAILABLE_ACTION'
+const SET_CONNECTION_DATA = 'AgreementDetailReducer/SET_CONNECTION_DATA'
 
 export const actions = {
     FETCH_AGREEMENT_BY_ID_SUCCESS,
@@ -83,7 +92,10 @@ export const actions = {
     SET_SELECTED_NOTIFICATION_PERIOD,
     FETCH_AGREEMENT_PURCHASE_ORDER_SUCCESS,
     FETCH_AGREEMENT_PURCHASE_ORDER_BY_ID_SUCCESS,
-    SET_PURCHASE_ORDER_SETTING
+    SET_PURCHASE_ORDER_SETTING,
+    SET_ADD_SETTINGS,
+    SET_AVAILABLE_ACTION,
+    SET_CONNECTION_DATA
   }
 
 export const actionCreators = {
@@ -108,7 +120,10 @@ export const actionCreators = {
     setSelectedDate: createAction(SET_SELECTED_DATE),
     setUpdateAgreementConditionSettings: createAction(SET_UPDATE_AGREEMENT_CONDITION_SETTINGS),
     setSelectedNotificationPeriod: createAction(SET_SELECTED_NOTIFICATION_PERIOD),
-    setPurchaseOrderSettings: createAction(SET_PURCHASE_ORDER_SETTING)
+    setPurchaseOrderSettings: createAction(SET_PURCHASE_ORDER_SETTING),
+    setAddSettings: createAction(SET_ADD_SETTINGS),
+    setAvailableAction: createAction(SET_AVAILABLE_ACTION),
+    setConnectionData: createAction(SET_CONNECTION_DATA)
   }
 
 export const initialState = {
@@ -196,7 +211,29 @@ export const initialState = {
     description: '',
     duedate: '',
     'notificationPeriod': ''
-  }
+  },
+  addSettings: {
+    isAddModalOpen: false,
+    isDeleteModalOpen: false,
+    isEditModalOpen: false,
+    isConfirmationModalOpen: false,
+    updateResponse: null,
+    name: '',
+    description: ''
+  },
+  metaModelPerspective: '',
+  modelPerspective: '',
+  updateModelPerspectiveResponse: '',
+  availableAction: {
+    Create: false,
+    Read: false,
+    Update: false,
+    Delete: false,
+    toProcessMetaModel: false,
+    toProcessModelPerspectives: false
+  },
+  connectionData: '',
+  dropdownData: ''
 }
 
 export default handleActions(
@@ -244,7 +281,9 @@ export default handleActions(
       updateAgreementResponse: '',
       addAgreementConditionResponse: '',
       deleteAgreementConditionResponse: '',
-      updateAgreementConditionResponse: ''
+      updateAgreementConditionResponse: '',
+      updateModelPerspectiveResponse: '',
+      dropdownData: ''
     }),
     [COPY_AGREEMENT_PROPERTIES]: (state, action) => ({
       ...state,
@@ -383,6 +422,36 @@ export default handleActions(
     [SET_PURCHASE_ORDER_SETTING]: (state, action) => ({
       ...state,
       agreementPurchaseOrderSettings: action.payload
+    }),
+    [SET_AVAILABLE_ACTION]: (state, action) => ({
+      ...state,
+      availableAction: action.payload
+    }),
+    [SET_CONNECTION_DATA]: (state, action) => ({
+      ...state,
+      connectionData: action.payload
+    }),
+    [FETCH_META_MODEL_PRESPECTIVE_SUCCESS]: (state, action) => ({
+      ...state,
+      metaModelPerspective: action.payload,
+      availableAction: {...state.availableAction, 'toProcessMetaModel': true}
+    }),
+    [FETCH_DROPDOWN_DATA_SUCCESS]: (state, action) => ({
+      ...state,
+      dropdownData: action.payload
+    }),
+    [UPDATE_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
+      ...state,
+      updateModelPerspectiveResponse: action.payload
+    }),
+    [SET_ADD_SETTINGS]: (state, action) => ({
+      ...state,
+      addSettings: action.payload
+    }),
+    [FETCH_MODEL_PERSPECTIVE_SUCCESS]: (state, action) => ({
+      ...state,
+      modelPerspective: action.payload,
+      availableAction: {...state.availableAction, 'toProcessModelPerspectives': true}
     })
   },
   initialState

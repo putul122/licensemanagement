@@ -15,6 +15,12 @@ import {
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
   UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS
 } from '../../sagas/agreement/agreementSaga'
+import {
+  FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
+  UPDATE_MODEL_PRESPECTIVES_SUCCESS,
+  FETCH_MODEL_PERSPECTIVE_SUCCESS
+} from '../../sagas/model/modelSaga'
+import {FETCH_DROPDOWN_DATA_SUCCESS} from '../../sagas/basic/basicSaga'
 // Name Spaced Action Types
 const SET_UPDATE_ENTITLEMENT_SETTINGS = 'EntitlementDetailReducer/SET_UPDATE_ENTITLEMENT_SETTINGS'
 const RESET_RESPONSE = 'EntitlementDetailReducer/RESET_RESPONSE'
@@ -32,31 +38,37 @@ const SET_ADD_CONNECTION_SETTINGS = 'EntitlementDetailReducer/SET_ADD_CONNECTION
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'EntitlementDetailReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
 const SET_CURRENT_TAB = 'EntitlementDetailReducer/SET_CURRENT_TAB'
 const SET_VALIDATION_PROPERTY = 'EntitlementDetailReducer/SET_VALIDATION_PROPERTY'
+const SET_ADD_SETTINGS = 'EntitlementDetailReducer/SET_ADD_SETTINGS'
+const SET_AVAILABLE_ACTION = 'EntitlementDetailReducer/SET_AVAILABLE_ACTION'
+const SET_CONNECTION_DATA = 'EntitlementDetailReducer/SET_CONNECTION_DATA'
 
 export const actions = {
-    FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
-    FETCH_ENTITLEMENT_BY_ID_SUCCESS,
-    FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
-    FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
-    SET_UPDATE_ENTITLEMENT_SETTINGS,
-    RESET_RESPONSE,
-    SET_EDIT_COMPONENT_FLAG,
-    PUSH_ENTITLEMENT_PROPERTY_PAYLOAD,
-    EDIT_ENTITLEMENT_PROPERTIES,
-    COPY_ENTITLEMENT_PROPERTIES,
-    COPY_ENTITLEMENT_DATA,
-    RESTORE_ENTITLEMENT_PROPERTIES,
-    DELETE_ENTITLEMENT_SUCCESS,
-    UPDATE_ENTITLEMENT_PROPERTIES_SUCCESS,
-    FETCH_RELATIONSHIP_PROPERTY_SUCCESS,
-    UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
-    DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
-    FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
-    FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
-    UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
-    RESET_UPDATE_RELATIONSHIP_RESPONSE,
-    SET_RELATIONSHIP_ACTION_SETTINGS,
-    SET_VALIDATION_PROPERTY
+  FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
+  FETCH_ENTITLEMENT_BY_ID_SUCCESS,
+  FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
+  FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
+  SET_UPDATE_ENTITLEMENT_SETTINGS,
+  RESET_RESPONSE,
+  SET_EDIT_COMPONENT_FLAG,
+  PUSH_ENTITLEMENT_PROPERTY_PAYLOAD,
+  EDIT_ENTITLEMENT_PROPERTIES,
+  COPY_ENTITLEMENT_PROPERTIES,
+  COPY_ENTITLEMENT_DATA,
+  RESTORE_ENTITLEMENT_PROPERTIES,
+  DELETE_ENTITLEMENT_SUCCESS,
+  UPDATE_ENTITLEMENT_PROPERTIES_SUCCESS,
+  FETCH_RELATIONSHIP_PROPERTY_SUCCESS,
+  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
+  DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
+  FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
+  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
+  RESET_UPDATE_RELATIONSHIP_RESPONSE,
+  SET_RELATIONSHIP_ACTION_SETTINGS,
+  SET_VALIDATION_PROPERTY,
+  SET_ADD_SETTINGS,
+  SET_AVAILABLE_ACTION,
+  SET_CONNECTION_DATA
 }
 
 export const actionCreators = {
@@ -75,7 +87,10 @@ export const actionCreators = {
   setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
   resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
   setCurrentTab: createAction(SET_CURRENT_TAB),
-  setValidationProperty: createAction(SET_VALIDATION_PROPERTY)
+  setValidationProperty: createAction(SET_VALIDATION_PROPERTY),
+  setAddSettings: createAction(SET_ADD_SETTINGS),
+  setAvailableAction: createAction(SET_AVAILABLE_ACTION),
+  setConnectionData: createAction(SET_CONNECTION_DATA)
 }
 
 export const initialState = {
@@ -130,7 +145,29 @@ export const initialState = {
   updateRelationshipPropertyResponse: '',
   deleteRelationshipResponse: '',
   showTabs: {'showProperty': ' active show', 'showRelationship': ''},
-  validationProperty: []
+  validationProperty: [],
+  addSettings: {
+    isAddModalOpen: false,
+    isDeleteModalOpen: false,
+    isEditModalOpen: false,
+    isConfirmationModalOpen: false,
+    updateResponse: null,
+    name: '',
+    description: ''
+  },
+  metaModelPerspective: '',
+  modelPerspective: '',
+  updateModelPerspectiveResponse: '',
+  availableAction: {
+    Create: false,
+    Read: false,
+    Update: false,
+    Delete: false,
+    toProcessMetaModel: false,
+    toProcessModelPerspectives: false
+  },
+  connectionData: '',
+  dropdownData: ''
 }
 
 export default handleActions(
@@ -198,7 +235,9 @@ export default handleActions(
       entitlementPropertiesPayload: {property: [], entitlement: [], relationship: []},
       updateEntitlementResponse: '',
       deleteEntitlementResponse: '',
-      updateEntitlementPropertyResponse: ''
+      updateEntitlementPropertyResponse: '',
+      updateModelPerspectiveResponse: '',
+      dropdownData: ''
     }),
     [FETCH_RELATIONSHIP_PROPERTY_SUCCESS]: (state, action) => ({
       ...state,
@@ -255,6 +294,36 @@ export default handleActions(
     [SET_VALIDATION_PROPERTY]: (state, action) => ({
       ...state,
       validationProperty: action.payload
+    }),
+    [SET_AVAILABLE_ACTION]: (state, action) => ({
+      ...state,
+      availableAction: action.payload
+    }),
+    [SET_CONNECTION_DATA]: (state, action) => ({
+      ...state,
+      connectionData: action.payload
+    }),
+    [FETCH_META_MODEL_PRESPECTIVE_SUCCESS]: (state, action) => ({
+      ...state,
+      metaModelPerspective: action.payload,
+      availableAction: {...state.availableAction, 'toProcessMetaModel': true}
+    }),
+    [FETCH_DROPDOWN_DATA_SUCCESS]: (state, action) => ({
+      ...state,
+      dropdownData: action.payload
+    }),
+    [UPDATE_MODEL_PRESPECTIVES_SUCCESS]: (state, action) => ({
+      ...state,
+      updateModelPerspectiveResponse: action.payload
+    }),
+    [SET_ADD_SETTINGS]: (state, action) => ({
+      ...state,
+      addSettings: action.payload
+    }),
+    [FETCH_MODEL_PERSPECTIVE_SUCCESS]: (state, action) => ({
+      ...state,
+      modelPerspective: action.payload,
+      availableAction: {...state.availableAction, 'toProcessModelPerspectives': true}
     })
   },
   initialState

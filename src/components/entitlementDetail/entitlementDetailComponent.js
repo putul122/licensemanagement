@@ -13,7 +13,6 @@ import Discussion from '../../containers/discussion/discussionContainer'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
-const customStylescrud = { overlay: {zIndex: '1000'}, content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
 var divStyle = {
   // width: '900px',
   // height: '600px',
@@ -29,6 +28,26 @@ const formatAmount = (x) => {
     parts[1] = parts[1].substring(0, 2)
   }
   return parts.join('.')
+}
+let comparer = function (otherArray) {
+  return function (current) {
+    return otherArray.filter(function (other) {
+      return other.value === current.value && other.display === current.display
+    }).length === 0
+  }
+}
+const customStylescrud = {
+  content: {
+    top: '10%',
+    left: '8%',
+    background: 'none',
+    border: '0px',
+    overflow: 'none',
+    margin: 'auto'
+  },
+  overlay: {
+    zIndex: 1000
+  }
 }
 const customStyles = {
   overlay: {zIndex: '1000'},
@@ -102,6 +121,445 @@ export default function EntitlementDetail (props) {
     props.setUpdateEntitlementSettings(updateEntitlementSettings)
   }
   // End Code for Delete component
+  // Start Code for Edit entitlement using perspectives
+  let connectionSelectBoxList = ''
+  let businessPropertyList = ''
+  let messageList = ''
+  let editName = function (event) {
+    let addSettings = JSON.parse(JSON.stringify(props.addSettings))
+    addSettings.name = event.target.value
+    props.setAddSettings(addSettings)
+  }
+  let editDescription = function (event) {
+    let addSettings = JSON.parse(JSON.stringify(props.addSettings))
+    addSettings.description = event.target.value
+    props.setAddSettings(addSettings)
+  }
+  let editProperty = function (index, value) {
+    let connectionData = {...props.connectionData}
+    let customerProperty = connectionData.customerProperty
+    let propertyType = customerProperty[index].type_property.property_type
+    if (propertyType.key === 'Boolean') {
+      customerProperty[index].type_property.boolean_value = value
+    } else if (propertyType.key === 'Integer') {
+      customerProperty[index].type_property.int_value = value
+    } else if (propertyType.key === 'Decimal') {
+      customerProperty[index].type_property.float_value = value
+    } else if (propertyType.key === 'DateTime') {
+      customerProperty[index].type_property.date_time_value = value.format('DD MMM YYYY')
+    } else if (propertyType.key === 'Text') {
+      customerProperty[index].type_property.text_value = value
+    } else {
+      customerProperty[index].type_property.other_value = value
+    }
+    connectionData.customerProperty = customerProperty
+    props.setConnectionData(connectionData)
+  }
+  let handleEditPropertySelect = function (index) {
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      let connectionData = JSON.parse(JSON.stringify(props.connectionData))
+      let customerProperty = connectionData.customerProperty
+      if (actionMeta.action === 'select-option') {
+        customerProperty[index].type_property.value_set_value = newValue
+      }
+      if (actionMeta.action === 'clear') {
+        customerProperty[index].type_property.value_set_value = newValue
+      }
+      connectionData.customerProperty = customerProperty
+      props.setConnectionData(connectionData)
+    }
+  }
+  let handleSelectChange = function (index) {
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      console.log('index', index)
+      let connectionData = {...props.connectionData}
+      let selectedValues = connectionData.selectedValues
+      if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
+        selectedValues[index] = newValue
+        connectionData.selectedValues = selectedValues
+        props.setConnectionData(connectionData)
+      }
+      if (actionMeta.action === 'clear') {
+        selectedValues[index] = null
+        connectionData.selectedValues = selectedValues
+        props.setConnectionData(connectionData)
+      }
+    }
+  }
+  let openEditModal = function () {
+    let addSettings = JSON.parse(JSON.stringify(props.addSettings))
+    let labelParts = props.metaModelPerspective.resources[0].parts
+    let data = props.modelPerspective.resources[0]
+    let selectedValues = []
+    let setCustomerProperty = []
+    if (data.parts) {
+      labelParts.forEach(function (partData, ix) {
+        if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
+          if (partData.name === 'Name') {
+            addSettings.name = data.parts[ix].value
+          }
+          if (partData.name === 'Description') {
+            addSettings.description = data.parts[ix].value
+          }
+        } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
+          if (data.parts[ix].value.length > 0) {
+            // todo write code for multiple component
+            let eachSelectedValues = []
+            data.parts[ix].value.forEach(function (value, ix) {
+              let targetComponent = value.target_component
+              targetComponent.label = targetComponent.name
+              targetComponent.value = targetComponent.id
+              eachSelectedValues.push(targetComponent)
+            })
+            selectedValues.push(eachSelectedValues)
+          } else {
+            selectedValues.push(null)
+          }
+        } else if (partData.standard_property === null && partData.type_property !== null) { // Customer Property
+          let value = null
+          if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
+            value = data.parts[ix].value !== null ? data.parts[ix].value.int_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.float_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.text_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.date_time_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'List') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
+          } else {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.other_value : ''
+          }
+          setCustomerProperty.push(value)
+        }
+      })
+    }
+    addSettings.isEditModalOpen = true
+    addSettings.updateObject = data
+    addSettings.updateResponse = null
+    props.setAddSettings(addSettings)
+    let connectionData = {...props.connectionData}
+    let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
+      if (data.type_property.property_type.key === 'Boolean') {
+        data.type_property.boolean_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'Integer') {
+        data.type_property.int_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        data.type_property.float_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        data.type_property.date_time_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'Text') {
+        data.type_property.text_value = setCustomerProperty[index]
+      } else {
+        data.type_property.other_value = setCustomerProperty[index]
+      }
+      return data
+    })
+    connectionData.customerProperty = existingCustomerProperty
+    connectionData.selectedValues = selectedValues
+    connectionData.initialSelectedValues = JSON.parse(JSON.stringify(selectedValues))
+    props.setConnectionData(connectionData)
+  }
+  let closeEditModal = function () {
+    let addSettings = {...props.addSettings, isEditModalOpen: false, updateResponse: null}
+    props.setAddSettings(addSettings)
+  }
+  // update function to process update
+  let updateSoftware = function (event) {
+    event.preventDefault()
+    // eslint-disable-next-line
+    mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let addSettings = JSON.parse(JSON.stringify(props.addSettings))
+    let connectionData = JSON.parse(JSON.stringify(props.connectionData))
+    let labelParts = props.metaModelPerspective.resources[0].parts
+    let data = addSettings.updateObject
+    let patchPayload = []
+    if (data.parts) {
+      labelParts.forEach(function (partData, index) {
+        let valueType = ''
+        let obj = {}
+        if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
+          obj.op = 'replace'
+          valueType = partData.standard_property
+          obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+          if (partData.standard_property === 'name') {
+            obj.value = props.addSettings.name
+          }
+          if (partData.standard_property === 'description') {
+            obj.value = props.addSettings.description
+          }
+          patchPayload.push(obj)
+        } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
+          let dataIndex = connectionData.data.findIndex(p => p.name === partData.name)
+          console.log('dataIndex', dataIndex)
+          if (dataIndex !== -1) {
+            // found index
+            let max = connectionData.data[dataIndex].max
+            let initialSelectedValue = connectionData.initialSelectedValues[dataIndex] || []
+            let selectedValue = connectionData.selectedValues[dataIndex]
+            console.log('initialSelectedValue', initialSelectedValue)
+            console.log('selectedValue', selectedValue)
+            let onlyInInitial = []
+            if (initialSelectedValue) {
+              if (max === 1) {
+                let temp = []
+                temp.push(initialSelectedValue)
+                initialSelectedValue = temp
+              }
+            }
+            if (selectedValue) {
+              if (max === 1) {
+                let temp = []
+                temp.push(selectedValue)
+                selectedValue = temp
+              }
+            }
+            if (initialSelectedValue) {
+              if (selectedValue) {
+                onlyInInitial = initialSelectedValue.filter(comparer(selectedValue))
+              } else {
+                onlyInInitial = initialSelectedValue
+              }
+            }
+            let onlyInFinal = []
+            if (selectedValue) {
+              if (initialSelectedValue) {
+                onlyInFinal = selectedValue.filter(comparer(initialSelectedValue))
+              } else {
+                onlyInFinal = selectedValue
+              }
+            }
+            // remove operation payload
+            if (onlyInInitial.length > 0) {
+              let connectionIdArray = data.parts[index].value
+              let value = []
+              onlyInInitial.forEach(function (removeData, rid) {
+                let found = _.find(connectionIdArray, function (obj) { return (obj.target_component.id === removeData.id) })
+                console.log('found ----', found)
+                if (found) {
+                  // set connection id
+                  value.push(found.connection.id)
+                }
+              })
+              let obj = {}
+              obj.op = 'remove'
+              obj.value = value
+              valueType = 'value/-'
+              obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+              patchPayload.push(obj)
+              console.log('connectionId obj', connectionIdArray, obj)
+            }
+            console.log('index', dataIndex)
+            console.log('onlyInInitial', onlyInInitial)
+            console.log('onlyInFinal', onlyInFinal)
+            let existingTargetComponent = connectionData.selectedValues[dataIndex]
+            console.log('existingTargetComponent', existingTargetComponent)
+            if (onlyInFinal.length > 0) {
+              let connections = []
+              onlyInFinal.forEach(function (targetComponent, rid) {
+                let obj = {}
+                obj.target_id = targetComponent.id
+                connections.push(obj)
+              })
+              let obj = {}
+              obj.op = 'add'
+              obj.value = connections
+              valueType = 'value/-'
+              obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+              patchPayload.push(obj)
+              console.log('add obj', obj)
+            }
+          } else {
+            console.log('index', dataIndex)
+          }
+        } if (partData.standard_property === null && partData.type_property !== null) {
+          let obj = {}
+          obj.op = 'replace'
+          let customerProperty = _.find(connectionData.customerProperty, function (obj) {
+            return obj.name === partData.name
+          })
+          console.log('customerProperty', customerProperty)
+          if (customerProperty) {
+            if (customerProperty.type_property.property_type.key === 'Boolean') {
+              valueType = `boolean_value`
+              obj.value = customerProperty.type_property.boolean_value
+            } else if (customerProperty.type_property.property_type.key === 'Integer') {
+              valueType = `int_value`
+              obj.value = customerProperty.type_property.int_value
+            } else if (customerProperty.type_property.property_type.key === 'Decimal') {
+              valueType = `float_value`
+              obj.value = customerProperty.type_property.float_value
+            } else if (customerProperty.type_property.property_type.key === 'DateTime') {
+              valueType = `date_time_value`
+              obj.value = customerProperty.type_property.date_time_value
+            } else if (customerProperty.type_property.property_type.key === 'Text') {
+              valueType = `text_value`
+              obj.value = customerProperty.type_property.text_value
+            } else if (customerProperty.type_property.property_type.key === 'List') {
+              valueType = `value_set_value_id`
+              obj.value = customerProperty.type_property.value_set_value ? customerProperty.type_property.value_set_value.id : null
+            } else {
+              valueType = `other_value`
+              obj.value = customerProperty.type_property.other_value
+            }
+            obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+            patchPayload.push(obj)
+          }
+        }
+      })
+    }
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let perspectives = appPackage.resources[0].perspectives
+    let perspectiveObj = _.find(perspectives, function (obj) {
+      return (obj.key === 'Entitlement_Update' && obj.role_key === 'Update')
+    })
+    let payload = {}
+    payload.queryString = {}
+    payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
+    payload.queryString.apply_changes = true
+    payload.queryString.view_key = perspectiveObj.view_key
+    payload.data = {}
+    payload.data[props.metaModelPerspective.resources[0].id] = patchPayload
+    console.log('payload', payload)
+    props.updateModelPrespectives(payload)
+  }
+  // building form data to be set in edit form modal.
+  if (props.connectionData !== '' && props.connectionData.operation.isComplete) {
+    // eslint-disable-next-line
+    mApp && mApp.unblockPage()
+    let connectionData = {...props.connectionData}
+    connectionSelectBoxList = connectionData.data.map(function (data, index) {
+      let selectOptions = connectionData.selectOption[index].map(function (component, id) {
+        component.value = component.id
+        component.label = component.name
+        return component
+      })
+      return (<div className='form-group row'>
+        <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+        <div className='col-8'>
+          <Select
+            className='input-sm m-input'
+            placeholder={'Select ' + data.name}
+            isMulti={data.max !== 1}
+            isClearable
+            value={connectionData.selectedValues[index]}
+            onChange={handleSelectChange(index)}
+            options={selectOptions}
+            />
+        </div>
+      </div>)
+    })
+    businessPropertyList = connectionData.customerProperty.map(function (data, index) {
+      let value = null
+      if (data.type_property.property_type.key === 'Integer') {
+        value = data.type_property.int_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Number</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        value = data.type_property.float_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Number</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        value = data.type_property.date_time_value ? moment(data.type_property.date_time_value).format('DD MMM YYYY') : ''
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <DatePicker
+              className='input-sm form-control m-input'
+              selected={data.type_property.date_time_value ? moment(data.type_property.date_time_value) : ''}
+              dateFormat='DD MMM YYYY'
+              onSelect={(date) => { editProperty(index, date) }}
+              />
+            {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+            {false && (<div className='form-control-feedback'>should be Date</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'Text') {
+        value = data.type_property.text_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {false && (<div className='form-control-feedback'>should be Text</div>)}
+          </div>
+        </div>)
+      } else if (data.type_property.property_type.key === 'List') {
+        let propertyOption = data.type_property.value_set.values.map((option, opIndex) => {
+          option.label = option.name
+          option.value = option.id
+          return option
+        })
+        let dvalue = data.type_property.value_set_value
+        if (data.type_property.value_set_value !== null) {
+          dvalue.label = data.type_property.value_set_value.name
+          dvalue.value = data.type_property.value_set_value.id
+        }
+        value = data.type_property.value_set_value ? data.type_property.value_set_value.name : null
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <Select
+            className='col-8 input-sm m-input'
+            placeholder='Select Options'
+            isClearable
+            defaultValue={dvalue}
+            onChange={handleEditPropertySelect(index)}
+            isSearchable={false}
+            name={'selectProperty'}
+            options={propertyOption}
+          />
+        </div>)
+      } else {
+        value = data.type_property.other_value
+        return (<div className='form-group row'>
+          <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
+          <div className='col-8 form-group m-form__group has-info'>
+            <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
+            {true && (<div className='form-control-feedback'>should be Text</div>)}
+          </div>
+        </div>)
+      }
+    })
+  }
+  // parsing data for response message listing after update
+  if (props.addSettings.updateResponse !== null) {
+    if (props.addSettings.updateResponse.length > 0) {
+      messageList = props.addSettings.updateResponse.map(function (data, index) {
+        if (data.error_code === null) {
+          if (data.message != null) {
+            return (<li className='m-list-search__result-item' key={index}>{data.message}</li>)
+          } else {
+            if (props.addSettings.updateResponse.length === 1) {
+              return (<li className='m-list-search__result-item' key={99}>{'No data has been added.'}</li>)
+            }
+          }
+        } else {
+          return (<li className='m-list-search__result-item' key={index}>{'Error Code: ' + data.error_code + 'Message: ' + data.error_message}</li>)
+        }
+      })
+    } else {
+      messageList = []
+      messageList.push((
+        <li key={0}>{'No data has been added.'}</li>
+      ))
+    }
+  }
+  // End Code for Edit entitlement using perspectives
   // Start Code for Update Entitlement
   let entitlementProperties = props.entitlementProperties.resources ? [...props.entitlementProperties.resources] : ''
   let entitlementPropertiesPayload = {...props.entitlementPropertiesPayload}
@@ -1195,6 +1653,7 @@ export default function EntitlementDetail (props) {
       return (<li>{data}</li>)
     })
   }
+  console.log(updateEntitlement)
     return (
       <div>
         <div className='row'>
@@ -1214,7 +1673,7 @@ export default function EntitlementDetail (props) {
               <a href='/entitlements' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='back' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-list-1 fa-2x' />
               </a>&nbsp;&nbsp;
-              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Entitlement' onClick={updateEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Entitlement' onClick={openEditModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
                 <i className='fa flaticon-edit-1 fa-2x' />
               </a>&nbsp;&nbsp;
               <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Delete Entitlement' onClick={deleteEntitlement} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
@@ -1698,6 +2157,57 @@ export default function EntitlementDetail (props) {
               </div>
             </div>
           </ReactModal>
+          <ReactModal isOpen={props.addSettings.isEditModalOpen}
+            onRequestClose={closeEditModal}
+            // className='modal-dialog modal-lg'
+            style={customStylescrud}
+            >
+            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content' >
+                  <div className='modal-header'>
+                    {props.addSettings.updateResponse === null && (<h4 className='modal-title' id='exampleModalLabel'>Edit Entitlement</h4>)}
+                    {props.addSettings.updateResponse !== null && (<h4 className='modal-title' id='exampleModalLabel'>Update Report</h4>)}
+                    <button type='button' onClick={closeEditModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body' style={{'height': 'calc(70vh - 30px)', 'overflow': 'auto'}}>
+                    {props.addSettings.updateResponse === null && (<div className='col-md-12'>
+                      {/* {messageBlock} */}
+                      <div className='form-group m-form__group row'>
+                        <div className='col-8'>
+                          {/* <input className='form-control m-input' type='email' placeholder='Enter User Name' ref={input => (userName = input)} id='example-userName-input' /> */}
+                        </div>
+                      </div>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-input' className='col-2 col-form-label'>Name</label>
+                        <div className='col-8'>
+                          <input className='form-control m-input' value={props.addSettings.name} onChange={editName} placeholder='Enter Name' id='example-email-input' autoComplete='off' />
+                        </div>
+                      </div>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-input' className='col-2 col-form-label'>Description</label>
+                        <div className='col-8'>
+                          <textarea className='form-control m-input' value={props.addSettings.description} onChange={editDescription} placeholder='Enter Description' />
+                        </div>
+                      </div>
+                      {businessPropertyList}
+                      {connectionSelectBoxList}
+                    </div>)}
+                    {props.addSettings.updateResponse !== null && (<div className='m-list-search__results'>
+                      {messageList}
+                    </div>)}
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeEditModal} className='btn btn-outline-danger btn-sm'>Close</button>
+                    {props.addSettings.updateResponse === null && (<button className='btn btn-outline-info btn-sm' onClick={updateSoftware} >Update</button>)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
         </div>
         <Discussion name={entitlementName} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={entitlementName} type='Component' {...props} />
@@ -1721,5 +2231,7 @@ EntitlementDetail.propTypes = {
   componentTypeComponentConstraints: PropTypes.any,
   componentTypeComponents: PropTypes.any,
   showTabs: PropTypes.any,
-  validationProperty: PropTypes.any
+  validationProperty: PropTypes.any,
+  addSettings: PropTypes.any,
+  connectionData: PropTypes.any
 }
