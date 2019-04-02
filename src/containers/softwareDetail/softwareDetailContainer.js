@@ -99,6 +99,7 @@ export default compose(
       $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('next', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -175,9 +176,7 @@ export default compose(
               }
             })
           }
-          addSettings.isEditModalOpen = true
           addSettings.updateObject = data
-          addSettings.updateResponse = null
           nextProps.setAddSettings(addSettings)
           let connectionData = {...nextProps.connectionData}
           let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
@@ -301,6 +300,31 @@ export default compose(
           toastr.error(nextProps.deleteSoftwareResponse.error_message, nextProps.deleteSoftwareResponse.error_code)
         }
         this.props.resetResponse()
+      }
+      if (nextProps.updateSoftwareResponse && nextProps.updateSoftwareResponse !== '') {
+        let addSettings = {...nextProps.addSettings}
+        addSettings.name = ''
+        addSettings.description = ''
+        addSettings.updateResponse = nextProps.updateSoftwareResponse
+        nextProps.setAddSettings(addSettings)
+        let payload = {
+          'software_id': this.props.match.params.id
+        }
+        this.props.fetchSoftwareById && this.props.fetchSoftwareById(payload)
+        this.props.fetchSoftwareProperties && this.props.fetchSoftwareProperties(payload)
+        this.props.fetchSoftwareRelationships && this.props.fetchSoftwareRelationships(payload)
+        let appPackage = JSON.parse(localStorage.getItem('packages'))
+        let perspectives = appPackage.resources[0].perspectives
+        let perspectiveId = _.result(_.find(perspectives, function (obj) {
+          return obj.key === 'Software'
+        }), 'perspective')
+        let paydata = {}
+        paydata['meta_model_perspective_id'] = perspectiveId
+        let modelPerspectivePayload = {}
+        modelPerspectivePayload.id = this.props.match.params.id
+        modelPerspectivePayload.data = paydata
+        this.props.fetchModelPerspective(modelPerspectivePayload)
+        nextProps.resetResponse()
       }
     }
   })

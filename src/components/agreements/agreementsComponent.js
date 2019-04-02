@@ -188,7 +188,9 @@ export default function Agreements (props) {
         if (data.length > 0) {
           let connections = []
           data.forEach(function (selectedValue, ix) {
-            connections.push(selectedValue.id)
+            let obj = {}
+            obj.target_id = selectedValue.id
+            connections.push(obj)
           })
           obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
         } else {
@@ -197,7 +199,9 @@ export default function Agreements (props) {
       } else {
         if (data) {
           let connections = []
-          connections.push(data.id)
+          let obj = {}
+          obj.target_id = data.id
+          connections.push(obj)
           obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
         } else {
           obj.value.parts[connectionData.data[index].partIndex] = {}

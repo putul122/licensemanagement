@@ -50,7 +50,7 @@ export const actionCreators = {
   fetchComponentModelPrespectivesFailure: createAction(FETCH_COMPONENT_MODEL_PRESPECTIVES_FAILURE),
   fetchModelPerspective: createAction(FETCH_MODEL_PERSPECTIVE),
   fetchModelPerspectiveSuccess: createAction(FETCH_MODEL_PERSPECTIVE_SUCCESS),
-  fetchModelPrespectiveFailure: createAction(FETCH_MODEL_PERSPECTIVE_FAILURE)
+  fetchModelPerspectiveFailure: createAction(FETCH_MODEL_PERSPECTIVE_FAILURE)
 }
 
 export default function * watchModel () {
@@ -169,8 +169,8 @@ export function * getModelPerspective (action) {
       api.getModelPerspective(action.payload.id),
       {params: action.payload.data}
     )
-    yield put(actionCreators.fetchModelPrespectivesSuccess(modelPrespective.data))
+    yield put(actionCreators.fetchModelPerspectiveSuccess(modelPrespective.data))
   } catch (error) {
-    yield put(actionCreators.fetchModelPrespectivesFailure(error))
+    yield put(actionCreators.fetchModelPerspectiveFailure(error))
   }
 }

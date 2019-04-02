@@ -19,6 +19,13 @@ var divStyle = {
   'border': '1px solid #000000',
   'background-color': '#FFFFFF'
 }
+let comparer = function (otherArray) {
+  return function (current) {
+    return otherArray.filter(function (other) {
+      return other.value === current.value && other.display === current.display
+    }).length === 0
+  }
+}
 const formatAmount = (x) => {
   let parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -42,6 +49,7 @@ const customStylescrud = {
 }
 
 export default function Softwareview (props) {
+  console.log('props sd', props)
   let connectionSelectBoxList = ''
   let businessPropertyList = ''
   let messageList = ''
@@ -131,13 +139,6 @@ export default function Softwareview (props) {
         )
       })
       return (
-        // <tbody key={index} className={'col-6'}>
-        //   <tr>
-        //     <td><span className={styles.title}>Type</span></td>
-        //     <td><span className={styles.labelbold}>{property.name}</span></td>
-        //   </tr>
-        //   {childProperties}
-        // </tbody>
         <tbody key={index} className={'col-6'}>
           <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
             <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
@@ -327,8 +328,6 @@ export default function Softwareview (props) {
   }
   // End code for delete agreement
   // Code for update Software
-  let newSoftwareName = ''
-  let newSoftwareDescription = ''
   let editName = function (event) {
     let addSettings = JSON.parse(JSON.stringify(props.addSettings))
     addSettings.name = event.target.value
@@ -396,114 +395,166 @@ export default function Softwareview (props) {
   }
   let openEditModal = function () {
     let addSettings = JSON.parse(JSON.stringify(props.addSettings))
-    addSettings.name = props.softwarebyId.resources[0].name
-    addSettings.description = props.softwarebyId.resources[0].description
+    // addSettings.name = props.softwarebyId.resources[0].name
+    // addSettings.description = props.softwarebyId.resources[0].description
     addSettings.isEditModalOpen = true
     props.setAddSettings(addSettings)
-    let connectionData = {...props.connectionData}
-    let selectedValues = []
-    connectionData.selectedValues.forEach(function (data) {
-      selectedValues.push(null)
-    })
-    let resetCustomerProperty = connectionData.customerProperty.map(function (data, index) {
-      if (data.type_property.property_type.key === 'Boolean') {
-        data.type_property.boolean_value = null
-      } else if (data.type_property.property_type.key === 'Integer') {
-        data.type_property.int_value = null
-      } else if (data.type_property.property_type.key === 'Decimal') {
-        data.type_property.float_value = null
-      } else if (data.type_property.property_type.key === 'DateTime') {
-        data.type_property.date_time_value = null
-      } else if (data.type_property.property_type.key === 'Text') {
-        data.type_property.text_value = null
-      } else if (data.type_property.property_type.key === 'List') {
-        data.type_property.value_set_value = null
-      } else {
-        data.type_property.other_value = null
-      }
-      return data
-    })
-    connectionData.selectedValues = selectedValues
-    connectionData.customerProperty = resetCustomerProperty
-    props.setConnectionData(connectionData)
   }
   let closeEditModal = function () {
-    let addSettings = {...props.addSettings, isEditModalOpen: false, updateResponse: null}
+    let addSettings = {...props.addSettings, isEditModalOpen: false}
     props.setAddSettings(addSettings)
   }
-  let updateSoftware = function () {
+  let updateSoftware = function (event) {
+    event.preventDefault()
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let appPackage = JSON.parse(localStorage.getItem('packages'))
-    let perspectives = appPackage.resources[0].perspectives
-    let perspectiveId = _.result(_.find(perspectives, function (obj) {
-      return obj.key === 'Software'
-    }), 'perspective')
-    // let payload = {
-    //   'component_type': {
-    //     'id': componentTypeId
-    //   },
-    //   'name': newAgreementName.value,
-    //   'description': newAgreementDescription.value
-    // }
+    mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let addSettings = JSON.parse(JSON.stringify(props.addSettings))
+    let connectionData = JSON.parse(JSON.stringify(props.connectionData))
+    let labelParts = props.metaModelPerspective.resources[0].parts
+    let data = addSettings.updateObject
     let patchPayload = []
-    let obj = {}
-    obj.op = 'add'
-    obj.path = '/-'
-    obj.value = {}
-    obj.value.parts = []
-    obj.value.parts[0] = {'value': newSoftwareName.value}
-    obj.value.parts[1] = {'value': newSoftwareDescription.value}
-    let connectionData = {...props.connectionData}
-    connectionData.selectedValues.forEach(function (data, index) {
-      if (Array.isArray(data)) {
-        if (data.length > 0) {
-          let connections = []
-          data.forEach(function (selectedValue, ix) {
-            connections.push(selectedValue.id)
+    if (data.parts) {
+      labelParts.forEach(function (partData, index) {
+        let valueType = ''
+        let obj = {}
+        if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
+          obj.op = 'replace'
+          valueType = partData.standard_property
+          obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+          if (partData.standard_property === 'name') {
+            obj.value = props.addSettings.name
+          }
+          if (partData.standard_property === 'description') {
+            obj.value = props.addSettings.description
+          }
+          patchPayload.push(obj)
+        } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
+          let dataIndex = connectionData.data.findIndex(p => p.name === partData.name)
+          console.log('dataIndex', dataIndex)
+          if (dataIndex !== -1) {
+            // found index
+            let max = connectionData.data[dataIndex].max
+            let initialSelectedValue = connectionData.initialSelectedValues[dataIndex] || []
+            let selectedValue = connectionData.selectedValues[dataIndex]
+            console.log('initialSelectedValue', initialSelectedValue)
+            console.log('selectedValue', selectedValue)
+            let onlyInInitial = []
+            if (initialSelectedValue) {
+              if (max === 1) {
+                let temp = []
+                temp.push(initialSelectedValue)
+                initialSelectedValue = temp
+              }
+            }
+            if (selectedValue) {
+              if (max === 1) {
+                let temp = []
+                temp.push(selectedValue)
+                selectedValue = temp
+              }
+            }
+            if (initialSelectedValue) {
+              if (selectedValue) {
+                onlyInInitial = initialSelectedValue.filter(comparer(selectedValue))
+              } else {
+                onlyInInitial = initialSelectedValue
+              }
+            }
+            let onlyInFinal = []
+            if (selectedValue) {
+              if (initialSelectedValue) {
+                onlyInFinal = selectedValue.filter(comparer(initialSelectedValue))
+              } else {
+                onlyInFinal = selectedValue
+              }
+            }
+            // remove operation payload
+            if (onlyInInitial.length > 0) {
+              let connectionIdArray = data.parts[index].value
+              let value = []
+              onlyInInitial.forEach(function (removeData, rid) {
+                let found = _.find(connectionIdArray, function (obj) { return (obj.target_component.id === removeData.id) })
+                console.log('found ----', found)
+                if (found) {
+                  // set connection id
+                  value.push(found.connection.id)
+                }
+              })
+              let obj = {}
+              obj.op = 'remove'
+              obj.value = value
+              valueType = 'value/-'
+              obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+              patchPayload.push(obj)
+              console.log('connectionId obj', connectionIdArray, obj)
+            }
+            console.log('index', dataIndex)
+            console.log('onlyInInitial', onlyInInitial)
+            console.log('onlyInFinal', onlyInFinal)
+            let existingTargetComponent = connectionData.selectedValues[dataIndex]
+            console.log('existingTargetComponent', existingTargetComponent)
+            if (onlyInFinal.length > 0) {
+              let connections = []
+              onlyInFinal.forEach(function (targetComponent, rid) {
+                let obj = {}
+                obj.target_id = targetComponent.id
+                connections.push(obj)
+              })
+              let obj = {}
+              obj.op = 'add'
+              obj.value = connections
+              valueType = 'value/-'
+              obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+              patchPayload.push(obj)
+              console.log('add obj', obj)
+            }
+          } else {
+            console.log('index', dataIndex)
+          }
+        } if (partData.standard_property === null && partData.type_property !== null) {
+          let obj = {}
+          obj.op = 'replace'
+          let customerProperty = _.find(connectionData.customerProperty, function (obj) {
+            return obj.name === partData.name
           })
-          obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
-        } else {
-          obj.value.parts[connectionData.data[index].partIndex] = {}
+          console.log('customerProperty', customerProperty)
+          if (customerProperty) {
+            if (customerProperty.type_property.property_type.key === 'Boolean') {
+              valueType = `boolean_value`
+              obj.value = customerProperty.type_property.boolean_value
+            } else if (customerProperty.type_property.property_type.key === 'Integer') {
+              valueType = `int_value`
+              obj.value = customerProperty.type_property.int_value
+            } else if (customerProperty.type_property.property_type.key === 'Decimal') {
+              valueType = `float_value`
+              obj.value = customerProperty.type_property.float_value
+            } else if (customerProperty.type_property.property_type.key === 'DateTime') {
+              valueType = `date_time_value`
+              obj.value = customerProperty.type_property.date_time_value
+            } else if (customerProperty.type_property.property_type.key === 'Text') {
+              valueType = `text_value`
+              obj.value = customerProperty.type_property.text_value
+            } else if (customerProperty.type_property.property_type.key === 'List') {
+              valueType = `value_set_value_id`
+              obj.value = customerProperty.type_property.value_set_value ? customerProperty.type_property.value_set_value.id : null
+            } else {
+              valueType = `other_value`
+              obj.value = customerProperty.type_property.other_value
+            }
+            obj.path = '/' + data.subject_id + '/parts/' + index + '/' + valueType
+            patchPayload.push(obj)
+          }
         }
-      } else {
-        if (data) {
-          let connections = []
-          connections.push(data.id)
-          obj.value.parts[connectionData.data[index].partIndex] = {'value': connections}
-        } else {
-          obj.value.parts[connectionData.data[index].partIndex] = {}
-        }
-      }
-    })
-    connectionData.customerProperty.forEach(function (data, index) {
-      if (data.type_property.property_type.key === 'Boolean') {
-        obj.value.parts[data.partIndex] = {value: {'boolean_value': data.type_property.boolean_value}}
-      } else if (data.type_property.property_type.key === 'Integer') {
-        obj.value.parts[data.partIndex] = {value: {'int_value': data.type_property.int_value}}
-      } else if (data.type_property.property_type.key === 'Decimal') {
-        obj.value.parts[data.partIndex] = {value: {'float_value': data.type_property.float_value}}
-      } else if (data.type_property.property_type.key === 'DateTime') {
-        obj.value.parts[data.partIndex] = {value: {'date_time_value': data.type_property.date_time_value}}
-      } else if (data.type_property.property_type.key === 'Text') {
-        obj.value.parts[data.partIndex] = {value: {'text_value': data.type_property.text_value}}
-      } else if (data.type_property.property_type.key === 'List') {
-        obj.value.parts[data.partIndex] = {value: {'value_set_value_id': data.type_property.value_set_value ? data.type_property.value_set_value.id : null}}
-      } else {
-        obj.value.parts[data.partIndex] = {value: {'other_value': data.type_property.other_value}}
-      }
-    })
-    patchPayload.push(obj)
+      })
+    }
     let payload = {}
     payload.queryString = {}
     payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
     payload.queryString.apply_changes = true
     payload.data = {}
-    payload.data[perspectiveId] = patchPayload
+    payload.data[props.metaModelPerspective.resources[0].id] = patchPayload
     console.log('payload', payload)
-    // props.updateModelPrespectives(payload)
-    // props.addAgreement(payload)
-    // closeAddModal()
+    props.updateModelPrespectives(payload)
   }
   if (props.connectionData !== '' && props.connectionData.operation.isComplete) {
     // eslint-disable-next-line
@@ -849,7 +900,7 @@ export default function Softwareview (props) {
                   </div>
                   <div className='modal-footer'>
                     <button type='button' onClick={closeEditModal} className='btn btn-outline-danger btn-sm'>Close</button>
-                    {props.addSettings.updateResponse === null && (<button className='btn btn-outline-info btn-sm disabled' onClick={updateSoftware} >Update</button>)}
+                    {props.addSettings.updateResponse === null && (<button className='btn btn-outline-info btn-sm' onClick={updateSoftware} >Update</button>)}
                   </div>
                 </div>
               </div>
