@@ -312,9 +312,9 @@ if (props.softwareSummary && props.softwareSummary !== '') {
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let appPackage = JSON.parse(localStorage.getItem('packages'))
     let perspectives = appPackage.resources[0].perspectives
-    let perspectiveId = _.result(_.find(perspectives, function (obj) {
-      return obj.key === 'Software'
-    }), 'perspective')
+    let perspectiveObj = _.find(perspectives, function (obj) {
+      return (obj.key === 'Software_Create' && obj.role_key === 'Create')
+    })
     // let payload = {
     //   'component_type': {
     //     'id': componentTypeId
@@ -378,8 +378,9 @@ if (props.softwareSummary && props.softwareSummary !== '') {
     payload.queryString = {}
     payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
     payload.queryString.apply_changes = true
+    payload.queryString.view_key = perspectiveObj.view_key
     payload.data = {}
-    payload.data[perspectiveId] = patchPayload
+    payload.data[perspectiveObj.perspective] = patchPayload
     console.log('payload', payload)
     props.updateModelPrespectives(payload)
     // props.addAgreement(payload)

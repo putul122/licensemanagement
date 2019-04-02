@@ -70,7 +70,8 @@ export function * getMetaModelPrespective (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
     const metaModelPrespective = yield call(
       axios.get,
-      api.getMetaModelPerspective(action.payload)
+      api.getMetaModelPerspective(action.payload.id),
+      {params: action.payload.data}
     )
     yield put(actionCreators.fetchMetaModelPrespectiveSuccess(metaModelPrespective.data))
   } catch (error) {

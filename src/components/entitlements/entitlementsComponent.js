@@ -301,9 +301,9 @@ export default function Entitlementlists (props) {
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let appPackage = JSON.parse(localStorage.getItem('packages'))
     let perspectives = appPackage.resources[0].perspectives
-    let perspectiveId = _.result(_.find(perspectives, function (obj) {
-      return obj.key === 'Entitlements'
-    }), 'perspective')
+    let perspectiveObj = _.find(perspectives, function (obj) {
+      return (obj.key === 'Entitlement_Create' && obj.role_key === 'Create')
+    })
     // let appPackage = JSON.parse(localStorage.getItem('packages'))
     // let componentTypes = appPackage.resources[0].component_types
     // let componentTypeId = _.result(_.find(componentTypes, function (obj) {
@@ -372,8 +372,9 @@ export default function Entitlementlists (props) {
     payload.queryString = {}
     payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
     payload.queryString.apply_changes = true
+    payload.queryString.view_key = perspectiveObj.view_key
     payload.data = {}
-    payload.data[perspectiveId] = patchPayload
+    payload.data[perspectiveObj.perspective] = patchPayload
     console.log('payload', payload)
     props.updateModelPrespectives(payload)
     // props.addEntitlement(payload)

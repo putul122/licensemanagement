@@ -81,10 +81,14 @@ export default compose(
       this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let perspectives = appPackage.resources[0].perspectives
-      let perspectiveId = _.result(_.find(perspectives, function (obj) {
-        return obj.key === 'Agreements'
-      }), 'perspective')
-      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(perspectiveId)
+      let perspectiveObj = _.find(perspectives, function (obj) {
+        return (obj.key === 'Agreement_Create' && obj.role_key === 'Create')
+      })
+      let perspectiveId = perspectiveObj.perspective
+      let metaPayload = {}
+      metaPayload.id = perspectiveId
+      metaPayload.data = {'view_key': perspectiveObj.view_key}
+      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(metaPayload)
     },
     componentDidMount: function () {
       // eslint-disable-next-line

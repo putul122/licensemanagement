@@ -395,13 +395,82 @@ export default function Softwareview (props) {
   }
   let openEditModal = function () {
     let addSettings = JSON.parse(JSON.stringify(props.addSettings))
-    // addSettings.name = props.softwarebyId.resources[0].name
-    // addSettings.description = props.softwarebyId.resources[0].description
+    let labelParts = props.metaModelPerspective.resources[0].parts
+    let data = props.modelPerspective.resources[0]
+    let selectedValues = []
+    let setCustomerProperty = []
+    if (data.parts) {
+      labelParts.forEach(function (partData, ix) {
+        if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
+          if (partData.name === 'Name') {
+            addSettings.name = data.parts[ix].value
+          }
+          if (partData.name === 'Description') {
+            addSettings.description = data.parts[ix].value
+          }
+        } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
+          if (data.parts[ix].value.length > 0) {
+            // todo write code for multiple component
+            let eachSelectedValues = []
+            data.parts[ix].value.forEach(function (value, ix) {
+              let targetComponent = value.target_component
+              targetComponent.label = targetComponent.name
+              targetComponent.value = targetComponent.id
+              eachSelectedValues.push(targetComponent)
+            })
+            selectedValues.push(eachSelectedValues)
+          } else {
+            selectedValues.push(null)
+          }
+        } else if (partData.standard_property === null && partData.type_property !== null) { // Customer Property
+          let value = null
+          if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
+            value = data.parts[ix].value !== null ? data.parts[ix].value.int_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.float_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Text') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.text_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.date_time_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
+          } else if (labelParts[ix].type_property.property_type.key === 'List') {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
+          } else {
+            value = data.parts[ix].value !== null ? data.parts[ix].value.other_value : ''
+          }
+          setCustomerProperty.push(value)
+        }
+      })
+    }
     addSettings.isEditModalOpen = true
+    addSettings.updateObject = data
+    addSettings.updateResponse = null
     props.setAddSettings(addSettings)
+    let connectionData = {...props.connectionData}
+    let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
+      if (data.type_property.property_type.key === 'Boolean') {
+        data.type_property.boolean_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'Integer') {
+        data.type_property.int_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'Decimal') {
+        data.type_property.float_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'DateTime') {
+        data.type_property.date_time_value = setCustomerProperty[index]
+      } else if (data.type_property.property_type.key === 'Text') {
+        data.type_property.text_value = setCustomerProperty[index]
+      } else {
+        data.type_property.other_value = setCustomerProperty[index]
+      }
+      return data
+    })
+    connectionData.customerProperty = existingCustomerProperty
+    connectionData.selectedValues = selectedValues
+    connectionData.initialSelectedValues = JSON.parse(JSON.stringify(selectedValues))
+    props.setConnectionData(connectionData)
   }
   let closeEditModal = function () {
-    let addSettings = {...props.addSettings, isEditModalOpen: false}
+    let addSettings = {...props.addSettings, isEditModalOpen: false, updateResponse: null}
     props.setAddSettings(addSettings)
   }
   let updateSoftware = function (event) {
@@ -547,10 +616,16 @@ export default function Softwareview (props) {
         }
       })
     }
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let perspectives = appPackage.resources[0].perspectives
+    let perspectiveObj = _.find(perspectives, function (obj) {
+      return (obj.key === 'Software_Update' && obj.role_key === 'Update')
+    })
     let payload = {}
     payload.queryString = {}
     payload.queryString.meta_model_perspective_id = props.metaModelPerspective.resources[0].id
     payload.queryString.apply_changes = true
+    payload.queryString.view_key = perspectiveObj.view_key
     payload.data = {}
     payload.data[props.metaModelPerspective.resources[0].id] = patchPayload
     console.log('payload', payload)

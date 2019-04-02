@@ -83,12 +83,17 @@ export default compose(
       this.props.fetchSoftwareRelationships && this.props.fetchSoftwareRelationships(payload)
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let perspectives = appPackage.resources[0].perspectives
-      let perspectiveId = _.result(_.find(perspectives, function (obj) {
-        return obj.key === 'Software'
-      }), 'perspective')
-      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(perspectiveId)
+      let perspectiveObj = _.find(perspectives, function (obj) {
+        return (obj.key === 'Software_Update' && obj.role_key === 'Update')
+      })
+      let perspectiveId = perspectiveObj.perspective
+      let metaPayload = {}
+      metaPayload.id = perspectiveId
+      metaPayload.data = {'view_key': perspectiveObj.view_key}
+      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(metaPayload)
       let paydata = {}
       paydata['meta_model_perspective_id'] = perspectiveId
+      paydata['view_key'] = perspectiveObj.view_key
       let modelPerspectivePayload = {}
       modelPerspectivePayload.id = this.props.match.params.id
       modelPerspectivePayload.data = paydata
@@ -315,11 +320,12 @@ export default compose(
         this.props.fetchSoftwareRelationships && this.props.fetchSoftwareRelationships(payload)
         let appPackage = JSON.parse(localStorage.getItem('packages'))
         let perspectives = appPackage.resources[0].perspectives
-        let perspectiveId = _.result(_.find(perspectives, function (obj) {
-          return obj.key === 'Software'
-        }), 'perspective')
+        let perspectiveObj = _.find(perspectives, function (obj) {
+          return (obj.key === 'Software_Update' && obj.role_key === 'Update')
+        })
         let paydata = {}
-        paydata['meta_model_perspective_id'] = perspectiveId
+        paydata['meta_model_perspective_id'] = perspectiveObj.perspective
+        paydata['view_key'] = perspectiveObj.view_key
         let modelPerspectivePayload = {}
         modelPerspectivePayload.id = this.props.match.params.id
         modelPerspectivePayload.data = paydata
