@@ -2000,9 +2000,11 @@ let handleConditionDescriptionChange = function (event) {
   props.setAddConditionSettings(addConditionActionSettings)
   console.log('Condition Description Change', addConditionActionSettings)
 }
-let handleConditionDueDateChange = function (event) {
+let handleDateChange = function (value) {
+  let startDate = value.format('DD MMM YYYY')
+  console.log(startDate)
   let addConditionActionSettings = JSON.parse(JSON.stringify(props.addConditionActionSettings))
-  addConditionActionSettings.conditionData.due_date = event.target.value
+  addConditionActionSettings.conditionData.due_date = startDate
   props.setAddConditionSettings(addConditionActionSettings)
   console.log('Condition date change Change', addConditionActionSettings)
 }
@@ -2816,16 +2818,15 @@ let editAgreeementCondition = function (event) {
                       </div>
                       <div className='form-group row'>
                         <div className='col-4'><label htmlFor='date' className='form-control-label'>Due Date</label></div>
-                        <div className='col-3'><input type='text' className='form-control' value={props.addConditionActionSettings.conditionData ? moment(props.addConditionActionSettings.conditionData.due_date).format('DD MMM YYYY') : ''} autoComplete='off' required /></div>
-                        <div className='col-5'><input type='date' className='form-control' autoComplete='off' onChange={handleConditionDueDateChange} required /></div>
+                        <div className='col-8'>
+                          <DatePicker
+                            className='input-sm form-control m-input'
+                            value={props.addConditionActionSettings.conditionData ? moment(props.addConditionActionSettings.conditionData.due_date).format('DD MMM YYYY') : ''}
+                            dateFormat='DD MMM YYYY'
+                            onChange={(date) => { handleDateChange(date) }}
+                          />
+                        </div>
                       </div>
-                      {/* <div className='form-group row'>
-                        <DatePicker
-                          className='input-sm form-control m-input'
-                          selected={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.due_date : ''}
-                          dateFormat='DD MMM YYYY'
-                        />
-                      </div> */}
                       <div className='form-group row'>
                         <div className='col-4'><label htmlFor='SelectNotificationPeriod' className='col-form-label'>Notification Period</label></div>
                         <div className='col-3'><input type='text' className='form-control' value={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.notification_period : ''} autoComplete='off' required /></div>

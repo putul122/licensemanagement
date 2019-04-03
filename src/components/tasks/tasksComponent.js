@@ -33,6 +33,8 @@ export default function Tasks (props) {
   let paginationLimit = 6
   let pageArray = []
   let listPage = []
+  let propertyList = ''
+  let selectedTaskName = props.actionSettings.selectedTask ? props.actionSettings.selectedTask.name : ''
   let openModal = function (data) {
     console.log('data', data)
     console.log(props, props.actionSettings)
@@ -45,6 +47,8 @@ export default function Tasks (props) {
     props.setActionSettings(actionSettings)
     let payload = {id: data.workflow.context.id}
     props.fetchTaskProperties && props.fetchTaskProperties(payload)
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
   }
   let closeModal = function (event) {
     event.preventDefault()
@@ -55,20 +59,53 @@ export default function Tasks (props) {
     }
     props.setActionSettings(actionSettings)
   }
+  let submitTask = function () {
+    let payload = {}
+    let patchPayload = []
+    let obj = {}
+    obj.op = 'replace'
+    obj.path = '/status'
+    obj.value = {'key': 'Completed'}
+    patchPayload.push(obj)
+    payload.id = props.actionSettings.selectedTask.id
+    payload.data = patchPayload
+    props.fetchTaskProperties && props.fetchTaskProperties(payload)
+    // eslint-disable-next-line
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  }
   if (props.actionSettings.isNotificationModalOpen && props.actionSettings.taskProperties !== null) {
-    // if (nextProps.componentTypeProperties.resources.length > 0) {
-    //   props.actionSettings.taskProperties.resources.forEach(function (data, index) {
-    //     console.log('data-------------', data)
-    //     let valueSet = _.result(_.find(data.properties, function (obj) {
-    //       return obj.id === propertyId
-    //     }), 'value_set')
-    //     console.log('valueset ----', valueSet)
-    //     if (valueSet) {
-    //       console.log(valueSet.values, 'inside if')
-    //       nextProps.setTemplateCategoryData(valueSet.values)
-    //     }
-    //   })
-    // }
+    if (props.actionSettings.taskProperties.length > 0) {
+      propertyList = []
+      props.actionSettings.taskProperties.forEach(function (data, index) {
+        if (data.properties.length > 0) {
+          data.properties.forEach(function (propertyData, pix) {
+            let value = ''
+            let propertyName = propertyData.name
+            if (propertyData.property_type.key === 'Boolean') {
+              value = propertyData.boolean_value
+            } else if (propertyData.property_type.key === 'Integer') {
+              value = propertyData.int_value
+            } else if (propertyData.property_type.key === 'Decimal') {
+              value = propertyData.float_value
+            } else if (propertyData.property_type.key === 'DateTime') {
+              value = propertyData.date_time_value ? moment(propertyData.date_time_value).format('DD MMM YYYY') : ''
+            } else if (propertyData.property_type.key === 'Text') {
+              value = propertyData.text_value
+            } else if (propertyData.property_type.key === 'List') {
+              value = propertyData.value_set_value ? propertyData.value_set_value.name : null
+            } else {
+              value = propertyData.other_value
+            }
+            propertyList.push(<div className='m-widget13__item'>
+              <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                {propertyName}:
+                </span>
+              <span className='m-widget13__text'>{value}</span>
+            </div>)
+          })
+        }
+      })
+    }
   }
   if (props.tasks && props.tasks !== '') {
     tasksList = props.tasks.resources.map(function (data, index) {
@@ -309,7 +346,7 @@ export default function Tasks (props) {
                     </button>
                   </div>
                   <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>Name</h4>
+                    <h4 className='modal-title' id='exampleModalLabel'>Name: {selectedTaskName}</h4>
                   </div>
                   <div className='modal-body'>
                     <div className='row m--margin-top-20'>
@@ -326,30 +363,7 @@ export default function Tasks (props) {
                                     <span className='m-list-search__result-item'>
                                       <div className='m-portlet__body'>
                                         <div className='m-widget13'>
-                                          <div className='m-widget13__item'>
-                                            <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
-                                                Agreement Owner:
-                                                </span>
-                                            <span className='m-widget13__text'>{'principleStatement'}</span>
-                                          </div>
-                                          <div className='m-widget13__item'>
-                                            <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                                Agreement Type:
-                                                </span>
-                                            <span className='m-widget13__text'>{'principleRationale'}</span>
-                                          </div>
-                                          <div className='m-widget13__item'>
-                                            <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                                Expiry Date:
-                                                </span>
-                                            <span className='m-widget13__text'>{'principleImplication'}</span>
-                                          </div>
-                                          <div className='m-widget13__item'>
-                                            <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                                Notification Period:
-                                                </span>
-                                            <span className='m-widget13__text'>{'principleType'}</span>
-                                          </div>
+                                          {propertyList}
                                         </div>
                                       </div>
                                     </span>
@@ -364,7 +378,7 @@ export default function Tasks (props) {
                   </div>
                   <div className='modal-footer'>
                     <button type='button' onClick={closeModal} className='btn btn-sm btn-info'>Close</button>
-                    <button type='button' onClick={closeModal} className='btn btn-sm btn-info'>Submit</button>
+                    <button type='button' onClick={submitTask} className='btn btn-sm btn-info'>Submit</button>
                   </div>
                 </div>
               </div>

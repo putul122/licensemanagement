@@ -222,9 +222,9 @@ return (
           <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Entitlement' onClick={''} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
             <i className='fa flaticon-plus fa-2x' />
           </a>&nbsp;&nbsp;
-          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={''} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+          {/* <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={''} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
             <i className='fa flaticon-multimedia-3 fa-2x' />
-          </a>
+          </a> */}
         </span>
         {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Entitlment</button>&nbsp;
         <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp; */}

@@ -277,14 +277,14 @@ export default function Agreements (props) {
   }
 
   if (props.agreements && props.agreements !== '') {
+    let todayDate = new Date()
     let sortedArray = _.orderBy(props.agreements.resources, ['name'], ['asc'])
     agreementsList = sortedArray.map(function (data, index) {
       return (
         <tr key={index}>
           <td><a href={'/agreements/' + data.id} >{data.name}</a></td>
           <td>{data.supplier}</td>
-          <td>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
-          <td>{''}</td>
+          <td className={moment(data.expiry_date).isSameOrBefore(todayDate) ? styles.danger : styles.success}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
           <td>{data.entitlement_count}</td>
           <td>{'R ' + formatAmount(data.cost)}</td>
         </tr>
@@ -728,7 +728,6 @@ export default function Agreements (props) {
                                 <th className=''><h5># Agreements</h5></th>
                                 <th className=''><h5>Supplier</h5></th>
                                 <th className=''><h5>Expiry Date</h5></th>
-                                <th className=''><h5>Type</h5></th>
                                 <th className=''><h5># Entitlements</h5></th>
                                 <th className=''><h5>Cost</h5></th>
                               </tr>
