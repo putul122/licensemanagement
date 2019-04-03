@@ -6,6 +6,23 @@ import debounce from 'lodash/debounce'
 import styles from './tasksComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
+const customStyles = {
+  overlay: {
+    zIndex: 1000
+  },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    border: 'none',
+    background: 'none',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    zIndex: 2
+  }
+}
 
 export default function Tasks (props) {
   console.log('props === task comp', props)
@@ -323,7 +340,7 @@ export default function Tasks (props) {
         <div>
           <ReactModal isOpen={props.actionSettings.isNotificationModalOpen}
             onRequestClose={closeModal}
-            >
+            style={customStyles}>
             <div className={''}>
               <div className='modal-dialog modal-lg'>
                 <div className='modal-content'>
@@ -365,8 +382,10 @@ export default function Tasks (props) {
                     </div>
                   </div>
                   <div className='modal-footer'>
-                    <button type='button' onClick={closeModal} className='btn btn-sm btn-info'>Close</button>
-                    <button type='button' onClick={submitTask} className='btn btn-sm btn-info'>Submit</button>
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Close</button>
+                      <button type='button' onClick={submitTask} className='m-btn btn btn-secondary'>Submit</button>
+                    </div>
                   </div>
                 </div>
               </div>
