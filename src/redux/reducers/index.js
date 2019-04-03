@@ -24,6 +24,7 @@ import dataModelReducer from './dataModelReducer/dataModelReducerReducer'
 import businessUnitsReducer from './businessUnitsReducer/businessUnitsReducerReducer'
 import viewBusinessUnitsReducer from './viewBusinessUnitsReducer/viewBusinessUnitsReducerReducer'
 import searchReducer from './searchReducer/searchReducerReducer'
+import tasksReducer from './tasksReducer/tasksReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -50,5 +51,6 @@ export default combineReducers({
     dataModelReducer,
     businessUnitsReducer,
     viewBusinessUnitsReducer,
-    searchReducer
+    searchReducer,
+    tasksReducer
 })

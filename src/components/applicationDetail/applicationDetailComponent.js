@@ -322,9 +322,10 @@ export default function Applicationview (props) {
           return (
             <tr key={index}>
               <td>{data.entitlement.supplier}</td>
-              <td>{data.entitlement.name}</td>
+              <td><a href={'/entitlements/' + data.id}>{data.entitlement.name}</a></td>
               <td>{data.entitlement.part_number}</td>
               <td>{data.entitlement.purchased}</td>
+              <td className={(data.entitlement.purchased < data.entitlement.consumed) ? styles.danger : styles.success}>{data.entitlement.purchased}</td>
               <td>{data.entitlement.consumed}</td>
               <td>{data.entitlement.reserved}</td>
               <td>{'R ' + formatAmount(data.entitlement.cost)}</td>

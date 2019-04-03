@@ -62,6 +62,7 @@ export default compose(
     //   eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
+        'details': true,
         'search': '',
         'page_size': 10,
         'page': 1

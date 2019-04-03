@@ -51,6 +51,7 @@ export function mapStateToProps (state, props) {
     connectionData: state.agreementDetailReducer.connectionData,
     dropdownData: state.agreementDetailReducer.dropdownData,
     modelPerspective: state.agreementDetailReducer.modelPerspective,
+    startDate: state.agreementDetailReducer.startDate,
     updateModelPerspectiveResponse: state.agreementDetailReducer.updateModelPerspectiveResponse
   }
 }
@@ -107,7 +108,8 @@ export const propsMapping: Callbacks = {
   setAddSettings: actionCreators.setAddSettings,
   fetchMetaModelPrespective: sagaActions.modelActions.fetchMetaModelPrespective,
   fetchModelPerspective: sagaActions.modelActions.fetchModelPerspective,
-  fetchDropdownData: sagaActions.basicActions.fetchDropdownData
+  fetchDropdownData: sagaActions.basicActions.fetchDropdownData,
+  setStartDate: actionCreators.setStartDate
 }
 
 // If you want to use the function mapping

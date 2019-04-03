@@ -54,6 +54,7 @@ const SET_PURCHASE_ORDER_SETTING = 'AgreementDetailReducer/SET_PURCHASE_ORDER_SE
 const SET_ADD_SETTINGS = 'AgreementDetailReducer/SET_ADD_SETTINGS'
 const SET_AVAILABLE_ACTION = 'AgreementDetailReducer/SET_AVAILABLE_ACTION'
 const SET_CONNECTION_DATA = 'AgreementDetailReducer/SET_CONNECTION_DATA'
+const SET_START_DATE = 'AgreementDetailReducer/SET_START_DATE'
 
 export const actions = {
     FETCH_AGREEMENT_BY_ID_SUCCESS,
@@ -95,7 +96,8 @@ export const actions = {
     SET_PURCHASE_ORDER_SETTING,
     SET_ADD_SETTINGS,
     SET_AVAILABLE_ACTION,
-    SET_CONNECTION_DATA
+    SET_CONNECTION_DATA,
+    SET_START_DATE
   }
 
 export const actionCreators = {
@@ -123,7 +125,8 @@ export const actionCreators = {
     setPurchaseOrderSettings: createAction(SET_PURCHASE_ORDER_SETTING),
     setAddSettings: createAction(SET_ADD_SETTINGS),
     setAvailableAction: createAction(SET_AVAILABLE_ACTION),
-    setConnectionData: createAction(SET_CONNECTION_DATA)
+    setConnectionData: createAction(SET_CONNECTION_DATA),
+    setStartDate: createAction(SET_START_DATE)
   }
 
 export const initialState = {
@@ -233,7 +236,8 @@ export const initialState = {
     toProcessModelPerspectives: false
   },
   connectionData: '',
-  dropdownData: ''
+  dropdownData: '',
+  startDate: ''
 }
 
 export default handleActions(
@@ -452,6 +456,10 @@ export default handleActions(
       ...state,
       modelPerspective: action.payload,
       availableAction: {...state.availableAction, 'toProcessModelPerspectives': true}
+    }),
+    [SET_START_DATE]: (state, action) => ({
+      ...state,
+      startDate: action.payload
     })
   },
   initialState

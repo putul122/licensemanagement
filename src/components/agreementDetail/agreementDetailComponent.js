@@ -108,7 +108,7 @@ export default function AgreementDetail (props) {
   // let conditionSelectedDueDate = ''
   let conditionNotification = ''
   let periodOptions = ''
-  let DateInputBox
+  // let DateInputBox
   let ConditionNameInputBox
   let ConditionDescriptionInputBox
   let agreementPurchaseOrderList = ''
@@ -1210,13 +1210,13 @@ export default function AgreementDetail (props) {
         agreementEntitlementList = props.agreementEntitlements.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
-              <td>{data.name}</td>
+              <td><a href={'/entitlements/' + data.id}>{data.name}</a></td>
               <td>{data.part_number}</td>
-              <td>{data.purchased}</td>
+              <td className={(data.purchased < data.consumed) ? styles.danger : styles.success}>{data.purchased}</td>
               <td>{data.consumed}</td>
               <td>{data.reserved}</td>
-              <td>{'R ' + formatAmount(data.cost)}</td>
               <td>{data.bu_allocated}</td>
+              <td>{'R ' + formatAmount(data.cost)}</td>
             </tr>
           )
         })
@@ -1942,6 +1942,12 @@ let handleNotificationPeriodSelect = function (newValue: any, actionMeta: any) {
     props.setAddConditionSettings(addConditionActionSettings)
   }
 }
+let handleDateSelect = function (value) {
+  let startDate = value.format('DD MMM YYYY')
+  console.log(startDate)
+  props.setStartDate(startDate)
+  console.log(startDate)
+}
 let addAgreementCondition = function (event) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -1951,7 +1957,7 @@ let addAgreementCondition = function (event) {
     obj.op = 'add'
     obj.path = '/-'
     obj.value = {
-      due_date: DateInputBox.value,
+      due_date: props.startDate,
       notification_period_id: props.addConditionActionSettings.notificationPeriodSelected.id,
       name: ConditionNameInputBox.value,
       description: ConditionDescriptionInputBox.value
@@ -2292,13 +2298,13 @@ let editAgreeementCondition = function (event) {
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_2'>Bill of Material</a>
             </li>
             <li className='nav-item'>
-              <a className='nav-link' data-toggle='tab' href='#m_tabs_2_3'>Relationships</a>
-            </li>
-            <li className='nav-item'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_4'>Conditions</a>
             </li>
             <li className='nav-item'>
               <a className='nav-link' data-toggle='tab' href='#m_tabs_2_5'>PO</a>
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link' data-toggle='tab' href='#m_tabs_2_3'>Relationships</a>
             </li>
           </ul>
           <div className='tab-content'>
@@ -2325,8 +2331,8 @@ let editAgreeementCondition = function (event) {
                           <th className=''><h5>Purchased</h5></th>
                           <th className=''><h5>Consumed</h5></th>
                           <th className=''><h5>Project Reserved</h5></th>
-                          <th className=''><h5>Cost</h5></th>
                           <th className=''><h5>BU Allocated</h5></th>
+                          <th className=''><h5>Cost</h5></th>
                           {/* <th className=''><h5>Total Cost</h5></th> */}
                         </tr>
                       </thead>
@@ -2405,7 +2411,7 @@ let editAgreeementCondition = function (event) {
             <div className='tab-pane' id='m_tabs_2_5' role='tabpanel'>
               <div className='col-md-12 m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll'>
                 <div className='m-portlet'>
-                  <div className='m-portlet__body'>
+                  <div className='m-portlet__body' style={{height: '200px', overflowY: 'auto'}}>
                     <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                       <thead>
                         <tr role='row'>
@@ -2739,8 +2745,15 @@ let editAgreeementCondition = function (event) {
                       </div>
                       <div className='form-group row'>
                         <div className='col-4'><label htmlFor='text' className='form-control-label'>Due Date</label></div>
+                        <div className='col-8'>
+                          <DatePicker
+                            className='input-sm form-control m-input'
+                            value={props.startDate}
+                            dateFormat='DD MMM YYYY'
+                            onChange={(date) => { handleDateSelect(date) }}
+                          />
+                        </div>
                         {/* <div className='col-8'><input type='date' className='form-control' ref={input => (DateInputBox = input)} autoComplete='off' required onChange={(event) => { addDate(event.target.value) }} /></div> */}
-                        <div className='col-8'><input type='date' className='form-control' ref={input => (DateInputBox = input)} autoComplete='off' required /></div>
                       </div>
                       <div className='form-group row'>
                         <div className='col-4'><label htmlFor='SelectNotificationPeriod' className='col-form-label'>Notification Period</label></div>
@@ -2930,7 +2943,7 @@ let editAgreeementCondition = function (event) {
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
-                  <div className='modal-body'>
+                  <div className='modal-body' style={{height: '350px', overflowY: 'scroll'}}>
                     <div className='col-md-12'>
                       <div className='form-group row'>
                         <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
@@ -3054,5 +3067,6 @@ let editAgreeementCondition = function (event) {
       agreementPurchaseOrders: PropTypes.any,
       notificationPeriodData: PropTypes.any,
       addSettings: PropTypes.any,
+      startDate: PropTypes.any,
       connectionData: PropTypes.any
   }

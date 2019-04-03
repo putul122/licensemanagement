@@ -178,6 +178,15 @@ export default class Root extends Component {
             }
             resolve(require('../sheetsPage/sheetsPageRoute').default)
             break
+          case 'tasks':
+            if (module.hot) {
+              module.hot.accept('../tasksPage/tasksPageRoute', () => {
+                        require('../tasksPage/tasksPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../tasksPage/tasksPageRoute').default)
+            break
           case 'businessUnits':
             if (module.hot) {
               module.hot.accept('../businessUnitsPage/businessUnitsPageRoute', () => {
@@ -254,6 +263,7 @@ export default class Root extends Component {
             <Route exact path='/business-units' component={(props) => this.loadView('businessUnits', props)} />
             <Route exact path='/business-units/:id' component={(props) => this.loadView('viewBusinessUnits', props)} />
             <Route exact path='/searchAll' component={(props) => this.loadView('search', props)} />
+            <Route exact path='/tasks' component={(props) => this.loadView('tasks', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

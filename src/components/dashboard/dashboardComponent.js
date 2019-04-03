@@ -426,12 +426,11 @@ export default function Dashboard (props) {
           EntitlementContent.push(
             <span key={index++}>
               <div className='row'>
-                <div className='col-sm-4' style={{'marginTop': '6px'}}><p style={{'width': '165px', 'fontSize': '0.7vw'}}>{supplier || 'No Supplier'}</p></div>
-                <div className='col-sm-8 pull-left'>
-                  <div className='m--space-10' />
-                  <div className='progress'>
-                    <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100'><div style={{'fontSize': '12px'}}>{formatAmount(liability)}%</div></div>
-                    <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' ><div style={{'fontSize': '12px'}}>{formatAmount(overspend)}%</div></div>
+                <div className='col-sm-3' style={{'marginTop': '6px'}}><p style={{'width': '165px', 'fontSize': '0.7vw'}}>{supplier || 'No Supplier'}</p></div>
+                <div className='col-sm-9 pull-left'>
+                  <div className='progress' style={{height: '3em'}}>
+                    <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100'><div style={{'fontSize': '15px'}}>{formatAmount(liability)}%</div></div>
+                    <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' ><div style={{'fontSize': '15px'}}>{formatAmount(overspend)}%</div></div>
                   </div>
                   <div className='m--space-10' />
                 </div>
@@ -567,7 +566,7 @@ export default function Dashboard (props) {
                         <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
                       </div>
                     </div>
-                    <div className='m-widget17__stats'>
+                    <div className='m-widget17__stats' style={{'width': '97%'}}>
                       <div className='m-widget17__items m-widget17__items-col2'>
                         <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                           <span className='m-widget17__icon'>
@@ -677,7 +676,7 @@ export default function Dashboard (props) {
                         <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
                       </div>
                     </div>
-                    <div className='m-widget17__stats'>
+                    <div className='m-widget17__stats' style={{'width': '97%'}}>
                       <div className='m-widget17__items m-widget17__items-col2'>
                         <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                           <span className='m-widget17__icon'>
@@ -741,7 +740,7 @@ export default function Dashboard (props) {
                         <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
                       </div>
                     </div>
-                    <div className='m-widget17__stats'>
+                    <div className='m-widget17__stats' style={{'width': '97%'}}>
                       <div className='m-widget17__items m-widget17__items-col2'>
                         <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                           <span className='m-widget17__icon'>

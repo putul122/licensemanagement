@@ -137,11 +137,12 @@ export default function Entitlementlists (props) {
         <tr key={index}>
           <td><a href={'/entitlements/' + data.id} >{data.name}</a></td>
           <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
-          <td>{data.purchased}</td>
+          <td>{data.part_number}</td>
+          <td className={(data.purchased < data.consumed) ? styles.danger : styles.success}>{data.purchased}</td>
           <td>{data.consumed}</td>
+          <td>{data.reserved}</td>
+          <td>{data.bu_allocated}</td>
           <td>{'R ' + formatAmount(data.cost)}</td>
-          <td>{'R ' + formatAmount(data.total_cost)}</td>
-          {/* <td>{data.cost}</td> */}
         </tr>
       )
     })
@@ -738,10 +739,12 @@ return (
                           <tr role='row'>
                             <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
                             <th className='' style={{width: '58.25px'}}><h5>Supplier</h5></th>
+                            <th className='' style={{width: '58.25px'}}><h5>Part Number</h5></th>
                             <th className='' style={{width: '108.25px'}}><h5>Purchased</h5></th>
                             <th className='' style={{width: '137.25px'}}><h5>Consumed</h5></th>
-                            <th className='' style={{width: '171.25px'}}><h5>Cost Per Unit</h5></th>
-                            <th className='' style={{width: '132.25px'}}><h5>Total cost</h5></th>
+                            <th className='' style={{width: '171.25px'}}><h5>Project Reserved</h5></th>
+                            <th className='' style={{width: '132.25px'}}><h5>BU Allocated</h5></th>
+                            <th className='' style={{width: '132.25px'}}><h5>Cost</h5></th>
                           </tr>
                         </thead>
                         <tbody>

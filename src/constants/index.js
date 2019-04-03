@@ -172,7 +172,8 @@ const api = {
   addSoftware: 'https://ecoconductor-dev-api-model.azurewebsites.net/components',
   deleteSoftware: function (componentId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
-  }
+  },
+  getTasks: 'https://notification-eco-dev.ecoconductor.com/workflow_tasks'
 }
 
 export default api
