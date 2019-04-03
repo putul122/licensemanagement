@@ -29,6 +29,6 @@ class TasksPageRoute extends React.Component {
   </div>
 		)
 	}
-	props: {}
+	// props: {}
 }
 export default TasksPageRoute
