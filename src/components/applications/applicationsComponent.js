@@ -321,13 +321,14 @@ export default function Applicationlists (props) {
           faClass = 'fa fa-minus'
           if (props.applicationEntitlements.resources.length > 0) {
             childList = props.applicationEntitlements.resources.map(function (childData, idx) {
+              let cost = childData.license_count * childData.license_unit_cost
               return (
                 <tr key={'child' + idx}>
                   <td>{''}</td>
                   <td>{childData.entitlement.name}</td>
                   <td>{''}</td>
                   <td>{''}</td>
-                  <td>{childData.entitlement.cost ? 'R ' + formatAmount(childData.entitlement.cost) : ''}</td>
+                  <td>{childData.entitlement.cost ? 'R ' + formatAmount(cost) : ''}</td>
                 </tr>
               )
             })

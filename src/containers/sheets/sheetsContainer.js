@@ -68,19 +68,22 @@ export default compose(
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let perspectives = appPackage.resources[0].perspectives
       let exportAllPayload = ''
-      perspectives = perspectives.map(function (data, index) {
-        data.label = data.key
-        exportAllPayload = exportAllPayload + 'meta_model_perspective_id=' + data.perspective
-        if (perspectives.length - 1 !== index) {
-          exportAllPayload = exportAllPayload + '&'
+      let perspectivesData = []
+      perspectives.forEach(function (data, index) {
+        if (data.role_key === null && data.view_key === null) {
+          data.label = data.key
+          exportAllPayload = exportAllPayload + 'meta_model_perspective_id=' + data.perspective
+          if (perspectives.length - 1 !== index) {
+            exportAllPayload = exportAllPayload + '&'
+          }
+          perspectivesData.push(data)
         }
-        return data
       })
       let modalSettings = {...this.props.modalSettings, 'exportAllPayload': exportAllPayload}
       this.props.setModalSetting(modalSettings)
       // this.props.fetchAllModelPrespectives(payload)
       // console.log('perspectives', perspectives)
-      this.props.setPerspectivesData(perspectives)
+      this.props.setPerspectivesData(perspectivesData)
     },
     componentDidMount: function () {
       // eslint-disable-next-line

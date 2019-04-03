@@ -369,7 +369,14 @@ export default function Sheets (props) {
             } else if (metaModelPrespective.standard_property === null && metaModelPrespective.type_property === null) { // Connection Property
               data.op = 'add'
               valueType = 'value/-'
-              data.value = data.value.split(',')
+              let valueArray = data.value.split(',')
+              let valueData = []
+              valueArray.forEach(function (targetData, tid) {
+                let obj = {}
+                obj.target_name = targetData
+                valueData.push(obj)
+              })
+              data.value = valueData
             } else if (metaModelPrespective.type_property !== null) { // below are Customer Property
               let propertyType = metaModelPrespective.type_property.property_type.key
               if (propertyType === 'Integer') {
@@ -514,7 +521,11 @@ export default function Sheets (props) {
       let modelPrespectivesPayload = {'meta_model_perspective_id': perspectiveId}
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      props.fetchMetaModelPrespective(perspectiveId)
+      // props.fetchMetaModelPrespective(perspectiveId)
+      let metaPayload = {}
+      metaPayload.id = perspectiveId
+      metaPayload.data = {} // {'view_key': perspectiveObj.view_key}
+      props.fetchMetaModelPrespective && props.fetchMetaModelPrespective(metaPayload)
       props.fetchModelPrespectives(modelPrespectivesPayload)
       let modalSettings = {...props.modalSettings, 'selectedMetaModel': newValue, 'apiData': []}
       props.setModalSetting(modalSettings)
@@ -726,7 +737,7 @@ return (
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
                       <div className='row' style={{'marginBottom': '20px'}}>
-                        <div className='col-sm-12 col-md-6'>
+                        <div className='col-sm-12 col-md-5'>
                           <div className='' id='' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Select</h5>
                             <Select
@@ -741,15 +752,15 @@ return (
                             />
                           </div>
                         </div>
-                        <div className='col-sm-12 col-md-6'>
-                          <div className='row'>
-                            <div className='col-6'>
+                        <div className='col-sm-12 col-md-7'>
+                          <div className='row clearfix'>
+                            <div className='col-6 pull-right'>
                               <span className={wrapperClass}>
                                 <button type='button' onClick={openExportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='flaticon-folder-2' />&nbsp;&nbsp;Export</button>&nbsp;&nbsp;&nbsp;&nbsp;
                                 <button type='button' onClick={openImportModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info ' + disabledClass}><i className='flaticon-folder-3' />&nbsp;&nbsp;Import</button>
                               </span>
                             </div>
-                            <div className='col-6'>
+                            <div className='col-6 pull-left'>
                               <button type='button' onClick={openExportAllModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info '}><i className='flaticon-download' />&nbsp;&nbsp;Export All</button>&nbsp;&nbsp;&nbsp;&nbsp;
                               <button type='button' onClick={openImportAllModal} className={'btn btn-secondary m-btn m-btn--pill m-btn--label-info '}><i className='flaticon-up-arrow' />&nbsp;&nbsp;Import All</button>
                             </div>
