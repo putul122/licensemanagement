@@ -4,13 +4,27 @@ import _ from 'lodash'
 import moment from 'moment'
 import debounce from 'lodash/debounce'
 import styles from './tasksComponent.scss'
+import ReactModal from 'react-modal'
+ReactModal.setAppElement('#root')
+const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      border: 'none',
+      background: 'none',
+      transform: 'translate(-50%, -50%)',
+      width: '100%'
+    }
+}
 
 export default function Tasks (props) {
-  console.log(props.tasks)
+  console.log('props === task comp', props)
   let searchTextBox = ''
   let totalNoPages
   let perPage = props.perPage
-  console.log(perPage)
   let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
@@ -19,14 +33,49 @@ export default function Tasks (props) {
   let paginationLimit = 6
   let pageArray = []
   let listPage = []
-  console.log(searchTextBox)
-
+  let openModal = function (data) {
+    console.log('data', data)
+    console.log(props, props.actionSettings)
+    let actionSettings = {...props.actionSettings,
+      'isNotificationModalOpen': true,
+      'selectedTask': data,
+      'taskProperties': null
+    }
+    console.log(actionSettings)
+    props.setActionSettings(actionSettings)
+    let payload = {id: data.workflow.context.id}
+    props.fetchTaskProperties && props.fetchTaskProperties(payload)
+  }
+  let closeModal = function (event) {
+    event.preventDefault()
+    let actionSettings = {...props.actionSettings,
+      'isNotificationModalOpen': false,
+      'selectedTask': null,
+      'taskProperties': null
+    }
+    props.setActionSettings(actionSettings)
+  }
+  if (props.actionSettings.isNotificationModalOpen && props.actionSettings.taskProperties !== null) {
+    // if (nextProps.componentTypeProperties.resources.length > 0) {
+    //   props.actionSettings.taskProperties.resources.forEach(function (data, index) {
+    //     console.log('data-------------', data)
+    //     let valueSet = _.result(_.find(data.properties, function (obj) {
+    //       return obj.id === propertyId
+    //     }), 'value_set')
+    //     console.log('valueset ----', valueSet)
+    //     if (valueSet) {
+    //       console.log(valueSet.values, 'inside if')
+    //       nextProps.setTemplateCategoryData(valueSet.values)
+    //     }
+    //   })
+    // }
+  }
   if (props.tasks && props.tasks !== '') {
     tasksList = props.tasks.resources.map(function (data, index) {
       return (
         <tr key={index}>
-          <td>{data.task_type.id}</td>
-          <td>{data.task_type.name}</td>
+          <td><a onClick={(event) => { event.preventDefault(); openModal(data) }} href='javascript:void(0);'>{data.id}</a></td>
+          <td>{data.name}</td>
           <td>{data.workflow.context.name}</td>
           <td>{data.workflow.name}</td>
           <td>{data.assigned_to.name}</td>
@@ -59,28 +108,6 @@ export default function Tasks (props) {
       if (found.length > 0) { return group }
     })
   }
-  // let handleInputChange = debounce((e) => {
-  //   console.log(e)
-  //   const value = searchTextBox.value
-  //   // agreementsList = ''
-  //   let payload = {
-  //     'search': value || '',
-  //     'page_size': props.perPage,
-  //     'page': currentPage
-  //   }
-  //   // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-  //     props.fetchTasks(payload)
-  //     // eslint-disable-next-line
-  //     mApp && mApp.block('#tasksList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-  //     // eslint-disable-next-line
-  //     // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-  //     // props.setComponentTypeLoading(true)
-  //   // }
-  //   listPage = _.filter(pageArray, function (group) {
-  //     let found = _.filter(group, {'number': currentPage})
-  //     if (found.length > 0) { return group }
-  //   })
-  // }, 500)
   let handleInputChange = debounce((e) => {
     if (searchTextBox) {
       props.setCurrentPage(1)
@@ -235,22 +262,6 @@ export default function Tasks (props) {
                             </tr>
                           </thead>
                           <tbody>
-                            {/* <tr role='row'>
-                              <td className=''><a href='/tasks/1'>1</a></td>
-                              <td className=''>Approve Review</td>
-                              <td className=''>Architecture Review: C12345 Review</td>
-                              <td className=''>HLD Review</td>
-                              <td className=''>Naas Routenbach</td>
-                              <td className=''>2018-11-06</td>
-                            </tr>
-                            <tr role='row'>
-                              <td className=''><a href='/tasks/1'>2</a></td>
-                              <td className=''>Approve Ownership</td>
-                              <td className=''>Application: IVR</td>
-                              <td className=''>HLD Review</td>
-                              <td className=''>Koos Coetzee</td>
-                              <td className=''>2018-11-06</td>
-                            </tr> */}
                             {tasksList}
                           </tbody>
                         </table>
@@ -284,14 +295,88 @@ export default function Tasks (props) {
             </div>
           </div>
         </div>
+        <div>
+          <ReactModal isOpen={props.actionSettings.isNotificationModalOpen}
+            onRequestClose={closeModal}
+            style={customStyles}>
+            <div className={''}>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Due Date Notification</h4>
+                    <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Name</h4>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='row m--margin-top-20'>
+                      <div className='col-xl-12'>
+                        <div className='m-section m-section--last'>
+                          <div className='m-section__content'>
+                            <div className='m-demo'>
+                              <div className='m-demo__preview'>
+                                <div className='m-list-search'>
+                                  <div className='m-list-search__results'>
+                                    <span className='m-list-search__result-category m-list-search__result-category--first'>
+                                      Properties
+                                    </span>
+                                    <span className='m-list-search__result-item'>
+                                      <div className='m-portlet__body'>
+                                        <div className='m-widget13'>
+                                          <div className='m-widget13__item'>
+                                            <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
+                                                Agreement Owner:
+                                                </span>
+                                            <span className='m-widget13__text'>{'principleStatement'}</span>
+                                          </div>
+                                          <div className='m-widget13__item'>
+                                            <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                                Agreement Type:
+                                                </span>
+                                            <span className='m-widget13__text'>{'principleRationale'}</span>
+                                          </div>
+                                          <div className='m-widget13__item'>
+                                            <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                                Expiry Date:
+                                                </span>
+                                            <span className='m-widget13__text'>{'principleImplication'}</span>
+                                          </div>
+                                          <div className='m-widget13__item'>
+                                            <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                                Notification Period:
+                                                </span>
+                                            <span className='m-widget13__text'>{'principleType'}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeModal} className='btn btn-sm btn-info'>Close</button>
+                    <button type='button' onClick={closeModal} className='btn btn-sm btn-info'>Submit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+        </div>
       </div>
       )
     }
     Tasks.propTypes = {
-    // agreements: PropTypes.any,
-    // agreementsSummary: PropTypes.any,
-    // currentPage: PropTypes.any,
     currentPage: PropTypes.any,
     tasks: PropTypes.any,
-    perPage: PropTypes.any
+    perPage: PropTypes.any,
+    actionSettings: PropTypes.any
 }

@@ -1,24 +1,26 @@
 import {createAction, handleActions} from 'redux-actions'
 import {
-  FETCH_TASKS_SUCCESS
+  FETCH_TASKS_SUCCESS,
+  // UPDATE_TASK_SUCCESS,
+  FETCH_TASK_PROPERTIES_SUCCESS
 } from '../../sagas/task/taskSaga'
 // Name Spaced Action Types
-const SET_CURRENT_PAGE = 'templatesReducer/SET_CURRENT_PAGE'
-const SET_ADD_TEMPLATE_SETTINGS = 'templatesReducer/SET_ADD_TEMPLATE_SETTINGS'
-const RESET_RESPONSE = 'templatesReducer/RESET_RESPONSE'
-const SET_PER_PAGE = 'templatesReducer/SET_PER_PAGE'
+const SET_CURRENT_PAGE = 'tasksReducer/SET_CURRENT_PAGE'
+const SET_ACTION_SETTINGS = 'tasksReducer/SET_ACTION_SETTINGS'
+const RESET_RESPONSE = 'tasksReducer/RESET_RESPONSE'
+const SET_PER_PAGE = 'tasksReducer/SET_PER_PAGE'
 
 export const actions = {
   FETCH_TASKS_SUCCESS,
   SET_CURRENT_PAGE,
-  SET_ADD_TEMPLATE_SETTINGS,
+  SET_ACTION_SETTINGS,
   RESET_RESPONSE,
   SET_PER_PAGE
 }
 
 export const actionCreators = {
   setCurrentPage: createAction(SET_CURRENT_PAGE),
-  setAddTemplateSettings: createAction(SET_ADD_TEMPLATE_SETTINGS),
+  setActionSettings: createAction(SET_ACTION_SETTINGS),
   resetResponse: createAction(RESET_RESPONSE),
   setPerPage: createAction(SET_PER_PAGE)
 }
@@ -26,8 +28,13 @@ export const actionCreators = {
 export const initialState = {
   tasks: '',
   currentPage: 1,
-  perPage: 10
-  // createTemplateResponse: ''
+  perPage: 10,
+  actionSettings: {
+    isNotificationModalOpen: false,
+    selectedTask: null,
+    taskProperties: null
+  },
+  taskProperties: ''
 }
 
 export default handleActions(
@@ -46,7 +53,15 @@ export default handleActions(
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
-      createTemplateResponse: ''
+      taskProperties: ''
+    }),
+    [FETCH_TASK_PROPERTIES_SUCCESS]: (state, action) => ({
+      ...state,
+      taskProperties: action.payload
+    }),
+    [SET_ACTION_SETTINGS]: (state, action) => ({
+      ...state,
+      actionSettings: action.payload
     })
   },
   initialState
