@@ -1,7 +1,7 @@
 import {createAction, handleActions} from 'redux-actions'
 import {
   FETCH_TASKS_SUCCESS,
-  // UPDATE_TASK_SUCCESS,
+  UPDATE_TASK_SUCCESS,
   FETCH_TASK_PROPERTIES_SUCCESS
 } from '../../sagas/task/taskSaga'
 // Name Spaced Action Types
@@ -34,7 +34,8 @@ export const initialState = {
     selectedTask: null,
     taskProperties: null
   },
-  taskProperties: ''
+  taskProperties: '',
+  updateTaskResponse: ''
 }
 
 export default handleActions(
@@ -53,7 +54,8 @@ export default handleActions(
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
-      taskProperties: ''
+      taskProperties: '',
+      updateTaskResponse: ''
     }),
     [FETCH_TASK_PROPERTIES_SUCCESS]: (state, action) => ({
       ...state,
@@ -62,6 +64,10 @@ export default handleActions(
     [SET_ACTION_SETTINGS]: (state, action) => ({
       ...state,
       actionSettings: action.payload
+    }),
+    [UPDATE_TASK_SUCCESS]: (state, action) => ({
+      ...state,
+      updateTaskResponse: action.payload
     })
   },
   initialState

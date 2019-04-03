@@ -6,19 +6,6 @@ import debounce from 'lodash/debounce'
 import styles from './tasksComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
-const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      border: 'none',
-      background: 'none',
-      transform: 'translate(-50%, -50%)',
-      width: '100%'
-    }
-}
 
 export default function Tasks (props) {
   console.log('props === task comp', props)
@@ -69,9 +56,10 @@ export default function Tasks (props) {
     patchPayload.push(obj)
     payload.id = props.actionSettings.selectedTask.id
     payload.data = patchPayload
-    props.fetchTaskProperties && props.fetchTaskProperties(payload)
+    console.log('payload', payload)
+    props.updateTask && props.updateTask(payload)
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
   }
   if (props.actionSettings.isNotificationModalOpen && props.actionSettings.taskProperties !== null) {
     if (props.actionSettings.taskProperties.length > 0) {
@@ -335,7 +323,7 @@ export default function Tasks (props) {
         <div>
           <ReactModal isOpen={props.actionSettings.isNotificationModalOpen}
             onRequestClose={closeModal}
-            style={customStyles}>
+            >
             <div className={''}>
               <div className='modal-dialog modal-lg'>
                 <div className='modal-content'>
@@ -348,7 +336,7 @@ export default function Tasks (props) {
                   <div className='modal-header'>
                     <h4 className='modal-title' id='exampleModalLabel'>Name: {selectedTaskName}</h4>
                   </div>
-                  <div className='modal-body'>
+                  <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}} >
                     <div className='row m--margin-top-20'>
                       <div className='col-xl-12'>
                         <div className='m-section m-section--last'>

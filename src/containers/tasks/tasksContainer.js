@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     currentPage: state.tasksReducer.currentPage,
     perPage: state.tasksReducer.perPage,
     taskProperties: state.tasksReducer.taskProperties,
-    actionSettings: state.tasksReducer.actionSettings
+    actionSettings: state.tasksReducer.actionSettings,
+    updateTaskResponse: state.tasksReducer.updateTaskResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -76,7 +77,6 @@ export default compose(
         }
       }
       if (nextProps.taskProperties && nextProps.taskProperties !== '') {
-        console.log('-------------->task properties', nextProps.taskProperties)
         if (nextProps.taskProperties.error_code === null) {
           // eslint-disable-next-line
           mApp && mApp.unblockPage()
@@ -94,16 +94,33 @@ export default compose(
         mApp && mApp.unblock('#tasksList')
         // mApp && mApp.unblockPage()
       }
-      // if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-      //   // eslint-disable-next-line
-      //   mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      //   let payload = {
-      //     'search': '',
-      //     'page_size': nextProps.perPage,
-      //     'page': 1
-      //   }
-      //   this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // }
+      if (nextProps.updateTaskResponse && nextProps.updateTaskResponse !== '') {
+        if (nextProps.updateTaskResponse.error_code === null) {
+          // eslint-disable-next-line
+          mApp && mApp.unblockPage()
+          let actionSettings = {...nextProps.actionSettings}
+          actionSettings.isNotificationModalOpen = false
+          actionSettings.selectedTask = null
+          actionSettings.taskProperties = null
+          nextProps.setActionSettings(actionSettings)
+          // eslint-disable-next-line
+          toastr.success('Task submitted successfully.')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateTaskResponse.error_message, nextProps.updateTaskResponse.error_code)
+        }
+        nextProps.resetResponse()
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#tasksList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchTasks && this.props.fetchTasks(payload)
+      }
     }
   })
 )(Tasks)
