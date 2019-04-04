@@ -19,6 +19,7 @@ export function mapStateToProps (state, props) {
     applicationRelationshipData: state.applicationDetailReducer.applicationRelationshipData,
     responseProcessed: state.applicationDetailReducer.responseProcessed,
     entitlements: state.applicationDetailReducer.entitlements,
+    allEntitlements: state.applicationDetailReducer.allEntitlements,
     suppliers: state.applicationDetailReducer.suppliers,
     agreements: state.applicationDetailReducer.agreements,
     softwares: state.applicationDetailReducer.softwares,
@@ -47,6 +48,7 @@ export const propsMapping: Callbacks = {
   setApplicationRelationship: applicationDetailActionCreators.setApplicationRelationship,
   setResponseProcessed: applicationDetailActionCreators.setResponseProcessed,
   fetchEntitlementsBySupplierAgreement: sagaActions.entitlementActions.fetchEntitlementsBySupplierAgreement,
+  fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
   fetchSoftwares: sagaActions.softwareActions.fetchSoftwares,
   fetchAgreements: sagaActions.agreementActions.fetchAgreements,
   fetchSuppliers: sagaActions.supplierActions.fetchSuppliers,
@@ -93,6 +95,7 @@ export default compose(
       // this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
       // this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
       this.props.fetchSoftwares && this.props.fetchSoftwares({})
+      this.props.fetchEntitlements && this.props.fetchEntitlements({})
       this.props.fetchEntitlementsBySupplierAgreement && this.props.fetchEntitlementsBySupplierAgreement({})
       this.props.fetchAgreements && this.props.fetchAgreements({})
       this.props.fetchSuppliers && this.props.fetchSuppliers({})

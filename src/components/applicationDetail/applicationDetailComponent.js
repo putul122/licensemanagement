@@ -76,7 +76,7 @@ export default function Applicationview (props) {
   }
   let handleSupplierSelect = function (newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
-      let linkActionSettings = {...props.linkActionSettings, 'supplier': newValue}
+      let linkActionSettings = {...props.linkActionSettings, 'supplier': newValue, 'agreement': null, 'entitlement': null}
       props.setLinkActionSettings(linkActionSettings)
     }
     if (actionMeta.action === 'clear') {
@@ -142,26 +142,26 @@ export default function Applicationview (props) {
       }
       dataPayload.push(obj)
     }
-    if (props.linkActionSettings.agreement) {
-      let obj = {}
-      obj.op = 'add'
-      obj.path = '/-'
-      obj.value = {
-        id: props.linkActionSettings.agreement.id,
-        license_count: parseInt(props.linkActionSettings.licenseCount)
-      }
-      dataPayload.push(obj)
-    }
-    if (props.linkActionSettings.supplier) {
-      let obj = {}
-      obj.op = 'add'
-      obj.path = '/-'
-      obj.value = {
-        id: props.linkActionSettings.supplier.id,
-        license_count: parseInt(props.linkActionSettings.licenseCount)
-      }
-      dataPayload.push(obj)
-    }
+    // if (props.linkActionSettings.agreement) {
+    //   let obj = {}
+    //   obj.op = 'add'
+    //   obj.path = '/-'
+    //   obj.value = {
+    //     id: props.linkActionSettings.agreement.id,
+    //     license_count: parseInt(props.linkActionSettings.licenseCount)
+    //   }
+    //   dataPayload.push(obj)
+    // }
+    // if (props.linkActionSettings.supplier) {
+    //   let obj = {}
+    //   obj.op = 'add'
+    //   obj.path = '/-'
+    //   obj.value = {
+    //     id: props.linkActionSettings.supplier.id,
+    //     license_count: parseInt(props.linkActionSettings.licenseCount)
+    //   }
+    //   dataPayload.push(obj)
+    // }
     if (props.linkActionSettings.software) {
       let obj = {}
       obj.op = 'add'
@@ -282,33 +282,98 @@ export default function Applicationview (props) {
       }
     }
   }, 500)
-  if (props.entitlements !== '' && props.entitlements.error_code === null) {
-    // let linkActionSettings = {...props.linkActionSettings}
-    // let entitlementData = []
-    // if (linkActionSettings.supplier !== null) {
-    //   agreementData = _.filter(props.agreements.resources, {'supplier': linkActionSettings.supplier.name})
-    // } else {
-    //   selectAgreementOptions = props.agreements.resources.map((component, index) => {
-    //     let option = {...component}
-    //     option.value = component.name
-    //     option.label = component.name
-    //     return option
-    //   })
-    // }
-    // if (agreementData.length > 0) {
-    //   selectAgreementOptions = agreementData.map((component, index) => {
-    //     let option = {...component}
-    //     option.value = component.name
-    //     option.label = component.name
-    //     return option
-    //   })
-    // }
-    selectEntitlementOptions = props.entitlements.resources.map((component, index) => {
-      let option = {...component}
-      option.value = component.name
-      option.label = component.name
-      return option
-    })
+  if (props.entitlements !== '' && props.allEntitlements !== '' && props.entitlements.error_code === null && props.allEntitlements.error_code === null) {
+    let linkActionSettings = {...props.linkActionSettings}
+    let entitlementData = []
+    if (linkActionSettings.supplier !== null || linkActionSettings.agreement !== null) {
+      // agreementData = _.filter(props.agreements.resources, {'supplier': linkActionSettings.supplier.name})
+      if (linkActionSettings.supplier !== null && linkActionSettings.agreement === null) {
+        if (props.entitlements.resources.length > 0) {
+          // all datas are in object fields
+          for (let supplier in props.entitlements.resources[0]) {
+            if (props.entitlements.resources[0].hasOwnProperty(supplier)) {
+              if (supplier && supplier === linkActionSettings.supplier.name) {
+                for (let agreement in props.entitlements.resources[0][supplier]) {
+                  if (props.entitlements.resources[0][supplier].hasOwnProperty(agreement)) {
+                    if (agreement) {
+                      entitlementData = props.entitlements.resources[0][supplier][agreement]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        console.log(entitlementData)
+        if (entitlementData.length > 0) {
+          selectEntitlementOptions = entitlementData.map((component, index) => {
+            let option = {...component}
+            option.value = component.name
+            option.label = component.name
+            return option
+          })
+        }
+      } else if (linkActionSettings.supplier === null && linkActionSettings.agreement !== null) {
+        if (props.entitlements.resources.length > 0) {
+          // all datas are in object fields
+          for (let supplier in props.entitlements.resources[0]) {
+            if (props.entitlements.resources[0].hasOwnProperty(supplier)) {
+              if (supplier) {
+                for (let agreement in props.entitlements.resources[0][supplier]) {
+                  if (props.entitlements.resources[0][supplier].hasOwnProperty(agreement)) {
+                    if (agreement && agreement === linkActionSettings.agreement.name) {
+                      entitlementData = props.entitlements.resources[0][supplier][agreement]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        console.log(entitlementData)
+        if (entitlementData.length > 0) {
+          selectEntitlementOptions = entitlementData.map((component, index) => {
+            let option = {...component}
+            option.value = component.name
+            option.label = component.name
+            return option
+          })
+        }
+      } else if (linkActionSettings.supplier !== null && linkActionSettings.agreement !== null) {
+        if (props.entitlements.resources.length > 0) {
+          // all datas are in object fields
+          for (let supplier in props.entitlements.resources[0]) {
+            if (props.entitlements.resources[0].hasOwnProperty(supplier)) {
+              if (supplier && supplier === linkActionSettings.supplier.name) {
+                for (let agreement in props.entitlements.resources[0][supplier]) {
+                  if (props.entitlements.resources[0][supplier].hasOwnProperty(agreement)) {
+                    if (agreement && agreement === linkActionSettings.agreement.name) {
+                      entitlementData = props.entitlements.resources[0][supplier][agreement]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        console.log(entitlementData)
+        if (entitlementData.length > 0) {
+          selectEntitlementOptions = entitlementData.map((component, index) => {
+            let option = {...component}
+            option.value = component.name
+            option.label = component.name
+            return option
+          })
+        }
+      }
+    } else {
+      selectEntitlementOptions = props.allEntitlements.resources.map((component, index) => {
+        let option = {...component}
+        option.value = component.name
+        option.label = component.name
+        return option
+      })
+    }
   }
   if (props.agreements !== '' && props.agreements.error_code === null) {
     let linkActionSettings = {...props.linkActionSettings}
@@ -1366,5 +1431,6 @@ export default function Applicationview (props) {
   entitlements: PropTypes.any,
   agreements: PropTypes.any,
   suppliers: PropTypes.any,
-  softwares: PropTypes.any
+  softwares: PropTypes.any,
+  allEntitlements: PropTypes.any
  }
