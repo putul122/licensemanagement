@@ -15,7 +15,7 @@ import {
   FETCH_META_MODEL_PRESPECTIVE_SUCCESS,
   FETCH_COMPONENT_MODEL_PRESPECTIVES_SUCCESS
 } from '../../sagas/model/modelSaga'
-import { FETCH_ENTITLEMENTS_SUCCESS } from '../../sagas/entitlement/entitlementSaga'
+import { FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS } from '../../sagas/entitlement/entitlementSaga'
 import { FETCH_SUPPLIERS_SUCCESS } from '../../sagas/supplier/supplierSaga'
 import { FETCH_AGREEMENTS_SUCCESS } from '../../sagas/agreement/agreementSaga'
 import { FETCH_SOFTWARES_SUCCESS } from '../../sagas/software/softwareSaga'
@@ -152,7 +152,7 @@ export default handleActions(
       ...state,
       responseProcessed: action.payload
     }),
-    [FETCH_ENTITLEMENTS_SUCCESS]: (state, action) => ({
+    [FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS]: (state, action) => ({
       ...state,
       entitlements: action.payload
     }),

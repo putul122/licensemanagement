@@ -46,7 +46,7 @@ export const propsMapping: Callbacks = {
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setApplicationRelationship: applicationDetailActionCreators.setApplicationRelationship,
   setResponseProcessed: applicationDetailActionCreators.setResponseProcessed,
-  fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
+  fetchEntitlementsBySupplierAgreement: sagaActions.entitlementActions.fetchEntitlementsBySupplierAgreement,
   fetchSoftwares: sagaActions.softwareActions.fetchSoftwares,
   fetchAgreements: sagaActions.agreementActions.fetchAgreements,
   fetchSuppliers: sagaActions.supplierActions.fetchSuppliers,
@@ -79,19 +79,21 @@ export default compose(
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let perspectives = appPackage.resources[0].perspectives
       let metaModelPrespectiveId = _.result(_.find(perspectives, function (obj) {
-        return obj.key === 'Application'
+        return obj.key === 'Application' && obj.view_key === null
     }), 'perspective')
       console.log('perspectives', perspectives, metaModelPrespectiveId)
       let modelPayload = {}
       modelPayload.componentId = this.props.match.params.id
       modelPayload.metaModelPerspectiveId = metaModelPrespectiveId
-      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(metaModelPrespectiveId)
+      let metaPayload = {}
+      metaPayload.id = metaModelPrespectiveId
+      this.props.fetchMetaModelPrespective && this.props.fetchMetaModelPrespective(metaPayload)
       this.props.fetchComponentModelPrespectives && this.props.fetchComponentModelPrespectives(modelPayload)
       this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
       // this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
       // this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
       this.props.fetchSoftwares && this.props.fetchSoftwares({})
-      this.props.fetchEntitlements && this.props.fetchEntitlements({})
+      this.props.fetchEntitlementsBySupplierAgreement && this.props.fetchEntitlementsBySupplierAgreement({})
       this.props.fetchAgreements && this.props.fetchAgreements({})
       this.props.fetchSuppliers && this.props.fetchSuppliers({})
       let listPayload = {

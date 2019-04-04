@@ -31,6 +31,9 @@ export const UPDATE_ENTITLEMENT_PROPERTIES_FAILURE = 'saga/entitlement/UPDATE_AG
 export const ADD_ENTITLEMENT = 'saga/entitlement/ADD_ENTITLEMENT'
 export const ADD_ENTITLEMENT_SUCCESS = 'saga/entitlement/ADD_ENTITLEMENT_SUCCESS'
 export const ADD_ENTITLEMENT_FAILURE = 'saga/entitlement/ADD_ENTITLEMENT_FAILURE'
+export const FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT = 'saga/entitlement/FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT'
+export const FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS = 'saga/entitlement/FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUPPLIER_SUCCESS'
+export const FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_FAILURE = 'saga/entitlement/FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_FAILURE'
 
 export const actionCreators = {
   fetchEntitlements: createAction(FETCH_ENTITLEMENTS),
@@ -59,7 +62,10 @@ export const actionCreators = {
   updateEntitlementPropertiesFailure: createAction(UPDATE_ENTITLEMENT_PROPERTIES_FAILURE),
   addEntitlement: createAction(ADD_ENTITLEMENT),
   addEntitlementSuccess: createAction(ADD_ENTITLEMENT_SUCCESS),
-  addEntitlementFailure: createAction(ADD_ENTITLEMENT_FAILURE)
+  addEntitlementFailure: createAction(ADD_ENTITLEMENT_FAILURE),
+  fetchEntitlementsBySupplierAgreement: createAction(FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT),
+  fetchEntitlementsBySupplierAgreementSuccess: createAction(FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS),
+  fetchEntitlementsBySupplierAgreementFailure: createAction(FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_FAILURE)
 }
 
 export default function * watchEntitlements () {
@@ -72,8 +78,22 @@ export default function * watchEntitlements () {
     takeLatest(DELETE_ENTITLEMENT, deleteEntitlement),
     takeLatest(UPDATE_ENTITLEMENT, updateEntitlementData),
     takeLatest(UPDATE_ENTITLEMENT_PROPERTIES, updateEntitlementProperties),
-    takeLatest(ADD_ENTITLEMENT, addEntitlement)
+    takeLatest(ADD_ENTITLEMENT, addEntitlement),
+    takeLatest(FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT, getEntitlementsBySupplierAgreement)
   ]
+}
+
+export function * getEntitlementsBySupplierAgreement (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const entitlements = yield call(
+      axios.get,
+      api.getEntitlementsBySupplierAndAgreement
+    )
+    yield put(actionCreators.fetchEntitlementsBySupplierAgreementSuccess(entitlements.data))
+  } catch (error) {
+    yield put(actionCreators.fetchEntitlementsBySupplierAgreementFailure(error))
+  }
 }
 
 export function * getEntitlements (action) {

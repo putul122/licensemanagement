@@ -325,7 +325,7 @@ export default function Applicationlists (props) {
               return (
                 <tr key={'child' + idx}>
                   <td>{''}</td>
-                  <td>{childData.entitlement.name}</td>
+                  <td><a href={'/entitlements/' + childData.entitlement.id}>{childData.entitlement.name}</a></td>
                   <td>{''}</td>
                   <td>{''}</td>
                   <td>{childData.entitlement.cost ? 'R ' + formatAmount(cost) : ''}</td>

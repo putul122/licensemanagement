@@ -283,6 +283,26 @@ export default function Applicationview (props) {
     }
   }, 500)
   if (props.entitlements !== '' && props.entitlements.error_code === null) {
+    // let linkActionSettings = {...props.linkActionSettings}
+    // let entitlementData = []
+    // if (linkActionSettings.supplier !== null) {
+    //   agreementData = _.filter(props.agreements.resources, {'supplier': linkActionSettings.supplier.name})
+    // } else {
+    //   selectAgreementOptions = props.agreements.resources.map((component, index) => {
+    //     let option = {...component}
+    //     option.value = component.name
+    //     option.label = component.name
+    //     return option
+    //   })
+    // }
+    // if (agreementData.length > 0) {
+    //   selectAgreementOptions = agreementData.map((component, index) => {
+    //     let option = {...component}
+    //     option.value = component.name
+    //     option.label = component.name
+    //     return option
+    //   })
+    // }
     selectEntitlementOptions = props.entitlements.resources.map((component, index) => {
       let option = {...component}
       option.value = component.name
@@ -291,12 +311,26 @@ export default function Applicationview (props) {
     })
   }
   if (props.agreements !== '' && props.agreements.error_code === null) {
-    selectAgreementOptions = props.agreements.resources.map((component, index) => {
-      let option = {...component}
-      option.value = component.name
-      option.label = component.name
-      return option
-    })
+    let linkActionSettings = {...props.linkActionSettings}
+    let agreementData = []
+    if (linkActionSettings.supplier !== null) {
+      agreementData = _.filter(props.agreements.resources, {'supplier': linkActionSettings.supplier.name})
+    } else {
+      selectAgreementOptions = props.agreements.resources.map((component, index) => {
+        let option = {...component}
+        option.value = component.name
+        option.label = component.name
+        return option
+      })
+    }
+    if (agreementData.length > 0) {
+      selectAgreementOptions = agreementData.map((component, index) => {
+        let option = {...component}
+        option.value = component.name
+        option.label = component.name
+        return option
+      })
+    }
   }
   if (props.suppliers !== '' && props.suppliers.error_code === null) {
     selectSupplierOptions = props.suppliers.resources.map((component, index) => {

@@ -101,7 +101,7 @@ export default function Suppliers (props) {
                           <tr key={'child' + idx + '_' + ndx}>
                             <td>{''}</td>
                             <td>{''}</td>
-                            <td>{nestedChildData.name}</td>
+                            <td><a href={'/entitlements/' + nestedChildData.id} >{nestedChildData.name}</a></td>
                             <td>{''}</td>
                             <td>{''}</td>
                             <td>{'R ' + formatAmount(nestedChildData.cost)}</td>

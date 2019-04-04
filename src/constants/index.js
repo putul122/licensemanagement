@@ -179,7 +179,8 @@ const api = {
   },
   getTaskProperties: function (id) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + id + '/component_properties'
-  }
+  },
+  getEntitlementsBySupplierAndAgreement: 'https://lm-eco-dev.ecoconductor.com/api/Entitlement/GetEntitlementsBySupplierAndAgreement'
 }
 
 export default api

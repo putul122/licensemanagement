@@ -4,30 +4,26 @@ import BusinessUnitsList from '../../components/businessUnits/businessUnitsCompo
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/businessUnitsReducer/businessUnitsReducerReducer'
 // import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
-// import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    // authenticateUser: state.basicReducer.authenticateUser,
+    authenticateUser: state.basicReducer.authenticateUser,
     businessUnitsSummary: state.businessUnitsReducer.businessUnitsSummary,
     businessUnits: state.businessUnitsReducer.businessUnits,
     currentPage: state.businessUnitsReducer.currentPage,
-    // addEntitlementResponse: state.entitlementsReducer.addEntitlementResponse,
-    // modalIsOpen: state.basicReducer.modalIsOpen,
     perPage: state.businessUnitsReducer.perPage
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-//   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-     fetchBusinessUnitsSummary: sagaActions.businessUnitsActions.fetchBusinessUnitsSummary,
-     fetchBusinessUnits: sagaActions.businessUnitsActions.fetchBusinessUnits,
-     setCurrentPage: actionCreators.setCurrentPage,
-     setPerPage: actionCreators.setPerPage
-//   addEntitlement: sagaActions.entitlementActions.addEntitlement,
-//   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-//   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
- }
+    fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+    fetchBusinessUnitsSummary: sagaActions.businessUnitsActions.fetchBusinessUnitsSummary,
+    fetchBusinessUnits: sagaActions.businessUnitsActions.fetchBusinessUnits,
+    setCurrentPage: actionCreators.setCurrentPage,
+    setPerPage: actionCreators.setPerPage,
+    setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  }
 
 // If you want to use the function mapping
 // export const propsMapping = (dispatch, ownProps) => {
@@ -58,7 +54,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-    //   this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
     //   eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
@@ -79,11 +75,11 @@ export default compose(
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-    //   if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-    //     if (!nextProps.authenticateUser.resources[0].result) {
-    //       this.props.history.push('/')
-    //     }
-    //   }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.businessUnits && nextProps.businessUnits !== this.props.businessUnits) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#entitlementList')

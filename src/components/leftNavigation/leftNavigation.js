@@ -69,6 +69,12 @@ class LeftNavigation extends React.Component {
                 <span className={styles.navtext}>Projects</span>
               </a>
             </li>
+            <li className={styles.navicon}>
+              <a href='/business-units'>
+                <i className='fa fa-2x fa-delicious' />
+                <span className={styles.navtext}>Business Units</span>
+              </a>
+            </li>
             <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
               <a className='m-menu__link' href='/tasks'>
                 <i className='m-menu__link-icon flaticon-arrows ' style={{'font-size': '25px'}} />
@@ -81,12 +87,6 @@ class LeftNavigation extends React.Component {
               <a href='/sheets'>
                 <i className='fa fa-2x flaticon-interface-11' />
                 <span className={styles.navtext}>Sheets</span>
-              </a>
-            </li>
-            <li className={styles.navicon}>
-              <a href='/business-units'>
-                <i className='fa fa-2x fa-delicious' />
-                <span className={styles.navtext}>Business Units</span>
               </a>
             </li>
           </ul>

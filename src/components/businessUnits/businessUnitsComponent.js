@@ -3,8 +3,8 @@ import _ from 'lodash'
 import debounce from 'lodash/debounce'
 // import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
-// import Discussion from '../../containers/discussion/discussionContainer'
-// import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
+import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import styles from './businessUnitsComponent.scss'
 // ReactModal.setAppElement('#root')
 // const customStyles = {
@@ -34,20 +34,30 @@ export default function BusinessUnits (props) {
   console.log(props.businessUnits, props.perPage, props.currentPage, props.fetchBusinessUnits, props.businessUnitsSummary)
 //   let entitlementCount = ''
 //   let consumed = ''
-     let searchTextBox
-     let businessUnitsList = ''
-     let totalNoPages
-     let perPage = props.perPage
-     let currentPage = props.currentPage
-     let nextClass = ''
-     let previousClass = ''
-     let pageArray = []
-     let listPage = []
-     let paginationLimit = 6
-     let totalBusinessUnit
-     let businessTotalCount = ''
-     let totalCost = ''
-
+  let searchTextBox
+  let businessUnitsList = ''
+  let totalNoPages
+  let perPage = props.perPage
+  let currentPage = props.currentPage
+  let nextClass = ''
+  let previousClass = ''
+  let pageArray = []
+  let listPage = []
+  let paginationLimit = 6
+  let totalBusinessUnit
+  let businessTotalCount = ''
+  let totalCost = ''
+  let contextId = ''
+  let appPackage = JSON.parse(localStorage.getItem('packages'))
+  let componentTypes = appPackage.resources[0].component_types
+  let componentId = _.result(_.find(componentTypes, function (obj) {
+      return obj.key === 'Business Unit'
+  }), 'component_type')
+  contextId = componentId
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -219,58 +229,14 @@ return (
       </div>
       <div className='col-md-3 float-right'>
         <span className='pull-right'>
-          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Entitlement' onClick={''} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
-            <i className='fa flaticon-plus fa-2x' />
-          </a>&nbsp;&nbsp;
-          {/* <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={''} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
             <i className='fa flaticon-multimedia-3 fa-2x' />
-          </a> */}
+          </a>
         </span>
         {/* <button type='button' onClick={openModal} className='btn btn-outline-info btn-sm'>Add Entitlment</button>&nbsp;
         <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Create Discussion</button>&nbsp; */}
       </div>
     </div>
-    {/* <div>
-      <ReactModal isOpen={props.modalIsOpen}
-        onRequestClose={closeModal} style={customStyles}
-        >
-        <div className={''}>
-          <div className='modal-dialog'>
-            <div className='modal-content'>
-              <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'>New { 'Entitlement' }</h4>
-                <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
-                  <span aria-hidden='true'>×</span>
-                </button>
-              </div>
-              <div className='modal-body'>
-                <form>
-                  <div className='form-group'>
-                    <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                    <input type='text' className='form-control' ref={input => (newEntitlementName = input)} id='agreement-name' autoComplete='off' required />
-                  </div>
-                  <div className='form-group'>
-                    <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                    <textarea className='form-control'ref={textarea => (newEntitlementDescription = textarea)} defaultValue={''} autoComplete='off' required />
-                  </div>
-                </form>
-              </div>
-              <div className='modal-footer'>
-                <div className='row'>
-                  <div className='col-md-6t' />
-                  <div className='col-md-6'>
-                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
-                      <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Back</button>
-                      <button type='button' onClick={createEntitlement} className='m-btn btn btn-secondary'>Add</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ReactModal>
-    </div> */}
     <div className='row' id='entitlementSummary'>
       <div className='col-xl-6'>
         {/* <div className='m-portlet m-portlet--full-height'>
@@ -460,8 +426,8 @@ return (
         </div>
       </div>
     </div>
-    {/* <Discussion name={'Entitlements'} TypeKey='Entitlement' type='ComponentType' {...props} />
-    <NewDiscussion contextId={contextId} name={'Entitlements'} type='ComponentType' {...props} /> */}
+    <Discussion name={'Business Unit'} TypeKey='Business Unit' type='ComponentType' {...props} />
+    <NewDiscussion contextId={contextId} name={'Business Unit'} type='ComponentType' {...props} />
   </div>
       )
     }

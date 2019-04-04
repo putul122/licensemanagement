@@ -583,7 +583,7 @@ export default function Sheets (props) {
     if (props.modelPrespectives !== '') {
       let labelParts = props.metaModelPerspective.resources[0].parts
       if (props.modelPrespectives.length > 0) {
-        // console.log('props.modelPrespectives', props.modelPrespectives)
+        console.log('props.modelPrespectives', props.modelPrespectives)
         modelPrespectivesList = props.modelPrespectives.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           let childList = []
           // console.log('data', data)
@@ -614,7 +614,7 @@ export default function Sheets (props) {
               } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
                 value = (partData && partData.value !== null) ? partData.value.boolean_value : ''
               } else if (labelParts[ix].type_property.property_type.key === 'List') {
-                value = (partData && partData.value !== null) ? partData.value.value_set_value : ''
+                value = (partData && partData.value !== null) ? (partData.value.value_set_value ? partData.value.value_set_value.name : '') : ''
               } else {
                 value = (partData && partData.value !== null) ? partData.value.other_value : ''
               }
