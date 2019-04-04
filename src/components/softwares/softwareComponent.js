@@ -97,8 +97,8 @@ if (props.software && props.software !== '') {
         <tr key={index}>
           <td><a href={'/softwares/' + data.id} >{data.name}</a></td>
           <td>{data.supplier}</td>
+          <td>{moment(data.end_of_service_life).isValid() === true ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</td>
           <td>{data.instances}</td>
-          <td>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>
         </tr>
       </tbody>
     )
@@ -666,8 +666,8 @@ return (
                           <tr role='row'>
                             <th className='' ><h5>Name</h5></th>
                             <th className='' ><h5>Suppliers</h5></th>
-                            <th className='' ><h5>#Instances</h5></th>
                             <th className=''><h5>End of Support Life</h5></th>
+                            <th className='' ><h5>#Instances</h5></th>
                           </tr>
                         </thead>
                         {/* <tbody> */}

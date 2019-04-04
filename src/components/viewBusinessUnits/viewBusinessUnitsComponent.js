@@ -163,7 +163,7 @@ let listBusinessUnitAgreements = function () {
             <td><a href={'/agreements/' + data.id} >{data.name}</a></td>
             <td>{data.supplier}</td>
             <td>{data.entitlement_count}</td>
-            <td>{data.entitlement_cost}</td>
+            <td>{'R ' + formatAmount(data.entitlement_cost)}</td>
           </tr>
         )
       })

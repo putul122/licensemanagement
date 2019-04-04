@@ -72,10 +72,10 @@ export default function BusinessUnits (props) {
         <tr key={index}>
           <td><a href={'/business-units/' + data.id} >{data.name}</a></td>
           <td>{data.entitlement_count}</td>
-          <td>{data.total_license_cost}</td>
+          <td>{'R ' + formatAmount(data.total_license_cost)}</td>
           <td>{data.owns_agreement_count}</td>
           <td>{data.owns_application_count}</td>
-          <td>{data.owns_application_count}</td>
+          <td>{data.uses_application_count}</td>
         </tr>
       )
     })
@@ -438,6 +438,4 @@ BusinessUnits.propTypes = {
   businessUnitsSummary: PropTypes.any,
   currentPage: PropTypes.any,
   perPage: PropTypes.any
-//   modalIsOpen: PropTypes.any,
-//   setModalOpenStatus: PropTypes.func,
  }
