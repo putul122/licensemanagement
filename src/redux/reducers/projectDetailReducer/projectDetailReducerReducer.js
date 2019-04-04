@@ -10,6 +10,9 @@ import {
   DELETE_PROJECT_ENTITLEMENTS_SUCCESS,
   ADD_PROJECT_ENTITLEMENTS_SUCCESS
 } from '../../sagas/project/projectSaga'
+import { FETCH_SUPPLIERS_SUCCESS } from '../../sagas/supplier/supplierSaga'
+import { FETCH_AGREEMENTS_SUCCESS } from '../../sagas/agreement/agreementSaga'
+import { FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS } from '../../sagas/entitlement/entitlementSaga'
 // Name Spaced Action Types
 const SET_DELETE_PROJECT_MODAL_OPEN_STATUS = 'ProjectDetailReducer/SET_DELETE_PROJECT_MODAL_OPEN_STATUS'
 const SET_ENTITLEMENTS_ACTION_SETTINGS = 'ProjectDetailReducer/SET_ENTITLEMENTS_ACTION_SETTINGS'
@@ -80,10 +83,17 @@ export const initialState = {
     isConfirmationModalOpen: false,
     entitlementSelected: null,
     licenseCount: 0,
-    updateEntitlementData: null
+    updateEntitlementData: null,
+    entitlement: null,
+    agreement: null,
+    supplier: null
   },
   currentPage: 1,
-  perPage: 5
+  perPage: 5,
+  allEntitlements: '',
+  suppliers: '',
+  agreements: '',
+  entitlements: ''
 }
 
 export default handleActions(
@@ -134,7 +144,7 @@ export default handleActions(
     }),
     [FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS]: (state, action) => ({
       ...state,
-      entitlementComponents: action.payload
+      allEntitlements: action.payload
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
@@ -169,6 +179,18 @@ export default handleActions(
     [SET_CURRENT_PAGE]: (state, action) => ({
       ...state,
       currentPage: action.payload
+    }),
+    [FETCH_SUPPLIERS_SUCCESS]: (state, action) => ({
+      ...state,
+      suppliers: action.payload
+    }),
+    [FETCH_AGREEMENTS_SUCCESS]: (state, action) => ({
+      ...state,
+      agreements: action.payload
+    }),
+    [FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS]: (state, action) => ({
+      ...state,
+      entitlements: action.payload
     })
   },
   initialState

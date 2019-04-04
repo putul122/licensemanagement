@@ -277,14 +277,37 @@ export default function Agreements (props) {
   }
 
   if (props.agreements && props.agreements !== '') {
-    let todayDate = new Date()
+    let todayDate = moment().format('YYYY-MM-DD')
     let sortedArray = _.orderBy(props.agreements.resources, ['name'], ['asc'])
     agreementsList = sortedArray.map(function (data, index) {
+    //   if (moment(data.expiry_date).isSameOrBefore(todayDate)) {
+    //    <td className={styles.danger}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
+    //  }
+    // const getBackgroundColor() {
+    //   if (moment(data.expiry_date).isSameOrBefore(todayDate)) {
+    //     return 'blue'
+    //   }
+    //   // else if (status === 'pending') {
+    //   //   return 'black'
+    //   // } else {
+    //   //   return 'red'
+    //   // }
+    // }
+    let tdBlock = []
+    if (moment(data.expiry_date).subtract(parseInt((data.notification_period === null ? 90 : data.notification_period), 'days')) > (todayDate)) {
+      tdBlock.push(<td className={styles.success}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+    } else if ((moment(data.expiry_date).subtract(parseInt((data.notification_period === null ? 90 : data.notification_period), 'days')) < todayDate) && (moment(data.expiry_date) > todayDate)) {
+      tdBlock(<td className={styles.proccess}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+    } else if ((moment(data.expiry_date) > todayDate)) {
+      tdBlock.push(<td className={styles.danger}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+    } else {
+      tdBlock.push(<td className={''}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+    }
       return (
         <tr key={index}>
           <td><a href={'/agreements/' + data.id} >{data.name}</a></td>
           <td>{data.supplier}</td>
-          <td className={moment(data.expiry_date).isSameOrBefore(todayDate) ? styles.danger : styles.success}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
+          {tdBlock}
           <td>{data.entitlement_count}</td>
           <td>{'R ' + formatAmount(data.cost)}</td>
         </tr>

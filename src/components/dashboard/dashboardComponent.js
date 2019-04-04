@@ -423,11 +423,12 @@ export default function Dashboard (props) {
         if (props.entitlementSummary.resources[0].usage_per_supplier.hasOwnProperty(supplier)) {
           let liability = props.entitlementSummary.resources[0].usage_per_supplier[supplier].liability_percent
           let overspend = props.entitlementSummary.resources[0].usage_per_supplier[supplier].overspend_percent
+          let info = 'Consumed: ' + props.entitlementSummary.resources[0].usage_per_supplier[supplier].consumed + ' / Purchased: ' + props.entitlementSummary.resources[0].usage_per_supplier[supplier].purchased
           EntitlementContent.push(
             <span key={index++}>
               <div className='row'>
-                <div className='col-sm-3' style={{'marginTop': '6px'}}><p style={{'width': '165px', 'fontSize': '0.7vw'}}>{supplier || 'No Supplier'}</p></div>
-                <div className='col-sm-9 pull-left'>
+                <div className='col-sm-4' style={{'marginTop': '6px'}}><p data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title={info} style={{'fontSize': '0.7vw', 'cursor': 'pointer'}}>{supplier || 'No Supplier'}</p></div>
+                <div className='col-sm-8 pull-left'>
                   <div className='progress' style={{height: '3em'}}>
                     <div className='progress-bar bg-danger' role='progressbar' style={{width: `${liability}%`}} aria-valuenow={liability} aria-valuemin='0' aria-valuemax='100'><div style={{'fontSize': '15px'}}>{formatAmount(liability)}%</div></div>
                     <div className='progress-bar bg-success' role='progressbar' style={{width: `${overspend}%`}} aria-valuenow={overspend} aria-valuemin='0' aria-valuemax='100' ><div style={{'fontSize': '15px'}}>{formatAmount(overspend)}%</div></div>

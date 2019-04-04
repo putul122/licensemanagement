@@ -10,6 +10,9 @@ import {
     DELETE_BUSINESSUNIT_ENTITLEMENTS_SUCCESS,
     ADD_BUSINESSUNIT_ENTITLEMENTS_SUCCESS
 } from '../../sagas/businessUnits/businessUnitsSaga'
+import { FETCH_SUPPLIERS_SUCCESS } from '../../sagas/supplier/supplierSaga'
+import { FETCH_AGREEMENTS_SUCCESS } from '../../sagas/agreement/agreementSaga'
+import { FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS } from '../../sagas/entitlement/entitlementSaga'
 // Name Spaced Action Types
 const SET_CURRENT_PAGE = 'viesBusinessUnitsReducer/SET_CURRENT_PAGE'
 const SET_ACTIVE_TAB = 'viewBusinessUnitsReducer/SET_ACTIVE_TAB'
@@ -67,12 +70,18 @@ export const initialState = {
     isLinkDeleteModalOpen: false,
     isLinkUpdateModalOpen: false,
     entitlementSelected: null,
+    entitlement: null,
+    agreement: null,
+    supplier: null,
+    software: null,
     licenseCount: 0
   },
   addBusinessUnitEntitlementResponse: '',
   updateBusinessUnitEntitlementResponse: '',
   deleteBusinessUnitEntitlementResponse: '',
-  entitlementComponents: ''
+  allEntitlements: '',
+  suppliers: '',
+  agreements: ''
 }
 
 export default handleActions(
@@ -123,13 +132,25 @@ export default handleActions(
     }),
     [FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS]: (state, action) => ({
       ...state,
-      entitlementComponents: action.payload
+      allEntitlements: action.payload
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       addBusinessUnitEntitlementResponse: '',
       updateBusinessUnitEntitlementResponse: '',
       deleteBusinessUnitEntitlementResponse: ''
+    }),
+    [FETCH_SUPPLIERS_SUCCESS]: (state, action) => ({
+      ...state,
+      suppliers: action.payload
+    }),
+    [FETCH_AGREEMENTS_SUCCESS]: (state, action) => ({
+      ...state,
+      agreements: action.payload
+    }),
+    [FETCH_ENTITLEMENTS_BY_SUPPLIER_AGREEMENT_SUCCESS]: (state, action) => ({
+      ...state,
+      entitlements: action.payload
     })
   },
   initialState

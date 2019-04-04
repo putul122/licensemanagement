@@ -9,8 +9,7 @@ import { actionCreators } from '../../redux/reducers/viewBusinessUnitsReducer/vi
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    // authenticateUser: state.basicReducer.authenticateUser,
-    // entitlementsSummary: state.entitlementsReducer.entitlementsSummary,
+    authenticateUser: state.basicReducer.authenticateUser,
     businessUnit: state.viewBusinessUnitsReducer.businessUnit,
     businessUnitAgreements: state.viewBusinessUnitsReducer.businessUnitAgreements,
     businessUnitEntitlements: state.viewBusinessUnitsReducer.businessUnitEntitlements,
@@ -22,27 +21,32 @@ export function mapStateToProps (state, props) {
     updateBusinessUnitEntitlementResponse: state.viewBusinessUnitsReducer.updateBusinessUnitEntitlementResponse,
     deleteBusinessUnitEntitlementResponse: state.viewBusinessUnitsReducer.deleteBusinessUnitEntitlementResponse,
     activeTab: state.viewBusinessUnitsReducer.activeTab,
-    entitlementComponents: state.viewBusinessUnitsReducer.entitlementComponents
+    allEntitlements: state.viewBusinessUnitsReducer.allEntitlements,
+    suppliers: state.viewBusinessUnitsReducer.suppliers,
+    agreements: state.viewBusinessUnitsReducer.agreements,
+    entitlements: state.viewBusinessUnitsReducer.entitlements
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-//   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-//   fetchEntitlementsSummary: sagaActions.entitlementActions.fetchEntitlementsSummary,
-     fetchBusinessUnitById: sagaActions.businessUnitsActions.fetchBusinessUnitById,
-     fetchBusinessUnitAgreements: sagaActions.businessUnitsActions.fetchBusinessUnitAgreements,
-     fetchBusinessUnitEntitlements: sagaActions.businessUnitsActions.fetchBusinessUnitEntitlements,
-     fetchBusinessOwnsApplications: sagaActions.businessUnitsActions.fetchBusinessOwnsApplications,
-     fetchBusinessUsesApplications: sagaActions.businessUnitsActions.fetchBusinessUsesApplications,
-     addBusinessUnitEntitlements: sagaActions.businessUnitsActions.addBusinessUnitEntitlements,
-     updateBusinessUnitEntitlements: sagaActions.businessUnitsActions.updateBusinessUnitEntitlements,
-     deleteBusinessUnitEntitlements: sagaActions.businessUnitsActions.deleteBusinessUnitEntitlements,
-     setCurrentPage: actionCreators.setCurrentPage,
-     setEntitlementActionSettings: actionCreators.setEntitlementActionSettings,
-     setActiveTab: actionCreators.setActiveTab,
-     resetResponse: actionCreators.resetResponse,
-     fetchComponentTypeComponents: sagaActions.businessUnitsActions.fetchComponentTypeComponents
- }
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchBusinessUnitById: sagaActions.businessUnitsActions.fetchBusinessUnitById,
+  fetchBusinessUnitAgreements: sagaActions.businessUnitsActions.fetchBusinessUnitAgreements,
+  fetchBusinessUnitEntitlements: sagaActions.businessUnitsActions.fetchBusinessUnitEntitlements,
+  fetchBusinessOwnsApplications: sagaActions.businessUnitsActions.fetchBusinessOwnsApplications,
+  fetchBusinessUsesApplications: sagaActions.businessUnitsActions.fetchBusinessUsesApplications,
+  addBusinessUnitEntitlements: sagaActions.businessUnitsActions.addBusinessUnitEntitlements,
+  updateBusinessUnitEntitlements: sagaActions.businessUnitsActions.updateBusinessUnitEntitlements,
+  deleteBusinessUnitEntitlements: sagaActions.businessUnitsActions.deleteBusinessUnitEntitlements,
+  setCurrentPage: actionCreators.setCurrentPage,
+  setEntitlementActionSettings: actionCreators.setEntitlementActionSettings,
+  setActiveTab: actionCreators.setActiveTab,
+  resetResponse: actionCreators.resetResponse,
+  fetchComponentTypeComponents: sagaActions.businessUnitsActions.fetchComponentTypeComponents,
+  fetchEntitlementsBySupplierAgreement: sagaActions.entitlementActions.fetchEntitlementsBySupplierAgreement,
+  fetchAgreements: sagaActions.agreementActions.fetchAgreements,
+  fetchSuppliers: sagaActions.supplierActions.fetchSuppliers
+}
 
 // If you want to use the function mapping
 // export const propsMapping = (dispatch, ownProps) => {
@@ -73,7 +77,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-    //   this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+    this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
     let payload = {
       'business_unit_id': this.props.match.params.id,
       'search': '',
@@ -85,6 +89,9 @@ export default compose(
     let componentTypeId = _.result(_.find(componentTypes, function (obj) {
       return obj.key === 'Entitlement'
     }), 'component_type')
+    this.props.fetchEntitlementsBySupplierAgreement && this.props.fetchEntitlementsBySupplierAgreement({})
+    this.props.fetchAgreements && this.props.fetchAgreements({})
+    this.props.fetchSuppliers && this.props.fetchSuppliers({})
     this.props.fetchBusinessUnitById && this.props.fetchBusinessUnitById(payload)
     this.props.fetchBusinessUnitAgreements && this.props.fetchBusinessUnitAgreements(payload)
     this.props.fetchBusinessUnitEntitlements && this.props.fetchBusinessUnitEntitlements(payload)
@@ -98,19 +105,19 @@ export default compose(
       // eslint-disable-next-line
       $('[data-toggle="m-tooltip"]').tooltip()
        // eslint-disable-next-line
-     mApp && mApp.block('#entitlementSummary', {textAlign: 'center',overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-     // eslint-disable-next-line
-     mApp && mApp.block('#bussinessUnitsAllList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-     },
+      mApp && mApp.block('#entitlementSummary', {textAlign: 'center',overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp && mApp.block('#bussinessUnitsAllList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
     componentWillReceiveProps: function (nextProps) {
       let payload = {
         'business_unit_id': this.props.match.params.id
       }
-    //   if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-    //     if (!nextProps.authenticateUser.resources[0].result) {
-    //       this.props.history.push('/')
-    //     }
-    //   }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
      if (nextProps.businessUnit && nextProps.businessUnit !== this.props.businessUnit) {
       // eslint-disable-next-line
       mApp && mApp.unblock('#entitlementSummary')
@@ -143,6 +150,8 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.addBusinessUnitEntitlementResponse.error_message, nextProps.addBusinessUnitEntitlementResponse.error_code)
         }
+        let entitlementActionSettings = {...this.props.entitlementActionSettings, 'isLinkModalOpen': false}
+        this.props.setEntitlementActionSettings(entitlementActionSettings)
         this.props.resetResponse()
       }
       if (nextProps.updateBusinessUnitEntitlementResponse && nextProps.updateBusinessUnitEntitlementResponse !== '') {
@@ -172,6 +181,30 @@ export default compose(
           toastr.error(nextProps.deleteBusinessUnitEntitlementResponse.error_message, nextProps.deleteBusinessUnitEntitlementResponse.error_code)
         }
         this.props.resetResponse()
+      }
+      if (nextProps.entitlements && nextProps.entitlements !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.entitlements.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.entitlements.error_message, nextProps.entitlements.error_code)
+        }
+      }
+      if (nextProps.suppliers && nextProps.suppliers !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.suppliers.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.suppliers.error_message, nextProps.suppliers.error_code)
+        }
+      }
+      if (nextProps.agreements && nextProps.agreements !== '') {
+        // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
+        if (nextProps.agreements.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.agreements.error_message, nextProps.agreements.error_code)
+        }
       }
     }
   })

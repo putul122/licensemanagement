@@ -40,7 +40,6 @@ export default function ProjectDetail (props) {
   let projectPropertiesList = ''
   let EntitlementList = ''
   let Cost = 0
-  let selectOptions = []
   let listPage = []
   let currentPage = props.currentPage
   let perPage = props.perPage
@@ -49,6 +48,9 @@ export default function ProjectDetail (props) {
   let previousClass = ''
   let pageArray = []
   let totalPages = ''
+  let selectSupplierOptions = []
+  let selectAgreementOptions = []
+  let selectEntitlementOptions = []
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -63,6 +65,159 @@ export default function ProjectDetail (props) {
     } else {
       // eslint-disable-next-line
       $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+    }
+  }
+  if (props.entitlements !== '' && props.allEntitlements !== '' && props.entitlements.error_code === null && props.allEntitlements.error_code === null) {
+    let entitlementActionSettings = {...props.entitlementActionSettings}
+    let entitlementData = []
+    if (entitlementActionSettings.supplier !== null || entitlementActionSettings.agreement !== null) {
+      // agreementData = _.filter(props.agreements.resources, {'supplier': linkActionSettings.supplier.name})
+      if (entitlementActionSettings.supplier !== null && entitlementActionSettings.agreement === null) {
+        if (props.entitlements.resources.length > 0) {
+          // all datas are in object fields
+          for (let supplier in props.entitlements.resources[0]) {
+            if (props.entitlements.resources[0].hasOwnProperty(supplier)) {
+              if (supplier && supplier === entitlementActionSettings.supplier.name) {
+                for (let agreement in props.entitlements.resources[0][supplier]) {
+                  if (props.entitlements.resources[0][supplier].hasOwnProperty(agreement)) {
+                    if (agreement) {
+                      entitlementData = props.entitlements.resources[0][supplier][agreement]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        console.log(entitlementData)
+        if (entitlementData.length > 0) {
+          selectEntitlementOptions = entitlementData.map((component, index) => {
+            let option = {...component}
+            option.value = component.name
+            option.label = component.name
+            return option
+          })
+        }
+      } else if (entitlementActionSettings.supplier === null && entitlementActionSettings.agreement !== null) {
+        if (props.entitlements.resources.length > 0) {
+          // all datas are in object fields
+          for (let supplier in props.entitlements.resources[0]) {
+            if (props.entitlements.resources[0].hasOwnProperty(supplier)) {
+              if (supplier) {
+                for (let agreement in props.entitlements.resources[0][supplier]) {
+                  if (props.entitlements.resources[0][supplier].hasOwnProperty(agreement)) {
+                    if (agreement && agreement === entitlementActionSettings.agreement.name) {
+                      entitlementData = props.entitlements.resources[0][supplier][agreement]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        console.log(entitlementData)
+        if (entitlementData.length > 0) {
+          selectEntitlementOptions = entitlementData.map((component, index) => {
+            let option = {...component}
+            option.value = component.name
+            option.label = component.name
+            return option
+          })
+        }
+      } else if (entitlementActionSettings.supplier !== null && entitlementActionSettings.agreement !== null) {
+        if (props.entitlements.resources.length > 0) {
+          // all datas are in object fields
+          for (let supplier in props.entitlements.resources[0]) {
+            if (props.entitlements.resources[0].hasOwnProperty(supplier)) {
+              if (supplier && supplier === entitlementActionSettings.supplier.name) {
+                for (let agreement in props.entitlements.resources[0][supplier]) {
+                  if (props.entitlements.resources[0][supplier].hasOwnProperty(agreement)) {
+                    if (agreement && agreement === entitlementActionSettings.agreement.name) {
+                      entitlementData = props.entitlements.resources[0][supplier][agreement]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        console.log(entitlementData)
+        if (entitlementData.length > 0) {
+          selectEntitlementOptions = entitlementData.map((component, index) => {
+            let option = {...component}
+            option.value = component.name
+            option.label = component.name
+            return option
+          })
+        }
+      }
+    } else {
+      selectEntitlementOptions = props.allEntitlements.resources.map((component, index) => {
+        let option = {...component}
+        option.value = component.name
+        option.label = component.name
+        return option
+      })
+    }
+  }
+  if (props.agreements !== '' && props.agreements.error_code === null) {
+    let entitlementActionSettings = {...props.entitlementActionSettings}
+    let agreementData = []
+    if (entitlementActionSettings.supplier !== null) {
+      agreementData = _.filter(props.agreements.resources, {'supplier': entitlementActionSettings.supplier.name})
+    } else {
+      selectAgreementOptions = props.agreements.resources.map((component, index) => {
+        let option = {...component}
+        option.value = component.name
+        option.label = component.name
+        return option
+      })
+    }
+    if (agreementData.length > 0) {
+      selectAgreementOptions = agreementData.map((component, index) => {
+        let option = {...component}
+        option.value = component.name
+        option.label = component.name
+        return option
+      })
+    }
+  }
+  if (props.suppliers !== '' && props.suppliers.error_code === null) {
+    selectSupplierOptions = props.suppliers.resources.map((component, index) => {
+      let option = {...component}
+      option.value = component.name
+      option.label = component.name
+      return option
+    })
+  }
+  let handleEntitlementSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlement': newValue}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlement': null}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+  }
+  let handleAgreementSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'agreement': newValue}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'agreement': null}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+  }
+  let handleSupplierSelect = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'supplier': newValue, 'agreement': null, 'entitlement': null}
+      props.setEntitlementActionSettings(entitlementActionSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let entitlementActionSettings = {...props.entitlementActionSettings, 'supplier': null}
+      props.setEntitlementActionSettings(entitlementActionSettings)
     }
   }
   let projectProperties = props.projectProperties.resources ? [...props.projectProperties.resources] : ''
@@ -253,17 +408,6 @@ export default function ProjectDetail (props) {
     props.editComponentProperties(editPayload)
     props.pushComponentPropertyPayload(projectPropertiesPayload)
   }
-  if (props.entitlementComponents !== '' && props.entitlementComponents.error_code === null) {
-    selectOptions = props.entitlementComponents.resources.map((component, index) => {
-      let option = {...component}
-      option.value = component.name
-      option.label = component.name
-      return option
-    })
-    console.log('if selectOptions', selectOptions)
-  } else {
-    console.log('else selectOptions', selectOptions)
-  }
   let openLinkEntitlementModal = function (event) {
     event.preventDefault()
     let entitlementActionSettings = {...props.entitlementActionSettings, 'isLinkModalOpen': true}
@@ -303,23 +447,27 @@ export default function ProjectDetail (props) {
     closeProjectDeleteModal()
   }
   let closeLinkEntitlementModal = function () {
-    let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': null, 'licenseCount': 0, 'isLinkModalOpen': false}
+    let entitlementActionSettings = {...props.entitlementActionSettings,
+      'entitlementSelected': null,
+      'licenseCount': 0,
+      'isLinkModalOpen': false
+    }
     props.setEntitlementActionSettings(entitlementActionSettings)
   }
-  let handleSelect = function (newValue: any, actionMeta: any) {
-    console.group('Value Changed first select')
-    console.log(newValue)
-    console.log(`action: ${actionMeta.action}`)
-    console.groupEnd()
-    if (actionMeta.action === 'select-option') {
-      let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': newValue}
-      props.setEntitlementActionSettings(entitlementActionSettings)
-    }
-    if (actionMeta.action === 'clear') {
-      let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': null}
-      props.setEntitlementActionSettings(entitlementActionSettings)
-    }
-  }
+  // let handleSelect = function (newValue: any, actionMeta: any) {
+  //   console.group('Value Changed first select')
+  //   console.log(newValue)
+  //   console.log(`action: ${actionMeta.action}`)
+  //   console.groupEnd()
+  //   if (actionMeta.action === 'select-option') {
+  //     let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': newValue}
+  //     props.setEntitlementActionSettings(entitlementActionSettings)
+  //   }
+  //   if (actionMeta.action === 'clear') {
+  //     let entitlementActionSettings = {...props.entitlementActionSettings, 'entitlementSelected': null}
+  //     props.setEntitlementActionSettings(entitlementActionSettings)
+  //   }
+  // }
   let handleLicenseCountChange = function (event) {
     let entitlementActionSettings = {...props.entitlementActionSettings, 'licenseCount': event.target.value}
     props.setEntitlementActionSettings(entitlementActionSettings)
@@ -329,21 +477,23 @@ export default function ProjectDetail (props) {
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     event.preventDefault()
     let dataPayload = []
-    let obj = {}
-    obj.op = 'add'
-    obj.path = '/-'
-    obj.value = {
-      id: props.entitlementActionSettings.entitlementSelected.id,
-      license_count: parseInt(props.entitlementActionSettings.licenseCount)
+    if (props.entitlementActionSettings.entitlement) {
+      let obj = {}
+      obj.op = 'add'
+      obj.path = '/-'
+      obj.value = {
+        id: props.entitlementActionSettings.entitlement.id,
+        license_count: parseInt(props.entitlementActionSettings.licenseCount)
+      }
+      dataPayload.push(obj)
     }
-    dataPayload.push(obj)
     let projectId = props.match.params.id
     let payload = {}
     payload.projectId = projectId
     payload.data = dataPayload
     console.log('payload', payload)
     props.addProjectEntitlements(payload)
-    closeLinkEntitlementModal()
+    // closeLinkEntitlementModal()
   }
   let editProjectEntitlement = function (event) {
     // eslint-disable-next-line
@@ -361,7 +511,7 @@ export default function ProjectDetail (props) {
     payload.data = dataPayload
     console.log('payload', payload)
     props.updateProjectEntitlements(payload)
-    closeLinkUpdateModal()
+    // closeLinkUpdateModal()
   }
   let deleteProjectEntitlement = function (event) {
     // eslint-disable-next-line
@@ -378,7 +528,7 @@ export default function ProjectDetail (props) {
     payload.data = dataPayload
     console.log('payload', payload)
     props.deleteProjectEntitlements(payload)
-    closeLinkDeleteModal()
+    // closeLinkDeleteModal()
   }
   if (props.projectData !== '' && props.projectData.error_code === null) {
     ProjectName = props.projectData.resources[0].name
@@ -827,21 +977,44 @@ return (
               </div>
               <div className='modal-body'>
                 <div className='form-group row'>
+                  <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Supplier</label></div>
+                  <div className='col-8'>
+                    <Select
+                      className='input-sm m-input'
+                      placeholder='Select'
+                      isClearable
+                      value={props.entitlementActionSettings.supplier}
+                      onChange={handleSupplierSelect}
+                      isSearchable
+                      options={selectSupplierOptions}
+                    />
+                  </div>
+                </div>
+                <div className='form-group row'>
+                  <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Agreement</label></div>
+                  <div className='col-8'>
+                    <Select
+                      className='input-sm m-input'
+                      placeholder='Select'
+                      isClearable
+                      value={props.entitlementActionSettings.agreement}
+                      onChange={handleAgreementSelect}
+                      isSearchable
+                      options={selectAgreementOptions}
+                    />
+                  </div>
+                </div>
+                <div className='form-group row'>
                   <div className='col-4'><label htmlFor='SelectEntitlement' className='col-form-label'>Select Entitlements</label></div>
                   <div className='col-8'>
                     <Select
                       className='input-sm m-input'
-                      placeholder='Select Enttlement'
+                      placeholder='Select'
                       isClearable
-                      // isOptionDisabled={''}
-                      // defaultValue={childPropertyOption[0]}
-                      // isDisabled={false}
-                      // isLoading={false}
-                      // isClearable={true}
-                      value={props.entitlementActionSettings.entitlementSelected}
-                      onChange={handleSelect}
+                      value={props.entitlementActionSettings.entitlement}
+                      onChange={handleEntitlementSelect}
                       isSearchable
-                      options={selectOptions}
+                      options={selectEntitlementOptions}
                     />
                   </div>
                 </div>
@@ -1027,7 +1200,10 @@ return (
       projectPropertiesPayload: PropTypes.any,
       copiedProjectProperties: PropTypes.any,
       copiedProjectData: PropTypes.any,
-      entitlementComponents: PropTypes.any,
       perPage: PropTypes.any,
-      currentPage: PropTypes.any
- }
+      currentPage: PropTypes.any,
+      entitlements: PropTypes.any,
+      agreements: PropTypes.any,
+      suppliers: PropTypes.any,
+      allEntitlements: PropTypes.any
+    }

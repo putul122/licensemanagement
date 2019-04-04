@@ -27,7 +27,11 @@ export function mapStateToProps (state, props) {
     addProjectEntitlementResponse: state.projectDetailReducer.addProjectEntitlementResponse,
     updateProjectEntitlementResponse: state.projectDetailReducer.updateProjectEntitlementResponse,
     deleteProjectEntitlementResponse: state.projectDetailReducer.deleteProjectEntitlementResponse,
-    deleteProjectResponse: state.projectDetailReducer.deleteProjectResponse
+    deleteProjectResponse: state.projectDetailReducer.deleteProjectResponse,
+    allEntitlements: state.projectDetailReducer.allEntitlements,
+    suppliers: state.projectDetailReducer.suppliers,
+    agreements: state.projectDetailReducer.agreements,
+    entitlements: state.projectDetailReducer.entitlements
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -54,7 +58,10 @@ export const propsMapping: Callbacks = {
   restoreProjectProperties: projectsActionCreators.restoreProjectProperties,
   resetResponse: projectsActionCreators.resetResponse,
   setCurrentPage: projectsActionCreators.setCurrentPage,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  fetchEntitlementsBySupplierAgreement: sagaActions.entitlementActions.fetchEntitlementsBySupplierAgreement,
+  fetchAgreements: sagaActions.agreementActions.fetchAgreements,
+  fetchSuppliers: sagaActions.supplierActions.fetchSuppliers
 }
 
 // If you want to use the function mapping
@@ -94,6 +101,9 @@ export default compose(
       let componentTypeId = _.result(_.find(componentTypes, function (obj) {
         return obj.key === 'Entitlement'
       }), 'component_type')
+      this.props.fetchEntitlementsBySupplierAgreement && this.props.fetchEntitlementsBySupplierAgreement({})
+      this.props.fetchAgreements && this.props.fetchAgreements({})
+      this.props.fetchSuppliers && this.props.fetchSuppliers({})
       this.props.fetchProjectById && this.props.fetchProjectById(payload)
       this.props.fetchProjectEntitlements && this.props.fetchProjectEntitlements(payload)
       this.props.fetchProjectProperties && this.props.fetchProjectProperties(projectId)
@@ -170,6 +180,8 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.addProjectEntitlementResponse.error_message, nextProps.addProjectEntitlementResponse.error_code)
         }
+        let entitlementActionSettings = {...this.props.entitlementActionSettings, 'entitlementSelected': null, 'licenseCount': 0, 'isLinkModalOpen': false}
+        this.props.setEntitlementActionSettings(entitlementActionSettings)
         this.props.resetResponse()
       }
       if (nextProps.updateProjectEntitlementResponse && nextProps.updateProjectEntitlementResponse !== '') {
@@ -184,6 +196,8 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.updateProjectEntitlementResponse.error_message, nextProps.updateProjectEntitlementResponse.error_code)
         }
+        let entitlementActionSettings = {...this.props.entitlementActionSettings, 'isLinkUpdateModalOpen': false, 'entitlementSelected': null, 'licenseCount': 0}
+        this.props.setEntitlementActionSettings(entitlementActionSettings)
         this.props.resetResponse()
       }
       if (nextProps.deleteProjectEntitlementResponse && nextProps.deleteProjectEntitlementResponse !== '') {
@@ -198,6 +212,8 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.deleteProjectEntitlementResponse.error_message, nextProps.deleteProjectEntitlementResponse.error_code)
         }
+        let entitlementActionSettings = {...this.props.entitlementActionSettings, 'isLinkDeleteModalOpen': false, 'entitlementSelected': null, 'licenseCount': 0}
+        this.props.setEntitlementActionSettings(entitlementActionSettings)
         this.props.resetResponse()
       }
       if (nextProps.deleteProjectResponse && nextProps.deleteProjectResponse !== '') {
