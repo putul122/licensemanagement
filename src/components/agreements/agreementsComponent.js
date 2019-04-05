@@ -283,13 +283,13 @@ export default function Agreements (props) {
     let tdBlock = []
     let notificationPeriod = data.notification_period === null ? 90 : parseInt(data.notification_period)
     if (moment(data.expiry_date).subtract(notificationPeriod, 'd') > (todayDate)) {
-      tdBlock.push(<td className={styles.success}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+      tdBlock.push(<td className={styles.success}>{data.expiry_date ? moment(data.expiry_date).format('DD MMM YYYY') : ''}</td>)
     } else if ((moment(data.expiry_date).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.expiry_date) > todayDate)) {
-      tdBlock.push(<td className={styles.proccess}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+      tdBlock.push(<td className={styles.proccess}>{data.expiry_date ? moment(data.expiry_date).format('DD MMM YYYY') : ''}</td>)
     } else if ((moment(data.expiry_date) < todayDate)) {
-      tdBlock.push(<td className={styles.danger}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+      tdBlock.push(<td className={styles.danger}>{data.expiry_date ? moment(data.expiry_date).format('DD MMM YYYY') : ''}</td>)
     } else {
-      tdBlock.push(<td className={''}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+      tdBlock.push(<td className={''}>{data.expiry_date ? moment(data.expiry_date).format('DD MMM YYYY') : ''}</td>)
     }
       return (
         <tr key={index}>

@@ -1825,13 +1825,13 @@ export default function AgreementDetail (props) {
           let todayDate = moment()
           let notificationPeriod = data.notification_period === null ? 90 : parseInt(data.notification_period)
           if (moment(data.due_date).subtract(notificationPeriod, 'd') > (todayDate)) {
-            tdBlock.push(<td className={styles.success}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+            tdBlock.push(<td className={styles.success}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
           } else if ((moment(data.due_date).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.due_date) > todayDate)) {
-            tdBlock.push(<td className={styles.proccess}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+            tdBlock.push(<td className={styles.proccess}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
           } else if ((moment(data.due_date) < todayDate)) {
-            tdBlock.push(<td className={styles.danger}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+            tdBlock.push(<td className={styles.danger}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
           } else {
-            tdBlock.push(<td className={''}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+            tdBlock.push(<td className={''}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
           }
           return (
             <tr key={index}>
