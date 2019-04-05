@@ -453,11 +453,23 @@ export default function Applicationview (props) {
     if (props.applicationSoftwares !== '') {
       if (props.applicationSoftwares.resources.length > 0) {
         applicationSoftwareList = props.applicationSoftwares.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          let tdBlock = []
+          let todayDate = moment()
+          let notificationPeriod = 90
+          if (moment(data.end_of_service_life).subtract(notificationPeriod, 'd') > (todayDate)) {
+            tdBlock.push(<td className={styles.success}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+          } else if ((moment(data.end_of_service_life).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.end_of_service_life) > todayDate)) {
+            tdBlock.push(<td className={styles.proccess}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+          } else if ((moment(data.end_of_service_life) < todayDate)) {
+            tdBlock.push(<td className={styles.danger}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+          } else {
+            tdBlock.push(<td className={''}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+          }
           return (
             <tr key={index}>
               <td>{data.supplier}</td>
               <td>{data.name}</td>
-              <td>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>
+              {tdBlock}
               <td>
                 <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
                   <button type='button' onClick={(event) => { event.preventDefault(); openLinkDeleteModal(data) }} className='m-btn btn btn-danger'><i className='fa flaticon-delete-1' /></button>

@@ -19,8 +19,7 @@ export default function SignUp (props) {
     </div>
     )
   }
-  let handleInput = function (event) {
-    event.preventDefault()
+  let handleRegister = function () {
     if (typeof (EmailBox) !== 'undefined' && typeof (PasswordBox) !== 'undefined') {
       let name = FullNameBox.value
       let nameArray = name.split(' ', 2)
@@ -65,6 +64,11 @@ export default function SignUp (props) {
     }
   }
 
+  let keyPressed = function (event) {
+    if (event.key === 'Enter') {
+      handleRegister()
+    }
+  }
   let handelClick = function (event) {
     props.toggleFlipInX('m-login--signin')
   }
@@ -80,16 +84,16 @@ export default function SignUp (props) {
               <div className='m-login__form m-form'>
                 {messageBlock}
                 <div className='form-group m-form__group'>
-                  <input className={'form-control'} type='text' ref={input => (FullNameBox = input)} placeholder='Fullname' name='fullname' />
+                  <input onKeyPress={keyPressed} className={'form-control'} type='text' ref={input => (FullNameBox = input)} placeholder='Fullname' name='fullname' />
                 </div>
                 <div className='form-group m-form__group'>
-                  <input className={'form-control'} type='text' ref={input => (EmailBox = input)} placeholder='Email' name='email' autoComplete='off' />
+                  <input onKeyPress={keyPressed} className={'form-control'} type='text' ref={input => (EmailBox = input)} placeholder='Email' name='email' autoComplete='off' />
                 </div>
                 <div className='form-group m-form__group'>
-                  <input className={'form-control'} type='password' ref={input => (PasswordBox = input)} placeholder='Password' name='password' />
+                  <input onKeyPress={keyPressed} className={'form-control'} type='password' ref={input => (PasswordBox = input)} placeholder='Password' name='password' />
                 </div>
                 <div className='m-login__form-action'>
-                  <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Register</button>&nbsp;&nbsp;
+                  <button type='button' onClick={handleRegister} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Register</button>&nbsp;&nbsp;
                   <button id='m_login_signup_cancel' onClick={handelClick} className='btn btn-outline-info m-btn m-btn--pill lg-btn--custom'>Cancel</button>
                 </div>
               </div>

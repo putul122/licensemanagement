@@ -44,6 +44,12 @@ export default function Login (props) {
     loadingClass = ''
   }
 
+  let keyPressed = function (event) {
+    if (event.key === 'Enter') {
+      handleSubmit()
+    }
+  }
+
   if (loggedInresponse !== '') {
     if (loggedInresponse.error_code) {
       messageBlock = loggedInMessageResponse(loggedInresponse.error_message)
@@ -66,10 +72,10 @@ export default function Login (props) {
           </div> */}
           {messageBlock}
           <div className='form-group m-form__group'>
-            <input className='form-control' type='text' ref={input => (EmailBox = input)} placeholder='Email' />
+            <input onKeyPress={keyPressed} className='form-control' type='text' ref={input => (EmailBox = input)} placeholder='Email' />
           </div>
           <div className='form-group m-form__group'>
-            <input className='form-control m-login__form-input--last' type='Password' ref={input => (PasswordBox = input)} placeholder='Password' />
+            <input onKeyPress={keyPressed} className='form-control m-login__form-input--last' type='Password' ref={input => (PasswordBox = input)} placeholder='Password' />
           </div>
           <div className='row m-login__form-sub'>
             <div className='col m--align-left'>
@@ -94,9 +100,9 @@ export default function Login (props) {
 Login.propTypes = {
   // isLoggedin: PropTypes.any,
   loginProcess: PropTypes.any,
-  loginUser: PropTypes.func,
-  client_id: PropTypes.any,
-  client_secret: PropTypes.any,
-  loggedInresponse: PropTypes.any,
-  setLoginProcessStatus: PropTypes.func
+  // loginUser: PropTypes.func,
+  // client_id: PropTypes.any,
+  // client_secret: PropTypes.any,
+  loggedInresponse: PropTypes.any
+  // setLoginProcessStatus: PropTypes.func
 }

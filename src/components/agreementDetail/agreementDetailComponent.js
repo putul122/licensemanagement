@@ -1821,10 +1821,22 @@ export default function AgreementDetail (props) {
     if (props.agreementConditions !== '') {
       if (props.agreementConditions.resources.length > 0) {
         agreementConditionsList = props.agreementConditions.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+          let tdBlock = []
+          let todayDate = moment()
+          let notificationPeriod = data.notification_period === null ? 90 : parseInt(data.notification_period)
+          if (moment(data.due_date).subtract(notificationPeriod, 'd') > (todayDate)) {
+            tdBlock.push(<td className={styles.success}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+          } else if ((moment(data.due_date).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.due_date) > todayDate)) {
+            tdBlock.push(<td className={styles.proccess}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+          } else if ((moment(data.due_date) < todayDate)) {
+            tdBlock.push(<td className={styles.danger}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+          } else {
+            tdBlock.push(<td className={''}>{moment(data.due_date).format('DD MMM YYYY')}</td>)
+          }
           return (
             <tr key={index}>
               <td><a href={'javascript:void(0)' + data.id} onClick={(event) => { event.preventDefault(); openViewConditionModal(data) }}>{data.name}</a></td>
-              <td>{moment(data.due_date).format('DD MMM YYYY')}</td>
+              {tdBlock}
               <td>
                 <div className='m-btn-group m-btn-group--pill btn-group' role='group' aria-label='First group'>
                   <button type='button' onClick={(event) => { event.preventDefault(); openUpdateConditionModal(data) }} className='m-btn btn btn-info'><i className='fa flaticon-edit-1' /></button>
@@ -2829,8 +2841,8 @@ let editAgreeementCondition = function (event) {
                       </div>
                       <div className='form-group row'>
                         <div className='col-4'><label htmlFor='SelectNotificationPeriod' className='col-form-label'>Notification Period</label></div>
-                        <div className='col-3'><input type='text' className='form-control' value={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.notification_period : ''} autoComplete='off' required /></div>
-                        <div className='col-5'>
+                        {/* <div className='col-3'><input type='text' className='form-control' value={props.addConditionActionSettings.conditionData ? props.addConditionActionSettings.conditionData.notification_period : ''} autoComplete='off' required /></div> */}
+                        <div className='col-8'>
                           <Select
                             // className='col-7 input-sm m-input'
                             placeholder='Select Notification'

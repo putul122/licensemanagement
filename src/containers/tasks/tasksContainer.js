@@ -78,8 +78,6 @@ export default compose(
       }
       if (nextProps.taskProperties && nextProps.taskProperties !== '') {
         if (nextProps.taskProperties.error_code === null) {
-          // eslint-disable-next-line
-          mApp && mApp.unblockPage()
           let actionSettings = {...nextProps.actionSettings}
           actionSettings.taskProperties = nextProps.taskProperties.resources
           nextProps.setActionSettings(actionSettings)
@@ -88,6 +86,8 @@ export default compose(
           toastr.error(nextProps.taskProperties.error_message, nextProps.taskProperties.error_code)
         }
         nextProps.resetResponse()
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
       }
       if (nextProps.tasks && nextProps.tasks !== this.props.tasks) {
         // eslint-disable-next-line
@@ -105,6 +105,12 @@ export default compose(
           nextProps.setActionSettings(actionSettings)
           // eslint-disable-next-line
           toastr.success('Task submitted successfully.')
+          let payload = {
+            'search': '',
+            'page_size': this.props.perPage,
+            'page': 1
+          }
+          this.props.fetchTasks && this.props.fetchTasks(payload)
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.updateTaskResponse.error_message, nextProps.updateTaskResponse.error_code)

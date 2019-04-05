@@ -92,12 +92,24 @@ if (props.software && props.software !== '') {
   //   )
   // })
   softwareList = sortedArray.map(function (data, index) {
+    let tdBlock = []
+    let todayDate = moment()
+    let notificationPeriod = 90
+    if (moment(data.end_of_service_life).subtract(notificationPeriod, 'd') > (todayDate)) {
+      tdBlock.push(<td className={styles.success}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+    } else if ((moment(data.end_of_service_life).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.end_of_service_life) > todayDate)) {
+      tdBlock.push(<td className={styles.proccess}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+    } else if ((moment(data.end_of_service_life) < todayDate)) {
+      tdBlock.push(<td className={styles.danger}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+    } else {
+      tdBlock.push(<td className={''}>{moment(data.end_of_service_life).format('DD MMM YYYY')}</td>)
+    }
     return (
       <tbody>
         <tr key={index}>
           <td><a href={'/softwares/' + data.id} >{data.name}</a></td>
           <td>{data.supplier}</td>
-          <td>{moment(data.end_of_service_life).isValid() === true ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</td>
+          {tdBlock}
           <td>{data.instances}</td>
         </tr>
       </tbody>

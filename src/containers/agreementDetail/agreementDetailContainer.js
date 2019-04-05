@@ -145,7 +145,8 @@ export default compose(
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
-        'agreement_id': this.props.match.params.id
+        'agreement_id': this.props.match.params.id,
+        'id': this.props.match.params.id
       }
       this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
       this.props.fetchAgreementEntitlements && this.props.fetchAgreementEntitlements(payload)

@@ -277,28 +277,16 @@ export default function Agreements (props) {
   }
 
   if (props.agreements && props.agreements !== '') {
-    let todayDate = moment().format('YYYY-MM-DD')
+    let todayDate = moment()
     let sortedArray = _.orderBy(props.agreements.resources, ['name'], ['asc'])
     agreementsList = sortedArray.map(function (data, index) {
-    //   if (moment(data.expiry_date).isSameOrBefore(todayDate)) {
-    //    <td className={styles.danger}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>
-    //  }
-    // const getBackgroundColor() {
-    //   if (moment(data.expiry_date).isSameOrBefore(todayDate)) {
-    //     return 'blue'
-    //   }
-    //   // else if (status === 'pending') {
-    //   //   return 'black'
-    //   // } else {
-    //   //   return 'red'
-    //   // }
-    // }
     let tdBlock = []
-    if (moment(data.expiry_date).subtract(parseInt((data.notification_period === null ? 90 : data.notification_period), 'days')) > (todayDate)) {
+    let notificationPeriod = data.notification_period === null ? 90 : parseInt(data.notification_period)
+    if (moment(data.expiry_date).subtract(notificationPeriod, 'd') > (todayDate)) {
       tdBlock.push(<td className={styles.success}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
-    } else if ((moment(data.expiry_date).subtract(parseInt((data.notification_period === null ? 90 : data.notification_period), 'days')) < todayDate) && (moment(data.expiry_date) > todayDate)) {
-      tdBlock(<td className={styles.proccess}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
-    } else if ((moment(data.expiry_date) > todayDate)) {
+    } else if ((moment(data.expiry_date).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.expiry_date) > todayDate)) {
+      tdBlock.push(<td className={styles.proccess}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
+    } else if ((moment(data.expiry_date) < todayDate)) {
       tdBlock.push(<td className={styles.danger}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
     } else {
       tdBlock.push(<td className={''}>{moment(data.expiry_date).format('DD MMM YYYY')}</td>)
