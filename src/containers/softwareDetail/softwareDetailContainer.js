@@ -174,6 +174,13 @@ export default compose(
                   value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
                 } else if (labelParts[ix].type_property.property_type.key === 'List') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
+                } else if (labelParts[ix].type_property.property_type.key === 'List') {
+                  if (data.parts[ix].value !== null) {
+                    value = {}
+                    value.valueSetValue = data.parts[ix].value.value_set_value
+                    value.valueSetValueId = data.parts[ix].value.value_set_value_id
+                  }
+                  // value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
                 } else {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.other_value : ''
                 }
@@ -195,6 +202,9 @@ export default compose(
               data.type_property.date_time_value = setCustomerProperty[index]
             } else if (data.type_property.property_type.key === 'Text') {
               data.type_property.text_value = setCustomerProperty[index]
+            } else if (data.type_property.property_type.key === 'List') {
+              data.type_property.value_set_value = setCustomerProperty[index] ? setCustomerProperty[index].valueSetValue : null
+              data.type_property.value_set_value_id = setCustomerProperty[index] ? setCustomerProperty[index].valueSetValueId : null
             } else {
               data.type_property.other_value = setCustomerProperty[index]
             }
