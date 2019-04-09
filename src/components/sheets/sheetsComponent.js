@@ -413,7 +413,7 @@ export default function Sheets (props) {
         labelParts.forEach(function (partData, index) {
           let obj = {}
           if (partData.standard_property !== null && partData.type_property === null) { // Standard Property
-            obj.value = fileData[i][partData.standard_property] || ''
+            obj.value = fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
           } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
             let connectionValue = '' + fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
             if (connectionValue.trim() !== '') {
