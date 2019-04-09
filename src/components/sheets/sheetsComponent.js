@@ -417,7 +417,14 @@ export default function Sheets (props) {
           } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
             let connectionValue = '' + fileData[i][partData.name.toLowerCase().trim().replace(/ /g, '_')] || ''
             if (connectionValue.trim() !== '') {
-              obj.value = connectionValue.split(',')
+              let valueArray = connectionValue.split(',')
+              let valueData = []
+              valueArray.forEach(function (targetData, tid) {
+                let obj = {}
+                obj.target_name = targetData
+                valueData.push(obj)
+              })
+              obj.value = valueData
             } else {
               obj.value = []
             }
