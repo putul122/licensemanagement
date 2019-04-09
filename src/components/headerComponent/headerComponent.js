@@ -106,9 +106,9 @@ export default function HeaderComponent (props) {
                   <div className='m-stack__item m-topbar__nav-wrapper'>
                     <ul className='m-topbar__nav m-nav m-nav--inline'>
                       <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
+                        {/* <p data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title={logout} style={{'fontSize': '0.7vw', 'cursor': 'pointer'}}>{'No Supplier'}</p> */}
                         <a href='javascript:void(0);' className='m-nav__link m-dropdown__toggle' onClick={openQuickSlide} id='m_topbar_notification_icon'>
-                          {/* {props.notificationFlag && (<span className='m-nav__link-badge m-badge m-badge--danger'><i className='flaticon-exclamation-2' /></span>)} */}
-                          <span className='m-nav__link-icon m-topbar__usericon'>
+                          <span className='m-nav__link-icon m-topbar__usericon' data-skin='light' data-toggle='m-tooltip' data-placement='bottom' data-original-title='Activity Feeds' style={{'fontSize': '10px', 'cursor': 'pointer'}}>
                             <span className='m-nav__link-icon-wrapper' style={notificationStyle}><i className='flaticon-music-2' /></span>
                           </span>
                         </a>
@@ -123,10 +123,9 @@ export default function HeaderComponent (props) {
                           <span className='m-topbar__userpic m--hide'>
                             <img src='assets/app/media/img/users/user4.jpg' className='m--img-rounded m--marginless m--img-centered' alt='' />
                           </span>
-                          <span className='m-nav__link-icon m-topbar__usericon'>
+                          <span className='m-nav__link-icon m-topbar__usericon' data-skin='light' data-toggle='m-tooltip' data-placement='bottom' data-original-title='Logout' style={{'fontSize': '10px', 'cursor': 'pointer'}}>
                             <span className='m-nav__link-icon-wrapper'><i className='flaticon-user-ok' /></span>
                           </span>
-                          <span className='m-topbar__username m--hide'>Nick</span>
                         </a>
                         <div className='m-dropdown__wrapper'>
                           <span className='m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust' />

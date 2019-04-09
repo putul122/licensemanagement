@@ -440,7 +440,7 @@ export default function Dashboard (props) {
           )
         }
       }
-      EntitlementList = EntitlementContent.map(function (element, index) {
+      EntitlementList = EntitlementContent.slice(0, 3).map(function (element, index) {
         return element
       })
     }

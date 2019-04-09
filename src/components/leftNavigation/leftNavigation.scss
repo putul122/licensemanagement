@@ -5,6 +5,8 @@
 .fa{
     font-size: 40px;
     text-align: center;
+    color:red !important;
+    background-color: red !important;
     // margin-right: 50px;
 }
 .logotext{
@@ -56,8 +58,8 @@
     display:table;
     border-collapse:collapse;
     border-spacing:0;
-    color:#999;
-     font-family: arial;
+    color:rgb(0, 131, 194);
+    font-family: arial;
     font-size: 14px;
     text-decoration:none;
     -webkit-transform:translateZ(0) scale(1,1);

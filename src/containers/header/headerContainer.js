@@ -33,6 +33,15 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentDidMount: function () {},
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      var tooltips = $('.tooltip').not('.in')
+      if (tooltips) {
+        tooltips.remove()
+      }
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
     componentWillReceiveProps (nextProps) {
       if (nextProps.isQuickSlideOpen && nextProps.isQuickSlideOpen !== this.props.isQuickSlideOpen) {
         if (nextProps.isQuickSlideOpen) {
@@ -51,5 +60,6 @@ export default compose(
         }
       }
     }
+
   })
 )(Header)
