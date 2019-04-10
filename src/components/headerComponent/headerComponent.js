@@ -28,9 +28,13 @@ export default function HeaderComponent (props) {
     let quickSlideClass = 'm-quick-sidebar--off'
     let isQuickSlideOpen = props.isQuickSlideOpen
     let isLoginSlideOpen = props.isLoginSlideOpen
+    let isSearchSlideOpen = props.isSearchSlideOpen
     let loginSlideClass = 'm-dropdown--close'
+    let searchSlideClass = 'm-dropdown--close'
     let notificationFlag = props.notificationFlag
     let notificationStyle = {}
+    let searchTextBox
+    console.log('searchTextBox', searchTextBox)
     if (props.notificationFlag) {
       notificationStyle = notificationAlert
     } else {
@@ -69,16 +73,31 @@ export default function HeaderComponent (props) {
     } else {
       loginSlideClass = ''
     }
+    if (isSearchSlideOpen) {
+      searchSlideClass = 'm-dropdown--open'
+    } else {
+      searchSlideClass = ''
+    }
     let openLoginSlide = function (event) {
       event.preventDefault()
       loginSlideClass = 'm-dropdown--open'
-      props.setLoginslideFlag(true)
+      props.setLoginslideFlag(!props.isLoginSlideOpen)
     }
     let closeLoginSlide = function (event) {
       event.preventDefault()
       loginSlideClass = 'm-dropdown--close'
       props.setLoginslideFlag(false)
     }
+    let openSearchSlide = function (event) {
+      event.preventDefault()
+      searchSlideClass = 'm-dropdown--open'
+      props.setSearchSlideFlag(!props.isSearchSlideOpen)
+    }
+    // let closeSearchSlide = function (event) {
+    //   event.preventDefault()
+    //   searchSlideClass = 'm-dropdown--close'
+    //   props.setSearchSlideFlag(false)
+    // }
     let logOut = function (event) {
       event.preventDefault()
       localStorage.removeItem('isLoggedin')
@@ -87,6 +106,18 @@ export default function HeaderComponent (props) {
       props.setLoginslideFlag(false)
       // props.history.push('/')
       window.location.href = window.location.origin
+    }
+    let handleGlobalSearch = function () {
+      let searchValue = ''
+      if (searchTextBox) {
+        searchValue = searchTextBox.value
+      }
+      window.location.href = window.location.origin + '/searchAll?search=' + searchValue
+    }
+    let keyPressed = function (event) {
+      if (event.key === 'Enter') {
+        handleGlobalSearch()
+      }
     }
     return (
       <div>
@@ -105,6 +136,39 @@ export default function HeaderComponent (props) {
                 <div id='m_header_topbar' className='m-topbar  m-stack m-stack--ver m-stack--general'>
                   <div className='m-stack__item m-topbar__nav-wrapper'>
                     <ul className='m-topbar__nav m-nav m-nav--inline'>
+                      <li className={'m-nav__item m-topbar__user-profile  m-dropdown  m-dropdown--medium m-dropdown--arrow  m-dropdown--align-right  m-dropdown--mobile-full-width m-dropdown--skin-light ' + searchSlideClass}>
+                        <a href='' className='m-nav__link' onClick={openSearchSlide}>
+                          <span className='m-nav__link-icon m-topbar__usericon' data-skin='light' data-toggle='m-tooltip' data-placement='bottom' data-original-title='Logout' style={{'fontSize': '10px', 'cursor': 'pointer'}}>
+                            <span className='m-nav__link-icon-wrapper'><i className='flaticon-search' /></span>
+                          </span>
+                        </a>
+                        <div className='m-dropdown__wrapper'>
+                          <span className='m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust' />
+                          <div className='m-dropdown__inner'>
+                            <div className='m--align-right'>
+                              <div className='m-card-user--skin-light' />
+                            </div>
+                            <div className='m-dropdown__body'>
+                              <div className='m-dropdown__content'>
+                                <ul className='m-nav m-nav--skin-light'>
+                                  <li className='m-nav__item'>
+                                    <div style={{'display': 'flex'}}>
+                                      <div className='m-input-icon m-input-icon--left'>
+                                        <input type='text' onKeyPress={keyPressed} className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} />
+                                        <span className='m-input-icon__icon m-input-icon__icon--left'>
+                                          <span>
+                                            <i className='la la-search' />
+                                          </span>
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
                       <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
                         {/* <p data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title={logout} style={{'fontSize': '0.7vw', 'cursor': 'pointer'}}>{'No Supplier'}</p> */}
                         <a href='javascript:void(0);' className='m-nav__link m-dropdown__toggle' onClick={openQuickSlide} id='m_topbar_notification_icon'>
@@ -193,6 +257,5 @@ HeaderComponent.propTypes = {
   isQuickSlideOpen: PropTypes.any,
   notificationFlag: PropTypes.any,
   isLoginSlideOpen: PropTypes.any,
-  setLoginslideFlag: PropTypes.func
-  // history: PropTypes.any
+  isSearchSlideOpen: PropTypes.any
 }

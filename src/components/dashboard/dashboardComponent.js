@@ -14,7 +14,6 @@ const formatAmount = (x) => {
   return parts.join('.')
 }
 export default function Dashboard (props) {
-  let searchTextBox
   let EntitlementList = ''
   let supplierCount = ''
   let agreementCount = ''
@@ -27,14 +26,6 @@ export default function Dashboard (props) {
   let selectOptionList = ''
   let costByTechnology = []
   let softwareSummaryData = {}
-  let handleGlobalSearch = function (event) {
-    event.preventDefault()
-    let searchValue = ''
-    if (searchTextBox) {
-      searchValue = searchTextBox.value
-    }
-    window.location.href = window.location.origin + '/searchAll?search=' + searchValue
-  }
   let chartOptionSoftware = {
     responsive: true,
     title: {
@@ -524,21 +515,6 @@ export default function Dashboard (props) {
           <select className='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onBlur={handleBlurChange} onChange={handleChange}>
             {selectOptionList}
           </select>
-        </div>
-        <div className={'col-md-6'}>
-          <div className='pull-right' id='m_table_1_length' style={{'display': 'flex'}}>
-            <div style={{'display': 'flex'}}>
-              <div className='m-input-icon m-input-icon--left'>
-                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} />
-                <span className='m-input-icon__icon m-input-icon__icon--left'>
-                  <span>
-                    <i className='la la-search' />
-                  </span>
-                </span>
-              </div>
-              <button onClick={handleGlobalSearch} className='btn btn-md btn-secondary'>Search</button>
-            </div>
-          </div>
         </div>
       </div>
       <br />

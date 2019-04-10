@@ -10,9 +10,13 @@ export default function Search (props) {
     let value = event.target.value
     props.setSearchText(value)
   }
-  let handleGlobalSearch = function (event) {
-    event.preventDefault()
+  let handleGlobalSearch = function () {
     window.location.href = window.location.origin + '/searchAll?search=' + props.searchText
+  }
+  let keyPressed = function (event) {
+    if (event.key === 'Enter') {
+      handleGlobalSearch()
+    }
   }
   let loadMoreData = function (event) {
     event.preventDefault()
@@ -82,7 +86,7 @@ export default function Search (props) {
             <div className='pull-right' id='m_table_1_length' style={{'display': 'flex'}}>
               <div style={{'display': 'flex'}}>
                 <div className='m-input-icon m-input-icon--left'>
-                  <input type='text' className='form-control m-input' value={props.searchText} onChange={handleChange} placeholder='Search...' id='generalSearch' />
+                  <input type='text' onKeyPress={keyPressed} className='form-control m-input' value={props.searchText} onChange={handleChange} placeholder='Search...' id='generalSearch' />
                   <span className='m-input-icon__icon m-input-icon__icon--left'>
                     <span>
                       <i className='la la-search' />

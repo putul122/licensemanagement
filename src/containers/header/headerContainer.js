@@ -10,7 +10,8 @@ export function mapStateToProps (state, props) {
     isQuickSlideOpen: state.basicReducer.isQuickSlideOpen,
     notificationFlag: state.basicReducer.notificationFlag,
     isLoginSlideOpen: state.basicReducer.isLoginSlideOpen,
-    updateNotificationViewStatusResponse: state.basicReducer.updateNotificationViewStatusResponse
+    updateNotificationViewStatusResponse: state.basicReducer.updateNotificationViewStatusResponse,
+    isSearchSlideOpen: state.basicReducer.isSearchSlideOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -18,6 +19,7 @@ export const propsMapping: Callbacks = {
   setQuickslideFlag: actionCreators.setQuickslideFlag,
   setNotificationFlag: actionCreators.setNotificationFlag,
   setLoginslideFlag: actionCreators.setLoginslideFlag,
+  setSearchSlideFlag: actionCreators.setSearchSlideFlag,
   resetNotificationResponse: actionCreators.resetNotificationResponse,
   updateNotificationViewStatus: sagaActions.basicActions.updateNotificationViewStatus
 }

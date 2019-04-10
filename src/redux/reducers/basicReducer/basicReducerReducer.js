@@ -13,6 +13,7 @@ const SET_MODAL_OPEN_STATUS = 'BasicReducer/SET_MODAL_OPEN_STATUS'
 const SET_QUICKSLIDE_FLAG = 'BasicReducer/SET_QUICKSLIDE_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
 const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
+const SET_SEARCH_SLIDE_FLAG = 'BasicReducer/SET_SEARCH_SLIDE_FLAG'
 const RESET_NOTIFICATION_RESPONSE = 'BasicReducer/RESET_NOTIFICATION_RESPONSE'
 const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
 const SET_API_CALLING_STATUS = 'BasicReducer/SET_API_CALLING_STATUS'
@@ -30,7 +31,8 @@ export const actions = {
   RESET_NOTIFICATION_RESPONSE,
   FETCH_PACKAGE_SUCCESS,
   SET_API_CALLING_STATUS,
-  TOGGLE_FLIPIN_X
+  TOGGLE_FLIPIN_X,
+  SET_SEARCH_SLIDE_FLAG
 }
 
 export const actionCreators = {
@@ -43,7 +45,8 @@ export const actionCreators = {
   setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
   resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE),
   setApiCallingStatus: createAction(SET_API_CALLING_STATUS),
-  toggleFlipInX: createAction(TOGGLE_FLIPIN_X)
+  toggleFlipInX: createAction(TOGGLE_FLIPIN_X),
+  setSearchSlideFlag: createAction(SET_SEARCH_SLIDE_FLAG)
 }
 
 export const initialState = {
@@ -62,7 +65,8 @@ export const initialState = {
   notificationFlag: false,
   updateNotificationViewStatusResponse: '',
   flipInX: 'm-login--signin',
-  packages: ''
+  packages: '',
+  isSearchSlideOpen: false
 }
 
 export default handleActions(
@@ -118,6 +122,10 @@ export default handleActions(
     }),
     [FETCH_PACKAGE_SUCCESS]: (state, action) => ({ ...state,
       packages: action.payload
+    }),
+    [SET_SEARCH_SLIDE_FLAG]: (state, action) => ({
+      ...state,
+      isSearchSlideOpen: action.payload
     })
   },
   initialState
