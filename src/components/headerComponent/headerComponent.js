@@ -138,7 +138,7 @@ export default function HeaderComponent (props) {
                     <ul className='m-topbar__nav m-nav m-nav--inline'>
                       <li className={'m-nav__item m-topbar__user-profile  m-dropdown  m-dropdown--medium m-dropdown--arrow  m-dropdown--align-right  m-dropdown--mobile-full-width m-dropdown--skin-light ' + searchSlideClass}>
                         <a href='' className='m-nav__link' onClick={openSearchSlide}>
-                          <span className='m-nav__link-icon m-topbar__usericon' data-skin='light' data-toggle='m-tooltip' data-placement='bottom' data-original-title='Logout' style={{'fontSize': '10px', 'cursor': 'pointer'}}>
+                          <span className='m-nav__link-icon m-topbar__usericon' data-skin='light' data-toggle='m-tooltip' data-placement='bottom' data-original-title='Search' style={{'fontSize': '10px', 'cursor': 'pointer'}}>
                             <span className='m-nav__link-icon-wrapper'><i className='flaticon-search' /></span>
                           </span>
                         </a>
