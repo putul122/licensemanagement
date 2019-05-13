@@ -19,3 +19,21 @@ h3{
     background-color: #0abb87;
     border-color: #0abb87;
 }
+.badge_success {
+    background: #0abb87;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 25px;
+    font-size: 11px;
+    color: white;
+    font-weight: 400;
+}
+.badge_danger {
+    background: #fd397a;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 25px;
+    font-size: 11px;
+    color: white;
+    font-weight: 400;
+}

@@ -93,7 +93,7 @@ export default compose(
       this.props.fetchComponentModelPrespectives && this.props.fetchComponentModelPrespectives(modelPayload)
       this.props.fetchApplicationById && this.props.fetchApplicationById(payload)
       // this.props.fetchApplicationProperties && this.props.fetchApplicationProperties(payload)
-      // this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
+      this.props.fetchApplicationRelationships && this.props.fetchApplicationRelationships(payload)
       this.props.fetchSoftwares && this.props.fetchSoftwares({})
       this.props.fetchEntitlements && this.props.fetchEntitlements({})
       this.props.fetchEntitlementsBySupplierAgreement && this.props.fetchEntitlementsBySupplierAgreement({})
@@ -185,8 +185,15 @@ export default compose(
                 obj.value = value
                 applicationProperties.push(obj)
               } else if (labelParts[ix].standard_property === null && labelParts[ix].type_property === null) { // Connection Property
+                let componentType = labelParts[ix].constraint.component_type
+                let targetComponentType = labelParts[ix].constraint.target_component_type
+                let connectionType = labelParts[ix].constraint.connection_type
                 if (partData.value) {
                   partData.value.forEach(function (data, index) {
+                    data.connection = JSON.parse(JSON.stringify(data))
+                    data.connection.connection_type = connectionType
+                    data.component.component_type = componentType
+                    data.target_component.component_type = targetComponentType
                     applicationRelationships.push(data)
                   })
                 }

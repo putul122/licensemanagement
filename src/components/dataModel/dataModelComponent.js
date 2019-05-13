@@ -536,11 +536,11 @@ export default function DataModel (props) {
                             link.target = index
                             link.direction = 'output'
                         } else if (data.relationship_type === 'ConnectTo') {  // Left
-                            link.type = data.connection.name || 'empty'
+                            link.type = data.connection ? data.connection.name : 'empty'
                             link.source = index
                             link.target = 0
                         } else if (data.relationship_type === 'ConnectFrom') {  // Right
-                            link.type = data.connection.name || 'empty'
+                            link.type = data.connection ? data.connection.name : 'empty'
                             link.source = 0
                             link.target = index
                         }

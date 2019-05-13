@@ -96,11 +96,11 @@ if (props.software && props.software !== '') {
     let todayDate = moment()
     let notificationPeriod = 90
     if (moment(data.end_of_service_life).subtract(notificationPeriod, 'd') > (todayDate)) {
-      tdBlock.push(<td className={styles.success}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</td>)
+      tdBlock.push(<td><span className={styles.badge_success}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</span></td>)
     } else if ((moment(data.end_of_service_life).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.end_of_service_life) > todayDate)) {
-      tdBlock.push(<td className={styles.proccess}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</td>)
+      tdBlock.push(<td><span className={styles.badge_proccess}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</span></td>)
     } else if ((moment(data.end_of_service_life) < todayDate)) {
-      tdBlock.push(<td className={styles.danger}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</td>)
+      tdBlock.push(<td><span className={styles.badge_danger}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</span></td>)
     } else {
       tdBlock.push(<td className={''}>{data.end_of_service_life ? moment(data.end_of_service_life).format('DD MMM YYYY') : ''}</td>)
     }

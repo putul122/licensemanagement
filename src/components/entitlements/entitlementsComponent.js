@@ -138,7 +138,7 @@ export default function Entitlementlists (props) {
           <td><a href={'/entitlements/' + data.id} >{data.name}</a></td>
           <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
           <td>{data.part_number}</td>
-          <td className={(data.purchased < data.consumed) ? styles.danger : styles.success}>{data.purchased}</td>
+          <td><span className={(data.purchased < data.consumed) ? styles.badge_danger : styles.badge_success}>{data.purchased}</span></td>
           <td>{data.consumed}</td>
           <td>{data.reserved}</td>
           <td>{data.bu_allocated}</td>

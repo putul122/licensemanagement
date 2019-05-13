@@ -263,7 +263,7 @@ export default function viewBusinessUnits (props) {
             <td>{data.entitlement.supplier}</td>
             <td><a href={'/entitlements/' + data.id}>{data.entitlement.name}</a></td>
             <td>{data.entitlement.part_number}</td>
-            <td className={(data.entitlement.purchased < data.entitlement.consumed) ? styles.danger : styles.success}>{data.entitlement.purchased}</td>
+            <td><span className={(data.entitlement.purchased < data.entitlement.consumed) ? styles.badge_danger : styles.badge_success}>{data.entitlement.purchased}</span></td>
             <td>{data.entitlement.consumed}</td>
             <td>{data.entitlement.reserved}</td>
             <td>{data.entitlement.bu_allocated}</td>

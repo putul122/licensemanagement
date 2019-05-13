@@ -82,6 +82,11 @@ export default compose(
           actionSettings.taskProperties = nextProps.taskProperties.resources
           nextProps.setActionSettings(actionSettings)
         } else {
+          let actionSettings = {...nextProps.actionSettings}
+          actionSettings.taskProperties = null
+          actionSettings.selectedTask = null
+          actionSettings.isNotificationModalOpen = false
+          nextProps.setActionSettings(actionSettings)
           // eslint-disable-next-line
           toastr.error(nextProps.taskProperties.error_message, nextProps.taskProperties.error_code)
         }

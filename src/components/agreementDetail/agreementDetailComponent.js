@@ -1212,7 +1212,7 @@ export default function AgreementDetail (props) {
             <tr key={index}>
               <td><a href={'/entitlements/' + data.id}>{data.name}</a></td>
               <td>{data.part_number}</td>
-              <td className={(data.purchased < data.consumed) ? styles.danger : styles.success}>{data.purchased}</td>
+              <td><span className={(data.purchased < data.consumed) ? styles.badge_danger : styles.badge_success}>{data.purchased}</span></td>
               <td>{data.consumed}</td>
               <td>{data.reserved}</td>
               <td>{data.bu_allocated}</td>
@@ -1825,11 +1825,11 @@ export default function AgreementDetail (props) {
           let todayDate = moment()
           let notificationPeriod = data.notification_period === null ? 90 : parseInt(data.notification_period)
           if (moment(data.due_date).subtract(notificationPeriod, 'd') > (todayDate)) {
-            tdBlock.push(<td className={styles.success}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
+            tdBlock.push(<td><span className={styles.badge_success}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</span></td>)
           } else if ((moment(data.due_date).subtract(notificationPeriod, 'd') < todayDate) && (moment(data.due_date) > todayDate)) {
-            tdBlock.push(<td className={styles.proccess}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
+            tdBlock.push(<td><span className={styles.badge_proccess}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</span></td>)
           } else if ((moment(data.due_date) < todayDate)) {
-            tdBlock.push(<td className={styles.danger}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
+            tdBlock.push(<td><span className={styles.badge_danger}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</span></td>)
           } else {
             tdBlock.push(<td className={''}>{data.due_date ? moment(data.due_date).format('DD MMM YYYY') : ''}</td>)
           }
