@@ -19,7 +19,6 @@ var connection = new signalR.HubConnectionBuilder()
           .configureLogging(signalR.LogLevel.Information)
           .build()
 connection.start().then(function () {
-  console.log('Connection Started---- >', connection)
   connection.invoke('GetNotificationStatus').catch(err => console.error('Call GetNotificationStatus method---', err))
 }).catch(err => console.error('connection error --------------', err))
 
@@ -35,7 +34,7 @@ export default function HeaderComponent (props) {
     let notificationStyle = {}
     let searchTextBox
     console.log('searchTextBox', searchTextBox)
-    if (props.notificationFlag) {
+    if (props.notificationIndicator) {
       notificationStyle = notificationAlert
     } else {
       notificationStyle = {}
@@ -45,6 +44,7 @@ export default function HeaderComponent (props) {
       payload = JSON.parse(payload)
       if (payload.notify) {
         props.setNotificationFlag(true)
+        props.setNotificationIndicator(true)
       } else {
         props.setNotificationFlag(false)
       }
@@ -52,6 +52,7 @@ export default function HeaderComponent (props) {
     if (isQuickSlideOpen) {
       quickSlideClass = 'm-quick-sidebar--on'
       if (props.notificationFlag) {
+        props.setNotificationIndicator(false)
         props.updateNotificationViewStatus && props.updateNotificationViewStatus()
       }
     } else {
@@ -257,5 +258,7 @@ HeaderComponent.propTypes = {
   isQuickSlideOpen: PropTypes.any,
   notificationFlag: PropTypes.any,
   isLoginSlideOpen: PropTypes.any,
-  isSearchSlideOpen: PropTypes.any
+  isSearchSlideOpen: PropTypes.any,
+  notificationIndicator: PropTypes.any,
+  setNotificationIndicator: PropTypes.func
 }

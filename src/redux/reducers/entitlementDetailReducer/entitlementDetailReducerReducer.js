@@ -2,8 +2,8 @@ import { createAction, handleActions } from 'redux-actions'
 import {
     FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
     FETCH_ENTITLEMENT_BY_ID_SUCCESS,
-    FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
-    FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
+    // FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
+    // FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
     DELETE_ENTITLEMENT_SUCCESS,
     UPDATE_ENTITLEMENT_PROPERTIES_SUCCESS
 } from '../../sagas/entitlement/entitlementSaga'
@@ -41,12 +41,14 @@ const SET_VALIDATION_PROPERTY = 'EntitlementDetailReducer/SET_VALIDATION_PROPERT
 const SET_ADD_SETTINGS = 'EntitlementDetailReducer/SET_ADD_SETTINGS'
 const SET_AVAILABLE_ACTION = 'EntitlementDetailReducer/SET_AVAILABLE_ACTION'
 const SET_CONNECTION_DATA = 'EntitlementDetailReducer/SET_CONNECTION_DATA'
+const SET_ENTITLEMENT_PROPERTY = 'EntitlementDetailReducer/SET_ENTITLEMENT_PROPERTY'
+const SET_ENTITLEMENT_RELATIONSHIP = 'EntitlementDetailReducer/SET_ENTITLEMENT_RELATIONSHIP'
 
 export const actions = {
   FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
   FETCH_ENTITLEMENT_BY_ID_SUCCESS,
-  FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
-  FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
+  // FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
+  // FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
   SET_UPDATE_ENTITLEMENT_SETTINGS,
   RESET_RESPONSE,
   SET_EDIT_COMPONENT_FLAG,
@@ -68,7 +70,9 @@ export const actions = {
   SET_VALIDATION_PROPERTY,
   SET_ADD_SETTINGS,
   SET_AVAILABLE_ACTION,
-  SET_CONNECTION_DATA
+  SET_CONNECTION_DATA,
+  SET_ENTITLEMENT_PROPERTY,
+  SET_ENTITLEMENT_RELATIONSHIP
 }
 
 export const actionCreators = {
@@ -90,14 +94,16 @@ export const actionCreators = {
   setValidationProperty: createAction(SET_VALIDATION_PROPERTY),
   setAddSettings: createAction(SET_ADD_SETTINGS),
   setAvailableAction: createAction(SET_AVAILABLE_ACTION),
-  setConnectionData: createAction(SET_CONNECTION_DATA)
+  setConnectionData: createAction(SET_CONNECTION_DATA),
+  setEntitlementProperty: createAction(SET_ENTITLEMENT_PROPERTY),
+  setEntitlementRelationship: createAction(SET_ENTITLEMENT_RELATIONSHIP)
 }
 
 export const initialState = {
   entitlement: '',
   entitlementSummary: '',
-  entitlementProperties: '',
-  entitlementRelationships: '',
+  entitlementProperties: [],
+  entitlementRelationships: [],
   deleteEntitlementResponse: '',
   updateEntitlementResponse: '',
   updateEntitlementPropertyResponse: '',
@@ -180,14 +186,14 @@ export default handleActions(
       ...state,
       entitlement: action.payload
     }),
-    [FETCH_ENTITLEMENT_PROPERTIES_SUCCESS]: (state, action) => ({
-      ...state,
-      entitlementProperties: action.payload
-    }),
-    [FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
-      ...state,
-      entitlementRelationships: action.payload
-    }),
+    // [FETCH_ENTITLEMENT_PROPERTIES_SUCCESS]: (state, action) => ({
+    //   ...state,
+    //   entitlementProperties: action.payload
+    // }),
+    // [FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
+    //   ...state,
+    //   entitlementRelationships: action.payload
+    // }),
     [DELETE_ENTITLEMENT_SUCCESS]: (state, action) => ({
       ...state,
       deleteEntitlementResponse: action.payload
@@ -324,6 +330,14 @@ export default handleActions(
       ...state,
       modelPerspective: action.payload,
       availableAction: {...state.availableAction, 'toProcessModelPerspectives': true}
+    }),
+    [SET_ENTITLEMENT_PROPERTY]: (state, action) => ({
+      ...state,
+      entitlementProperties: action.payload
+    }),
+    [SET_ENTITLEMENT_RELATIONSHIP]: (state, action) => ({
+      ...state,
+      entitlementRelationships: action.payload
     })
   },
   initialState

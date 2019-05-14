@@ -767,7 +767,7 @@ export default function Applicationview (props) {
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
-            <input style={{cursor: 'pointer'}} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} className='pull-left' type='checkbox' />
+            <input style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} className='pull-left' type='checkbox' />
             <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -808,7 +808,7 @@ export default function Applicationview (props) {
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
-            <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
+            <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
             <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -865,7 +865,7 @@ export default function Applicationview (props) {
                 outgoingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#outgoing_accordion_body' + outerKey + '-' + innerKey} aria-expanded='false'>
-                      <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
+                      <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
                       <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -926,7 +926,7 @@ export default function Applicationview (props) {
                 incomingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
-                      <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
+                      <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
                       <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                       <span className='m-accordion__item-mode' />
                     </div>

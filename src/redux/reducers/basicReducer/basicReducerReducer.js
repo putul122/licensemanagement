@@ -17,6 +17,7 @@ const SET_SEARCH_SLIDE_FLAG = 'BasicReducer/SET_SEARCH_SLIDE_FLAG'
 const RESET_NOTIFICATION_RESPONSE = 'BasicReducer/RESET_NOTIFICATION_RESPONSE'
 const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
 const SET_API_CALLING_STATUS = 'BasicReducer/SET_API_CALLING_STATUS'
+const SET_NOTIFICATION_INDICATOR = 'BasicReducer/SET_NOTIFICATION_INDICATOR'
 
 export const actions = {
   INCREMENT,
@@ -32,7 +33,8 @@ export const actions = {
   FETCH_PACKAGE_SUCCESS,
   SET_API_CALLING_STATUS,
   TOGGLE_FLIPIN_X,
-  SET_SEARCH_SLIDE_FLAG
+  SET_SEARCH_SLIDE_FLAG,
+  SET_NOTIFICATION_INDICATOR
 }
 
 export const actionCreators = {
@@ -46,7 +48,8 @@ export const actionCreators = {
   resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE),
   setApiCallingStatus: createAction(SET_API_CALLING_STATUS),
   toggleFlipInX: createAction(TOGGLE_FLIPIN_X),
-  setSearchSlideFlag: createAction(SET_SEARCH_SLIDE_FLAG)
+  setSearchSlideFlag: createAction(SET_SEARCH_SLIDE_FLAG),
+  setNotificationIndicator: createAction(SET_NOTIFICATION_INDICATOR)
 }
 
 export const initialState = {
@@ -63,6 +66,7 @@ export const initialState = {
   isQuickSlideOpen: false,
   isLoginSlideOpen: false,
   notificationFlag: false,
+  notificationIndicator: false,
   updateNotificationViewStatusResponse: '',
   flipInX: 'm-login--signin',
   packages: '',
@@ -126,6 +130,10 @@ export default handleActions(
     [SET_SEARCH_SLIDE_FLAG]: (state, action) => ({
       ...state,
       isSearchSlideOpen: action.payload
+    }),
+    [SET_NOTIFICATION_INDICATOR]: (state, action) => ({
+      ...state,
+      notificationIndicator: action.payload
     })
   },
   initialState

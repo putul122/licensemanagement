@@ -21,7 +21,8 @@ export const propsMapping: Callbacks = {
     // setComponentId: componentModalViewActionCreators.setComponentId,
     setCurrentPage: actionCreators.setCurrentPage,
     setModalSettings: componentModalViewActionCreators.setModalSettings,
-    setQuickslideFlag: basicActionCreators.setQuickslideFlag
+    setQuickslideFlag: basicActionCreators.setQuickslideFlag,
+    setNotificationFlag: basicActionCreators.setNotificationFlag
 }
 
 // If you want to use the function mapping
@@ -69,6 +70,7 @@ export default compose(
         payload.page_size = 100
         payload.page = 1
         this.props.activityMessage && this.props.activityMessage(payload)
+        this.props.setNotificationFlag(false)
       }
       if (nextProps.activityMessages && nextProps.activityMessages !== this.props.activityMessages) {
         // eslint-disable-next-line

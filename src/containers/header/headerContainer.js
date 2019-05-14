@@ -9,6 +9,7 @@ export function mapStateToProps (state, props) {
   return {
     isQuickSlideOpen: state.basicReducer.isQuickSlideOpen,
     notificationFlag: state.basicReducer.notificationFlag,
+    notificationIndicator: state.basicReducer.notificationIndicator,
     isLoginSlideOpen: state.basicReducer.isLoginSlideOpen,
     updateNotificationViewStatusResponse: state.basicReducer.updateNotificationViewStatusResponse,
     isSearchSlideOpen: state.basicReducer.isSearchSlideOpen
@@ -18,6 +19,7 @@ export function mapStateToProps (state, props) {
 export const propsMapping: Callbacks = {
   setQuickslideFlag: actionCreators.setQuickslideFlag,
   setNotificationFlag: actionCreators.setNotificationFlag,
+  setNotificationIndicator: actionCreators.setNotificationIndicator,
   setLoginslideFlag: actionCreators.setLoginslideFlag,
   setSearchSlideFlag: actionCreators.setSearchSlideFlag,
   resetNotificationResponse: actionCreators.resetNotificationResponse,
@@ -45,18 +47,8 @@ export default compose(
       $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps (nextProps) {
-      if (nextProps.isQuickSlideOpen && nextProps.isQuickSlideOpen !== this.props.isQuickSlideOpen) {
-        if (nextProps.isQuickSlideOpen) {
-          if (this.props.notificationFlag) {
-            console.log('call me')
-            console.log(this.props)
-          }
-        }
-      }
       if (nextProps.updateNotificationViewStatusResponse && nextProps.updateNotificationViewStatusResponse !== '' && nextProps.updateNotificationViewStatusResponse !== this.props.updateNotificationViewStatusResponse) {
         if (nextProps.updateNotificationViewStatusResponse.result_code === 0) {
-          console.log('call me')
-          console.log(nextProps)
           // this.props.resetNotificationResponse()
           this.props.setNotificationFlag && this.props.setNotificationFlag(false)
         }

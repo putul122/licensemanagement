@@ -273,6 +273,8 @@ export default compose(
           let data = nextProps.modelPerspective.resources[0]
           let selectedValues = []
           let setCustomerProperty = []
+          let entitlementProperties = []
+          // let entitlementRelationships = []
           if (data.parts) {
             labelParts.forEach(function (partData, ix) {
               console.log(partData, data.parts[ix])
@@ -283,6 +285,10 @@ export default compose(
                 if (partData.standard_property === 'description') {
                   addSettings.description = data.parts[ix].value
                 }
+                let obj = {}
+                obj.name = labelParts[ix].name
+                obj.value = data.parts[ix].value
+                entitlementProperties.push(obj)
               } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
                 if (data.parts[ix].value.length > 0) {
                   // todo write code for multiple component
@@ -299,32 +305,45 @@ export default compose(
                 }
               } else if (partData.standard_property === null && partData.type_property !== null) { // Customer Property
                 let value = null
+                let obj = {}
+                obj.name = labelParts[ix].name
                 if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
                   value = data.parts[ix].value !== null ? data.parts[ix].value.int_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.float_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Text') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.text_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.date_time_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'List') {
                   if (data.parts[ix].value !== null) {
                     value = {}
                     value.valueSetValue = data.parts[ix].value.value_set_value
                     value.valueSetValueId = data.parts[ix].value.value_set_value_id
+                    obj.value = data.parts[ix].value.value_set_value.name
+                  } else {
+                    obj.value = null
                   }
                   // value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
                 } else {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.other_value : ''
+                  obj.value = value
                 }
                 setCustomerProperty.push(value)
+                entitlementProperties.push(obj)
               }
             })
           }
           addSettings.updateObject = data
           nextProps.setAddSettings(addSettings)
+          nextProps.setEntitlementProperty(entitlementProperties)
           let connectionData = {...nextProps.connectionData}
           let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
             if (data.type_property.property_type.key === 'Boolean') {
