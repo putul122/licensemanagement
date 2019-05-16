@@ -96,6 +96,74 @@ export default function EntitlementDetail (props) {
   //     $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
   //   }
   // }
+  let handleCheckbox = function (value, data) {
+    let displayIndex = data.displayIndex
+    let entitlementRelationships = JSON.parse(JSON.stringify(props.entitlementRelationships))
+    let index = _.findIndex(entitlementRelationships, {displayIndex: displayIndex})
+    let checkedObject = entitlementRelationships[index]
+    checkedObject.isDisplay = value
+    entitlementRelationships[index] = checkedObject
+    props.setEntitlementRelationship(entitlementRelationships)
+  }
+  let handleGroupCheckbox = function (value, checkData) {
+    console.log('handle group checkbox', value, checkData)
+    let entitlementRelationships = JSON.parse(JSON.stringify(props.entitlementRelationships))
+    if (checkData.relationshipType === 'Parent') {
+      let parent = _.filter(props.entitlementRelationships, {'relationship_type': 'Parent'})
+      if (parent.length > 0) {
+        parent.forEach(function (data, id) {
+          let index = _.findIndex(entitlementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = entitlementRelationships[index]
+          checkedObject.isDisplay = value
+          entitlementRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'Child') {
+      let child = _.filter(props.entitlementRelationships, {'relationship_type': 'Child'})
+      if (child.length > 0) {
+        child.forEach(function (data, isCheckboxChecked) {
+          let index = _.findIndex(entitlementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = entitlementRelationships[index]
+          checkedObject.isDisplay = value
+          entitlementRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectFrom') {
+      let outgoing = _.filter(props.entitlementRelationships, {'relationship_type': 'ConnectFrom'})
+      outgoing = _.filter(outgoing, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      outgoing = _.filter(outgoing, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (outgoing.length > 0) {
+        outgoing.forEach(function (data, id) {
+          let index = _.findIndex(entitlementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = entitlementRelationships[index]
+          checkedObject.isDisplay = value
+          entitlementRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectTo') {
+      let incoming = _.filter(props.entitlementRelationships, {'relationship_type': 'ConnectTo'})
+      incoming = _.filter(incoming, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      incoming = _.filter(incoming, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (incoming.length > 0) {
+        incoming.forEach(function (data, id) {
+          let index = _.findIndex(entitlementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = entitlementRelationships[index]
+          checkedObject.isDisplay = value
+          entitlementRelationships[index] = checkedObject
+        })
+      }
+    }
+    console.log('setEntitlementRelationship', entitlementRelationships)
+    props.setEntitlementRelationship(entitlementRelationships)
+  }
   let showProperty = function (event) {
     let payload = {'showProperty': ' active show', 'showRelationship': ''}
     props.setCurrentTab(payload)
@@ -440,7 +508,7 @@ export default function EntitlementDetail (props) {
         component.label = component.name
         return component
       })
-      return (<div className='form-group row'>
+      return (<div key={'connection' + index} className='form-group row'>
         <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
         <div className='col-8'>
           <Select
@@ -459,7 +527,7 @@ export default function EntitlementDetail (props) {
       let value = null
       if (data.type_property.property_type.key === 'Integer') {
         value = data.type_property.int_value
-        return (<div className='form-group row'>
+        return (<div key={'business' + index} className='form-group row'>
           <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
           <div className='col-8 form-group m-form__group has-info'>
             <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
@@ -468,7 +536,7 @@ export default function EntitlementDetail (props) {
         </div>)
       } else if (data.type_property.property_type.key === 'Decimal') {
         value = data.type_property.float_value
-        return (<div className='form-group row'>
+        return (<div key={'business' + index} className='form-group row'>
           <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
           <div className='col-8 form-group m-form__group has-info'>
             <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
@@ -477,7 +545,7 @@ export default function EntitlementDetail (props) {
         </div>)
       } else if (data.type_property.property_type.key === 'DateTime') {
         value = data.type_property.date_time_value ? moment(data.type_property.date_time_value).format('DD MMM YYYY') : ''
-        return (<div className='form-group row'>
+        return (<div key={'business' + index} className='form-group row'>
           <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
           <div className='col-8 form-group m-form__group has-info'>
             <DatePicker
@@ -492,7 +560,7 @@ export default function EntitlementDetail (props) {
         </div>)
       } else if (data.type_property.property_type.key === 'Text') {
         value = data.type_property.text_value
-        return (<div className='form-group row'>
+        return (<div key={'business' + index} className='form-group row'>
           <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
           <div className='col-8 form-group m-form__group has-info'>
             <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
@@ -511,7 +579,7 @@ export default function EntitlementDetail (props) {
           dvalue.value = data.type_property.value_set_value.id
         }
         value = data.type_property.value_set_value ? data.type_property.value_set_value.name : null
-        return (<div className='form-group row'>
+        return (<div key={'business' + index} className='form-group row'>
           <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
           <Select
             className='col-8 input-sm m-input'
@@ -526,7 +594,7 @@ export default function EntitlementDetail (props) {
         </div>)
       } else {
         value = data.type_property.other_value
-        return (<div className='form-group row'>
+        return (<div key={'business' + index} className='form-group row'>
           <div className='col-2'><label htmlFor='Category' className='col-form-label'>{data.name}</label></div>
           <div className='col-8 form-group m-form__group has-info'>
             <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editProperty(index, event.target.value) }} placeholder='Enter Here' />
@@ -822,7 +890,7 @@ export default function EntitlementDetail (props) {
   if (props.entitlementProperties.length > 0) {
     entitlementPropertiesList = props.entitlementProperties.map(function (data, index) {
       return (
-        <tr id={'property' + index}>
+        <tr key={'property' + index} id={'property' + index}>
           <td><span className={styles.labelbold}>{data.name}</span></td>
           <td><span className={''}>{data.value}</span></td>
         </tr>
@@ -938,38 +1006,57 @@ export default function EntitlementDetail (props) {
   //     )
   //   })
   // }
-  if (props.entitlementRelationships && props.entitlementRelationships !== '') {
-    modelRelationshipData = props.entitlementRelationships.resources
-    let parent = _.filter(props.entitlementRelationships.resources, {'relationship_type': 'Parent'})
-    let outgoing = _.filter(props.entitlementRelationships.resources, {'relationship_type': 'ConnectFrom'})
+  if (props.entitlementRelationships && props.entitlementRelationships.length > 0) {
+    modelRelationshipData = _.filter(props.entitlementRelationships, {'isDisplay': true})
+    let parent = _.filter(props.entitlementRelationships, {'relationship_type': 'Parent'})
+    let outgoing = _.filter(props.entitlementRelationships, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let incoming = _.filter(props.entitlementRelationships.resources, {'relationship_type': 'ConnectTo'})
+    let incoming = _.filter(props.entitlementRelationships, {'relationship_type': 'ConnectTo'})
     incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let child = _.filter(props.entitlementRelationships.resources, {'relationship_type': 'Child'})
+    let child = _.filter(props.entitlementRelationships, {'relationship_type': 'Child'})
     let parentApplicationRelationshipListFn = function () {
       if (parent.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = parent[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = parent[0].target_component.component_type.name
         let childElementList = parent.map(function (element, i) {
-        let relationshipActionSettings = {...props.relationshipActionSettings}
-        relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
-        relationshipActionSettings.relationshipId = element.target_component.id
-        return (<span className='row' key={'parent' + i} style={{'padding': '5px'}}>
-          <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-          <div className='dropdown pull-right col-md-2'>
-            <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-            <div className={styles.dropmenu}>
-              <ul className='dropdown-menu'>
-                <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
-              </ul>
-            </div>
+        // let relationshipActionSettings = {...props.relationshipActionSettings}
+        // relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
+        // relationshipActionSettings.relationshipId = element.target_component.id
+        // return (<span className='row' key={'parent' + i} style={{'padding': '5px'}}>
+        //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+        //   <div className='dropdown pull-right col-md-2'>
+        //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+        //     <div className={styles.dropmenu}>
+        //       <ul className='dropdown-menu'>
+        //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
+        //       </ul>
+        //     </div>
+        //   </div>
+        //   <br />
+        // </span>)
+        if (element.isDisplay) {
+          isCheckboxChecked = true
+        }
+        return (<span className='row' style={{'padding': '5px'}}>
+          <div className='col-md-10'>
+            <span className='pull-left'>{element.target_component.name}</span>
+            <span className='float-right'>
+              <span className='pull-right'>
+                <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+              </span>
+            </span>
           </div>
-          <br />
         </span>)
       })
       return (
         <div className='m-accordion__item' key={'parent_accord'} style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
+            <input style={{cursor: 'pointer'}} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} className='pull-left' type='checkbox' />
             <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -987,28 +1074,47 @@ export default function EntitlementDetail (props) {
     }
     let childApplicationRelationshipListFn = function () {
       if (child.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = child[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = child[0].target_component.component_type.name
         let childElementList = child.map(function (element, i) {
-        let relationshipActionSettings = {...props.relationshipActionSettings}
-        relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
-        relationshipActionSettings.relationshipId = element.target_component.id
-        return (<span className='row' key={'child' + i} style={{'padding': '5px'}}>
-          <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-          <div className='dropdown pull-right col-md-2'>
-            <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-            <div className={styles.dropmenu}>
-              <ul className='dropdown-menu'>
-                <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
-              </ul>
-            </div>
+          if (element.isDisplay) {
+            isCheckboxChecked = true
+          }
+        // let relationshipActionSettings = {...props.relationshipActionSettings}
+        // relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
+        // relationshipActionSettings.relationshipId = element.target_component.id
+        // return (<span className='row' key={'child' + i} style={{'padding': '5px'}}>
+        //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+        //   <div className='dropdown pull-right col-md-2'>
+        //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+        //     <div className={styles.dropmenu}>
+        //       <ul className='dropdown-menu'>
+        //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
+        //       </ul>
+        //     </div>
+        //   </div>
+        //   <br />
+        // </span>)
+        return (<span className='row' style={{'padding': '5px'}}>
+          <div className='col-md-10'>
+            <span className='pull-left'>{element.target_component.name}</span>
+            <span className='float-right'>
+              <span className='pull-right'>
+                <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+              </span>
+            </span>
           </div>
-          <br />
         </span>)
       })
       return (
         <div className='m-accordion__item' key={'child_accord'} style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
+            <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
             <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -1039,29 +1145,48 @@ export default function EntitlementDetail (props) {
             for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
               if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
-                let relationshipActionSettings = {...props.relationshipActionSettings}
-                relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
-                relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectFrom'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
+                // let relationshipActionSettings = {...props.relationshipActionSettings}
+                // relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
+                // relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                  return (<span className='row' key={'outgoing' + i} style={{'padding': '5px'}}>
-                    <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-                    <div className='dropdown pull-right col-md-2'>
-                      <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-                      <div className={styles.dropmenu}>
-                        <ul className='dropdown-menu'>
-                          <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
-                        </ul>
-                      </div>
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
+                  // return (<span className='row' key={'outgoing' + i} style={{'padding': '5px'}}>
+                  //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+                  //   <div className='dropdown pull-right col-md-2'>
+                  //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                  //     <div className={styles.dropmenu}>
+                  //       <ul className='dropdown-menu'>
+                  //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  //       </ul>
+                  //     </div>
+                  //   </div>
+                  //   <br />
+                  // </span>)
+                  return (<span className='row' style={{'padding': '5px'}}>
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
+                      </span>
                     </div>
-                    <br />
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 outgoingElements.push(
                   <div className='m-accordion__item' key={'outgoing_accord'} style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#outgoing_accordion_body' + outerKey + '-' + innerKey} aria-expanded='false'>
+                      <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
                       <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -1097,29 +1222,48 @@ export default function EntitlementDetail (props) {
             for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
               if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
-                let relationshipActionSettings = {...props.relationshipActionSettings}
-                relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
-                relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectTo'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
+                // let relationshipActionSettings = {...props.relationshipActionSettings}
+                // relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
+                // relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                  return (<span className='row' key={'incoming' + i} style={{'padding': '5px'}}>
-                    <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-                    <div className='dropdown pull-right col-md-2'>
-                      <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-                      <div className={styles.dropmenu}>
-                        <ul className='dropdown-menu'>
-                          <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
-                        </ul>
-                      </div>
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
+                  // return (<span className='row' key={'incoming' + i} style={{'padding': '5px'}}>
+                  //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+                  //   <div className='dropdown pull-right col-md-2'>
+                  //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                  //     <div className={styles.dropmenu}>
+                  //       <ul className='dropdown-menu'>
+                  //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  //       </ul>
+                  //     </div>
+                  //   </div>
+                  //   <br />
+                  // </span>)
+                  return (<span className='row' style={{'padding': '5px'}}>
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
+                      </span>
                     </div>
-                    <br />
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 incomingElements.push(
                   <div className='m-accordion__item' key={'incoming_accord'} style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
+                      <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
                       <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -1204,15 +1348,15 @@ export default function EntitlementDetail (props) {
       selectComponentOptions1.push(newOption)
     }
   }
-  let openModal = function (event) {
-    // event.preventDefault()
-    let parent = _.filter(props.entitlementRelationships.resources, {'relationship_type': 'Parent'})
-    let isParentSelected = parent.length > 0
-    let payload = {...props.addNewConnectionSettings, 'isModalOpen': true, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': isParentSelected, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
-    props.setAddConnectionSettings(payload)
-    entitlementPropertiesPayload.relationship = []
-    props.pushEntitlementPropertyPayload(entitlementPropertiesPayload)
-  }
+  // let openModal = function (event) {
+  //   // event.preventDefault()
+  //   let parent = _.filter(props.entitlementRelationships.resources, {'relationship_type': 'Parent'})
+  //   let isParentSelected = parent.length > 0
+  //   let payload = {...props.addNewConnectionSettings, 'isModalOpen': true, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': isParentSelected, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
+  //   props.setAddConnectionSettings(payload)
+  //   entitlementPropertiesPayload.relationship = []
+  //   props.pushEntitlementPropertyPayload(entitlementPropertiesPayload)
+  // }
   let closeModal = function () {
     let payload = {...props.addNewConnectionSettings, 'isModalOpen': false, 'firstSelectboxSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
     props.setAddConnectionSettings(payload)
@@ -1836,43 +1980,6 @@ export default function EntitlementDetail (props) {
         {/* The table structure ends */}
         <div className='row col-sm-12'>
           <div className='col-md-5 m-portlet'>
-            {/* <div className={styles.tabsprops}>
-              <ul className='nav nav-tabs nav-fill' role='tablist'>
-                <li className='nav-item'>
-                  <a className='nav-link active show' data-toggle='tab' href='#m_tabs_3_1'>Properties</a>
-                </li>
-                <li className='nav-item'>
-                  <a className='nav-link' data-toggle='tab' href='#m_tabs_3_2'>RelationShips</a>
-                </li>
-              </ul>
-              <div className={styles.tabcontentborder}>
-                <div className='tab-content'>
-                  <div className='tab-pane active' id='m_tabs_3_1' role='tabpanel'>
-                    <div className='col-md-12'>
-                      <table className={'table ' + styles.borderless}>
-                        {entitlementPropertiesList}
-                      </table>
-                    </div>
-                  </div>
-                  <div className='tab-pane' id='m_tabs_3_2' role='tabpanel'>
-                    <div className='col-lg-12' >
-                      <div className='pull-right'>
-                        <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
-                      </div>
-                      <div className={'row col-md-12'} style={{'marginTop': '20px'}}>
-                        <div className='m--space-10' />
-                        <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
-                          {parentApplicationRelationshipList}
-                          {outgoingApplicationRelationshipList}
-                          {incomingApplicationRelationshipList}
-                          {childApplicationRelationshipList}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <div className={styles.tabsprops}>
               <ul className='nav nav-tabs' role='tablist'>
                 <li className='nav-item'>
@@ -1889,15 +1996,14 @@ export default function EntitlementDetail (props) {
                   </table>
                 </div>
                 <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
-                  <div className='row'>
+                  {/* <div className='row'>
                     <div className='col-6' />
                     <div className='col-6 float-right'>
                       <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Relationship' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
                         <i className='fa flaticon-add fa-2x' />
                       </a>
-                      {/*    */}
                     </div>
-                  </div>
+                  </div> */}
                   <div className={'row'} style={{'marginTop': '20px'}}>
                     <div className='m--space-10' />
                     <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' style={{width: '100%'}} role='tablist' aria-multiselectable='true'>

@@ -17,6 +17,8 @@ const RESET_RESPONSE = 'softwareDetailReducer/RESET_RESPONSE'
 const SET_ADD_SETTINGS = 'softwareDetailReducer/SET_ADD_SETTINGS'
 const SET_AVAILABLE_ACTION = 'softwareDetailReducer/SET_AVAILABLE_ACTION'
 const SET_CONNECTION_DATA = 'softwareDetailReducer/SET_CONNECTION_DATA'
+const SET_SOFTWARE_PROPERTY = 'softwareDetailReducer/SET_SOFTWARE_PROPERTY'
+const SET_SOFTWARE_RELATIONSHIP = 'softwareDetailReducer/SET_SOFTWARE_RELATIONSHIP'
 
 export const actions = {
   FETCH_SOFTWARE_BY_ID_SUCCESS,
@@ -25,7 +27,9 @@ export const actions = {
   RESET_RESPONSE,
   SET_ADD_SETTINGS,
   SET_AVAILABLE_ACTION,
-  SET_CONNECTION_DATA
+  SET_CONNECTION_DATA,
+  SET_SOFTWARE_PROPERTY,
+  SET_SOFTWARE_RELATIONSHIP
 }
 
 export const actionCreators = {
@@ -33,14 +37,16 @@ export const actionCreators = {
   resetResponse: createAction(RESET_RESPONSE),
   setAddSettings: createAction(SET_ADD_SETTINGS),
   setAvailableAction: createAction(SET_AVAILABLE_ACTION),
-  setConnectionData: createAction(SET_CONNECTION_DATA)
+  setConnectionData: createAction(SET_CONNECTION_DATA),
+  setSoftwareProperty: createAction(SET_SOFTWARE_PROPERTY),
+  setSoftwareRelationship: createAction(SET_SOFTWARE_RELATIONSHIP)
 }
 
 export const initialState = {
   softwarebyId: '',
-  softwareProperties: '',
+  softwareProperties: [],
   modelPerspective: '',
-  softwareRelationships: '',
+  softwareRelationships: [],
   showTabs: {'showProperty': ' active show', 'showRelationship': ''},
   updateSoftwareResponse: '',
   deleteSoftwareResponse: '',
@@ -72,18 +78,18 @@ export default handleActions(
       ...state,
       softwarebyId: action.payload
     }),
-    [FETCH_SOFTWARE_PROPERTIES_SUCCESS]: (state, action) => ({
-      ...state,
-      softwareProperties: action.payload
-    }),
+    // [FETCH_SOFTWARE_PROPERTIES_SUCCESS]: (state, action) => ({
+    //   ...state,
+    //   softwareProperties: action.payload
+    // }),
     [SET_CURRENT_TAB]: (state, action) => ({
       ...state,
       showTabs: action.payload
     }),
-    [FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS]: (state, action) => ({
-      ...state,
-      softwareRelationships: action.payload
-    }),
+    // [FETCH_SOFTWARE_RELATIONSHIPS_SUCCESS]: (state, action) => ({
+    //   ...state,
+    //   softwareRelationships: action.payload
+    // }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       addSoftwareResponse: '',
@@ -124,6 +130,14 @@ export default handleActions(
       ...state,
       modelPerspective: action.payload,
       availableAction: {...state.availableAction, 'toProcessModelPerspectives': true}
+    }),
+    [SET_SOFTWARE_PROPERTY]: (state, action) => ({
+      ...state,
+      softwareProperties: action.payload
+    }),
+    [SET_SOFTWARE_RELATIONSHIP]: (state, action) => ({
+      ...state,
+      softwareRelationships: action.payload
     })
   },
   initialState

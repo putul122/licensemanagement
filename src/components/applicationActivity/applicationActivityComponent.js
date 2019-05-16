@@ -124,7 +124,7 @@ export default function ApplicationActivity (props) {
               }
               if (parts[1] === 'Mention') {
                 let messageParts = testMessage.split(match)
-                messageArrayBlock.push((<span key={'m' + i + 'ma' + index}>{messageParts[0]}</span>))
+                messageArrayBlock.push((<span key={'m' + i + 'men' + index}>{messageParts[0]}</span>))
                 messageArrayBlock.push((<a href='javascript:void(0);' className='search-term-match'>{'@' + parts[0]}</a>))
                 if (messageParts[1].match(/\[(.*?)\]/g) === null) {
                   messageArrayBlock.push((<span>{messageParts[1]}</span>))
@@ -134,8 +134,8 @@ export default function ApplicationActivity (props) {
               } else if (parts[1] === 'Reference') {
                 let messageParts = testMessage.split(match)
                 parts[0] = parts[0].replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
-                messageArrayBlock.push((<span>{messageParts[0]}</span>))
-                messageArrayBlock.push((<a onClick={(event) => { event.preventDefault(); test(data, message.references) }} href='javascript:void(0);' className='search-term-match'>{'#' + parts[0]}</a>))
+                messageArrayBlock.push((<span key={'r' + i + 'ref' + index}>{messageParts[0]}</span>))
+                messageArrayBlock.push((<a key={'r' + i + 'ref_anch' + index} onClick={(event) => { event.preventDefault(); test(data, message.references) }} href='javascript:void(0);' className='search-term-match'>{'#' + parts[0]}</a>))
                 if (messageParts[1].match(/\[(.*?)\]/g) === null) {
                   messageArrayBlock.push((<span>{messageParts[1]}</span>))
                 } else {
@@ -143,7 +143,7 @@ export default function ApplicationActivity (props) {
                 }
               } else if (parts[1] === 'Tag') {
                 let messageParts = testMessage.split(match)
-                messageArrayBlock.push((<span>{messageParts[0]}</span>))
+                messageArrayBlock.push((<span key={'t' + i + 'tag' + index} >{messageParts[0]}</span>))
                 messageArrayBlock.push((<span>{'#' + parts[0] + ''}</span>))
                 if (messageParts[1].match(/\[(.*?)\]/g) === null) {
                   messageArrayBlock.push((<span>{messageParts[1]}</span>))

@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import moment from 'moment'
 import EntitlementDetail from '../../components/entitlementDetail/entitlementDetailComponent.js'
 import { actions as sagaActions } from '../../redux/sagas/'
 import _ from 'lodash'
@@ -79,7 +80,9 @@ export const propsMapping: Callbacks = {
   setAddSettings: actionCreators.setAddSettings,
   fetchMetaModelPrespective: sagaActions.modelActions.fetchMetaModelPrespective,
   fetchModelPerspective: sagaActions.modelActions.fetchModelPerspective,
-  fetchDropdownData: sagaActions.basicActions.fetchDropdownData
+  fetchDropdownData: sagaActions.basicActions.fetchDropdownData,
+  setEntitlementProperty: actionCreators.setEntitlementProperty,
+  setEntitlementRelationship: actionCreators.setEntitlementRelationship
 }
 
 // If you want to use the function mapping
@@ -120,8 +123,8 @@ export default compose(
       }
       this.props.fetchEntitlementById && this.props.fetchEntitlementById(payload)
       this.props.fetchEntitlementProperties && this.props.fetchEntitlementProperties(payload)
-      this.props.fetchEntitlementRelationships && this.props.fetchEntitlementRelationships(payload)
-      this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
+      // this.props.fetchEntitlementRelationships && this.props.fetchEntitlementRelationships(payload)
+      // this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let perspectives = appPackage.resources[0].perspectives
       let perspectiveObj = _.find(perspectives, function (obj) {
@@ -274,7 +277,7 @@ export default compose(
           let selectedValues = []
           let setCustomerProperty = []
           let entitlementProperties = []
-          // let entitlementRelationships = []
+          let entitlementRelationships = []
           if (data.parts) {
             labelParts.forEach(function (partData, ix) {
               console.log(partData, data.parts[ix])
@@ -303,6 +306,18 @@ export default compose(
                 } else {
                   selectedValues.push(null)
                 }
+                let componentType = labelParts[ix].constraint.component_type
+                let targetComponentType = labelParts[ix].constraint.target_component_type
+                let connectionType = labelParts[ix].constraint.connection_type
+                if (data.parts[ix].value.length > 0) {
+                  data.parts[ix].value.forEach(function (data, index) {
+                    data.connection = JSON.parse(JSON.stringify(data))
+                    data.connection.connection_type = connectionType
+                    data.component.component_type = componentType
+                    data.target_component.component_type = targetComponentType
+                    entitlementRelationships.push(data)
+                  })
+                }
               } else if (partData.standard_property === null && partData.type_property !== null) { // Customer Property
                 let value = null
                 let obj = {}
@@ -317,7 +332,7 @@ export default compose(
                   value = data.parts[ix].value !== null ? data.parts[ix].value.text_value : ''
                   obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-                  value = data.parts[ix].value !== null ? data.parts[ix].value.date_time_value : ''
+                  value = data.parts[ix].value !== null ? moment(data.parts[ix].value.date_time_value).format('DD MMM YYYY') : ''
                   obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
@@ -327,7 +342,9 @@ export default compose(
                     value = {}
                     value.valueSetValue = data.parts[ix].value.value_set_value
                     value.valueSetValueId = data.parts[ix].value.value_set_value_id
-                    obj.value = data.parts[ix].value.value_set_value.name
+                    if (data.parts[ix].value.value_set_value) {
+                      obj.value = data.parts[ix].value.value_set_value.name
+                    }
                   } else {
                     obj.value = null
                   }
@@ -344,6 +361,13 @@ export default compose(
           addSettings.updateObject = data
           nextProps.setAddSettings(addSettings)
           nextProps.setEntitlementProperty(entitlementProperties)
+          let counter = 0
+          let entitlementRelationshipData = entitlementRelationships.map(function (data, index) {
+            data.isDisplay = true
+            data.displayIndex = counter++
+            return data
+          })
+          nextProps.setEntitlementRelationship(entitlementRelationshipData)
           let connectionData = {...nextProps.connectionData}
           let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
             if (data.type_property.property_type.key === 'Boolean') {

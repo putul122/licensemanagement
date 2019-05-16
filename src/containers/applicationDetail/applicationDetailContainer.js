@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import moment from 'moment'
 import ApplicationDetail from '../../components/applicationDetail/applicationDetailComponent.js'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as applicationDetailActionCreators } from '../../redux/reducers/applicationDetailReducer/applicationDetailReducerReducer'
@@ -172,7 +173,7 @@ export default compose(
                 } else if (labelParts[ix].type_property.property_type.key === 'Text') {
                   value = partData.value !== null ? partData.value.text_value : ''
                 } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-                  value = partData.value !== null ? partData.value.date_time_value : ''
+                  value = partData.value !== null ? moment(partData.value.date_time_value).format('DD MMM YYYY') : ''
                 } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
                   value = partData.value !== null ? partData.value.boolean_value : ''
                 } else if (labelParts[ix].type_property.property_type.key === 'List') {

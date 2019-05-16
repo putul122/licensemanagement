@@ -2,8 +2,8 @@ import { createAction, handleActions } from 'redux-actions'
 import {
   FETCH_AGREEMENT_BY_ID_SUCCESS,
   FETCH_AGREEMENT_ENTITLEMENTS_SUCCESS,
-  FETCH_AGREEMENT_PROPERTIES_SUCCESS,
-  FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS,
+  // FETCH_AGREEMENT_PROPERTIES_SUCCESS,
+  // FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS,
   FETCH_AGREEMENT_CONDITIONS_SUCCESS,
   FETCH_AGREEMENT_CONDITION_BY_ID_SUCCESS,
   FETCH_AGREEMENT_CONDITION_NOTIFICATION_PERIOD_SUCCESS,
@@ -55,12 +55,14 @@ const SET_ADD_SETTINGS = 'AgreementDetailReducer/SET_ADD_SETTINGS'
 const SET_AVAILABLE_ACTION = 'AgreementDetailReducer/SET_AVAILABLE_ACTION'
 const SET_CONNECTION_DATA = 'AgreementDetailReducer/SET_CONNECTION_DATA'
 const SET_START_DATE = 'AgreementDetailReducer/SET_START_DATE'
+const SET_AGREEMENT_RELATIONSHIP = 'AgreementDetailReducer/SET_AGREEMENT_RELATIONSHIP'
+const SET_AGREEMENT_PROPERTY = 'AgreementDetailReducer/SET_AGREEMENT_PROPERTY'
 
 export const actions = {
     FETCH_AGREEMENT_BY_ID_SUCCESS,
     FETCH_AGREEMENT_ENTITLEMENTS_SUCCESS,
-    FETCH_AGREEMENT_PROPERTIES_SUCCESS,
-    FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS,
+    // FETCH_AGREEMENT_PROPERTIES_SUCCESS,
+    // FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS,
     SET_ADD_AGREEMENT_SETTINGS,
     SET_RELATIONSHIP_ACTION_SETTINGS,
     ADD_AGREEMENT_SUCCESS,
@@ -97,7 +99,9 @@ export const actions = {
     SET_ADD_SETTINGS,
     SET_AVAILABLE_ACTION,
     SET_CONNECTION_DATA,
-    SET_START_DATE
+    SET_START_DATE,
+    SET_AGREEMENT_RELATIONSHIP,
+    SET_AGREEMENT_PROPERTY
   }
 
 export const actionCreators = {
@@ -126,7 +130,9 @@ export const actionCreators = {
     setAddSettings: createAction(SET_ADD_SETTINGS),
     setAvailableAction: createAction(SET_AVAILABLE_ACTION),
     setConnectionData: createAction(SET_CONNECTION_DATA),
-    setStartDate: createAction(SET_START_DATE)
+    setStartDate: createAction(SET_START_DATE),
+    setAgreementRelationship: createAction(SET_AGREEMENT_RELATIONSHIP),
+    setAgreementProperty: createAction(SET_AGREEMENT_PROPERTY)
   }
 
 export const initialState = {
@@ -142,7 +148,7 @@ export const initialState = {
   agreementProperties: '',
   copiedAgreementProperties: '',
   copiedAgreementData: '',
-  agreementRelationships: '',
+  agreementRelationships: [],
   agreementEntitlements: '',
   isEditComponent: false,
   agreementPropertiesPayload: {property: [], agreement: [], relationship: []},
@@ -250,14 +256,14 @@ export default handleActions(
       ...state,
       agreementEntitlements: action.payload
     }),
-    [FETCH_AGREEMENT_PROPERTIES_SUCCESS]: (state, action) => ({
-      ...state,
-      agreementProperties: action.payload
-    }),
-    [FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
-      ...state,
-      agreementRelationships: action.payload
-    }),
+    // [FETCH_AGREEMENT_PROPERTIES_SUCCESS]: (state, action) => ({
+    //   ...state,
+    //   agreementProperties: action.payload
+    // }),
+    // [FETCH_AGREEMENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
+    //   ...state,
+    //   agreementRelationships: action.payload
+    // }),
     [SET_ADD_AGREEMENT_SETTINGS]: (state, action) => ({
       ...state,
       addAgreementSettings: action.payload
@@ -460,6 +466,14 @@ export default handleActions(
     [SET_START_DATE]: (state, action) => ({
       ...state,
       startDate: action.payload
+    }),
+    [SET_AGREEMENT_RELATIONSHIP]: (state, action) => ({
+      ...state,
+      agreementRelationships: action.payload
+    }),
+    [SET_AGREEMENT_PROPERTY]: (state, action) => ({
+      ...state,
+      agreementProperties: action.payload
     })
   },
   initialState

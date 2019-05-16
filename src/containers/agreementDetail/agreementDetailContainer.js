@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import moment from 'moment'
 import AgreementDetail from '../../components/agreementDetail/agreementDetailComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import _ from 'lodash'
@@ -109,7 +110,9 @@ export const propsMapping: Callbacks = {
   fetchMetaModelPrespective: sagaActions.modelActions.fetchMetaModelPrespective,
   fetchModelPerspective: sagaActions.modelActions.fetchModelPerspective,
   fetchDropdownData: sagaActions.basicActions.fetchDropdownData,
-  setStartDate: actionCreators.setStartDate
+  setStartDate: actionCreators.setStartDate,
+  setAgreementRelationship: actionCreators.setAgreementRelationship,
+  setAgreementProperty: actionCreators.setAgreementProperty
 }
 
 // If you want to use the function mapping
@@ -150,8 +153,8 @@ export default compose(
       }
       this.props.fetchAgreementById && this.props.fetchAgreementById(payload)
       this.props.fetchAgreementEntitlements && this.props.fetchAgreementEntitlements(payload)
-      this.props.fetchAgreementProperties && this.props.fetchAgreementProperties(payload)
-      this.props.fetchAgreementRelationships && this.props.fetchAgreementRelationships(payload)
+      // this.props.fetchAgreementProperties && this.props.fetchAgreementProperties(payload)
+      // this.props.fetchAgreementRelationships && this.props.fetchAgreementRelationships(payload)
       this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
       this.props.fetchAgreementConditions && this.props.fetchAgreementConditions(payload)
       this.props.fetchAgreementPurchaseOrder && this.props.fetchAgreementPurchaseOrder(payload)
@@ -209,10 +212,10 @@ export default compose(
           this.props.history.push('/agreements')
         }
       }
-      if (nextProps.agreementRelationships && nextProps.agreementRelationships !== this.props.agreementRelationships) {
-        // eslint-disable-next-line
-        mApp && mApp.unblockPage()
-      }
+      // if (nextProps.agreementRelationships && nextProps.agreementRelationships !== this.props.agreementRelationships) {
+      //   // eslint-disable-next-line
+      //   mApp && mApp.unblockPage()
+      // }
       if (nextProps.deleteAgreementResponse && nextProps.deleteAgreementResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
@@ -379,6 +382,8 @@ export default compose(
           let data = nextProps.modelPerspective.resources[0]
           let selectedValues = []
           let setCustomerProperty = []
+          let agreementProperties = []
+          let agreementRelationships = []
           if (data.parts) {
             labelParts.forEach(function (partData, ix) {
               console.log(partData, data.parts[ix])
@@ -389,6 +394,10 @@ export default compose(
                 if (partData.standard_property === 'description') {
                   addSettings.description = data.parts[ix].value
                 }
+                let obj = {}
+                obj.name = labelParts[ix].name
+                obj.value = data.parts[ix].value
+                agreementProperties.push(obj)
               } else if (partData.standard_property === null && partData.type_property === null) { // Connection Property
                 if (data.parts[ix].value.length > 0) {
                   // todo write code for multiple component
@@ -403,34 +412,68 @@ export default compose(
                 } else {
                   selectedValues.push(null)
                 }
+                let componentType = labelParts[ix].constraint.component_type
+                let targetComponentType = labelParts[ix].constraint.target_component_type
+                let connectionType = labelParts[ix].constraint.connection_type
+                if (data.parts[ix].value.length > 0) {
+                  data.parts[ix].value.forEach(function (data, index) {
+                    data.connection = JSON.parse(JSON.stringify(data))
+                    data.connection.connection_type = connectionType
+                    data.component.component_type = componentType
+                    data.target_component.component_type = targetComponentType
+                    agreementRelationships.push(data)
+                  })
+                }
               } else if (partData.standard_property === null && partData.type_property !== null) { // Customer Property
                 let value = null
+                let obj = {}
+                obj.name = labelParts[ix].name
                 if (labelParts[ix].type_property.property_type.key === 'Integer') { // below are Customer Property
                   value = data.parts[ix].value !== null ? data.parts[ix].value.int_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Decimal') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.float_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Text') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.text_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'DateTime') {
-                  value = data.parts[ix].value !== null ? data.parts[ix].value.date_time_value : ''
+                  value = data.parts[ix].value !== null ? moment(data.parts[ix].value.date_time_value).format('DD MMM YYYY') : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'Boolean') {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.boolean_value : ''
+                  obj.value = value
                 } else if (labelParts[ix].type_property.property_type.key === 'List') {
                   if (data.parts[ix].value !== null) {
                     value = {}
                     value.valueSetValue = data.parts[ix].value.value_set_value
                     value.valueSetValueId = data.parts[ix].value.value_set_value_id
+                    if (data.parts[ix].value.value_set_value) {
+                      obj.value = data.parts[ix].value.value_set_value.name
+                    }
+                  } else {
+                    obj.value = null
                   }
                   // value = data.parts[ix].value !== null ? data.parts[ix].value.value_set_value : ''
                 } else {
                   value = data.parts[ix].value !== null ? data.parts[ix].value.other_value : ''
+                  obj.value = value
                 }
                 setCustomerProperty.push(value)
+                agreementProperties.push(obj)
               }
             })
           }
           addSettings.updateObject = data
           nextProps.setAddSettings(addSettings)
+          nextProps.setAgreementProperty(agreementProperties)
+          let counter = 0
+          let agreementRelationshipData = agreementRelationships.map(function (data, index) {
+            data.isDisplay = true
+            data.displayIndex = counter++
+            return data
+          })
+          nextProps.setAgreementRelationship(agreementRelationshipData)
           let connectionData = {...nextProps.connectionData}
           let existingCustomerProperty = connectionData.customerProperty.map(function (data, index) {
             if (data.type_property.property_type.key === 'Boolean') {

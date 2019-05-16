@@ -70,16 +70,84 @@ export default function Softwareview (props) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
   }
-  let toggleExpandIcon = function (index) {
-    // eslint-disable-next-line
-    let iconClass = $('#expandIcon' + index).attr('class')
-    if (iconClass === 'fa fa-plus') {
-      // eslint-disable-next-line
-      $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
-    } else {
-      // eslint-disable-next-line
-      $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+  // let toggleExpandIcon = function (index) {
+  //   // eslint-disable-next-line
+  //   let iconClass = $('#expandIcon' + index).attr('class')
+  //   if (iconClass === 'fa fa-plus') {
+  //     // eslint-disable-next-line
+  //     $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
+  //   } else {
+  //     // eslint-disable-next-line
+  //     $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+  //   }
+  // }
+  let handleCheckbox = function (value, data) {
+    let displayIndex = data.displayIndex
+    let softwareRelationships = JSON.parse(JSON.stringify(props.softwareRelationships))
+    let index = _.findIndex(softwareRelationships, {displayIndex: displayIndex})
+    let checkedObject = softwareRelationships[index]
+    checkedObject.isDisplay = value
+    softwareRelationships[index] = checkedObject
+    props.setSoftwareRelationship(softwareRelationships)
+  }
+  let handleGroupCheckbox = function (value, checkData) {
+    console.log('handle group checkbox', value, checkData)
+    let softwareRelationships = JSON.parse(JSON.stringify(props.softwareRelationships))
+    if (checkData.relationshipType === 'Parent') {
+      let parent = _.filter(props.softwareRelationships, {'relationship_type': 'Parent'})
+      if (parent.length > 0) {
+        parent.forEach(function (data, id) {
+          let index = _.findIndex(softwareRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = softwareRelationships[index]
+          checkedObject.isDisplay = value
+          softwareRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'Child') {
+      let child = _.filter(props.softwareRelationships, {'relationship_type': 'Child'})
+      if (child.length > 0) {
+        child.forEach(function (data, isCheckboxChecked) {
+          let index = _.findIndex(softwareRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = softwareRelationships[index]
+          checkedObject.isDisplay = value
+          softwareRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectFrom') {
+      let outgoing = _.filter(props.softwareRelationships, {'relationship_type': 'ConnectFrom'})
+      outgoing = _.filter(outgoing, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      outgoing = _.filter(outgoing, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (outgoing.length > 0) {
+        outgoing.forEach(function (data, id) {
+          let index = _.findIndex(softwareRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = softwareRelationships[index]
+          checkedObject.isDisplay = value
+          softwareRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectTo') {
+      let incoming = _.filter(props.softwareRelationships, {'relationship_type': 'ConnectTo'})
+      incoming = _.filter(incoming, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      incoming = _.filter(incoming, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (incoming.length > 0) {
+        incoming.forEach(function (data, id) {
+          let index = _.findIndex(softwareRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = softwareRelationships[index]
+          checkedObject.isDisplay = value
+          softwareRelationships[index] = checkedObject
+        })
+      }
     }
+    console.log('softwareRelationships', softwareRelationships)
+    props.setSoftwareRelationship(softwareRelationships)
   }
   let showProperty = function (event) {
     let payload = {'showProperty': ' active show', 'showRelationship': ''}
@@ -102,88 +170,114 @@ export default function Softwareview (props) {
     startNode.title = props.softwarebyId.resources[0].name
     startNode.icon = componentTypeIcon
   }
-  if (props.softwareProperties && props.softwareProperties !== '') {
-    softwarePropertiesList = props.softwareProperties.resources.map(function (property, index) {
-      let propertyProperties = property.properties
-      let childProperties = propertyProperties.map(function (childProperty, childIndex) {
-        let value
-        // console.log('childProperty', childProperty)
-        if (childProperty.property_type.key === 'Integer') {
-          value = childProperty.int_value
-        } else if (childProperty.property_type.key === 'Decimal') {
-          value = childProperty.float_value
-        } else if (childProperty.property_type.key === 'DateTime') {
-          value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
-        } else if (childProperty.property_type.key === 'Text') {
-          value = childProperty.text_value
-        } else if (childProperty.property_type.key === 'List') {
-          // let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
-          //   option.label = option.name
-          //   option.value = option.id
-          //   return option
-          // })
-          let dvalue = childProperty.value_set_value
-          if (childProperty.value_set_value !== null) {
-            dvalue.label = childProperty.value_set_value.name
-            dvalue.value = childProperty.value_set_value.id
-          }
-          value = childProperty.value_set_value ? childProperty.value_set_value.name : null
-        } else {
-          value = childProperty.other_value
-        }
-        return (
-          <tr key={'child' + childIndex}>
-            <td><span className={styles.labelbold}>{childProperty.name}</span></td>
-            <td><span>{value}</span></td>
-          </tr>
-        )
-      })
+  if (props.softwareProperties.length > 0) {
+    softwarePropertiesList = props.softwareProperties.map(function (data, index) {
       return (
-        <tbody key={index} className={'col-6'}>
-          <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
-            <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
-            <td><span className={styles.labelbold}>{property.name}</span></td>
-          </tr>
-          <tr className='collapse' id={'expand' + index}>
-            <td colSpan='2'>
-              <table>
-                {childProperties}
-              </table>
-            </td>
-          </tr>
-        </tbody>
+        <tr key={'property' + index} id={'property' + index}>
+          <td><span className={styles.labelbold}>{data.name}</span></td>
+          <td><span className={''}>{data.value}</span></td>
+        </tr>
       )
     })
-    console.log('-------------', softwarePropertiesList)
   }
-  if (props.softwareRelationships && props.softwareRelationships !== '') {
-    modelRelationshipData = props.softwareRelationships.resources
-    let parent = _.filter(props.softwareRelationships.resources, {'relationship_type': 'Parent'})
-    let outgoing = _.filter(props.softwareRelationships.resources, {'relationship_type': 'ConnectFrom'})
+  // if (props.softwareProperties && props.softwareProperties !== '') {
+  //   softwarePropertiesList = props.softwareProperties.resources.map(function (property, index) {
+  //     let propertyProperties = property.properties
+  //     let childProperties = propertyProperties.map(function (childProperty, childIndex) {
+  //       let value
+  //       // console.log('childProperty', childProperty)
+  //       if (childProperty.property_type.key === 'Integer') {
+  //         value = childProperty.int_value
+  //       } else if (childProperty.property_type.key === 'Decimal') {
+  //         value = childProperty.float_value
+  //       } else if (childProperty.property_type.key === 'DateTime') {
+  //         value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
+  //       } else if (childProperty.property_type.key === 'Text') {
+  //         value = childProperty.text_value
+  //       } else if (childProperty.property_type.key === 'List') {
+  //         // let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
+  //         //   option.label = option.name
+  //         //   option.value = option.id
+  //         //   return option
+  //         // })
+  //         let dvalue = childProperty.value_set_value
+  //         if (childProperty.value_set_value !== null) {
+  //           dvalue.label = childProperty.value_set_value.name
+  //           dvalue.value = childProperty.value_set_value.id
+  //         }
+  //         value = childProperty.value_set_value ? childProperty.value_set_value.name : null
+  //       } else {
+  //         value = childProperty.other_value
+  //       }
+  //       return (
+  //         <tr key={'child' + childIndex}>
+  //           <td><span className={styles.labelbold}>{childProperty.name}</span></td>
+  //           <td><span>{value}</span></td>
+  //         </tr>
+  //       )
+  //     })
+  //     return (
+  //       <tbody key={index} className={'col-6'}>
+  //         <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+  //           <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
+  //           <td><span className={styles.labelbold}>{property.name}</span></td>
+  //         </tr>
+  //         <tr className='collapse' id={'expand' + index}>
+  //           <td colSpan='2'>
+  //             <table>
+  //               {childProperties}
+  //             </table>
+  //           </td>
+  //         </tr>
+  //       </tbody>
+  //     )
+  //   })
+  //   console.log('-------------', softwarePropertiesList)
+  // }
+  if (props.softwareRelationships && props.softwareRelationships.length > 0) {
+    modelRelationshipData = _.filter(props.softwareRelationships, {'isDisplay': true})
+    let parent = _.filter(props.softwareRelationships, {'relationship_type': 'Parent'})
+    let outgoing = _.filter(props.softwareRelationships, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let incoming = _.filter(props.softwareRelationships.resources, {'relationship_type': 'ConnectTo'})
+    let incoming = _.filter(props.softwareRelationships, {'relationship_type': 'ConnectTo'})
     incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let child = _.filter(props.softwareRelationships.resources, {'relationship_type': 'Child'})
+    let child = _.filter(props.softwareRelationships, {'relationship_type': 'Child'})
     let parentSoftwareRelationshipListFn = function () {
       if (parent.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = parent[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = parent[0].target_component.component_type.name
         let childElementList = parent.map(function (element, i) {
-        return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><span>{element.target_component.name}</span></div>
-        </span>)
-      })
-      return (
-        <div className='m-accordion__item' style={{'overflow': 'visible'}}>
-          <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
-            <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
-            <span className='m-accordion__item-mode' />
-          </div>
-          <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + parent[0].relationship_type} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
-            <div className='m-accordion__item-content'>
-              {childElementList}
+          if (element.isDisplay) {
+            isCheckboxChecked = true
+          }
+          return (<span className='row' style={{'padding': '5px'}}>
+            <div className='col-md-10'>
+              <span className='pull-left'>{element.target_component.name}</span>
+              <span className='float-right'>
+                <span className='pull-right'>
+                  <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                </span>
+              </span>
+            </div>
+          </span>)
+        })
+        return (
+          <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+            <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
+              <input style={{cursor: 'pointer'}} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} className='pull-left' type='checkbox' />
+              <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
+              <span className='m-accordion__item-mode' />
+            </div>
+            <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + parent[0].relationship_type} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
+              <div className='m-accordion__item-content'>
+                {childElementList}
+              </div>
             </div>
           </div>
-        </div>
-        )
+          )
       } else {
         console.log('parent else')
         return false
@@ -191,14 +285,30 @@ export default function Softwareview (props) {
     }
     let childSoftwareRelationshipListFn = function () {
       if (child.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = child[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = child[0].target_component.component_type.name
         let childElementList = child.map(function (element, i) {
-        return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><span>{element.target_component.name}</span></div>
-        </span>)
-      })
+          if (element.isDisplay) {
+            isCheckboxChecked = true
+          }
+          return (<span className='row' style={{'padding': '5px'}}>
+            <div className='col-md-10'>
+              <span className='pull-left'>{element.target_component.name}</span>
+              <span className='float-right'>
+                <span className='pull-right'>
+                  <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                </span>
+              </span>
+            </div>
+          </span>)
+        })
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
+            <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
             <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -229,15 +339,31 @@ export default function Softwareview (props) {
             for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
               if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectFrom'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><span>{element.target_component.name}</span></div>
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
+                      </span>
+                    </div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 outgoingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#outgoing_accordion_body' + outerKey + '-' + innerKey} aria-expanded='false'>
+                      <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
                       <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -273,15 +399,31 @@ export default function Softwareview (props) {
             for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
               if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectTo'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><span>{element.target_component.name}</span></div>
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
+                      </span>
+                    </div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 incomingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
+                      <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
                       <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                       <span className='m-accordion__item-mode' />
                     </div>

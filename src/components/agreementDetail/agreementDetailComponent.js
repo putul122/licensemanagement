@@ -702,113 +702,113 @@ export default function AgreementDetail (props) {
     let addAgreementSettings = {...props.addAgreementSettings, isConfirmationModalOpen: false}
     props.setAddAgreementSettings(addAgreementSettings)
   }
-  let handlePropertySelect = function (index, childIndex) {
-    return function (newValue: any, actionMeta: any) {
-      if (actionMeta.action === 'select-option') {
-        if (newValue !== null) {
-          let payload
-          let typeProperty = agreementProperties[index].properties[childIndex].type_property
-          agreementProperties[index].properties[childIndex].value_set_value = newValue
-          payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
+  // let handlePropertySelect = function (index, childIndex) {
+  //   return function (newValue: any, actionMeta: any) {
+  //     if (actionMeta.action === 'select-option') {
+  //       if (newValue !== null) {
+  //         let payload
+  //         let typeProperty = agreementProperties[index].properties[childIndex].type_property
+  //         agreementProperties[index].properties[childIndex].value_set_value = newValue
+  //         payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
 
-          if (agreementPropertiesPayload.property.length === 0) {
-            agreementPropertiesPayload.property.push(payload)
-          } else {
-            if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
-              agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
-            } else {
-              agreementPropertiesPayload.property.push(payload)
-            }
-          }
-          let editPayload = {}
-          editPayload.agreement = agreementData
-          editPayload.property = {resources: agreementProperties}
-          props.editComponentProperties(editPayload)
-          props.pushComponentPropertyPayload(agreementPropertiesPayload)
-        }
-      }
-      if (actionMeta.action === 'clear') {
-        let payload
-        let typeProperty = agreementProperties[index].properties[childIndex].type_property
-        agreementProperties[index].properties[childIndex].value_set_value = newValue
-        payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': newValue }
+  //         if (agreementPropertiesPayload.property.length === 0) {
+  //           agreementPropertiesPayload.property.push(payload)
+  //         } else {
+  //           if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
+  //             agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
+  //           } else {
+  //             agreementPropertiesPayload.property.push(payload)
+  //           }
+  //         }
+  //         let editPayload = {}
+  //         editPayload.agreement = agreementData
+  //         editPayload.property = {resources: agreementProperties}
+  //         props.editComponentProperties(editPayload)
+  //         props.pushComponentPropertyPayload(agreementPropertiesPayload)
+  //       }
+  //     }
+  //     if (actionMeta.action === 'clear') {
+  //       let payload
+  //       let typeProperty = agreementProperties[index].properties[childIndex].type_property
+  //       agreementProperties[index].properties[childIndex].value_set_value = newValue
+  //       payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': newValue }
 
-        if (agreementPropertiesPayload.property.length === 0) {
-          agreementPropertiesPayload.property.push(payload)
-        } else {
-          if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
-            agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
-          } else {
-            agreementPropertiesPayload.property.push(payload)
-          }
-        }
-        let editPayload = {}
-        editPayload.agreement = agreementData
-        editPayload.property = {resources: agreementProperties}
-        props.editComponentProperties(editPayload)
-        props.pushComponentPropertyPayload(agreementPropertiesPayload)
-      }
-    }
-  }
-  let editDateProperty = function (index, childIndex, value) {
-    let payload
-    let typeProperty = agreementProperties[index].properties[childIndex].type_property
-    let selectedDate = value.format('DD MMM YYYY')
-    agreementProperties[index].properties[childIndex].date_time_value = value.format('DD MMM YYYY')
-    payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': selectedDate }
-    if (agreementPropertiesPayload.property.length === 0) {
-      agreementPropertiesPayload.property.push(payload)
-    } else {
-      if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
-        agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
-      } else {
-        agreementPropertiesPayload.property.push(payload)
-      }
-    }
-    let editPayload = {}
-    editPayload.agreement = agreementData
-    editPayload.property = {resources: agreementProperties}
-    props.editComponentProperties(editPayload)
-    props.pushComponentPropertyPayload(agreementPropertiesPayload)
-  }
-  let editTextProperty = function (index, childIndex, value) {
-    let payload
-    let typeProperty = agreementProperties[index].properties[childIndex].type_property
-    if (agreementProperties[index].properties[childIndex].property_type.key === 'Boolean') {
-      agreementProperties[index].properties[childIndex].boolean_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/boolean_value`, 'value': value }
-    } else if (agreementProperties[index].properties[childIndex].property_type.key === 'Integer') {
-      agreementProperties[index].properties[childIndex].int_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/int_value`, 'value': value }
-    } else if (agreementProperties[index].properties[childIndex].property_type.key === 'Decimal') {
-      agreementProperties[index].properties[childIndex].float_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/float_value`, 'value': value }
-    } else if (agreementProperties[index].properties[childIndex].property_type.key === 'DateTime') {
-      agreementProperties[index].properties[childIndex].date_time_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': value }
-    } else if (agreementProperties[index].properties[childIndex].property_type.key === 'Text') {
-      agreementProperties[index].properties[childIndex].text_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-    } else {
-      agreementProperties[index].properties[childIndex].other_value = value
-      payload = { 'op': 'replace', 'path': `/${typeProperty}/other_value`, 'value': value }
-      agreementProperties[index].properties[childIndex].showMessage = false
-    }
-    if (agreementPropertiesPayload.property.length === 0) {
-      agreementPropertiesPayload.property.push(payload)
-    } else {
-      if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
-        agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
-      } else {
-        agreementPropertiesPayload.property.push(payload)
-      }
-    }
-    let editPayload = {}
-    editPayload.agreement = agreementData
-    editPayload.property = {resources: agreementProperties}
-    props.editComponentProperties(editPayload)
-    props.pushComponentPropertyPayload(agreementPropertiesPayload)
-  }
+  //       if (agreementPropertiesPayload.property.length === 0) {
+  //         agreementPropertiesPayload.property.push(payload)
+  //       } else {
+  //         if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
+  //           agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
+  //         } else {
+  //           agreementPropertiesPayload.property.push(payload)
+  //         }
+  //       }
+  //       let editPayload = {}
+  //       editPayload.agreement = agreementData
+  //       editPayload.property = {resources: agreementProperties}
+  //       props.editComponentProperties(editPayload)
+  //       props.pushComponentPropertyPayload(agreementPropertiesPayload)
+  //     }
+  //   }
+  // }
+  // let editDateProperty = function (index, childIndex, value) {
+  //   let payload
+  //   let typeProperty = agreementProperties[index].properties[childIndex].type_property
+  //   let selectedDate = value.format('DD MMM YYYY')
+  //   agreementProperties[index].properties[childIndex].date_time_value = value.format('DD MMM YYYY')
+  //   payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': selectedDate }
+  //   if (agreementPropertiesPayload.property.length === 0) {
+  //     agreementPropertiesPayload.property.push(payload)
+  //   } else {
+  //     if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
+  //       agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
+  //     } else {
+  //       agreementPropertiesPayload.property.push(payload)
+  //     }
+  //   }
+  //   let editPayload = {}
+  //   editPayload.agreement = agreementData
+  //   editPayload.property = {resources: agreementProperties}
+  //   props.editComponentProperties(editPayload)
+  //   props.pushComponentPropertyPayload(agreementPropertiesPayload)
+  // }
+  // let editTextProperty = function (index, childIndex, value) {
+  //   let payload
+  //   let typeProperty = agreementProperties[index].properties[childIndex].type_property
+  //   if (agreementProperties[index].properties[childIndex].property_type.key === 'Boolean') {
+  //     agreementProperties[index].properties[childIndex].boolean_value = value
+  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/boolean_value`, 'value': value }
+  //   } else if (agreementProperties[index].properties[childIndex].property_type.key === 'Integer') {
+  //     agreementProperties[index].properties[childIndex].int_value = value
+  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/int_value`, 'value': value }
+  //   } else if (agreementProperties[index].properties[childIndex].property_type.key === 'Decimal') {
+  //     agreementProperties[index].properties[childIndex].float_value = value
+  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/float_value`, 'value': value }
+  //   } else if (agreementProperties[index].properties[childIndex].property_type.key === 'DateTime') {
+  //     agreementProperties[index].properties[childIndex].date_time_value = value
+  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': value }
+  //   } else if (agreementProperties[index].properties[childIndex].property_type.key === 'Text') {
+  //     agreementProperties[index].properties[childIndex].text_value = value
+  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
+  //   } else {
+  //     agreementProperties[index].properties[childIndex].other_value = value
+  //     payload = { 'op': 'replace', 'path': `/${typeProperty}/other_value`, 'value': value }
+  //     agreementProperties[index].properties[childIndex].showMessage = false
+  //   }
+  //   if (agreementPropertiesPayload.property.length === 0) {
+  //     agreementPropertiesPayload.property.push(payload)
+  //   } else {
+  //     if (payload.path === agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1].path) {
+  //       agreementPropertiesPayload.property[agreementPropertiesPayload.property.length - 1] = payload
+  //     } else {
+  //       agreementPropertiesPayload.property.push(payload)
+  //     }
+  //   }
+  //   let editPayload = {}
+  //   editPayload.agreement = agreementData
+  //   editPayload.property = {resources: agreementProperties}
+  //   props.editComponentProperties(editPayload)
+  //   props.pushComponentPropertyPayload(agreementPropertiesPayload)
+  // }
   // End of code for Update Agreement
   // Code for delete agreement
   let deleteAgreement = function () {
@@ -1100,110 +1100,118 @@ export default function AgreementDetail (props) {
     agreementCost = props.agreement.resources[0].cost
     entitlementCount = props.agreement.resources[0].entitlement_count
   }
-  if (props.agreementProperties && props.agreementProperties !== '') {
-    agreementPropertiesList = props.agreementProperties.resources.map(function (property, index) {
-      let propertyProperties = property.properties
-      let childProperties = propertyProperties.map(function (childProperty, childIndex) {
-        let value
-        let htmlElement
-        let requiredProperty = false
-        if (childProperty.optionality.key === 'Required') {
-          requiredProperty = true
-        }
-        if (childProperty.property_type.key === 'Integer') {
-          value = childProperty.int_value || ''
-          htmlElement = function () {
-            return (<div className='form-group m-form__group has-info'>
-              <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-              {false && (<div className='form-control-feedback'>should be Number</div>)}
-            </div>)
-          }
-        } else if (childProperty.property_type.key === 'Decimal') {
-          value = childProperty.float_value || ''
-          htmlElement = function () {
-            return (<div className='form-group m-form__group has-info'>
-              <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-              {false && (<div className='form-control-feedback'>should be Number</div>)}
-            </div>)
-          }
-        } else if (childProperty.property_type.key === 'DateTime') {
-          value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
-          htmlElement = function () {
-            return (<div className='form-group m-form__group has-info'>
-              <DatePicker
-                className='input-sm form-control m-input'
-                selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
-                dateFormat='DD MMM YYYY'
-                onSelect={(date) => { editDateProperty(index, childIndex, date) }}
-                />
-              {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
-              {false && (<div className='form-control-feedback'>should be Date</div>)}
-            </div>)
-          }
-        } else if (childProperty.property_type.key === 'Text') {
-          value = childProperty.text_value || ''
-          htmlElement = function () {
-            return (<div className='form-group m-form__group has-info'>
-              <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-              {false && (<div className='form-control-feedback'>should be Text</div>)}
-            </div>)
-          }
-        } else if (childProperty.property_type.key === 'List') {
-          let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
-            option.label = option.name
-            option.value = option.id
-            return option
-          })
-          let dvalue = childProperty.value_set_value
-          if (childProperty.value_set_value !== null) {
-            dvalue.label = childProperty.value_set_value.name
-            dvalue.value = childProperty.value_set_value.id
-          }
-          value = childProperty.value_set_value ? childProperty.value_set_value.name : null
-          htmlElement = function () {
-            return (<div className='form-group has-info'><Select
-              className='input-sm m-input'
-              placeholder='Select Options'
-              isClearable
-              defaultValue={dvalue}
-              onChange={handlePropertySelect(index, childIndex)}
-              isSearchable={false}
-              name={'selectProperty'}
-              options={childPropertyOption}
-            /></div>)
-          }
-        } else {
-          value = childProperty.other_value || ''
-          htmlElement = function () {
-            return (<div className='form-group m-form__group has-info'>
-              <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-              {false && (<div className='form-control-feedback'>should be Text</div>)}
-            </div>)
-          }
-        }
-        return (
-          <tr key={'child' + childIndex}>
-            <td><span className={styles.labelbold}>{childProperty.name}</span>{requiredProperty && props.isEditComponent && (<span style={{'fontSize': '20px'}} className='text-danger' >*</span>)}</td>
-            <td>
-              {!props.isEditComponent && (<span>{value}</span>)}
-              {props.isEditComponent && htmlElement()}
-            </td>
-          </tr>
-        )
-      })
+  if (props.agreementProperties.length > 0) {
+    agreementPropertiesList = props.agreementProperties.map(function (data, index) {
       return (
-        <tbody key={index} className={'col-6'}>
-          <tr>
-            <td><span className={styles.title}>Type</span></td>
-            <td><span className={styles.labelbold}>{property.name}</span></td>
-          </tr>
-          {childProperties}
-        </tbody>
+        <tr key={'property' + index} id={'property' + index}>
+          <td><span className={styles.labelbold}>{data.name}</span></td>
+          <td><span className={''}>{data.value}</span></td>
+        </tr>
       )
     })
-  } else {
-    console.log('else')
   }
+  // if (props.agreementProperties && props.agreementProperties !== '') {
+  //   agreementPropertiesList = props.agreementProperties.resources.map(function (property, index) {
+  //     let propertyProperties = property.properties
+  //     let childProperties = propertyProperties.map(function (childProperty, childIndex) {
+  //       let value
+  //       let htmlElement
+  //       let requiredProperty = false
+  //       if (childProperty.optionality.key === 'Required') {
+  //         requiredProperty = true
+  //       }
+  //       if (childProperty.property_type.key === 'Integer') {
+  //         value = childProperty.int_value || ''
+  //         htmlElement = function () {
+  //           return (<div className='form-group m-form__group has-info'>
+  //             <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {false && (<div className='form-control-feedback'>should be Number</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'Decimal') {
+  //         value = childProperty.float_value || ''
+  //         htmlElement = function () {
+  //           return (<div className='form-group m-form__group has-info'>
+  //             <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {false && (<div className='form-control-feedback'>should be Number</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'DateTime') {
+  //         value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
+  //         htmlElement = function () {
+  //           return (<div className='form-group m-form__group has-info'>
+  //             <DatePicker
+  //               className='input-sm form-control m-input'
+  //               selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
+  //               dateFormat='DD MMM YYYY'
+  //               onSelect={(date) => { editDateProperty(index, childIndex, date) }}
+  //               />
+  //             {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+  //             {false && (<div className='form-control-feedback'>should be Date</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'Text') {
+  //         value = childProperty.text_value || ''
+  //         htmlElement = function () {
+  //           return (<div className='form-group m-form__group has-info'>
+  //             <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {false && (<div className='form-control-feedback'>should be Text</div>)}
+  //           </div>)
+  //         }
+  //       } else if (childProperty.property_type.key === 'List') {
+  //         let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
+  //           option.label = option.name
+  //           option.value = option.id
+  //           return option
+  //         })
+  //         let dvalue = childProperty.value_set_value
+  //         if (childProperty.value_set_value !== null) {
+  //           dvalue.label = childProperty.value_set_value.name
+  //           dvalue.value = childProperty.value_set_value.id
+  //         }
+  //         value = childProperty.value_set_value ? childProperty.value_set_value.name : null
+  //         htmlElement = function () {
+  //           return (<div className='form-group has-info'><Select
+  //             className='input-sm m-input'
+  //             placeholder='Select Options'
+  //             isClearable
+  //             defaultValue={dvalue}
+  //             onChange={handlePropertySelect(index, childIndex)}
+  //             isSearchable={false}
+  //             name={'selectProperty'}
+  //             options={childPropertyOption}
+  //           /></div>)
+  //         }
+  //       } else {
+  //         value = childProperty.other_value || ''
+  //         htmlElement = function () {
+  //           return (<div className='form-group m-form__group has-info'>
+  //             <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+  //             {false && (<div className='form-control-feedback'>should be Text</div>)}
+  //           </div>)
+  //         }
+  //       }
+  //       return (
+  //         <tr key={'child' + childIndex}>
+  //           <td><span className={styles.labelbold}>{childProperty.name}</span>{requiredProperty && props.isEditComponent && (<span style={{'fontSize': '20px'}} className='text-danger' >*</span>)}</td>
+  //           <td>
+  //             {!props.isEditComponent && (<span>{value}</span>)}
+  //             {props.isEditComponent && htmlElement()}
+  //           </td>
+  //         </tr>
+  //       )
+  //     })
+  //     return (
+  //       <tbody key={index} className={'col-6'}>
+  //         <tr>
+  //           <td><span className={styles.title}>Type</span></td>
+  //           <td><span className={styles.labelbold}>{property.name}</span></td>
+  //         </tr>
+  //         {childProperties}
+  //       </tbody>
+  //     )
+  //   })
+  // }
   let listEntitlement = function () {
     if (props.agreementEntitlements !== '') {
       if (props.agreementEntitlements.resources.length > 0) {
@@ -1289,23 +1297,23 @@ export default function AgreementDetail (props) {
       handleListAndPagination(currentPage + 1)
     }
   }
-  if (props.agreementRelationships && props.agreementRelationships !== '') {
+  if (props.agreementRelationships && props.agreementRelationships.length > 0) {
     // modelRelationshipData = props.agreementRelationships.resources
-    let parent = _.filter(props.agreementRelationships.resources, {'relationship_type': 'Parent'})
-    let outgoing = _.filter(props.agreementRelationships.resources, {'relationship_type': 'ConnectFrom'})
+    let parent = _.filter(props.agreementRelationships, {'relationship_type': 'Parent'})
+    let outgoing = _.filter(props.agreementRelationships, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let incoming = _.filter(props.agreementRelationships.resources, {'relationship_type': 'ConnectTo'})
+    let incoming = _.filter(props.agreementRelationships, {'relationship_type': 'ConnectTo'})
     incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
-    let child = _.filter(props.agreementRelationships.resources, {'relationship_type': 'Child'})
+    let child = _.filter(props.agreementRelationships, {'relationship_type': 'Child'})
     let parentComponentRelationshipListFn = function () {
       if (parent.length > 0) {
         let childElementList = parent.map(function (element, i) {
-        let relationshipActionSettings = {...props.relationshipActionSettings}
-        relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
-        relationshipActionSettings.relationshipId = element.target_component.id
+        // let relationshipActionSettings = {...props.relationshipActionSettings}
+        // relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
+        // relationshipActionSettings.relationshipId = element.target_component.id
         return (<span className='row' style={{'padding': '5px'}}>
           <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-          <div className='dropdown pull-right col-md-2'>
+          {/* <div className='dropdown pull-right col-md-2'>
             <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
             <div className={styles.dropmenu}>
               <ul className='dropdown-menu'>
@@ -1314,7 +1322,7 @@ export default function AgreementDetail (props) {
                 <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
               </ul>
             </div>
-          </div>
+          </div> */}
           <br />
         </span>)
       })
@@ -1339,12 +1347,12 @@ export default function AgreementDetail (props) {
     let childComponentRelationshipListFn = function () {
       if (child.length > 0) {
         let childElementList = child.map(function (element, i) {
-        let relationshipActionSettings = {...props.relationshipActionSettings}
-        relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
-        relationshipActionSettings.relationshipId = element.target_component.id
+        // let relationshipActionSettings = {...props.relationshipActionSettings}
+        // relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
+        // relationshipActionSettings.relationshipId = element.target_component.id
         return (<span className='row' style={{'padding': '5px'}}>
           <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-          <div className='dropdown pull-right col-md-2'>
+          {/* <div className='dropdown pull-right col-md-2'>
             <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
             <div className={styles.dropmenu}>
               <ul className='dropdown-menu'>
@@ -1353,7 +1361,7 @@ export default function AgreementDetail (props) {
                 <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
               </ul>
             </div>
-          </div>
+          </div> */}
           <br />
         </span>)
       })
@@ -1393,13 +1401,13 @@ export default function AgreementDetail (props) {
             for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
               if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
-                let relationshipActionSettings = {...props.relationshipActionSettings}
-                relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
-                relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
+                // let relationshipActionSettings = {...props.relationshipActionSettings}
+                // relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
+                // relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                   return (<span className='row' style={{'padding': '5px'}}>
                     <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-                    <div className='dropdown pull-right col-md-2'>
+                    {/* <div className='dropdown pull-right col-md-2'>
                       <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
                       <div className={styles.dropmenu}>
                         <ul className='dropdown-menu'>
@@ -1408,7 +1416,7 @@ export default function AgreementDetail (props) {
                           <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
                         </ul>
                       </div>
-                    </div>
+                    </div> */}
                     <br />
                   </span>)
                 })
@@ -1451,13 +1459,13 @@ export default function AgreementDetail (props) {
             for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
               if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
-                let relationshipActionSettings = {...props.relationshipActionSettings}
-                relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
-                relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
+                // let relationshipActionSettings = {...props.relationshipActionSettings}
+                // relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
+                // relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                   return (<span className='row' style={{'padding': '5px'}}>
                     <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-                    <div className='dropdown pull-right col-md-2'>
+                    {/* <div className='dropdown pull-right col-md-2'>
                       <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
                       <div className={styles.dropmenu}>
                         <ul className='dropdown-menu'>
@@ -1466,7 +1474,7 @@ export default function AgreementDetail (props) {
                           <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
                         </ul>
                       </div>
-                    </div>
+                    </div> */}
                     <br />
                   </span>)
                 })
@@ -1558,15 +1566,15 @@ export default function AgreementDetail (props) {
       selectComponentOptions1.push(newOption)
     }
   }
-  let openModal = function (event) {
-    // event.preventDefault()
-    let parent = _.filter(props.agreementRelationships.resources, {'relationship_type': 'Parent'})
-    let isParentSelected = parent.length > 0
-    let payload = {...props.addNewConnectionSettings, 'isModalOpen': true, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': isParentSelected, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
-    props.setAddConnectionSettings(payload)
-    agreementPropertiesPayload.relationship = []
-    props.pushComponentPropertyPayload(agreementPropertiesPayload)
-  }
+  // let openModal = function (event) {
+  //   // event.preventDefault()
+  //   let parent = _.filter(props.agreementRelationships.resources, {'relationship_type': 'Parent'})
+  //   let isParentSelected = parent.length > 0
+  //   let payload = {...props.addNewConnectionSettings, 'isModalOpen': true, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': isParentSelected, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
+  //   props.setAddConnectionSettings(payload)
+  //   agreementPropertiesPayload.relationship = []
+  //   props.pushComponentPropertyPayload(agreementPropertiesPayload)
+  // }
   let closeModal = function () {
     let payload = {...props.addNewConnectionSettings, 'isModalOpen': false, 'firstSelectboxSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
     props.setAddConnectionSettings(payload)
@@ -2465,15 +2473,14 @@ let editAgreeementCondition = function (event) {
             </div>
             <div className='tab-pane' id='m_tabs_2_3' role='tabpanel'>
               <div className='col-lg-12' >
-                <div className='row'>
+                {/* <div className='row'>
                   <div className='col-6' />
                   <div className='col-6 float-right'>
                     <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Relationship' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
                       <i className='fa flaticon-add fa-2x' />
                     </a>
-                    {/* <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button> */}
                   </div>
-                </div>
+                </div> */}
                 <div className='' style={{'marginTop': '20px'}}>
                   <div className='m--space-10' />
                   <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' style={{width: '100%'}} role='tablist' aria-multiselectable='true'>
