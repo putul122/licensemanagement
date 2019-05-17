@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './agreementDetailComponent.scss'
 import moment from 'moment'
+import DataModelComponent from '../../containers/dataModel/dataModelContainer'
 import _ from 'lodash'
 import Select from 'react-select'
 // import debounce from 'lodash/debounce'
@@ -39,6 +40,14 @@ const customStyles = {
     transform: 'translate(-50%, -50%)'
   }
 }
+var divStyle = {
+  // width: '900px',
+  // height: '600px',
+  'overflowY': 'scroll',
+  'overflowX': 'scroll',
+  'border': '1px solid #000000',
+  'background-color': '#FFFFFF'
+}
 let comparer = function (otherArray) {
   return function (current) {
     return otherArray.filter(function (other) {
@@ -73,6 +82,8 @@ export default function AgreementDetail (props) {
   console.log(props)
   console.log(props.selectedNotificationPeriod, props.setUpdateAgreementConditionSettings, props.agreementPurchaseOrders)
   console.log(props.isEditComponent, props.setAddConditionSettings, props.fetchAgreementPurchaseOrderById, props.setPurchaseOrderSettings, props.addConditionActionSettings, props.fetchAgreementConditionById, props.agreementCondition, props.notificationPeriodData, props.selectedDate)
+  let modelRelationshipData = ''
+  let startNode = {}
   let agreementEntitlementList = ''
   let agreementPropertiesList = ''
   let agreementConditionsList = ''
@@ -115,7 +126,74 @@ export default function AgreementDetail (props) {
   let purchaseOrderName
   let purchaseOrderByIdList
   let purchaseOrderItemList
-
+  let handleCheckbox = function (value, data) {
+    let displayIndex = data.displayIndex
+    let agreementRelationships = JSON.parse(JSON.stringify(props.agreementRelationships))
+    let index = _.findIndex(agreementRelationships, {displayIndex: displayIndex})
+    let checkedObject = agreementRelationships[index]
+    checkedObject.isDisplay = value
+    agreementRelationships[index] = checkedObject
+    props.setAgreementRelationship(agreementRelationships)
+  }
+  let handleGroupCheckbox = function (value, checkData) {
+    console.log('handle group checkbox', value, checkData)
+    let agreementRelationships = JSON.parse(JSON.stringify(props.agreementRelationships))
+    if (checkData.relationshipType === 'Parent') {
+      let parent = _.filter(props.agreementRelationships, {'relationship_type': 'Parent'})
+      if (parent.length > 0) {
+        parent.forEach(function (data, id) {
+          let index = _.findIndex(agreementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = agreementRelationships[index]
+          checkedObject.isDisplay = value
+          agreementRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'Child') {
+      let child = _.filter(props.agreementRelationships, {'relationship_type': 'Child'})
+      if (child.length > 0) {
+        child.forEach(function (data, isCheckboxChecked) {
+          let index = _.findIndex(agreementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = agreementRelationships[index]
+          checkedObject.isDisplay = value
+          agreementRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectFrom') {
+      let outgoing = _.filter(props.agreementRelationships, {'relationship_type': 'ConnectFrom'})
+      outgoing = _.filter(outgoing, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      outgoing = _.filter(outgoing, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (outgoing.length > 0) {
+        outgoing.forEach(function (data, id) {
+          let index = _.findIndex(agreementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = agreementRelationships[index]
+          checkedObject.isDisplay = value
+          agreementRelationships[index] = checkedObject
+        })
+      }
+    } else if (checkData.relationshipType === 'ConnectTo') {
+      let incoming = _.filter(props.agreementRelationships, {'relationship_type': 'ConnectTo'})
+      incoming = _.filter(incoming, function (data) {
+        return data.connection.name === checkData.connectionName
+      })
+      incoming = _.filter(incoming, function (data) {
+        return data.target_component.component_type.name === checkData.targetComponentTypeName
+      })
+      if (incoming.length > 0) {
+        incoming.forEach(function (data, id) {
+          let index = _.findIndex(agreementRelationships, {displayIndex: data.displayIndex})
+          let checkedObject = agreementRelationships[index]
+          checkedObject.isDisplay = value
+          agreementRelationships[index] = checkedObject
+        })
+      }
+    }
+    console.log('agreementRelationships', agreementRelationships)
+    props.setAgreementRelationship(agreementRelationships)
+  }
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -1099,6 +1177,14 @@ export default function AgreementDetail (props) {
     expireInDays = props.agreement.resources[0].expire_in_days
     agreementCost = props.agreement.resources[0].cost
     entitlementCount = props.agreement.resources[0].entitlement_count
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
+    let componentTypes = appPackage.resources[0].component_types
+    let componentTypeIcon = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Agreement'
+    }), 'icon')
+    startNode.name = props.agreement.resources[0].name
+    startNode.title = props.agreement.resources[0].name
+    startNode.icon = componentTypeIcon
   }
   if (props.agreementProperties.length > 0) {
     agreementPropertiesList = props.agreementProperties.map(function (data, index) {
@@ -1298,7 +1384,7 @@ export default function AgreementDetail (props) {
     }
   }
   if (props.agreementRelationships && props.agreementRelationships.length > 0) {
-    // modelRelationshipData = props.agreementRelationships.resources
+    modelRelationshipData = _.filter(props.agreementRelationships, {'isDisplay': true})
     let parent = _.filter(props.agreementRelationships, {'relationship_type': 'Parent'})
     let outgoing = _.filter(props.agreementRelationships, {'relationship_type': 'ConnectFrom'})
     outgoing = _.orderBy(outgoing, ['connection.name', 'target_component.name'], ['asc', 'asc'])
@@ -1307,28 +1393,47 @@ export default function AgreementDetail (props) {
     let child = _.filter(props.agreementRelationships, {'relationship_type': 'Child'})
     let parentComponentRelationshipListFn = function () {
       if (parent.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = parent[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = parent[0].target_component.component_type.name
         let childElementList = parent.map(function (element, i) {
         // let relationshipActionSettings = {...props.relationshipActionSettings}
         // relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
         // relationshipActionSettings.relationshipId = element.target_component.id
+        // return (<span className='row' style={{'padding': '5px'}}>
+        //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+        //   <div className='dropdown pull-right col-md-2'>
+        //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+        //     <div className={styles.dropmenu}>
+        //       <ul className='dropdown-menu'>
+        //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
+        //       </ul>
+        //     </div>
+        //   </div>
+        //   <br />
+        // </span>)
+        if (element.isDisplay) {
+          isCheckboxChecked = true
+        }
         return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-          {/* <div className='dropdown pull-right col-md-2'>
-            <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-            <div className={styles.dropmenu}>
-              <ul className='dropdown-menu'>
-                <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
-              </ul>
-            </div>
-          </div> */}
-          <br />
+          <div className='col-md-10'>
+            <span className='pull-left'>{element.target_component.name}</span>
+            <span className='float-right'>
+              <span className='pull-right'>
+                <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+              </span>
+            </span>
+          </div>
         </span>)
       })
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
+            <input style={{cursor: 'pointer'}} onChange={(event) => { handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} className='pull-left' type='checkbox' />
             <span className='m-accordion__item-title'>{parent[0].component.name} {'is Child of'} {parent[0].target_component.component_type.name}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -1346,28 +1451,47 @@ export default function AgreementDetail (props) {
     }
     let childComponentRelationshipListFn = function () {
       if (child.length > 0) {
+        let isCheckboxChecked = false
+        let checkData = {}
+        checkData.relationshipType = child[0].relationship_type
+        checkData.connectionName = null
+        checkData.targetComponentTypeName = child[0].target_component.component_type.name
         let childElementList = child.map(function (element, i) {
         // let relationshipActionSettings = {...props.relationshipActionSettings}
         // relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
         // relationshipActionSettings.relationshipId = element.target_component.id
+        // return (<span className='row' style={{'padding': '5px'}}>
+        //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+        //   <div className='dropdown pull-right col-md-2'>
+        //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+        //     <div className={styles.dropmenu}>
+        //       <ul className='dropdown-menu'>
+        //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
+        //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
+        //       </ul>
+        //     </div>
+        //   </div>
+        //   <br />
+        // </span>)
+        if (element.isDisplay) {
+          isCheckboxChecked = true
+        }
         return (<span className='row' style={{'padding': '5px'}}>
-          <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-          {/* <div className='dropdown pull-right col-md-2'>
-            <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-            <div className={styles.dropmenu}>
-              <ul className='dropdown-menu'>
-                <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Edit</a></li>
-                <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }} >Delete</a></li>
-              </ul>
-            </div>
-          </div> */}
-          <br />
+          <div className='col-md-10'>
+            <span className='pull-left'>{element.target_component.name}</span>
+            <span className='float-right'>
+              <span className='pull-right'>
+                <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+              </span>
+            </span>
+          </div>
         </span>)
       })
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
+            <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
             <span className='m-accordion__item-title'>{child[0].component.name} {'is Parent of'} {child[0].target_component.component_type.name}</span>
             <span className='m-accordion__item-mode' />
           </div>
@@ -1401,23 +1525,42 @@ export default function AgreementDetail (props) {
             for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
               if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectFrom'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
                 // let relationshipActionSettings = {...props.relationshipActionSettings}
                 // relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
                 // relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
+                  // return (<span className='row' style={{'padding': '5px'}}>
+                  //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+                  //   <div className='dropdown pull-right col-md-2'>
+                  //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                  //     <div className={styles.dropmenu}>
+                  //       <ul className='dropdown-menu'>
+                  //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  //       </ul>
+                  //     </div>
+                  //   </div>
+                  //   <br />
+                  // </span>)
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-                    {/* <div className='dropdown pull-right col-md-2'>
-                      <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-                      <div className={styles.dropmenu}>
-                        <ul className='dropdown-menu'>
-                          <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
-                        </ul>
-                      </div>
-                    </div> */}
-                    <br />
+                    <div className='col-md-10'>
+                      <input style={{cursor: 'pointer'}} checked={isCheckboxChecked} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} className='pull-left' type='checkbox' />
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
+                      </span>
+                    </div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
@@ -1459,29 +1602,48 @@ export default function AgreementDetail (props) {
             for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
               if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                 innerKey++
+                let isCheckboxChecked = false
+                let checkData = {}
+                checkData.relationshipType = 'ConnectTo'
+                checkData.connectionName = connectionKey
+                checkData.targetComponentTypeName = targetComponentTypeKey
                 // let relationshipActionSettings = {...props.relationshipActionSettings}
                 // relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
                 // relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                 let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
+                  // return (<span className='row' style={{'padding': '5px'}}>
+                  //   <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
+                  //   <div className='dropdown pull-right col-md-2'>
+                  //     <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                  //     <div className={styles.dropmenu}>
+                  //       <ul className='dropdown-menu'>
+                  //         <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  //         <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  //       </ul>
+                  //     </div>
+                  //   </div>
+                  //   <br />
+                  // </span>)
+                  if (element.isDisplay) {
+                    isCheckboxChecked = true
+                  }
                   return (<span className='row' style={{'padding': '5px'}}>
-                    <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
-                    {/* <div className='dropdown pull-right col-md-2'>
-                      <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-                      <div className={styles.dropmenu}>
-                        <ul className='dropdown-menu'>
-                          <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                          <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
-                        </ul>
-                      </div>
-                    </div> */}
-                    <br />
+                    <div className='col-md-10'>
+                      <span className='pull-left'>{element.target_component.name}</span>
+                      <span className='float-right'>
+                        <span className='pull-right'>
+                          <input style={{cursor: 'pointer'}} type='checkbox' onChange={(event) => { handleCheckbox(event.target.checked, element) }} checked={element.isDisplay} />{' display'}
+                        </span>
+                      </span>
+                    </div>
                   </span>)
                 })
                 // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                 incomingElements.push(
                   <div className='m-accordion__item' style={{'overflow': 'visible'}}>
                     <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
+                      <input className='pull-left' style={{cursor: 'pointer'}} onChange={(event) => { event.stopPropagation(); handleGroupCheckbox(event.target.checked, checkData) }} checked={isCheckboxChecked} type='checkbox' />
                       <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                       <span className='m-accordion__item-mode' />
                     </div>
@@ -2481,13 +2643,23 @@ let editAgreeementCondition = function (event) {
                     </a>
                   </div>
                 </div> */}
-                <div className='' style={{'marginTop': '20px'}}>
-                  <div className='m--space-10' />
-                  <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' style={{width: '100%'}} role='tablist' aria-multiselectable='true'>
-                    {parentComponentRelationshipList}
-                    {outgoingComponentRelationshipList}
-                    {incomingComponentRelationshipList}
-                    {childComponentRelationshipList}
+                <div className='row'>
+                  <div className='col-6 float-left' style={{'marginTop': '20px'}}>
+                    <div className='m--space-10' />
+                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' style={{width: '100%'}} role='tablist' aria-multiselectable='true'>
+                      {parentComponentRelationshipList}
+                      {outgoingComponentRelationshipList}
+                      {incomingComponentRelationshipList}
+                      {childComponentRelationshipList}
+                    </div>
+                  </div>
+                  <div className='col-6 float-right' style={{'marginTop': '20px'}}>
+                    <div className='' >
+                      <div id='divPaperWrapper' style={divStyle}>
+                        <DataModelComponent startNode={startNode} relationships={modelRelationshipData} />
+                        {/* <DataModelComponent /> */}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
